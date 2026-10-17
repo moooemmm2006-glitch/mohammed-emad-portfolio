@@ -237,7 +237,7 @@ mo-emad-portfolio/
 
 ## ٨. الموقع على الإنترنت (GitHub + Vercel)
 
-رابط موقعك: **https://mohammed-emad.vercel.app**
+رابط موقعك: **https://mohammed-emad-portfolio.vercel.app**
 
 - ملفات الموقع محفوظة على GitHub في المستودع `mohammed-emad-portfolio`.
 - Vercel مربوط بالمستودع: **أي تعديل تحفظه على GitHub ينزل على الموقع تلقائيًا خلال دقيقة.**
@@ -258,9 +258,9 @@ mo-emad-portfolio/
 
 ## ٩. صورة المعاينة على واتساب (Open Graph)
 
-عند إرسال رابط موقعك على واتساب أو فيسبوك تظهر صورة `assets/og-image.png` مع العنوان والوصف. رابط الموقع (`mohammed-emad.vercel.app`) مكتوب بالفعل في الصفحات.
+عند إرسال رابط موقعك على واتساب أو فيسبوك تظهر صورة `assets/og-image.png` مع العنوان والوصف. رابط الموقع (`mohammed-emad-portfolio.vercel.app`) مكتوب بالفعل في الصفحات.
 
-- **لو غيّرت عنوان الموقع أو ربطت دومين خاص:** ابحث في `index.html` و `project.html` و `consultation.html` و `automation.html` و `sitemap.xml` و `robots.txt` عن `mohammed-emad.vercel.app` واستبدله بالعنوان الجديد.
+- **لو غيّرت عنوان الموقع أو ربطت دومين خاص:** ابحث في `index.html` و `project.html` و `consultation.html` و `automation.html` و `sitemap.xml` و `robots.txt` عن `mohammed-emad-portfolio.vercel.app` واستبدله بالعنوان الجديد.
 - اختبر شكل المعاينة على [opengraph.xyz](https://www.opengraph.xyz) أو [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/).
 
 > واتساب يحتفظ بالمعاينة القديمة فترة. لو لم تتحدث، جرّب إرسال الرابط مع `?v=2` في آخره.
@@ -291,7 +291,7 @@ mo-emad-portfolio/
 | `posts/post-background.png` | خلفية البوست فاضية — افتحها في Canva واكتب عليها |
 
 **تعديل التصاميم:** الملفات في `brand/social/source/` صفحات HTML. افتح أي ملف في Chrome، عدّل النص بالمحرر، ثم صوّره بالمقاس المطلوب: `F12` ← Device toolbar ← اكتب المقاس ← **Capture screenshot**.
-- رابط موقعك في الغلاف وفي البوست مكتوب `mohammed-emad.vercel.app` — غيّره لو غيّرت عنوان الموقع.
+- رابط موقعك في الغلاف وفي البوست مكتوب `mohammed-emad-portfolio.vercel.app` — غيّره لو غيّرت عنوان الموقع.
 - البوست بالعربي: افتح `post-template.html?lang=ar`، والخلفية الفاضية: `post-template.html?blank=1`.
 - غلاف الهايلايت: `highlight.html?icon=work` (أو `reviews` أو `services` أو `contact`).
 
