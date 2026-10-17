@@ -1,0 +1,31 @@
+/* Shared styles for the social media designs (same tokens as the website). */
+:root {
+  --ink: #0B0D12;
+  --ink-1: #0F1218;
+  --ivory: #F4F1EA;
+  --cobalt: #2E5BFF;
+  --cobalt-2: #4A72FF;
+  --mist: #A2A5AD;
+  --slate: #6C707A;
+  --line: rgba(244, 241, 234, .08);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: var(--w); height: var(--h); overflow: hidden; background: var(--ink); color: var(--ivory); -webkit-font-smoothing: antialiased; }
+body { position: relative; font-family: "Inter", "IBM Plex Sans Arabic", sans-serif; }
+.ar { font-family: "IBM Plex Sans Arabic", sans-serif; direction: rtl; }
+.en-display { font-family: "Space Grotesk", sans-serif; }
+
+/* Background layers */
+.grid {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: var(--g, 64px) var(--g, 64px);
+  background-position: center;
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 45%, #000 10%, transparent 75%);
+}
+.glow { position: absolute; left: 50%; transform: translateX(-50%); border-radius: 50%; background: radial-gradient(closest-side, rgba(46, 91, 255, .42), rgba(46, 91, 255, .1) 55%, transparent); }
+
+/* The ME mark as inline SVG uses these colors */
+.mark { display: block; }
+.mark .fg { fill: var(--ivory); }
+.mark .ac { fill: var(--cobalt); }

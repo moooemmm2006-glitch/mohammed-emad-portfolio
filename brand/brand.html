@@ -1,0 +1,241 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mohammed Emad — Brand Kit</title>
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    body { padding-bottom: 120px; }
+    .bk-head { padding-block: 96px 64px; border-bottom: 1px solid var(--line); position: relative; overflow: hidden; isolation: isolate; }
+    .bk-head .logo { height: 28px; color: var(--fg); }
+    .bk-head h1 { margin-top: 56px; font-size: clamp(2.6rem, 6vw, 4.5rem); line-height: 1; letter-spacing: -0.04em; }
+    .bk-head p { margin-top: 18px; color: var(--fg-2); max-width: 60ch; font-size: 1.08rem; }
+    .bk-head .ar { font-family: "IBM Plex Sans Arabic", sans-serif; direction: rtl; text-align: left; unicode-bidi: plaintext; margin-top: 8px; color: var(--fg-3); }
+    .bk-sec { padding-top: 88px; }
+    .bk-sec > .container > h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -0.03em; }
+    .bk-sec > .container > .sub { margin-top: 8px; color: var(--fg-2); max-width: 64ch; }
+    .bk-sec > .container > .sub-ar { margin-top: 2px; color: var(--fg-3); font-family: "IBM Plex Sans Arabic", sans-serif; direction: rtl; unicode-bidi: plaintext; text-align: left; }
+    .bk-grid { display: grid; gap: 16px; margin-top: 32px; }
+    .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    @media (max-width: 860px) { .g2, .g3 { grid-template-columns: 1fr; } }
+
+    .tile { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--ink-1); }
+    .tile__art { display: grid; place-items: center; min-height: 220px; padding: 40px; }
+    .tile__art img { max-height: 44px; width: auto; }
+    .tile__art.big img { max-height: 96px; }
+    .tile__art.dark { background: var(--ink); }
+    .tile__art.light { background: var(--ivory); }
+    .tile__art.cobalt { background: var(--cobalt); }
+    .tile__meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--fg-2); }
+    .tile__meta a { color: var(--fg); display: inline-flex; gap: 6px; align-items: center; font-weight: 500; }
+    .tile__meta a:hover { color: var(--cobalt-2); }
+
+    .swatch { border: 1px solid var(--line); border-radius: 18px; overflow: hidden; background: var(--ink-1); cursor: pointer; text-align: left; width: 100%; transition: border-color .2s; }
+    .swatch:hover { border-color: var(--line-2); }
+    .swatch__chip { height: 150px; display: flex; align-items: flex-end; padding: 16px; font-size: 12px; }
+    .swatch__body { padding: 16px 18px 18px; }
+    .swatch__name { font-family: "Space Grotesk", sans-serif; font-size: 1.15rem; font-weight: 500; }
+    .swatch__codes { margin-top: 6px; font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: 13px; color: var(--fg-2); line-height: 1.7; }
+    .swatch__use { margin-top: 10px; font-size: 13.5px; color: var(--fg-3); }
+    .swatch.copied .swatch__chip::after { content: "Copied ✓"; margin-inline-start: auto; padding: 4px 10px; border-radius: 99px; background: rgba(0,0,0,.5); color: #fff; }
+    .ratio { margin-top: 24px; display: flex; height: 18px; border-radius: 99px; overflow: hidden; border: 1px solid var(--line); }
+    .ratio span { display: block; }
+
+    .type { border: 1px solid var(--line); border-radius: 18px; padding: 28px; background: var(--ink-1); }
+    .type__label { font-size: 12px; text-transform: uppercase; letter-spacing: .14em; color: var(--fg-3); }
+    .type__sample { margin-top: 18px; font-size: 64px; line-height: 1; }
+    .type__line { margin-top: 18px; color: var(--fg-2); font-size: 15px; }
+    .type__meta { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--fg-3); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+    .type__meta a { color: var(--fg); }
+
+    .rules li { display: flex; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); color: var(--fg-2); font-size: 15px; }
+    .rules li b { color: var(--fg); font-weight: 500; }
+    .rules .yes { color: #3DDC97; }
+    .rules .no { color: #FF6B6B; }
+    .rules-box { border: 1px solid var(--line); border-radius: 18px; padding: 24px 28px; background: var(--ink-1); }
+    .rules-box h3 { font-size: 1.1rem; margin-bottom: 8px; }
+
+    .social img { width: 100%; height: auto; display: block; }
+    .sizes { width: 100%; border-collapse: collapse; margin-top: 32px; font-size: 14.5px; }
+    .sizes th, .sizes td { text-align: left; padding: 14px 12px; border-top: 1px solid var(--line); }
+    .sizes th { color: var(--fg-3); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .12em; }
+    .sizes td { color: var(--fg-2); }
+    .sizes td:first-child { color: var(--fg); }
+    .sizes code { font-family: ui-monospace, Consolas, monospace; color: var(--fg); }
+    .table-wrap { overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <header class="bk-head">
+    <div class="hero__bg" aria-hidden="true"><div class="hero__grid"></div><div class="hero__glow"></div></div>
+    <div class="container">
+      <img class="logo" src="logo-on-dark.svg" alt="Mohammed Emad" style="height:28px">
+      <h1>Brand kit</h1>
+      <p>Logo, colors, and type for everything Mohammed Emad publishes: the website, proposals, and Facebook, Instagram, and TikTok posts. Click any color to copy its HEX code.</p>
+      <p class="ar">كل ما تحتاجه لتصميم منشوراتك: الشعار، الألوان، والخطوط. اضغط على أي لون لنسخ الكود.</p>
+    </div>
+  </header>
+
+  <!-- LOGO -->
+  <section class="bk-sec">
+    <div class="container">
+      <h2>Logo</h2>
+      <p class="sub">An M and an E share one stem. The cobalt block is the E’s middle bar and doubles as a text cursor, a nod to design and code together. Use the full logo when space allows and the mark alone for avatars, favicons, and small spaces.</p>
+      <p class="sub-ar">الشعار الكامل للمساحات الواسعة، والرمز وحده لصورة البروفايل والمساحات الصغيرة.</p>
+      <div class="bk-grid g2">
+        <div class="tile"><div class="tile__art dark"><img src="logo-on-dark.svg" alt="Logo on dark"></div><div class="tile__meta"><span>Logo, for dark backgrounds</span><a href="logo-on-dark.svg" download>SVG ↓</a></div></div>
+        <div class="tile"><div class="tile__art light"><img src="logo-on-light.svg" alt="Logo on light"></div><div class="tile__meta"><span>Logo, for light backgrounds</span><a href="logo-on-light.svg" download>SVG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark big"><img src="mark-on-dark.svg" alt="Mark on dark"></div><div class="tile__meta"><span>Mark, for dark backgrounds</span><a href="mark-on-dark.svg" download>SVG ↓</a></div></div>
+        <div class="tile"><div class="tile__art light big"><img src="mark-on-light.svg" alt="Mark on light"></div><div class="tile__meta"><span>Mark, for light backgrounds</span><a href="mark-on-light.svg" download>SVG ↓</a></div></div>
+      </div>
+      <div class="bk-grid g2">
+        <div class="rules-box">
+          <h3>Do</h3>
+          <ul class="rules">
+            <li><span class="yes">✓</span><span><b>Leave clear space</b> around the logo at least equal to the height of the mark.</span></li>
+            <li><span class="yes">✓</span><span><b>Minimum size:</b> full logo 20px tall on screen, mark 16px.</span></li>
+            <li><span class="yes">✓</span><span><b>Use ink or ivory backgrounds</b>, or a calm, dark photo.</span></li>
+          </ul>
+        </div>
+        <div class="rules-box">
+          <h3>Don’t</h3>
+          <ul class="rules">
+            <li><span class="no">✕</span><span><b>Don’t stretch, rotate, or outline</b> the logo.</span></li>
+            <li><span class="no">✕</span><span><b>Don’t recolor the cobalt block</b> or add shadows or gradients.</span></li>
+            <li><span class="no">✕</span><span><b>Don’t place it on busy images</b> or on cobalt; use the ivory version there.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COLORS -->
+  <section class="bk-sec">
+    <div class="container">
+      <h2>Colors</h2>
+      <p class="sub">Mostly ink and ivory. Cobalt is the spark: one accent per design (a button, a word, a line), never large areas.</p>
+      <p class="sub-ar">القاعدة: الحبر والعاجي هما الأساس، والأزرق يُستخدم مرة واحدة فقط في كل تصميم كلمسة مميزة.</p>
+      <div class="bk-grid g3" id="swatches"></div>
+      <div class="ratio" aria-label="Color proportion: 70% ink, 20% ivory, 7% grays, 3% cobalt">
+        <span style="width:70%;background:#0B0D12"></span><span style="width:20%;background:#F4F1EA"></span><span style="width:7%;background:#6C707A"></span><span style="width:3%;background:#2E5BFF"></span>
+      </div>
+      <p class="sub" style="font-size:13.5px;margin-top:10px">Suggested proportion: 70% ink · 20% ivory · 7% grays · 3% cobalt</p>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section class="bk-sec">
+    <div class="container">
+      <h2>Typography</h2>
+      <p class="sub">All free on Google Fonts. Headlines use tight letter spacing in English (−3% to −4%) and normal spacing in Arabic. Never add letter spacing to Arabic; it breaks the joins between letters.</p>
+      <div class="bk-grid g3">
+        <div class="type">
+          <div class="type__label">Headlines · English</div>
+          <div class="type__sample" style="font-family:'Space Grotesk';font-weight:500;letter-spacing:-0.04em">Aa Gg</div>
+          <div class="type__line" style="font-family:'Space Grotesk'">Websites that earn trust.</div>
+          <div class="type__meta"><span>Space Grotesk · 500</span><a href="https://fonts.google.com/specimen/Space+Grotesk" target="_blank" rel="noopener">Get font ↗</a></div>
+        </div>
+        <div class="type">
+          <div class="type__label">Body · English</div>
+          <div class="type__sample" style="font-family:'Inter';font-weight:500;letter-spacing:-0.02em">Aa Gg</div>
+          <div class="type__line" style="font-family:'Inter'">Clear, readable body text and UI labels.</div>
+          <div class="type__meta"><span>Inter · 400 / 500</span><a href="https://fonts.google.com/specimen/Inter" target="_blank" rel="noopener">Get font ↗</a></div>
+        </div>
+        <div class="type">
+          <div class="type__label">Arabic · all text</div>
+          <div class="type__sample" style="font-family:'IBM Plex Sans Arabic';font-weight:600;direction:rtl;text-align:right">أب جـ</div>
+          <div class="type__line" style="font-family:'IBM Plex Sans Arabic';direction:rtl;text-align:right">مواقع تكسب ثقة عملائك من أول نظرة.</div>
+          <div class="type__meta"><span>IBM Plex Sans Arabic · 400 / 600</span><a href="https://fonts.google.com/specimen/IBM+Plex+Sans+Arabic" target="_blank" rel="noopener">Get font ↗</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOCIAL -->
+  <section class="bk-sec">
+    <div class="container">
+      <h2>Social media</h2>
+      <p class="sub">Ready-to-upload images, all in <code>brand/social/</code>. To edit them, change the HTML files in <code>brand/social/source/</code> (see the README).</p>
+      <p class="sub-ar">صور جاهزة للرفع مباشرة على حساباتك — كلها في مجلد brand/social.</p>
+      <div class="bk-grid g3 social" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+        <div class="tile"><div class="tile__art dark" style="padding:24px"><img src="social/profile/profile-logo.png" alt="Profile picture, logo" style="max-height:none;width:100%;max-width:220px;border-radius:50%"></div><div class="tile__meta"><span>Profile picture A · logo</span><a href="social/profile/profile-logo.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:24px"><img src="social/profile/profile-photo.png" alt="Profile picture, photo" style="max-height:none;width:100%;max-width:220px;border-radius:50%"></div><div class="tile__meta"><span>Profile picture B · photo</span><a href="social/profile/profile-photo.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:24px"><img src="social/profile/profile-photo-natural.png" alt="Profile picture, natural photo" style="max-height:none;width:100%;max-width:220px;border-radius:50%"></div><div class="tile__meta"><span>Profile picture C · portrait mode</span><a href="social/profile/profile-photo-natural.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:24px"><img src="social/logo/png/logo-icon-512.png" alt="App icon" style="max-height:none;width:100%;max-width:180px"></div><div class="tile__meta"><span>Icon · 512 / 1024 / 2048</span><a href="social/logo/png/logo-icon-2048.png" download>PNG ↓</a></div></div>
+        <div class="tile" style="grid-column:1 / -1"><div class="tile__art dark" style="padding:24px"><img src="social/cover/cover-facebook.png" alt="Facebook cover" style="max-height:none;width:100%;border-radius:10px"></div><div class="tile__meta"><span>Facebook cover · 1640×624</span><a href="social/cover/cover-facebook.png" download>PNG ↓</a></div></div>
+      </div>
+      <div class="bk-grid g3 social" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+        <div class="tile"><div class="tile__art dark" style="padding:16px"><img src="social/highlights/highlight-work.png" alt="Highlight: Work" style="max-height:260px;width:auto"></div><div class="tile__meta"><span>Highlight · Work</span><a href="social/highlights/highlight-work.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:16px"><img src="social/highlights/highlight-reviews.png" alt="Highlight: Reviews" style="max-height:260px;width:auto"></div><div class="tile__meta"><span>Highlight · Reviews</span><a href="social/highlights/highlight-reviews.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:16px"><img src="social/highlights/highlight-services.png" alt="Highlight: Services" style="max-height:260px;width:auto"></div><div class="tile__meta"><span>Highlight · Services</span><a href="social/highlights/highlight-services.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:16px"><img src="social/highlights/highlight-contact.png" alt="Highlight: Contact" style="max-height:260px;width:auto"></div><div class="tile__meta"><span>Highlight · Contact</span><a href="social/highlights/highlight-contact.png" download>PNG ↓</a></div></div>
+      </div>
+      <div class="bk-grid g3 social">
+        <div class="tile"><div class="tile__art dark" style="padding:16px"><img src="social/posts/post-example-en.png" alt="Post example, English" style="max-height:340px;width:auto"></div><div class="tile__meta"><span>Post · English example</span><a href="social/posts/post-example-en.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:16px"><img src="social/posts/post-example-ar.png" alt="Post example, Arabic" style="max-height:340px;width:auto"></div><div class="tile__meta"><span>Post · Arabic example</span><a href="social/posts/post-example-ar.png" download>PNG ↓</a></div></div>
+        <div class="tile"><div class="tile__art dark" style="padding:16px"><img src="social/posts/post-background.png" alt="Post background" style="max-height:340px;width:auto"></div><div class="tile__meta"><span>Post · blank background (for Canva)</span><a href="social/posts/post-background.png" download>PNG ↓</a></div></div>
+      </div>
+      <div class="bk-grid">
+        <div class="tile"><div class="tile__art dark" style="padding:24px"><img src="../assets/og-image.png" alt="Link preview image" style="max-height:none;width:100%;max-width:720px;border-radius:10px"></div><div class="tile__meta"><span>Link preview (WhatsApp / Facebook) · 1200×630, used by the website automatically</span><a href="../assets/og-image.png" download>PNG ↓</a></div></div>
+      </div>
+
+      <div class="table-wrap">
+        <table class="sizes">
+          <thead><tr><th>Format</th><th>Size (px)</th><th>Tip</th></tr></thead>
+          <tbody>
+            <tr><td>Instagram / Facebook post</td><td><code>1080 × 1350</code></td><td>4:5 portrait takes the most space in the feed.</td></tr>
+            <tr><td>Instagram / TikTok story or reel cover</td><td><code>1080 × 1920</code></td><td>Keep text within the middle 1080 × 1420 area.</td></tr>
+            <tr><td>Facebook cover</td><td><code>1640 × 624</code></td><td>Keep key content centered; the sides get cropped on phones.</td></tr>
+            <tr><td>Profile picture (all platforms)</td><td><code>1080 × 1080</code></td><td>Shown as a circle, so keep the mark centered.</td></tr>
+            <tr><td>Project showcase post</td><td><code>1080 × 1350</code></td><td>Ink background, the project screenshot in a browser frame, and the project name in Space Grotesk.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOICE -->
+  <section class="bk-sec">
+    <div class="container">
+      <h2>Voice</h2>
+      <div class="bk-grid g3">
+        <div class="rules-box"><h3>Confident, not loud</h3><p class="sub" style="font-size:15px">Short sentences. No exclamation marks, no “best in the market.” Let the work speak.</p></div>
+        <div class="rules-box"><h3>Clear, not technical</h3><p class="sub" style="font-size:15px">Talk about results for the client (trust, sales, inquiries), not code or tools.</p></div>
+        <div class="rules-box"><h3>Honest</h3><p class="sub" style="font-size:15px">Only real projects, real reviews, and real numbers. Never invent results.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const colors = [
+      { name: 'Ink', hex: '#0B0D12', rgb: '11, 13, 18', use: 'Main background. Most of every design.', text: '#F4F1EA' },
+      { name: 'Ivory', hex: '#F4F1EA', rgb: '244, 241, 234', use: 'Headlines and text on ink; light backgrounds.', text: '#0B0D12' },
+      { name: 'Cobalt', hex: '#2E5BFF', rgb: '46, 91, 255', use: 'Accent only: buttons, one highlighted word, small details.', text: '#FFFFFF' },
+      { name: 'Surface', hex: '#141821', rgb: '20, 24, 33', use: 'Cards and panels on top of ink.', text: '#F4F1EA' },
+      { name: 'Mist', hex: '#A2A5AD', rgb: '162, 165, 173', use: 'Secondary text on dark backgrounds.', text: '#0B0D12' },
+      { name: 'Slate', hex: '#6C707A', rgb: '108, 112, 122', use: 'Captions, labels, the muted part of a headline.', text: '#F4F1EA' }
+    ];
+    document.getElementById('swatches').innerHTML = colors.map(c => `
+      <button class="swatch" type="button" data-hex="${c.hex}">
+        <div class="swatch__chip" style="background:${c.hex};color:${c.text}"></div>
+        <div class="swatch__body">
+          <div class="swatch__name">${c.name}</div>
+          <div class="swatch__codes">HEX ${c.hex}<br>RGB ${c.rgb}</div>
+          <div class="swatch__use">${c.use}</div>
+        </div>
+      </button>`).join('');
+    document.querySelectorAll('.swatch').forEach(b => b.addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(b.dataset.hex); } catch (e) {}
+      b.classList.add('copied');
+      setTimeout(() => b.classList.remove('copied'), 1400);
+    }));
+  </script>
+</body>
+</html>

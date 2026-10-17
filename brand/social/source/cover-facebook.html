@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Facebook cover (1640×624)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=block">
+<link rel="stylesheet" href="social.css">
+<style>
+  :root { --w: 1640px; --h: 624px; --g: 60px; }
+  /* Safe area: centered 1100×440 — visible on mobile (sides get cropped) and clear of the
+     profile picture that overlaps the bottom-left corner on desktop. */
+  .safe { position: absolute; left: 270px; top: 92px; width: 1100px; height: 440px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .mark { width: 64px; margin-bottom: 36px; }
+  .names { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 44px; width: 100%; }
+  .divider { width: 1px; height: 150px; background: linear-gradient(transparent, rgba(244, 241, 234, .22), transparent); }
+  .side h1 { font-size: 60px; line-height: 1.1; font-weight: 500; letter-spacing: -0.035em; white-space: nowrap; }
+  .side p { margin-top: 16px; font-size: 23px; line-height: 1.45; color: var(--mist); }
+  /* Both names hug the center divider. */
+  .en { text-align: right; }
+  .en h1 { font-family: "Space Grotesk", sans-serif; }
+  .ar { text-align: left; }
+  .ar h1 { font-weight: 600; letter-spacing: 0; line-height: 1.2; font-size: 66px; }
+  .ar p { font-size: 25px; }
+  .link { margin-top: 44px; display: inline-flex; align-items: center; gap: 12px; height: 52px; padding: 0 24px; border-radius: 999px;
+          border: 1.5px solid rgba(46, 91, 255, .55); background: rgba(46, 91, 255, .14); font: 500 21px/1 "Inter", sans-serif; color: var(--ivory); }
+  .link svg { width: 22px; height: 22px; stroke: var(--cobalt-2); }
+</style></head>
+<body>
+  <div class="grid"></div>
+  <div class="glow" style="width:1500px;height:760px;bottom:-520px"></div>
+  <div class="glow" style="width:900px;height:500px;top:-360px;opacity:.6"></div>
+  <div class="safe">
+    <svg class="mark" viewBox="4 4 32 24"><path class="fg" d="M4 28V4h4l8 11 8-11h4v24h-4V11l-8 11-8-11v17zM24 4h12v4H24zM24 24h12v4H24z"/><path class="ac" d="M30 14h5v4h-5z"/></svg>
+    <div class="names">
+      <div class="side en"><h1>Mohammed Emad</h1><p>Websites &amp; automations<br>that bring you clients</p></div>
+      <div class="divider"></div>
+      <div class="side ar"><h1>محمد عماد</h1><p>مواقع وأتمتة<br>تجلب لك العملاء</p></div>
+    </div>
+    <!-- Website link: change the text below if your address is different. -->
+    <div class="link"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg><span>mohammed-emad.vercel.app</span></div>
+  </div>
+</body></html>

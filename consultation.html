@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="is-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>استشارة مجانية — محمد عماد</title>
+  <meta name="description" content="احجز استشارة مجانية وبدون أي التزام مع محمد عماد للحديث عن فكرة موقعك.">
+  <meta name="theme-color" content="#0B0D12">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="محمد عماد">
+  <meta property="og:title" content="استشارة مجانية — محمد عماد">
+  <meta property="og:description" content="محادثة مجانية وبدون أي التزام حول موقعك.">
+  <meta property="og:url" content="https://mohammed-emad.vercel.app/consultation.html">
+  <meta property="og:image" content="https://mohammed-emad.vercel.app/assets/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts load in the background so a slow connection never blocks the page. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap"></noscript>
+  <link rel="stylesheet" href="css/style.css">
+  <noscript><style>html.is-loading body{opacity:1}.reveal{opacity:1;transform:none}</style></noscript>
+
+  <script src="data/site.js"></script>
+  <script>
+    (function () {
+      var d = document.documentElement, l = new URLSearchParams(location.search).get('lang'), s;
+      try { s = localStorage.getItem('lang'); } catch (e) {}
+      l = l || s || (window.SITE && SITE.defaultLang) || 'ar';
+      l = l === 'en' ? 'en' : 'ar';
+      d.lang = l; d.dir = l === 'ar' ? 'rtl' : 'ltr';
+    })();
+  </script>
+</head>
+<body data-page="consultation">
+  <header id="site-header"></header>
+
+  <!-- Text for this page lives in js/i18n.js (the "consult" section). -->
+  <main id="main"><div id="consult-page"></div></main>
+
+  <footer id="site-footer"></footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/consultation.js"></script>
+</body>
+</html>

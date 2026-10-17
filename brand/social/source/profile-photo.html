@@ -1,0 +1,20 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Profile picture — photo (1080×1080)</title>
+<link rel="stylesheet" href="social.css">
+<style>
+  :root { --w: 1080px; --h: 1080px; }
+  /* Glow and ring sit BEHIND the photo, so you appear in front of them. Face stays in the center safe area. */
+  .halo { position: absolute; left: 50%; top: 46%; width: 980px; height: 980px; transform: translate(-50%, -50%); border-radius: 50%;
+          background: radial-gradient(closest-side, rgba(46, 91, 255, .42), rgba(46, 91, 255, .12) 58%, transparent); }
+  .ring { position: absolute; left: 50%; top: 46%; width: 760px; height: 760px; transform: translate(-50%, -50%); border-radius: 50%;
+          border: 3px solid rgba(74, 114, 255, .55); box-shadow: 0 0 70px rgba(46, 91, 255, .3); }
+  /* The cut-out photo: scale and position are tuned so your face sits just above center. */
+  .me { position: absolute; width: calc(1200px * var(--s)); left: calc(540px - 548px * var(--s)); top: calc(450px - 655px * var(--s)); --s: 1.8; }
+  .fade { position: absolute; left: 0; right: 0; bottom: 0; height: 380px; background: linear-gradient(rgba(11, 13, 18, 0), rgba(11, 13, 18, .85) 55%, var(--ink)); }
+</style></head>
+<body>
+  <div class="halo"></div>
+  <div class="ring"></div>
+  <img class="me" src="me-cutout.png" alt="">
+  <div class="fade"></div>
+</body></html>

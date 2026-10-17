@@ -1,0 +1,21 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Profile picture — natural photo (1080×1080)</title>
+<link rel="stylesheet" href="social.css">
+<style>
+  :root { --w: 1080px; --h: 1080px; --s: 1.8; }
+  /* "Portrait mode": the original background, blurred and darkened, with you sharp in front. */
+  .bg, .me { position: absolute; width: calc(1200px * var(--s)); left: calc(540px - 548px * var(--s)); top: calc(450px - 655px * var(--s)); }
+  .bg { filter: blur(22px) brightness(.42) saturate(.7); transform: scale(1.04); transform-origin: 548px 655px; }
+  .tint { position: absolute; inset: 0; background:
+            radial-gradient(circle at 50% 46%, rgba(46, 91, 255, .22), rgba(11, 13, 18, .25) 45%, rgba(11, 13, 18, .85) 72%); }
+  .ring { position: absolute; left: 50%; top: 46%; width: 760px; height: 760px; transform: translate(-50%, -50%); border-radius: 50%;
+          border: 3px solid rgba(74, 114, 255, .6); box-shadow: 0 0 70px rgba(46, 91, 255, .35); }
+  .fade { position: absolute; left: 0; right: 0; bottom: 0; height: 300px; background: linear-gradient(rgba(11, 13, 18, 0), rgba(11, 13, 18, .8)); }
+</style></head>
+<body>
+  <img class="bg" src="../../../assets/about/me-original.jpg" alt="">
+  <div class="tint"></div>
+  <div class="ring"></div>
+  <img class="me" src="me-cutout.png" alt="">
+  <div class="fade"></div>
+</body></html>

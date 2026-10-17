@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="is-loading">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>404 — محمد عماد</title>
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#0B0D12">
+  <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Fonts load in the background so a slow connection never blocks the page. -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600&display=swap"></noscript>
+  <link rel="stylesheet" href="/css/style.css">
+  <noscript><style>html.is-loading body{opacity:1}.reveal{opacity:1;transform:none}</style></noscript>
+  <script src="/data/site.js"></script>
+  <script>
+    (function () {
+      var d = document.documentElement, p = new URLSearchParams(location.search).get('lang'), s;
+      try { s = localStorage.getItem('lang'); } catch (e) {}
+      var l = (p || s || (window.SITE && SITE.defaultLang) || 'ar') === 'en' ? 'en' : 'ar';
+      d.lang = l; d.dir = l === 'ar' ? 'rtl' : 'ltr';
+    })();
+  </script>
+</head>
+<body data-page="404">
+  <main class="empty">
+    <div class="hero__bg" aria-hidden="true"><div class="hero__grid"></div><div class="hero__glow"></div></div>
+    <div class="container">
+      <p class="eyebrow reveal">404</p>
+      <h1 class="h2 reveal" data-i18n="notFound.title"></h1>
+      <p class="lead reveal" data-i18n="notFound.text" style="margin-bottom:32px"></p>
+      <a class="btn btn--ghost btn--lg reveal" href="/"><span data-icon="arrow" data-icon-class="ic--back"></span><span data-i18n="notFound.back"></span></a>
+    </div>
+  </main>
+  <script src="/js/i18n.js"></script>
+  <script src="/js/core.js"></script>
+  <script>window.App.start();</script>
+</body>
+</html>

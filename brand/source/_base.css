@@ -1,0 +1,6 @@
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:var(--w);height:var(--h);overflow:hidden;background:#0B0D12;color:#F4F1EA;-webkit-font-smoothing:antialiased}
+body{position:relative;font-family:"Inter","IBM Plex Sans Arabic",sans-serif}
+.grid{position:absolute;inset:0;background-image:linear-gradient(rgba(244,241,234,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(244,241,234,.07) 1px,transparent 1px);background-size:var(--g,64px) var(--g,64px);background-position:center;-webkit-mask-image:radial-gradient(ellipse 65% 70% at 50% 40%,#000 15%,transparent 75%)}
+.glow{position:absolute;left:50%;transform:translateX(-50%);border-radius:50%;background:radial-gradient(closest-side,rgba(46,91,255,.42),rgba(46,91,255,.1) 55%,transparent)}
+.ar{font-family:"IBM Plex Sans Arabic",sans-serif;direction:rtl}
