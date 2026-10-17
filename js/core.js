@@ -190,7 +190,7 @@
       ? `<span class="ph__hint">${icon('spark')}<span class="ph__hint-label">${esc(t('img.missing'))}:</span> <b dir="ltr">${esc(opts.src)}</b><span class="ph__hint-size" dir="ltr">· ${esc(opts.size || '1600×1000')}</span></span>`
       : '';
     const img = opts.src
-      ? `<img src="${esc(opts.src)}" alt="${esc(opts.alt || '')}" loading="${opts.eager ? 'eager' : 'lazy'}" decoding="async" onload="this.classList.add('is-loaded')" onerror="this.remove()">`
+      ? `<img src="${esc(opts.src)}" alt="${esc(opts.alt || '')}" decoding="async" onerror="this.remove()">`
       : '';
     return `<div class="shot${opts.cls ? ' ' + opts.cls : ''}" style="--tint:${esc(opts.color || '#2E5BFF')}">
       <div class="shot__bar" aria-hidden="true"><i></i><i></i><i></i>${host ? `<span class="shot__url" dir="ltr">${esc(host)}</span>` : ''}</div>

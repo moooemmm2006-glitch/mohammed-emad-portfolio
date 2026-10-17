@@ -109,7 +109,7 @@
   function renderAbout() {
     $('about-portrait').innerHTML = `
       <div class="about__mark">${window.App.MARK}</div>
-      <img src="assets/about/me.jpg" alt="${esc(t('brand.name'))}" width="720" height="900" loading="lazy" decoding="async" onload="this.parentNode.classList.add('has-photo')" onerror="this.remove()">
+      <img src="assets/about/me.jpg" alt="${esc(t('brand.name'))}" width="720" height="900" decoding="async" onerror="this.remove()">
       <figcaption class="about__badge"><b>${esc(t('brand.name'))}</b><span>${esc(t('about.role'))}</span></figcaption>`;
     const yt = SITE.youtube
       ? `<a class="about__yt" href="${esc(SITE.youtube)}" target="_blank" rel="noopener">${icon('youtube')}<span>${esc(t('about.creator'))}</span>${icon('arrowUpRight')}</a>`

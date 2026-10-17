@@ -505,10 +505,10 @@ html[lang="ar"] .hero__title { font-size: clamp(2.4rem, 6.4vw, 5.25rem); }
   height: 100%;
   object-fit: cover;
   object-position: top center;
-  opacity: 0;
-  transition: opacity .6s var(--ease), transform 1s var(--ease);
+  animation: img-in .7s var(--ease) both;
+  transition: transform 1s var(--ease);
 }
-.shot__view img.is-loaded { opacity: 1; }
+@keyframes img-in { from { opacity: 0; } to { opacity: 1; } }
 
 .ph {
   position: absolute;
@@ -739,10 +739,9 @@ html[lang="ar"] .review blockquote { line-height: 1.75; }
   height: 100%;
   object-fit: cover;
   object-position: 50% 18%;
-  opacity: 0;
-  transition: opacity .8s var(--ease), transform 1.2s var(--ease);
+  animation: img-in .8s var(--ease) both;
+  transition: transform 1.2s var(--ease);
 }
-.about__portrait.has-photo > img { opacity: 1; }
 .about__portrait:hover > img { transform: scale(1.025); }
 /* Soft ink fade at the bottom + a whisper of cobalt, so the photo sits in the brand palette. */
 .about__portrait::after {
@@ -757,7 +756,6 @@ html[lang="ar"] .review blockquote { line-height: 1.75; }
 }
 .about__mark { position: absolute; inset: 0; display: grid; place-items: center; color: var(--fg); }
 .about__mark .mark { width: 42%; height: auto; }
-.about__portrait.has-photo .about__mark { display: none; }
 .about__badge {
   position: absolute;
   z-index: 2;
