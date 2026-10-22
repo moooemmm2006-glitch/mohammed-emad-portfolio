@@ -288,7 +288,7 @@ mo-emad-portfolio/
 | `profile/profile-preview-sheet.png` | معاينة الصور الثلاث مقصوصة دائرة بمقاسات 320 و 110 و 40 بكسل |
 | `profile/profile-photo.png` | صورة بروفايل بصورتك على خلفية الهوية (1080×1080) |
 | `profile/profile-photo-natural.png` | صورتك بنمط "بورتريه": خلفية الصورة الأصلية مموّهة (1080×1080) |
-| `cover/cover-facebook.png` | غلاف فيسبوك (1640×624) |
+| `cover/cover-facebook-dark.png` / `-light.png` | غلاف فيسبوك غامق وفاتح (1640×624) — المصدر `cover-facebook.html?v=dark` أو `?v=light` |
 | `highlights/highlight-*.png` | أغلفة هايلايت إنستجرام: Work و Reviews و Services و Contact (1080×1920) |
 | `posts/post-example-ar.png` / `-en.png` | مثال لبوست جاهز (1080×1350) |
 | `posts/post-background.png` | خلفية البوست فاضية — افتحها في Canva واكتب عليها |
