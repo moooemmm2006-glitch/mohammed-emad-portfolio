@@ -1,0 +1,38 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Profile picture — ME Web (1080×1080)</title>
+<!-- Three versions from one file:
+     profile-meweb.html?v=main   → mark only (Instagram, TikTok)
+     profile-meweb.html?v=name   → mark + "ME WEB" (Facebook)
+     profile-meweb.html?v=light  → mark only on Ivory -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&display=block">
+<link rel="stylesheet" href="social.css">
+<style>
+  :root { --w: 1080px; --h: 1080px; }
+  /* Everything stays inside the 740px ring, well within the circle crop. */
+  .halo { position: absolute; left: 50%; top: 50%; width: 900px; height: 900px; transform: translate(-50%, -50%); border-radius: 50%;
+          background: radial-gradient(closest-side, rgba(46, 91, 255, .30), rgba(46, 91, 255, .08) 60%, transparent); }
+  .ring { position: absolute; left: 50%; top: 50%; width: 740px; height: 740px; transform: translate(-50%, -50%); border-radius: 50%;
+          border: 3px solid rgba(46, 91, 255, .45); box-shadow: 0 0 60px rgba(46, 91, 255, .25), inset 0 0 60px rgba(46, 91, 255, .12); }
+  .lockup { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 58px; }
+  .mark { width: 500px; }
+  .name { display: none; font-family: "Space Grotesk", sans-serif; font-weight: 500; font-size: 92px; line-height: 1; letter-spacing: .08em; margin-right: -.08em; color: var(--ivory); }
+
+  .v-name .mark { width: 360px; }
+  .v-name .name { display: block; }
+
+  .v-light, .v-light body { background: var(--ivory); }
+  .v-light .mark .fg { fill: var(--ink); }
+  .v-light .halo { background: radial-gradient(closest-side, rgba(46, 91, 255, .14), rgba(46, 91, 255, .04) 60%, transparent); }
+  .v-light .ring { border-color: rgba(46, 91, 255, .35); box-shadow: 0 0 60px rgba(46, 91, 255, .12), inset 0 0 60px rgba(46, 91, 255, .06); }
+</style>
+<script>document.documentElement.className = 'v-' + (new URLSearchParams(location.search).get('v') || 'main');</script>
+</head>
+<body>
+  <div class="halo"></div>
+  <div class="ring"></div>
+  <div class="lockup">
+    <svg class="mark" viewBox="4 4 32 24"><path class="fg" d="M4 28V4h4l8 11 8-11h4v24h-4V11l-8 11-8-11v17zM24 4h12v4H24zM24 24h12v4H24z"/><path class="ac" d="M30 14h5v4h-5z"/></svg>
+    <span class="name">ME WEB</span>
+  </div>
+</body></html>
