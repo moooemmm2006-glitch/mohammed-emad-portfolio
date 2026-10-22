@@ -283,7 +283,7 @@
             </div>
           </div>
           <div class="footer__bottom">
-            <span>© ${new Date().getFullYear()} ${esc(t('brand.name'))}. ${esc(t('footer.rights'))}</span>
+            <span class="footer__copy">© ${new Date().getFullYear()} ${esc(t('brand.name'))}. ${esc(t('footer.rights'))}<small>${esc(t('footer.owner'))}</small></span>
             <a href="#top" class="footer__top-link">${esc(t('footer.top'))} ${icon('arrowUp')}</a>
           </div>
         </div>`;

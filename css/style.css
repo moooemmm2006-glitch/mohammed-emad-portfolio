@@ -1,5 +1,5 @@
 /* =========================================================================
-   Mohammed Emad — Portfolio styles
+   ME Web — site styles
    Colors & fonts live in :root below (same values as brand/brand.html).
    ========================================================================= */
 
@@ -1314,9 +1314,12 @@ html[lang="ar"] .case-row__body p { line-height: 1.95; }
   letter-spacing: var(--tr-m);
   white-space: nowrap;
 }
-html[lang="ar"] .brand__name { font-size: 17px; }
+html[lang="ar"] .brand__name { font-size: 16px; }
+/* "ME WEB" is a Latin brand name in both languages */
+.brand__name { font-family: "Space Grotesk", system-ui, sans-serif; text-transform: uppercase; letter-spacing: .08em; }
+.footer__copy small { display: block; margin-top: 4px; font-size: 12px; opacity: .8; }
 .footer__logo .brand .mark { height: 24px; }
-.footer__logo .brand__name { font-size: 17px; }
+.footer__logo .brand__name { font-size: 16px; }
 
 /* =========================================================================
    Automation

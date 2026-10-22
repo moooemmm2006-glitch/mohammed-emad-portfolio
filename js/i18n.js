@@ -4,10 +4,10 @@
    ========================================================================= */
 window.I18N = {
   ar: {
-    brand: { name: "محمد عماد" },
+    brand: { name: "ME Web", owner: "محمد عماد" },
     meta: {
-      title: "محمد عماد — تصميم وتطوير المواقع",
-      description: "أبني مواقع وأتمتة ذكية تجلب لك العملاء وتوفّر وقتك — للشركات والمتاجر الإلكترونية والعلامات الشخصية."
+      title: "ME Web | محمد عماد — تصميم وتطوير المواقع",
+      description: "ME Web: مواقع وأتمتة ذكية تجلب لك العملاء وتوفّر وقتك — للشركات والمتاجر الإلكترونية والعلامات الشخصية."
     },
     nav: {
       work: "الأعمال",
@@ -88,7 +88,7 @@ window.I18N = {
       askText: "أخبرني بها، وسأقترح عليك كيف يمكن أن تتم وحدها.",
       more: "اكتشف الأتمتة",
       page: {
-        metaTitle: "أتمتة الأعمال — محمد عماد",
+        metaTitle: "أتمتة الأعمال — ME Web",
         metaDescription: "موقع يعمل لأجلك على مدار الساعة: رد فوري على العملاء، وطلبات تُسجَّل وحدها، ومتابعة لا تنسى.",
         lead: "بدل أن تقضي يومك في الرد والنسخ والمتابعة، دع موقعك يتولّى المهام المتكررة — وتفرّغ أنت لعملائك ولعملك.",
         examplesTitle: "أمثلة لما يمكن أن يتم تلقائيًا",
@@ -123,7 +123,7 @@ window.I18N = {
         { icon: "compass", t: "صورة واضحة", d: "تخرج وأنت تعرف كيف يمكن أن يبدو موقعك وما الذي يحتاجه — حتى لو لم نعمل معًا." }
       ],
       page: {
-        metaTitle: "استشارة مجانية — محمد عماد",
+        metaTitle: "استشارة مجانية — ME Web",
         metaDescription: "احجز اجتماعًا مجانيًا وبدون أي التزام للحديث عن فكرة موقعك، واخرج بصورة واضحة لما يناسبك.",
         title: "محادثة مجانية <span class=\"hl\">عن موقعك.</span>",
         lead: "قبل أن تدفع أي شيء، لنتحدث عن موقعك وعن المهام التي يمكن أن تتم تلقائيًا. سأساعدك أن تعرف بوضوح ما تحتاجه — سواء قررت العمل معي أو لا.",
@@ -171,7 +171,7 @@ window.I18N = {
         d: "موقع يجلب لك العملاء — ويتابع معهم تلقائيًا.",
         points: ["موقع احترافي مصمّم ليحوّل الزوار إلى عملاء", "رد فوري وتنبيه بكل عميل جديد", "متابعة وتذكيرات تلقائية"],
         cta: "اسأل عن هذه الباقة",
-        wa: "مرحبًا محمد، أنا مهتم بباقة الموقع + الأتمتة."
+        wa: "أهلًا ME Web، أنا مهتم بباقة الموقع + الأتمتة."
       },
       askTitle: "لست متأكدًا مما تحتاجه؟",
       askText: "أخبرني عن نشاطك، وسنحدّد معًا الحل الأنسب لك.",
@@ -201,7 +201,7 @@ window.I18N = {
     },
     about: {
       eyebrow: "عنّي",
-      title: "أهلًا، أنا محمد عماد.",
+      title: "أنا محمد عماد، صاحب ME Web.",
       role: "مصمّم ومطوّر مواقع",
       lecturer: "محاضر لغة ألمانية",
       creator: "صانع محتوى على يوتيوب",
@@ -229,6 +229,7 @@ window.I18N = {
     footer: {
       tagline: "مواقع وأتمتة أعمال للشركات والمتاجر والعلامات الشخصية.",
       rights: "جميع الحقوق محفوظة.",
+      owner: "المؤسس: محمد عماد",
       top: "العودة للأعلى",
       explore: "تصفّح",
       connect: "تواصل"
@@ -249,7 +250,7 @@ window.I18N = {
       ctaTitle: "تريد موقعًا بهذا المستوى؟",
       ctaLead: "أرسل لي رسالة على واتساب ولنبدأ الحديث عن مشروعك.",
       notFound: "لم يتم العثور على هذا المشروع.",
-      waAbout: "مرحبًا محمد، شاهدت مشروع {name} وأريد موقعًا بنفس المستوى."
+      waAbout: "أهلًا ME Web، شاهدت مشروع {name} وأريد موقعًا بنفس المستوى."
     },
     img: { missing: "ضع الصورة هنا" },
     social: { whatsapp: "واتساب", email: "البريد", youtube: "يوتيوب", instagram: "إنستجرام", tiktok: "تيك توك", facebook: "فيسبوك" },
@@ -257,10 +258,10 @@ window.I18N = {
   },
 
   en: {
-    brand: { name: "Mohammed Emad" },
+    brand: { name: "ME Web", owner: "Mohammed Emad" },
     meta: {
-      title: "Mohammed Emad — Web Designer & Developer",
-      description: "I build websites and smart automations that bring you clients and save you time — for businesses, online stores, and personal brands."
+      title: "ME Web | Mohammed Emad — Web Design & Development",
+      description: "ME Web builds websites and smart automations that bring you clients and save you time — for businesses, online stores, and personal brands."
     },
     nav: {
       work: "Work",
@@ -341,7 +342,7 @@ window.I18N = {
       askText: "Tell me about it, and I’ll suggest how it could run on its own.",
       more: "Explore automation",
       page: {
-        metaTitle: "Business automation — Mohammed Emad",
+        metaTitle: "Business automation — ME Web",
         metaDescription: "A website that works for you 24/7: instant replies to clients, orders recorded on their own, and follow-ups that never forget.",
         lead: "Instead of spending your day replying, copying, and following up, let your website handle the repetitive tasks — so you can focus on your clients and your work.",
         examplesTitle: "Examples of what can run on its own",
@@ -376,7 +377,7 @@ window.I18N = {
         { icon: "compass", t: "A clear picture", d: "You’ll leave knowing what your website could look like and what it takes — even if we don’t work together." }
       ],
       page: {
-        metaTitle: "Free consultation — Mohammed Emad",
+        metaTitle: "Free consultation — ME Web",
         metaDescription: "Book a free, no-obligation meeting to talk about your website idea, and leave with a clear picture of what fits you.",
         title: "A free conversation <span class=\"hl\">about your website.</span>",
         lead: "Before you spend anything, let’s talk about your website and the tasks that could run on their own. I’ll help you get clear on what you need — whether or not you end up working with me.",
@@ -424,7 +425,7 @@ window.I18N = {
         d: "A website that brings you clients — and follows up with them automatically.",
         points: ["A professional website designed to turn visitors into clients", "Instant replies and alerts for every new lead", "Automatic follow-ups and reminders"],
         cta: "Ask about this package",
-        wa: "Hi Mohammed, I'm interested in the Website + Automation package."
+        wa: "Hi ME Web, I'm interested in the Website + Automation package."
       },
       askTitle: "Not sure what you need?",
       askText: "Tell me about your business and we’ll figure out the right solution together.",
@@ -454,7 +455,7 @@ window.I18N = {
     },
     about: {
       eyebrow: "About",
-      title: "Hi, I’m Mohammed Emad.",
+      title: "I’m Mohammed Emad, the founder of ME Web.",
       role: "Web designer & developer",
       lecturer: "German language lecturer",
       creator: "Content creator on YouTube",
@@ -482,6 +483,7 @@ window.I18N = {
     footer: {
       tagline: "Websites and business automation for businesses, stores, and personal brands.",
       rights: "All rights reserved.",
+      owner: "Founder: Mohammed Emad",
       top: "Back to top",
       explore: "Explore",
       connect: "Connect"
@@ -502,7 +504,7 @@ window.I18N = {
       ctaTitle: "Want a website at this level?",
       ctaLead: "Send me a message on WhatsApp and let’s talk about your project.",
       notFound: "This project could not be found.",
-      waAbout: "Hi Mohammed, I saw the {name} project and I'd like a website at the same level."
+      waAbout: "Hi ME Web, I saw the {name} project and I'd like a website at the same level."
     },
     img: { missing: "Place image here" },
     social: { whatsapp: "WhatsApp", email: "Email", youtube: "YouTube", instagram: "Instagram", tiktok: "TikTok", facebook: "Facebook" },

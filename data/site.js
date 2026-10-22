@@ -27,13 +27,13 @@ window.SITE = {
 
   // الرسالة الجاهزة التي تُكتب تلقائيًا عند فتح واتساب
   whatsappMessage: {
-    ar: "مرحبًا محمد، شاهدت أعمالك وأريد أن أبدأ مشروع موقع.",
-    en: "Hi Mohammed, I saw your portfolio and I'd like to start a website project."
+    ar: "أهلًا ME Web، حابب أبدأ مشروع موقع.",
+    en: "Hi ME Web, I'd like to start a website project."
   },
 
   // الرسالة الجاهزة لزر "احجز اجتماعًا مجانيًا"
   consultMessage: {
-    ar: "مرحبًا محمد، أريد حجز استشارة مجانية بخصوص موقعي أو أتمتة نشاطي.",
-    en: "Hi Mohammed, I'd like to book a free consultation about my website or automating my business."
+    ar: "أهلًا ME Web، حابب أحجز استشارة مجانية بخصوص موقعي",
+    en: "Hi ME Web, I'd like to book a free consultation about my website"
   }
 };
