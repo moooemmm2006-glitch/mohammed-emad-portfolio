@@ -1,9 +1,9 @@
 <!doctype html>
 <html><head><meta charset="utf-8"><title>Profile picture — ME Web (1080×1080)</title>
-<!-- Three versions from one file:
-     profile-meweb.html?v=main   → mark only (Instagram, TikTok)
-     profile-meweb.html?v=name   → mark + "ME WEB" (Facebook)
-     profile-meweb.html?v=light  → mark only on Ivory -->
+<!-- Three versions from one file (Ivory is the main look):
+     profile-meweb.html?v=main   → mark only on Ivory (Instagram, TikTok)
+     profile-meweb.html?v=name   → mark + "ME WEB" on Ivory (Facebook)
+     profile-meweb.html?v=dark   → mark only on Ink (backup) -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&display=block">
 <link rel="stylesheet" href="social.css">
@@ -21,12 +21,16 @@
   .v-name .mark { width: 360px; }
   .v-name .name { display: block; }
 
-  .v-light, .v-light body { background: var(--ivory); }
-  .v-light .mark .fg { fill: var(--ink); }
-  .v-light .halo { background: radial-gradient(closest-side, rgba(46, 91, 255, .14), rgba(46, 91, 255, .04) 60%, transparent); }
-  .v-light .ring { border-color: rgba(46, 91, 255, .35); box-shadow: 0 0 60px rgba(46, 91, 255, .12), inset 0 0 60px rgba(46, 91, 255, .06); }
+  .light, .light body { background: var(--ivory); }
+  .light .mark .fg { fill: var(--ink); }
+  .light .name { color: var(--ink); }
+  .light .halo { background: radial-gradient(closest-side, rgba(46, 91, 255, .14), rgba(46, 91, 255, .04) 60%, transparent); }
+  .light .ring { border-color: rgba(46, 91, 255, .35); box-shadow: 0 0 60px rgba(46, 91, 255, .12), inset 0 0 60px rgba(46, 91, 255, .06); }
 </style>
-<script>document.documentElement.className = 'v-' + (new URLSearchParams(location.search).get('v') || 'main');</script>
+<script>
+  const v = new URLSearchParams(location.search).get('v') || 'main';
+  document.documentElement.className = 'v-' + v + (v === 'dark' ? '' : ' light');
+</script>
 </head>
 <body>
   <div class="halo"></div>

@@ -282,9 +282,9 @@ mo-emad-portfolio/
 | `logo/logo-icon.svg` | رمز ME داخل مربع داكن بزوايا دائرية (يصلح لأي مكان) |
 | `logo/logo-mark-on-dark.svg` / `-on-light.svg` | رمز ME وحده بخلفية شفافة |
 | `logo/png/…-512.png` و `-1024` و `-2048` | نسخ PNG شفافة بثلاثة مقاسات من كل شعار |
-| `profile/profile-meweb-main.png` | صورة البروفايل الأساسية: رمز ME وحده — لإنستجرام وتيك توك (1080×1080) |
-| `profile/profile-meweb-name.png` | رمز ME وتحته ME WEB — لفيسبوك (1080×1080) |
-| `profile/profile-meweb-light.png` | نفس الأساسية على خلفية فاتحة (1080×1080) |
+| `profile/profile-meweb-main.png` | صورة البروفايل الأساسية: رمز ME وحده على خلفية فاتحة — لإنستجرام وتيك توك (1080×1080) |
+| `profile/profile-meweb-name.png` | رمز ME وتحته ME WEB على خلفية فاتحة — لفيسبوك (1080×1080) |
+| `profile/profile-meweb-dark.png` | نسخة احتياطية على خلفية داكنة (1080×1080) |
 | `profile/profile-preview-sheet.png` | معاينة الصور الثلاث مقصوصة دائرة بمقاسات 320 و 110 و 40 بكسل |
 | `profile/profile-photo.png` | صورة بروفايل بصورتك على خلفية الهوية (1080×1080) |
 | `profile/profile-photo-natural.png` | صورتك بنمط "بورتريه": خلفية الصورة الأصلية مموّهة (1080×1080) |
@@ -297,7 +297,7 @@ mo-emad-portfolio/
 - رابط موقعك في الغلاف وفي البوست مكتوب `mohammed-emad-portfolio.vercel.app` — غيّره لو غيّرت عنوان الموقع.
 - البوست بالعربي: افتح `post-template.html?lang=ar`، والخلفية الفاضية: `post-template.html?blank=1`.
 - غلاف الهايلايت: `highlight.html?icon=work` (أو `reviews` أو `services` أو `contact`).
-- صور البروفايل: `profile-meweb.html?v=main` (أو `name` أو `light`) بمقاس 1080×1080.
+- صور البروفايل: `profile-meweb.html?v=main` (أو `name` أو `dark`) بمقاس 1080×1080.
 
 **الألوان:**
 
