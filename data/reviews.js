@@ -10,6 +10,8 @@
 
    - project: نفس slug المشروع في data/projects.js (أو "" لو الرأي غير مرتبط بمشروع)
    - name / role: يمكن كتابتهما بلغة واحدة "..." أو بلغتين { ar: "...", en: "..." }
+   - quote: أهم جملة قالها العميل في الفويس، حرفيًا { ar: "...", en: "..." } (اختياري)
+   - transcript: نص الفويس كامل حرفيًا { ar: "...", en: "ترجمة" } — يظهر بزر "اقرأ النص" (اختياري)
    - لا تكتب أي نص على لسان العميل لم يقله بنفسه.
    ========================================================================= */
 window.REVIEWS = [
@@ -18,8 +20,9 @@ window.REVIEWS = [
     name: { ar: "أحمد آرك", en: "Ahmed Ark" },
     role: { ar: "مونتير وموشن ديزاينر", en: "Video Editor & Motion Designer" },
 
-    // رسالة صوتية حقيقية من العميل (تسجيل شاشة لرسالة واتساب)
+    // رسالة صوتية حقيقية من العميل (تسجيل شاشة لرسالة واتساب، مقصوص على الفويس اللي بيشتغل)
     video: "assets/reviews/ahmed-ark-review.mp4",
-    poster: "assets/reviews/ahmed-ark-review-poster.jpg"
+    poster: "assets/reviews/ahmed-ark-review-poster.jpg",
+    duration: "0:32"
   }
 ];

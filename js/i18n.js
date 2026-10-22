@@ -197,7 +197,11 @@ window.I18N = {
       play: "تشغيل الرسالة الصوتية",
       pause: "إيقاف مؤقت",
       seek: "التقدّم في الرسالة",
-      caseStudy: "دراسة الحالة"
+      caseStudy: "دراسة الحالة",
+      proof: "من محادثة واتساب مع العميل",
+      readTranscript: "اقرأ النص",
+      hideTranscript: "إخفاء النص",
+      translated: ""
     },
     about: {
       eyebrow: "عنّي",
@@ -451,7 +455,11 @@ window.I18N = {
       play: "Play voice message",
       pause: "Pause",
       seek: "Message progress",
-      caseStudy: "Case study"
+      caseStudy: "Case study",
+      proof: "From the WhatsApp chat with the client",
+      readTranscript: "Read transcript",
+      hideTranscript: "Hide transcript",
+      translated: "Translated from Arabic."
     },
     about: {
       eyebrow: "About",

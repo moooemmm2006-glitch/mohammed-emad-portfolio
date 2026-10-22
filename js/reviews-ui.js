@@ -29,10 +29,12 @@
     const name = tx(r.name);
     return `
       <div class="voice" data-voice>
-        <div class="voice__media">
-          <video src="${esc(r.video)}"${r.poster ? ` poster="${esc(r.poster)}"` : ''} preload="metadata" playsinline webkit-playsinline aria-label="${esc(t('reviews.voiceLabel'))} — ${esc(name)}"></video>
-          <button class="voice__big" type="button" data-voice-toggle aria-label="${esc(t('reviews.play'))}">${icon('play')}</button>
-        </div>
+        <figure class="voice__proof">
+          <div class="voice__media">
+            <video src="${esc(r.video)}"${r.poster ? ` poster="${esc(r.poster)}"` : ''} preload="metadata" playsinline webkit-playsinline aria-label="${esc(t('reviews.voiceLabel'))} — ${esc(name)}"></video>
+          </div>
+          <figcaption>${esc(t('reviews.proof'))}</figcaption>
+        </figure>
         <div class="voice__bar">
           <button class="voice__btn" type="button" data-voice-toggle aria-label="${esc(t('reviews.play'))}">${icon('play', 'voice__ic-play')}${icon('pause', 'voice__ic-pause')}</button>
           <div class="voice__wave" data-voice-seek role="slider" tabindex="0" aria-label="${esc(t('reviews.seek'))}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">${waveBars(r.video, 56)}</div>
@@ -47,6 +49,10 @@
     const p = PROJECTS.find((x) => x.slug === r.project);
     const name = tx(r.name);
     const text = tx(r.text);
+    // Voice reviews: the client's own words, transcribed from the recording.
+    const quote = tx(r.quote);
+    const transcript = tx(r.transcript);
+    const translated = transcript && window.App.lang() === 'en';
     const avatar = r.photo ? `<img src="${esc(r.photo)}" alt="" loading="lazy" onerror="this.remove()">` : '';
     const links = p ? [
       p.url && `<a class="pill-link" href="${esc(p.url)}" target="_blank" rel="noopener">${esc(t('work.live'))}${icon('arrowUpRight')}</a>`,
@@ -62,7 +68,13 @@
              </div>`
           : QUOTE}
         ${text ? `<blockquote>${esc(text)}</blockquote>` : ''}
+        ${quote ? `<blockquote class="review__quote">${esc(quote)}</blockquote>` : ''}
         ${r.video ? player(r) : ''}
+        ${transcript ? `<details class="transcript">
+          <summary class="pill-link"><span class="transcript__open">${esc(t('reviews.readTranscript'))}</span><span class="transcript__close">${esc(t('reviews.hideTranscript'))}</span></summary>
+          <p>${esc(transcript)}</p>
+          ${translated ? `<small>${esc(t('reviews.translated'))}</small>` : ''}
+        </details>` : ''}
         <figcaption>
           <span class="avatar"><span>${esc(initials(name))}</span>${avatar}</span>
           <span class="review__who"><b>${esc(name)}</b><small>${esc(tx(r.role))}</small></span>
