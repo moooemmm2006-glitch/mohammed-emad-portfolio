@@ -22,32 +22,30 @@ window.PROJECTS = [
 
     type: { ar: "متجر إلكتروني", en: "E-commerce store" },
     summary: {
-      ar: "متجر إلكتروني للساعات الأصلية في مصر — «⁨Beauty & Simplicity⁩».",
-      en: "An online store for original watches in Egypt — “Beauty & Simplicity.”"
+      ar: "متجر إلكتروني للساعات في مصر — «⁨Beauty & Simplicity⁩».",
+      en: "Online watch store in Egypt — “Beauty & Simplicity.”"
     },
 
     idea: {
-      ar: "متجر للساعات الأصلية — كاسيو وسيكو وتيسو ورولكس وأوميغا وغيرها — مبني حول شعار العلامة «⁨Beauty & Simplicity⁩»: تجربة هادئة وأنيقة تجعل الساعات هي البطل، وتجعل الشراء أونلاين مريحًا وموثوقًا للعميل في مصر.",
-      en: "A store for original watches — Casio, Seiko, Tissot, Rolex, Omega and more — built around the brand’s tagline, “Beauty & Simplicity”: a calm, elegant experience that lets the watches take center stage and makes buying online feel easy and trustworthy for customers in Egypt."
+      ar: "متجر إلكتروني للساعات في مصر، مبني حول شعار العلامة «⁨Beauty & Simplicity⁩»: تصميم هادئ ونظيف يجعل الساعة هي البطل، وطلب سهل من السلة أو عبر واتساب.",
+      en: "An online watch store in Egypt, built around the brand’s tagline, “Beauty & Simplicity”: a calm, clean design that lets the watch take center stage, with easy ordering from the cart or on WhatsApp."
     },
     brief: "",
     built: {
       ar: [
-        "صفحة رئيسية أنيقة تضم المجموعة المميزة والعروض الحالية وقسم الماركات",
-        "صفحات كاملة للمنتجات والعروض والماركات و«قصتنا»",
-        "اختبار «اعثر على ساعتك»: 4 أسئلة سريعة تقترح الساعة المناسبة لكل عميل",
-        "قسم الثقة: فحص يدوي، الدفع عند الاستلام، استبدال خلال 14 يومًا، وتوصيل سريع",
-        "قسم آراء العملاء",
-        "الطلب والتواصل عبر واتساب للعملاء في مصر",
+        "تصميم نظيف وهادئ يعبّر عن شعار العلامة",
+        "صفحة المتجر لتصفّح الساعات",
+        "صفحة لكل منتج بالصور والسعر والتفاصيل",
+        "سلة مشتريات",
+        "الطلب والتواصل عبر واتساب",
         "دعم اللغتين العربية والإنجليزية"
       ],
       en: [
-        "Elegant home page with a featured collection, current offers, and a brands section",
-        "Full product, offers, brands, and “Our story” pages",
-        "“Find your watch” quiz: 4 quick questions that suggest the right watch for each customer",
-        "Trust section: checked by hand, cash on delivery, 14-day exchange, fast delivery",
-        "Customer reviews section",
-        "WhatsApp ordering and chat for Egyptian customers",
+        "Clean, calm design that reflects the brand’s tagline",
+        "Shop page to browse the watches",
+        "A page for every product with photos, price, and details",
+        "Shopping cart",
+        "WhatsApp ordering and chat",
         "Arabic and English support"
       ]
     },
