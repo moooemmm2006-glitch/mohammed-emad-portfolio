@@ -1,0 +1,111 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>ME Web — sample handover document</title>
+<!-- Source of assets/docs/handover-sample-ar.pdf and -en.pdf.
+     handover-sample.html?lang=ar or ?lang=en, printed to A4 PDF with backgrounds on. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500&display=block">
+<style>
+  @page { size: A4; margin: 0; }
+  :root { --ink: #0B0D12; --surface: #141821; --ivory: #F4F1EA; --cobalt: #2E5BFF; --cobalt-2: #4A72FF; --mist: #A2A5AD; --slate: #6C707A; --line: rgba(244, 241, 234, .1); }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { background: var(--ink); color: var(--ivory); font: 400 12.5px/1.6 "Inter", "IBM Plex Sans Arabic", sans-serif; }
+  [lang="ar"] body { font-family: "IBM Plex Sans Arabic", sans-serif; font-size: 13px; line-height: 1.75; }
+  .page { position: relative; width: 210mm; height: 297mm; padding: 16mm 17mm; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
+  .page:last-child { page-break-after: auto; }
+  .glow { position: absolute; inset-inline: -20%; top: -160px; height: 360px; background: radial-gradient(closest-side, rgba(46, 91, 255, .28), transparent); pointer-events: none; }
+  .top { position: relative; display: flex; align-items: center; justify-content: space-between; padding-bottom: 7mm; border-bottom: 1px solid var(--line); }
+  .logo { display: flex; align-items: center; gap: 10px; direction: ltr; }
+  .logo svg { height: 18px; }
+  .logo b { font: 500 15px/1 "Space Grotesk", sans-serif; letter-spacing: .08em; }
+  .tag { font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #7EE8B8; border: 1px solid rgba(61, 220, 151, .35); background: rgba(61, 220, 151, .1); padding: 4px 10px; border-radius: 999px; }
+  [lang="ar"] .tag { letter-spacing: 0; }
+  h1 { position: relative; margin-top: 8mm; font: 500 30px/1.15 "Space Grotesk", "IBM Plex Sans Arabic", sans-serif; letter-spacing: -.02em; }
+  [lang="ar"] h1 { font-family: "IBM Plex Sans Arabic", sans-serif; font-weight: 600; letter-spacing: 0; line-height: 1.35; }
+  .sub { margin-top: 3mm; color: var(--mist); max-width: 120mm; }
+  h2 { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; margin-bottom: 4mm; }
+  h2 i { font-style: normal; font: 500 11px/1 "Space Grotesk", sans-serif; color: var(--cobalt-2); }
+  section { position: relative; margin-top: 7mm; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 5mm 6mm; }
+  dl { display: grid; grid-template-columns: 38mm 1fr; gap: 1.6mm 6mm; }
+  [lang="ar"] .pages li, [lang="ar"] .font { padding-block: 2.6mm; }
+  [lang="ar"] .card { padding-block: 4mm; }
+  dt { color: var(--slate); }
+  .pages { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .pages li { list-style: none; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 3.5mm 4.5mm; }
+  .pages b { display: block; font-weight: 600; }
+  .pages span { color: var(--mist); font-size: 11.5px; }
+  .swatches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; }
+  .sw { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--surface); }
+  .sw i { display: block; height: 11mm; }
+  .sw div { padding: 2.5mm 3.5mm; }
+  .sw b { display: block; font-weight: 600; font-size: 11.5px; }
+  .sw code { font: 500 11px/1.4 "Inter", sans-serif; color: var(--mist); direction: ltr; unicode-bidi: isolate; }
+  .fonts { margin-top: 3mm; display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .font { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 4mm 4.5mm; }
+  .font b { display: block; font-size: 17px; font-weight: 500; }
+  .font span { color: var(--mist); font-size: 11.5px; }
+  ul.list { list-style: none; display: grid; gap: 2.6mm; }
+  ul.list li { position: relative; padding-inline-start: 6mm; }
+  ul.list li::before { content: ""; position: absolute; inset-inline-start: 0; top: .62em; width: 7px; height: 7px; border-radius: 2px; background: var(--cobalt); }
+  ul.list b { font-weight: 600; }
+  .steps { display: grid; gap: 3mm; }
+  .steps .card b { display: block; font-weight: 600; margin-bottom: 1mm; }
+  .steps .card p { color: var(--mist); }
+  .contact { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+  .contact .card span { display: block; color: var(--slate); font-size: 11px; }
+  .contact .card b { font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+  .foot { margin-top: auto; padding-top: 5mm; border-top: 1px solid var(--line); display: flex; justify-content: space-between; color: var(--slate); font-size: 10.5px; }
+  .ltr { direction: ltr; unicode-bidi: isolate; }
+</style></head>
+<body>
+<script>
+const L = new URLSearchParams(location.search).get('lang') === 'en' ? 'en' : 'ar';
+document.documentElement.lang = L; document.documentElement.dir = L === 'ar' ? 'rtl' : 'ltr';
+const T = {
+  ar: {
+    tag: 'نموذج — مشروع تجريبي', title: 'ملف تسليم المشروع', sub: 'هذا نموذج يوضّح شكل الملف الذي يستلمه كل عميل مع موقعه. المشروع والبيانات هنا تجريبية بالكامل.',
+    s1: 'ملخص المشروع', k: ['المشروع', 'النوع', 'الهدف', 'اللغات', 'التواصل في الموقع'],
+    v: ['Olive Studio (اسم تجريبي)', 'موقع شركة', 'تعريف الزوار بالخدمات، وتحويلهم إلى رسائل على واتساب', 'العربية والإنجليزية', 'زر واتساب وزر بريد إلكتروني'],
+    s2: 'صفحات الموقع', pages: [['الرئيسية', 'تعريف سريع بالنشاط وأهم الخدمات'], ['من نحن', 'قصة النشاط وفريق العمل'], ['الخدمات', 'كل خدمة بوصف واضح'], ['معرض الأعمال', 'صور الأعمال السابقة'], ['تواصل معنا', 'واتساب والبريد والموقع على الخريطة'], ['صفحة غير موجودة', 'تظهر عند فتح رابط خاطئ']],
+    s3: 'الألوان والخطوط', colors: ['الخلفية', 'النص', 'اللون المميز', 'الكروت'], fonts: [['IBM Plex Sans Arabic', 'لكل النصوص العربية'], ['Inter', 'لكل النصوص الإنجليزية']],
+    foot1: 'نموذج لمشروع تجريبي — ليس لعميل حقيقي', page: 'صفحة',
+    s4: 'ملفات الهوية المسلّمة', brand: [['الشعار', 'نسخة للخلفيات الفاتحة ونسخة للخلفيات الداكنة، بصيغة SVG وPNG'], ['الأيقونة', 'تُستخدم كصورة بروفايل وأيقونة للمتصفح'], ['الألوان والخطوط', 'الأكواد وأسماء الخطوط المذكورة في هذا الملف']],
+    s5: 'التواصل للتعديلات', contactText: 'لأي سؤال أو تعديل، تواصل معي مباشرة:', c: ['واتساب', 'البريد الإلكتروني'],
+    s6: 'الخطوات التالية المقترحة', next: [['النطاق', 'اختيار اسم نطاق خاص بنشاطك وربطه بالموقع. أشرح لك الخيارات وأساعدك في الربط.'], ['الاستضافة', 'الموقع مرفوع على استضافة. أشرح لك الحساب وأين تجد الإعدادات، وأساعدك لو أردت النقل.'], ['الصيانة', 'راجع الموقع كل فترة: هل المعلومات والأسعار والصور ما زالت صحيحة؟ وأرسل لي أي تعديل تحتاجه.']]
+  },
+  en: {
+    tag: 'Sample — fictional project', title: 'Project handover document', sub: 'A sample of the document every client receives with their website. The project and all details here are fictional.',
+    s1: 'Project summary', k: ['Project', 'Type', 'Goal', 'Languages', 'Contact on the site'],
+    v: ['Olive Studio (fictional name)', 'Business website', 'Introduce the services and turn visitors into WhatsApp messages', 'Arabic and English', 'WhatsApp and email buttons'],
+    s2: 'Site pages', pages: [['Home', 'A quick intro to the business and its main services'], ['About', 'The story and the team'], ['Services', 'Each service with a clear description'], ['Gallery', 'Photos of past work'], ['Contact', 'WhatsApp, email, and map location'], ['Not found', 'Shown when a wrong link is opened']],
+    s3: 'Colors and fonts', colors: ['Background', 'Text', 'Accent', 'Cards'], fonts: [['Inter', 'All English text'], ['IBM Plex Sans Arabic', 'All Arabic text']],
+    foot1: 'Sample for a fictional project — not a real client', page: 'Page',
+    s4: 'Brand files delivered', brand: [['Logo', 'A version for light backgrounds and one for dark backgrounds, in SVG and PNG'], ['Icon', 'Used as a profile picture and browser icon'], ['Colors and fonts', 'The codes and font names listed in this document']],
+    s5: 'Contact for edits', contactText: 'For any question or edit, reach me directly:', c: ['WhatsApp', 'Email'],
+    s6: 'Recommended next steps', next: [['Domain', 'Choose a domain name for your business and connect it to the site. I explain the options and help with the setup.'], ['Hosting', 'The site is live on a hosting account. I show you the account and where the settings are, and help if you want to move it.'], ['Maintenance', 'Check the site from time to time: are the details, prices, and photos still correct? Send me any edit you need.']]
+  }
+}[L];
+const MARK = '<svg viewBox="4 4 32 24"><path fill="#F4F1EA" d="M4 28V4h4l8 11 8-11h4v24h-4V11l-8 11-8-11v17zM24 4h12v4H24zM24 24h12v4H24z"/><path fill="#2E5BFF" d="M30 14h5v4h-5z"/></svg>';
+const header = `<div class="glow"></div><div class="top"><div class="logo">${MARK}<b>ME WEB</b></div><span class="tag">${T.tag}</span></div>`;
+const foot = (n) => `<div class="foot"><span>${T.foot1}</span><span>${T.page} ${n} / 2</span></div>`;
+const hex = ['#F7F5F0', '#1C1F26', '#5B7F5A', '#FFFFFF'];
+document.body.innerHTML = `
+<div class="page">${header}
+  <h1>${T.title}</h1><p class="sub">${T.sub}</p>
+  <section><h2><i>01</i>${T.s1}</h2><div class="card"><dl>${T.k.map((k, i) => `<dt>${k}</dt><dd>${T.v[i]}</dd>`).join('')}</dl></div></section>
+  <section><h2><i>02</i>${T.s2}</h2><ul class="pages">${T.pages.map(([a, b]) => `<li><b>${a}</b><span>${b}</span></li>`).join('')}</ul></section>
+  <section><h2><i>03</i>${T.s3}</h2>
+    <div class="swatches">${T.colors.map((c, i) => `<div class="sw"><i style="background:${hex[i]}"></i><div><b>${c}</b><code>${hex[i]}</code></div></div>`).join('')}</div>
+    <div class="fonts">${T.fonts.map(([a, b]) => `<div class="font"><b style="font-family:'${a}'">${a}</b><span>${b}</span></div>`).join('')}</div>
+  </section>
+  ${foot(1)}
+</div>
+<div class="page">${header}
+  <section><h2><i>04</i>${T.s4}</h2><div class="card"><ul class="list">${T.brand.map(([a, b]) => `<li><b>${a}:</b> ${b}</li>`).join('')}</ul></div></section>
+  <section><h2><i>05</i>${T.s5}</h2><p style="margin-bottom:3mm;color:var(--mist)">${T.contactText}</p>
+    <div class="contact"><div class="card"><span>${T.c[0]}</span><b>+20 109 645 2755</b></div><div class="card"><span>${T.c[1]}</span><b>mohammed.emad.official110@gmail.com</b></div></div></section>
+  <section><h2><i>06</i>${T.s6}</h2><div class="steps">${T.next.map(([a, b]) => `<div class="card"><b>${a}</b><p>${b}</p></div>`).join('')}</div></section>
+  ${foot(2)}
+</div>`;
+</script>
+</body></html>

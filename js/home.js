@@ -97,6 +97,15 @@
       </article>`).join('');
   }
 
+  function renderDeliver() {
+    $('deliver-grid').innerHTML = t('deliver.items').map((w, i) => `
+      <article class="why-card spot reveal" style="--d:${(i % 3) * 0.06}s">
+        <span class="why-card__icon">${icon(w.icon)}</span>
+        <h3>${esc(w.t)}</h3>
+        <p>${esc(w.d)}</p>
+      </article>`).join('');
+  }
+
   function renderConsult() {
     $('consult-chips').innerHTML = t('consult.chips').map((c) => `<li>${icon('check')}<span>${esc(c)}</span></li>`).join('');
     $('consult-points').innerHTML = t('consult.points').map((p, i) => `
@@ -158,6 +167,7 @@
     renderWhy();
     renderAuto();
     renderServices();
+    renderDeliver();
     renderConsult();
     renderProcess();
     renderReviews();

@@ -114,6 +114,7 @@ window.I18N = {
       title: "لنتحدث عن موقعك — <span class=\"hl\">مجانًا.</span>",
       lead: "محادثة هادئة وبدون أي التزام حول موقعك أو أتمتة نشاطك. لا عروض بيع، ولا ضغط — فقط نصيحة صادقة.",
       tasks: "أخبرني بالمهام التي تكررها يدويًا كل يوم، وسأقترح عليك ما يمكن أن يتم تلقائيًا.",
+      handover: "ومع موقعك تستلم ملف تسليم يشرح كل تفاصيله.",
       cta: "احجز اجتماعًا مجانيًا",
       more: "تفاصيل الاستشارة",
       chips: ["مجانية بالكامل", "بدون التزام", "بدون ضغط"],
@@ -175,18 +176,36 @@ window.I18N = {
       },
       askTitle: "لست متأكدًا مما تحتاجه؟",
       askText: "أخبرني عن نشاطك، وسنحدّد معًا الحل الأنسب لك.",
-      askCta: "لنتحدث"
+      askCta: "لنتحدث",
+      handover: "كل مشروع يشمل ملف تسليم يشرح موقعك بالتفصيل."
     },
     process: {
       eyebrow: "طريقة العمل",
       title: "طريق واضح من أول رسالة حتى الإطلاق.",
       steps: [
-        { t: "الاستكشاف", d: "نتحدث عن نشاطك وأهدافك وجمهورك، لنفهم بالضبط ما يجب أن يحققه موقعك." },
-        { t: "العرض", d: "تستلم عرضًا واضحًا بالنطاق والمدة والسعر — بدون مفاجآت لاحقًا." },
-        { t: "التصميم", d: "أصمّم شكل الموقع وهيكله، وأطوّره بملاحظاتك حتى يصبح كما تريد تمامًا." },
-        { t: "التطوير", d: "أبني الموقع ليكون سريعًا، ومتجاوبًا مع كل الشاشات، وسهل الظهور في محركات البحث." },
-        { t: "الإطلاق والمتابعة", d: "نطلق الموقع معًا، وأبقى متاحًا لأي تعديلات بعد التسليم." }
+        { t: "استشارة مجانية", d: "نتحدث عن فكرتك وأهدافك." },
+        { t: "التصميم والهيكل", d: "أعرض عليك الاتجاه قبل أن أبدأ البناء." },
+        { t: "البناء والمراجعة", d: "تراجع الموقع، وأطبّق ملاحظاتك." },
+        { t: "الإطلاق والتسليم", d: "ينطلق الموقع، وتستلم ملف التسليم." }
       ]
+    },
+    deliver: {
+      eyebrow: "مع كل موقع",
+      title: "ما تحصل عليه مع كل موقع.",
+      lead: "لا ينتهي عملي عند إطلاق الموقع. تستلم معه ما تحتاجه لتفهمه وتستخدمه وتبني عليه.",
+      items: [
+        { icon: "doc", t: "ملف تسليم المشروع", d: "ملف واضح يُسلَّم مع كل موقع، يشرح صفحاته وهيكله، وألوانه وخطوطه، وطريقة التواصل معي للتعديلات، والخطوات التالية المقترحة." },
+        { icon: "palette", t: "أساسيات الهوية", d: "الألوان والخطوط وملفات الشعار المستخدمة في الموقع، لتعيد استخدامها على حسابات التواصل الاجتماعي." },
+        { icon: "devices", t: "موقع يناسب كل الشاشات", d: "يعمل بشكل سليم على الموبايل والتابلت واللابتوب." },
+        { icon: "whatsapp", t: "أزرار التواصل والطلب", d: "أزرار واتساب والبريد الإلكتروني مربوطة ومُجرَّبة." },
+        { icon: "globe", t: "إرشاد في الاستضافة والنطاق", d: "أشرح لك الخيارات المتاحة، وأساعدك في الإعداد." },
+        { icon: "chat", t: "دعم بعد التسليم", d: "أبقى متاحًا بعد الإطلاق للأسئلة والتعديلات البسيطة." }
+      ],
+      sample: "حمّل نموذج ملف التسليم",
+      sampleHref: "assets/docs/handover-sample-ar.pdf",
+      sampleNote: "نموذج لمشروع تجريبي، وليس لعميل حقيقي.",
+      ctaTitle: "تريد أن تعرف ما يحتاجه موقعك؟",
+      ctaText: "احجز استشارة مجانية، ونتحدث عن فكرتك بدون أي التزام."
     },
     reviews: {
       eyebrow: "آراء العملاء",
@@ -372,6 +391,7 @@ window.I18N = {
       title: "Let’s talk about your website — <span class=\"hl\">free.</span>",
       lead: "A relaxed, no-obligation conversation about your website or automating your business. No sales pitch, no pressure — just honest advice.",
       tasks: "Tell me the tasks you repeat by hand every day, and I’ll suggest what can be automated.",
+      handover: "With your website, you also receive a handover document that explains it.",
       cta: "Book a free meeting",
       more: "How it works",
       chips: ["Completely free", "No obligation", "No pressure"],
@@ -433,18 +453,36 @@ window.I18N = {
       },
       askTitle: "Not sure what you need?",
       askText: "Tell me about your business and we’ll figure out the right solution together.",
-      askCta: "Let’s talk"
+      askCta: "Let’s talk",
+      handover: "Every project includes a handover document that explains your site."
     },
     process: {
       eyebrow: "Process",
       title: "A clear path from first message to launch.",
       steps: [
-        { t: "Discovery", d: "We talk about your business, goals, and audience to understand exactly what your website needs to do." },
-        { t: "Proposal", d: "You receive a clear proposal with scope, timeline, and price — no surprises later." },
-        { t: "Design", d: "I design the look and structure of your site and refine it with your feedback until it feels right." },
-        { t: "Development", d: "I build the site to be fast, responsive on every screen, and easy to find on search engines." },
-        { t: "Launch & support", d: "We launch together, and I stay available for adjustments after delivery." }
+        { t: "Free consultation", d: "We talk about your idea and goals." },
+        { t: "Design & structure", d: "I show you the direction before building." },
+        { t: "Build & review", d: "You review it, and I apply your feedback." },
+        { t: "Launch & handover", d: "The website goes live, and you receive the handover document." }
       ]
+    },
+    deliver: {
+      eyebrow: "With every website",
+      title: "What you get with every website.",
+      lead: "My work doesn’t end at launch. You get what you need to understand your site, use it, and build on it.",
+      items: [
+        { icon: "doc", t: "Handover document (PDF)", d: "A clear document delivered with every website that explains its pages and structure, colors and fonts, how to reach me for edits, and recommended next steps." },
+        { icon: "palette", t: "Brand basics", d: "The colors, fonts, and logo files used in your site, so you can reuse them on social media." },
+        { icon: "devices", t: "Mobile-ready website", d: "Works on phones, tablets, and laptops." },
+        { icon: "whatsapp", t: "Contact & order setup", d: "WhatsApp and email buttons connected and tested." },
+        { icon: "globe", t: "Hosting & domain guidance", d: "I explain the options and help with the setup." },
+        { icon: "chat", t: "Support after delivery", d: "I stay reachable for questions and small fixes after launch." }
+      ],
+      sample: "Download sample handover document",
+      sampleHref: "assets/docs/handover-sample-en.pdf",
+      sampleNote: "A sample for a fictional project, not a real client.",
+      ctaTitle: "Want to know what your website needs?",
+      ctaText: "Book a free consultation, and let’s talk about your idea with no obligation."
     },
     reviews: {
       eyebrow: "Testimonials",

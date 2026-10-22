@@ -994,6 +994,9 @@ html[lang="ar"] .about__body { line-height: 1.95; }
 html[lang="ar"] .consult-hero__title { font-size: clamp(2.4rem, 6vw, 4.8rem); }
 .consult-hero .hero__lead { margin-inline: auto; }
 .consult-hero .chips { margin-top: 28px; }
+.steps--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 1080px) { .steps--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .steps--4 { grid-template-columns: 1fr; } }
 .steps--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 32px; }
 @media (max-width: 1080px) { .steps--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0 24px; } }
 @media (max-width: 720px) { .steps--3 { grid-template-columns: 1fr; gap: 36px; } }
@@ -1632,3 +1635,14 @@ html[lang="ar"] .about__auto { line-height: 1.85; }
   .voice__time { font-size: 12.5px; }
   .review__links { margin-inline-start: 0; width: 100%; }
 }
+
+/* What you get with every website */
+.deliver-cta__btns { display: flex; flex-wrap: wrap; gap: 12px; }
+.deliver-note { margin-top: 14px; font-size: 13.5px; color: var(--fg-3); }
+.services-handover { margin-top: 24px; }
+@media (max-width: 640px) {
+  .deliver-cta__btns { width: 100%; }
+  .deliver-cta__btns .btn { width: 100%; }
+}
+.consult__tasks + .consult__tasks { margin-top: 10px; }
+@media (max-width: 640px) { .deliver-cta__btns .btn { white-space: normal; height: auto; min-height: 52px; padding-block: 12px; text-align: center; } }
