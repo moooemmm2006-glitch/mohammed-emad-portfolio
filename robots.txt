@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /brand/
 
-Sitemap: https://mohammed-emad-portfolio.vercel.app/sitemap.xml
+Sitemap: https://me-web.vercel.app/sitemap.xml
