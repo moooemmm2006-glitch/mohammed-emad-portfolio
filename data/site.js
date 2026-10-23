@@ -16,11 +16,16 @@ window.SITE = {
   // بريدك الإلكتروني
   email: "mohammed.emad.official110@gmail.com",
 
-  // روابط حساباتك كاملة (مثال: "https://instagram.com/username")
-  youtube: "https://www.youtube.com/@MohammedEmad-ilden",
-  instagram: "",
-  tiktok: "",
-  facebook: "",
+  // روابط السوشيال: المكان الوحيد اللي بتتحط فيه الروابط.
+  // حط الرابط كامل بين علامتي التنصيص، والأيقونة هتظهر لوحدها في كل الموقع
+  // (قسم التواصل والفوتر). أي رابط فاضي "" أيقونته مش بتظهر خالص.
+  // ترتيب الظهور: Instagram ثم TikTok ثم Facebook ثم YouTube.
+  social: {
+    instagram: "https://www.instagram.com/me.web.design/",
+    tiktok: "",
+    facebook: "",
+    youtube: "https://www.youtube.com/@MohammedEmad-ilden"
+  },
 
   // يظهر شارة "متاح لمشاريع جديدة" أعلى الصفحة. اجعلها false لإخفائها
   available: true,

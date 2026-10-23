@@ -192,6 +192,7 @@ html.is-loading body { opacity: 0; animation: force-show 0s 2.5s forwards; }
   transition: all .25s var(--ease);
 }
 .icon-btn:hover { background: var(--ivory); border-color: var(--ivory); color: var(--ink); }
+@media (pointer: coarse) { .contact__social .icon-btn, .footer__social .icon-btn { width: 44px; height: 44px; } }
 
 /* ---------- Navigation ---------- */
 .nav {

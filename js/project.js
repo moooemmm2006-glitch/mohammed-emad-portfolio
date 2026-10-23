@@ -146,6 +146,7 @@
             <p class="contact__lead">${esc(t('caseStudy.ctaLead'))}</p>
             <a class="btn btn--primary btn--xl" data-wa data-wa-message="${esc(waMsg)}">${icon('whatsapp')}<span>${esc(t('contact.whatsapp'))}</span></a>
             <div class="contact__lines">${window.App.contactLinesHTML('contact-line')}</div>
+            ${window.App.followBlockHTML()}
           </div>
         </div>
       </section>`;

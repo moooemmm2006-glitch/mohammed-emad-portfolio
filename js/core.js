@@ -103,23 +103,35 @@
     return rows.join('');
   }
 
+  // Social profiles in display order; an empty link in SITE.social hides that icon everywhere.
+  const SOCIAL_ORDER = ['instagram', 'tiktok', 'facebook', 'youtube'];
+  function socialHref(key) {
+    const v = ((SITE.social || {})[key] || '').trim();
+    return /^https?:\/\//i.test(v) ? v : '';
+  }
+  function followLinks() {
+    return SOCIAL_ORDER.map((key) => ({ key, href: socialHref(key) })).filter((s) => s.href);
+  }
+
   function socials() {
     const list = [
       { key: 'whatsapp', href: SITE.whatsapp ? waLink() : '' },
-      { key: 'email', href: mailto() },
-      { key: 'youtube', href: SITE.youtube },
-      { key: 'instagram', href: SITE.instagram },
-      { key: 'tiktok', href: SITE.tiktok },
-      { key: 'facebook', href: SITE.facebook }
+      { key: 'email', href: mailto() }
     ];
-    return list.filter((s) => s.href);
+    return list.filter((s) => s.href).concat(followLinks());
   }
 
   function socialLinksHTML(cls) {
-    return socials().map((s) => {
-      const ext = s.key === 'email' ? '' : ' target="_blank" rel="noopener"';
-      return `<a class="${cls}" href="${esc(s.href)}"${ext} aria-label="${esc(t('social.' + s.key))}" title="${esc(t('social.' + s.key))}">${icon(s.key)}</a>`;
-    }).join('');
+    return followLinks().map((s) =>
+      `<a class="${cls}" href="${esc(s.href)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(t('social.' + s.key))}" title="${esc(t('social.' + s.key))}">${icon(s.key)}</a>`
+    ).join('');
+  }
+
+  // "Follow" row used in contact sections; renders nothing while no social link is set.
+  function followBlockHTML() {
+    return followLinks().length
+      ? `<div class="contact__links"><div class="contact__social"><span>${esc(t('contact.follow'))}</span>${socialLinksHTML('icon-btn')}</div></div>`
+      : '';
   }
 
   // A local preview shows helpful "put your image here" hints; the live site never does.
@@ -269,7 +281,7 @@
         .map((k) => `<li><a href="${href(k)}">${esc(t('nav.' + k))}</a></li>`).join('')
         + `<li><a href="automation.html">${esc(t('nav.automation'))}</a></li>`
         + `<li><a href="consultation.html">${esc(t('nav.consult'))}</a></li>`;
-      const follow = socials().filter((s) => s.key !== 'whatsapp' && s.key !== 'email');
+      const follow = followLinks();
       el.innerHTML = `
         <div class="container">
           <div class="footer__top">
@@ -282,8 +294,7 @@
               <div>
                 <h4>${esc(t('footer.connect'))}</h4>
                 <div class="footer__contact">${contactLinesHTML('contact-line')}</div>
-                ${follow.length ? `<div class="footer__social">${follow.map((s) =>
-                  `<a class="icon-btn" href="${esc(s.href)}" target="_blank" rel="noopener" aria-label="${esc(t('social.' + s.key))}" title="${esc(t('social.' + s.key))}">${icon(s.key)}</a>`).join('')}</div>` : ''}
+                ${follow.length ? `<div class="footer__social">${socialLinksHTML('icon-btn')}</div>` : ''}
               </div>
             </div>
           </div>
@@ -328,7 +339,7 @@
 
   /* ---------- Boot ---------- */
   window.App = {
-    SITE, lang, t, tx, esc, icon, shot, waLink, socials, socialLinksHTML, contactLinesHTML, mailto, setLang, isLocal, MARK, LOGO,
+    SITE, lang, t, tx, esc, icon, shot, waLink, socials, followLinks, socialHref, socialLinksHTML, followBlockHTML, contactLinesHTML, mailto, setLang, isLocal, MARK, LOGO,
     onLang(fn) { listeners.push(fn); },
     reveal: observeReveals,
     start() {

@@ -120,8 +120,9 @@
       <div class="about__mark">${window.App.MARK}</div>
       <img src="assets/about/me.jpg" alt="${esc(t('brand.owner'))}" width="720" height="900" decoding="async" onerror="this.remove()">
       <figcaption class="about__badge"><b>${esc(t('brand.owner'))}</b><span>${esc(t('about.role'))}</span></figcaption>`;
-    const yt = SITE.youtube
-      ? `<a class="about__yt" href="${esc(SITE.youtube)}" target="_blank" rel="noopener">${icon('youtube')}<span>${esc(t('about.creator'))}</span>${icon('arrowUpRight')}</a>`
+    const ytHref = window.App.socialHref('youtube');
+    const yt = ytHref
+      ? `<a class="about__yt" href="${esc(ytHref)}" target="_blank" rel="noopener noreferrer">${icon('youtube')}<span>${esc(t('about.creator'))}</span>${icon('arrowUpRight')}</a>`
       : `<span>${esc(t('about.creator'))}</span>`;
     $('about-roles').innerHTML = `
       <p class="about__role">${esc(t('about.role'))}</p>
@@ -150,11 +151,10 @@
     }
     $('contact-cards').innerHTML = cards.join('');
 
-    const social = window.App.socials().filter((s) => s.key !== 'whatsapp' && s.key !== 'email');
+    const social = window.App.followLinks();
     const box = $('contact-links');
     box.innerHTML = social.length
-      ? `<div class="contact__social"><span>${esc(t('contact.follow'))}</span>${social.map((s) =>
-        `<a class="icon-btn" href="${esc(s.href)}" target="_blank" rel="noopener" aria-label="${esc(t('social.' + s.key))}" title="${esc(t('social.' + s.key))}">${icon(s.key)}</a>`).join('')}</div>`
+      ? `<div class="contact__social"><span>${esc(t('contact.follow'))}</span>${window.App.socialLinksHTML('icon-btn')}</div>`
       : '';
     box.hidden = !social.length;
   }

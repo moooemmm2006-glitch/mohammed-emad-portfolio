@@ -74,6 +74,7 @@
             <p class="contact__lead">${esc(P.ctaLead)}</p>
             ${bookBtn('btn--xl')}
             <div class="contact__lines">${contactLinesHTML('contact-line')}</div>
+            ${window.App.followBlockHTML()}
           </div>
         </div>
       </section>`;
