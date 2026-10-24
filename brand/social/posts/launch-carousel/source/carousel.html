@@ -90,7 +90,7 @@
 const q = new URLSearchParams(location.search);
 const L = q.get('lang') === 'ar' ? 'ar' : 'en', POS = +(q.get('s') || 1);
 // set=ark: the Ahmed Ark project gets five slides (hero + four sections) in place of slide 4
-const SEQ = q.get('set') === 'ark' ? [1, 2, 3, '4ark', 'ark-about', 'ark-gallery', 'ark-services', 'ark-contact', 5, 6, 7] : [1, 2, 3, q.get('alt') === 'ark' ? '4ark' : 4, 5, 6, 7];
+const SEQ = q.get('set') === 'ark2' ? ['4ark', 'ark-about', 'ark-gallery', 'ark-services', 'ark-contact', 5, 6, 7] : q.get('set') === 'ark' ? [1, 2, 3, '4ark', 'ark-about', 'ark-gallery', 'ark-services', 'ark-contact', 5, 6, 7] : [1, 2, 3, q.get('alt') === 'ark' ? '4ark' : 4, 5, 6, 7];
 const KEY = SEQ[POS - 1], TOTAL = SEQ.length, N = typeof KEY === 'number' ? KEY : 4;
 const ARKSHOT = { '4ark': 'ark', 'ark-about': 'ark-about', 'ark-gallery': 'ark-gallery', 'ark-services': 'ark-services', 'ark-contact': 'ark-contact' };
 if (L === 'ar') document.body.classList.add('is-ar');
