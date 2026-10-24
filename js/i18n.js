@@ -158,13 +158,14 @@ window.I18N = {
       eyebrow: "الخدمات",
       title: "كل ما تحتاجه لتظهر بأفضل صورة على الإنترنت.",
       lead: "من صفحة هبوط واحدة إلى متجر إلكتروني متكامل — كل مشروع أصمّمه وأطوّره من البداية للنهاية.",
+      done: { one: "{n} مشروع", many: "{n} مشاريع" },
       items: [
-        { icon: "building", t: "مواقع الشركات", d: "واجهة احترافية لشركتك تشرح ما تقدّمه بوضوح، وتحوّل الزوار إلى استفسارات حقيقية." },
-        { icon: "bag", t: "المتاجر الإلكترونية", d: "متاجر تعرض منتجاتك بشكل جذّاب، وتجعل الشراء سهلًا على كل الأجهزة." },
-        { icon: "target", t: "صفحات الهبوط", d: "صفحات مركّزة وقوية لمنتج أو عرض أو حملة إعلانية — مصمّمة حول هدف واحد." },
-        { icon: "user", t: "المواقع الشخصية", d: "موقع لعلامتك الشخصية يعرض أعمالك وقصتك بالمستوى الذي تستحقه." },
-        { icon: "refresh", t: "تطوير وإعادة تصميم المواقع", d: "تجديد موقعك الحالي: تصميم أوضح، وسرعة أعلى، وتجربة أفضل على الموبايل." },
-        { icon: "bolt", t: "أتمتة الأعمال", d: "ربط موقعك بمهامك اليومية، فيصل الرد للعملاء، وتُسجَّل الطلبات، وتتم المتابعة وحدها." }
+        { id: "business", icon: "building", t: "مواقع الشركات", d: "واجهة احترافية لشركتك تشرح ما تقدّمه بوضوح، وتحوّل الزوار إلى استفسارات حقيقية." },
+        { id: "store", icon: "bag", t: "المتاجر الإلكترونية", d: "متاجر تعرض منتجاتك بشكل جذّاب، وتجعل الشراء سهلًا على كل الأجهزة." },
+        { id: "landing", icon: "target", t: "صفحات الهبوط", d: "صفحات مركّزة وقوية لمنتج أو عرض أو حملة إعلانية — مصمّمة حول هدف واحد." },
+        { id: "portfolio", icon: "user", t: "المواقع الشخصية", d: "موقع لعلامتك الشخصية يعرض أعمالك وقصتك بالمستوى الذي تستحقه." },
+        { id: "redesign", icon: "refresh", t: "تطوير وإعادة تصميم المواقع", d: "تجديد موقعك الحالي: تصميم أوضح، وسرعة أعلى، وتجربة أفضل على الموبايل." },
+        { id: "automation", icon: "bolt", t: "أتمتة الأعمال", d: "ربط موقعك بمهامك اليومية، فيصل الرد للعملاء، وتُسجَّل الطلبات، وتتم المتابعة وحدها." }
       ],
       bundle: {
         badge: "الخيار الموصى به",
@@ -435,13 +436,14 @@ window.I18N = {
       eyebrow: "Services",
       title: "Everything you need to look great online.",
       lead: "From a single landing page to a complete online store — every project is designed and built end to end.",
+      done: { one: "{n} project", many: "{n} projects" },
       items: [
-        { icon: "building", t: "Business websites", d: "A professional home for your company that explains what you do clearly and turns visitors into real inquiries." },
-        { icon: "bag", t: "E-commerce stores", d: "Online stores that showcase your products beautifully and make buying simple on every device." },
-        { icon: "target", t: "Landing pages", d: "Focused, high-impact pages for a product, offer, or campaign — designed around a single goal." },
-        { icon: "user", t: "Personal portfolios", d: "A personal brand site that presents your work and story with the polish it deserves." },
-        { icon: "refresh", t: "Redesigns & improvements", d: "Refresh your existing site: sharper design, faster load times, and a better mobile experience." },
-        { icon: "bolt", t: "Business automation", d: "Your website connected to your daily tasks, so clients get answered, orders get recorded, and follow-ups happen on their own." }
+        { id: "business", icon: "building", t: "Business websites", d: "A professional home for your company that explains what you do clearly and turns visitors into real inquiries." },
+        { id: "store", icon: "bag", t: "E-commerce stores", d: "Online stores that showcase your products beautifully and make buying simple on every device." },
+        { id: "landing", icon: "target", t: "Landing pages", d: "Focused, high-impact pages for a product, offer, or campaign — designed around a single goal." },
+        { id: "portfolio", icon: "user", t: "Personal portfolios", d: "A personal brand site that presents your work and story with the polish it deserves." },
+        { id: "redesign", icon: "refresh", t: "Redesigns & improvements", d: "Refresh your existing site: sharper design, faster load times, and a better mobile experience." },
+        { id: "automation", icon: "bolt", t: "Business automation", d: "Your website connected to your daily tasks, so clients get answered, orders get recorded, and follow-ups happen on their own." }
       ],
       bundle: {
         badge: "Recommended",

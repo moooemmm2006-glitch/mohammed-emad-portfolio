@@ -15,6 +15,7 @@
 window.PROJECTS = [
   {
     slug: "mad-watches",
+    service: "business",
     name: "Mad Watches",
     url: "https://mad-watches.vercel.app/",
     year: "",
@@ -61,6 +62,7 @@ window.PROJECTS = [
 
   {
     slug: "ahmed-ark",
+    service: "portfolio",
     name: "Ahmed Ark",
     url: "https://motion-portfolio-umber.vercel.app/",
     year: "",

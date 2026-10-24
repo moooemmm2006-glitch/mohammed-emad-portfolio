@@ -36,12 +36,20 @@
   }
 
   function renderServices() {
-    const items = t('services.items').map((s, i) => `
+    const done = t('services.done');
+    const items = t('services.items').map((s, i) => {
+      // projects in data/projects.js whose `service` matches this card's id
+      const work = PROJECTS.filter((p) => p.service && p.service === s.id);
+      const count = work.length ? `<span class="service__count">${esc(work.length === 1 ? done.one : done.many).replace('{n}', `<bdi dir="ltr">+${work.length}</bdi>`)}</span>` : '';
+      const links = work.length ? `<div class="service__work">${work.map((p) => `
+          <a class="service__project" href="${caseUrl(p.slug)}">${esc(tx(p.name))}${icon('arrow')}</a>`).join('')}</div>` : '';
+      return `
       <article class="service spot reveal" style="--d:${(i % 3) * 0.06}s">
-        <span class="service__icon">${icon(s.icon)}</span>
+        <div class="service__top"><span class="service__icon">${icon(s.icon)}</span>${count}</div>
         <h3>${esc(s.t)}</h3>
-        <p>${esc(s.d)}</p>
-      </article>`).join('');
+        <p>${esc(s.d)}</p>${links}
+      </article>`;
+    }).join('');
     const b = t('services.bundle');
     const bundle = `
       <article class="bundle spot reveal">
