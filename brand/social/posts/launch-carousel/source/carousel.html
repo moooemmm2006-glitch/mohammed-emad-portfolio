@@ -88,7 +88,11 @@
   </div>
 <script>
 const q = new URLSearchParams(location.search);
-const L = q.get('lang') === 'ar' ? 'ar' : 'en', N = +(q.get('s') || 1), ALT = q.get('alt') === 'ark', TOTAL = 7;
+const L = q.get('lang') === 'ar' ? 'ar' : 'en', POS = +(q.get('s') || 1);
+// set=ark: the Ahmed Ark project gets five slides (hero + four sections) in place of slide 4
+const SEQ = q.get('set') === 'ark' ? [1, 2, 3, '4ark', 'ark-about', 'ark-gallery', 'ark-services', 'ark-contact', 5, 6, 7] : [1, 2, 3, q.get('alt') === 'ark' ? '4ark' : 4, 5, 6, 7];
+const KEY = SEQ[POS - 1], TOTAL = SEQ.length, N = typeof KEY === 'number' ? KEY : 4;
+const ARKSHOT = { '4ark': 'ark', 'ark-about': 'ark-about', 'ark-gallery': 'ark-gallery', 'ark-services': 'ark-services', 'ark-contact': 'ark-contact' };
 if (L === 'ar') document.body.classList.add('is-ar');
 const ar = L === 'ar';
 const shot = (n) => `shots/${n}-${n.startsWith('ark') ? 'en' : L}.png`;
@@ -111,6 +115,14 @@ const T = {
        en: { tag: 'Services', h: 'Everything you need<br>to look great online', cap: 'From a single landing page to a complete online store.' } },
   '4ark': { ar: { tag: 'من شغلي', h: 'أول مشروع اشتغلته', cap: 'موقع بورتفوليو لمونتير وموشن ديزاينر.' },
        en: { tag: 'My work', h: 'The first project I built', cap: 'A portfolio website for a video editor and motion designer.' } },
+  'ark-about': { ar: { tag: 'جوه موقع أحمد', h: 'صفحة التعريف', cap: 'بتعرّف أحمد وشغله من أول نظرة.' },
+       en: { tag: 'Inside Ahmed’s site', h: 'The about section', cap: 'Introduces Ahmed and his work at a glance.' } },
+  'ark-gallery': { ar: { tag: 'جوه موقع أحمد', h: 'معرض شغل 3D', cap: 'الزائر بيسحب بين المشاريع في معرض ثلاثي الأبعاد.' },
+       en: { tag: 'Inside Ahmed’s site', h: 'A 3D work gallery', cap: 'Visitors swipe through his projects in a 3D gallery.' } },
+  'ark-services': { ar: { tag: 'جوه موقع أحمد', h: 'الخدمات', cap: 'كل خدمة واضحة في كارت لوحدها.' },
+       en: { tag: 'Inside Ahmed’s site', h: 'Services', cap: 'Each service is clearly laid out in its own card.' } },
+  'ark-contact': { ar: { tag: 'جوه موقع أحمد', h: 'التواصل', cap: 'واتساب وفورم تواصل، عشان العميل يوصله بسهولة.' },
+       en: { tag: 'Inside Ahmed’s site', h: 'Contact', cap: 'WhatsApp and a contact form, so clients can reach him easily.' } },
   5: { ar: { tag: 'ليه موقع؟', h: 'ليه محتاج<br>موقع لبيزنسك؟', cards: [['key', 'الموقع بتاعك أنت، مش بتاع فيسبوك'], ['search', 'بيظهر في جوجل لما الناس تدور'], ['clock', 'الأسعار والتفاصيل متاحة للعميل في أي وقت']] },
        en: { tag: 'Why a website?', h: 'Why your business<br>needs a website', cards: [['key', 'Your website is yours, not Facebook’s'], ['search', 'It shows up on Google when people search'], ['clock', 'Prices and details are there for clients anytime']] } },
   6: { ar: { tag: 'مع كل موقع', h: 'مع كل موقع<br>هتستلم', cards: [['check', 'تصميم مظبوط على الموبايل'], ['check', 'ربط واتساب للطلب والتواصل'], ['check', 'ملف تسليم بيشرح موقعك بالتفصيل']] },
@@ -118,7 +130,7 @@ const T = {
   7: { ar: { h: 'احجز استشارة<br><em>مجانية</em>', p: 'نتكلم عن فكرتك وتصميم موقعك، من غير أي فلوس.', btn: 'الرابط في البايو', handle: 'إنستجرام' },
        en: { h: 'Book a free<br><em>consultation</em>', p: 'We talk about your idea and your website design, no cost.', btn: 'Link in bio', handle: 'Instagram' } },
 };
-const t = T[N === 4 && ALT ? '4ark' : N][L];
+const t = T[KEY][L];
 const M = document.getElementById('main');
 const g = document.getElementById('grid'), gl = document.getElementById('glow');
 g.style.webkitMaskImage = 'radial-gradient(ellipse 85% 60% at 50% 0%, #000 10%, transparent 70%)';
@@ -135,7 +147,7 @@ if (N === 1) {
 } else if (N === 3) {
   html = `${tag}<h2>${t.h}</h2><div class="shotwrap"><div class="shot desk"><img src="${shot('hero-desktop')}"></div></div><p class="cap">${t.cap}</p>`;
 } else if (N === 4) {
-  const d = ALT ? 'ark-desktop' : 'services-desktop', m = ALT ? 'ark-mobile' : 'services-mobile';
+  const a = ARKSHOT[KEY], d = a ? `${a}-desktop` : 'services-desktop', m = a ? `${a}-mobile` : 'services-mobile';
   html = `${tag}<h2>${t.h}</h2><div class="shotwrap duo"><div class="shot desk"><img src="${shot(d)}"></div><div class="shot mob"><img src="${shot(m)}"></div></div><p class="cap" style="margin-top:96px">${t.cap}</p>`;
 } else if (N === 5 || N === 6) {
   html = `${tag}<h2>${t.h}</h2><div class="cards ${N === 6 ? 'check' : ''}">${t.cards.map(([i, c]) => `<div class="card"><span class="ico">${ICON[i]}</span><p>${c}</p></div>`).join('')}</div>`;
@@ -145,8 +157,8 @@ if (N === 1) {
   html = `<h1>${t.h}</h1><p class="lead">${t.p}</p><span class="cta-btn">${t.btn}${ICON.arrow}</span><p class="handle"><span dir="ltr"><b>@me.web.design</b></span></p>`;
 }
 M.innerHTML = html;
-document.getElementById('count').innerHTML = `<b>${String(N).padStart(2, '0')}</b> / ${String(TOTAL).padStart(2, '0')}`;
-document.getElementById('dots').innerHTML = Array.from({ length: TOTAL }, (_, i) => `<i class="${i + 1 === N ? 'on' : ''}"></i>`).join('');
-document.getElementById('swipe').innerHTML = N < TOTAL ? `${ar ? 'اسحب' : 'Swipe'}${ICON.arrow}` : '';
+document.getElementById('count').innerHTML = `<b>${String(POS).padStart(2, '0')}</b> / ${String(TOTAL).padStart(2, '0')}`;
+document.getElementById('dots').innerHTML = Array.from({ length: TOTAL }, (_, i) => `<i class="${i + 1 === POS ? 'on' : ''}"></i>`).join('');
+document.getElementById('swipe').innerHTML = POS < TOTAL ? `${ar ? 'اسحب' : 'Swipe'}${ICON.arrow}` : '';
 </script>
 </body></html>

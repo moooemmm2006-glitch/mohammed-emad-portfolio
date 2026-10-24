@@ -10,6 +10,7 @@ const BASE = 'http://127.0.0.1:8765/brand/social/posts/launch-carousel/source/ca
   for (const l of ['ar', 'en']) {
     for (let s = 1; s <= 7; s++) jobs.push([`?lang=${l}&s=${s}`, `${l}/slide-${String(s).padStart(2, '0')}.png`]);
     jobs.push([`?lang=${l}&s=4&alt=ark`, `${l}/alt/slide-04-ahmed-ark.png`]);
+    for (let s = 1; s <= 11; s++) jobs.push([`?lang=${l}&set=ark&s=${s}`, `${l}-with-ahmed-ark/slide-${String(s).padStart(2, '0')}.png`]);
   }
   for (const [q, f] of jobs) {
     await p.goto(BASE + q, { waitUntil: 'networkidle' });
