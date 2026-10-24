@@ -1,0 +1,152 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Launch carousel (1080×1350)</title>
+<!-- Options: ?lang=ar|en &s=1..7 &alt=ark (slide 4 with the Ahmed Ark project) -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=block">
+<link rel="stylesheet" href="../../../source/social.css">
+<style>
+  :root { --w: 1080px; --h: 1350px; --g: 72px; --text: #F5F7FA; --sub: #9AA3B2; }
+  body { color: var(--text); }
+  .frame { position: absolute; inset: 80px; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; justify-content: space-between; height: 40px; }
+  .brand { display: inline-flex; align-items: center; gap: 14px; direction: ltr; }
+  .brand img { height: 34px; display: block; }
+  .brand .wm { font-size: 24px; letter-spacing: .16em; }
+  .count { font: 500 20px/1 "Inter", sans-serif; letter-spacing: .12em; color: var(--sub); }
+  .count b { color: var(--text); font-weight: 500; }
+  .main { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+  .bottom { display: flex; align-items: center; justify-content: space-between; height: 40px; }
+  .dots { display: flex; gap: 10px; }
+  .dots i { width: 10px; height: 10px; border-radius: 99px; background: rgba(245, 247, 250, .18); }
+  .dots i.on { width: 34px; background: var(--cobalt); }
+  .swipe { display: inline-flex; align-items: center; gap: 12px; font: 500 22px/1 "Inter", sans-serif; color: var(--sub); }
+  .swipe svg { width: 34px; height: 34px; }
+
+  .tag { display: inline-flex; align-items: center; gap: 12px; font: 500 22px/1 "Inter", sans-serif; letter-spacing: .14em; text-transform: uppercase; color: var(--sub); margin-bottom: 36px; }
+  .tag::before { content: ""; width: 10px; height: 10px; border-radius: 2px; background: var(--cobalt); }
+  h1, h2 { font-family: "Space Grotesk", sans-serif; font-weight: 600; letter-spacing: -0.035em; line-height: 1.04; }
+  h1 { font-size: 112px; }
+  h2 { font-size: 76px; }
+  h1 em, h2 em { font-style: normal; color: var(--cobalt-2); }
+  .lead { margin-top: 36px; font-size: 34px; line-height: 1.5; color: var(--sub); max-width: 26ch; }
+  .chips { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 56px; }
+  .chip { display: inline-flex; align-items: center; gap: 14px; height: 68px; padding: 0 30px; border-radius: 999px; border: 1px solid rgba(245, 247, 250, .14); background: rgba(20, 24, 33, .7); font: 500 26px/1 "Inter", sans-serif; }
+  .chip::before { content: ""; width: 10px; height: 10px; border-radius: 99px; background: var(--cobalt); box-shadow: 0 0 14px var(--cobalt); }
+
+  /* screenshots */
+  .shotwrap { position: relative; margin-top: 56px; }
+  .shotwrap::before { content: ""; position: absolute; inset: 8% 6%; background: radial-gradient(closest-side, rgba(46, 91, 255, .55), transparent); filter: blur(50px); }
+  .shot { position: relative; display: block; border-radius: 22px; overflow: hidden; border: 1px solid rgba(245, 247, 250, .12); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .9); background: #0B0D12; }
+  .shot img { display: block; width: 100%; }
+  .desk { width: 100%; }
+  .duo { display: flex; align-items: flex-end; }
+  .duo .desk { width: 760px; }
+  .duo .mob { width: 270px; margin-inline-start: -60px; margin-bottom: -40px; border-radius: 30px; border-width: 2px; }
+  .cap { margin-top: 64px; font-size: 30px; line-height: 1.5; color: var(--sub); }
+  .cap b { color: var(--text); font-weight: 500; }
+
+  /* cards & checklist */
+  .cards { display: flex; flex-direction: column; gap: 22px; margin-top: 60px; }
+  .card { display: flex; align-items: center; gap: 30px; padding: 34px 36px; border-radius: 24px; border: 1px solid rgba(245, 247, 250, .1); background: linear-gradient(180deg, rgba(28, 33, 44, .75), rgba(15, 18, 24, .75)); }
+  .ico { flex: none; width: 76px; height: 76px; border-radius: 20px; display: grid; place-items: center; background: rgba(46, 91, 255, .14); border: 1px solid rgba(46, 91, 255, .4); }
+  .ico svg { width: 38px; height: 38px; stroke: #8FA8FF; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .card p { font-size: 34px; line-height: 1.35; font-weight: 500; }
+  .check .ico { border-radius: 99px; width: 64px; height: 64px; background: var(--cobalt); border: 0; box-shadow: 0 10px 30px -8px rgba(46, 91, 255, .9); }
+  .check .ico svg { stroke: #fff; stroke-width: 2.6; width: 30px; height: 30px; }
+
+  /* cover & cta */
+  .cover .mark-big { width: 150px; margin-bottom: 70px; }
+  .cover h1 { font-size: 120px; }
+  .cta-btn { display: inline-flex; align-items: center; gap: 16px; height: 92px; padding: 0 44px; border-radius: 999px; background: var(--cobalt); font: 600 32px/1 "Inter", sans-serif; box-shadow: 0 24px 60px -16px rgba(46, 91, 255, .9); margin-top: 64px; align-self: flex-start; }
+  .cta-btn svg { width: 30px; height: 30px; stroke: #fff; fill: none; stroke-width: 2.2; }
+  .handle { margin-top: 30px; font: 500 30px/1 "Inter", sans-serif; color: var(--sub); }
+  .handle b { color: var(--text); font-weight: 500; }
+
+  /* Arabic */
+  body.is-ar .frame { direction: rtl; }
+  body.is-ar, body.is-ar .chip, body.is-ar .swipe, body.is-ar .tag, body.is-ar .cta-btn { font-family: "IBM Plex Sans Arabic", sans-serif; }
+  body.is-ar .tag { letter-spacing: 0; font-size: 26px; }
+  body.is-ar h1, body.is-ar h2 { font-family: "IBM Plex Sans Arabic", sans-serif; font-weight: 700; letter-spacing: 0; line-height: 1.32; }
+  body.is-ar h1 { font-size: 104px; }
+  body.is-ar .cover h1 { font-size: 110px; }
+  body.is-ar h2 { font-size: 72px; }
+  body.is-ar .lead, body.is-ar .cap { line-height: 1.75; }
+  body.is-ar .chip { font-size: 28px; font-weight: 500; }
+  body.is-ar .card p { font-size: 34px; line-height: 1.55; }
+  body.is-ar .cta-btn { font-size: 34px; font-weight: 600; }
+  body.is-ar .swipe svg, body.is-ar .cta-btn svg { transform: scaleX(-1); }
+  h2 .wm { letter-spacing: .05em; }
+  .wm { letter-spacing: .12em; font-family: "Space Grotesk", sans-serif; font-weight: 600; direction: ltr; unicode-bidi: isolate; }
+</style></head>
+<body>
+  <div class="grid" id="grid"></div>
+  <div class="glow" id="glow"></div>
+  <div class="frame">
+    <div class="top"><span class="brand"><img src="../../../logo/logo-mark-on-dark.svg" alt=""><span class="wm">ME WEB</span></span><span class="count" id="count" dir="ltr"></span></div>
+    <div class="main" id="main"></div>
+    <div class="bottom"><div class="dots" id="dots"></div><span class="swipe" id="swipe"></span></div>
+  </div>
+<script>
+const q = new URLSearchParams(location.search);
+const L = q.get('lang') === 'ar' ? 'ar' : 'en', N = +(q.get('s') || 1), ALT = q.get('alt') === 'ark', TOTAL = 7;
+if (L === 'ar') document.body.classList.add('is-ar');
+const ar = L === 'ar';
+const shot = (n) => `shots/${n}-${n.startsWith('ark') ? 'en' : L}.png`;
+const ICON = {
+  key: '<svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16 7l3 3M14 9l2 2"/></svg>',
+  search: '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>',
+  clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  check: '<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h16M14 6l6 6-6 6"/></svg>',
+};
+const WM = '<span class="wm">ME WEB</span>';
+const T = {
+  1: { ar: { h: 'عندك بيزنس<br><em>ومعندكش موقع؟</em>', p: 'مواقع احترافية للبيزنس والمتاجر' },
+       en: { h: 'Have a business<br><em>but no website?</em>', p: 'Professional websites for businesses &amp; stores' } },
+  2: { ar: { tag: 'مين أنا', h: `أنا محمد عماد،<br>مؤسس ${WM}`, p: 'بصمّم وببني مواقع احترافية للبيزنس والمتاجر الإلكترونية.', chips: ['تصميم مواقع', 'متاجر إلكترونية', 'أتمتة للأعمال'] },
+       en: { tag: 'Who I am', h: `I’m Mohammed Emad,<br>founder of ${WM}`, p: 'I design and build professional websites for businesses and online stores.', chips: ['Website design', 'Online stores', 'Automations'] } },
+  3: { ar: { tag: 'من شغلي', h: 'موقعي الشخصي', cap: 'نموذج من شغلي، مصمَّم ومبني من الصفر.' },
+       en: { tag: 'My work', h: 'My own website', cap: 'A sample of my work, designed and built from scratch.' } },
+  4: { ar: { tag: 'الخدمات', h: 'كل اللي محتاجه<br>عشان تظهر صح', cap: 'من صفحة هبوط لحد متجر إلكتروني كامل.' },
+       en: { tag: 'Services', h: 'Everything you need<br>to look great online', cap: 'From a single landing page to a complete online store.' } },
+  '4ark': { ar: { tag: 'من شغلي', h: 'أول مشروع اشتغلته', cap: 'موقع بورتفوليو لمونتير وموشن ديزاينر.' },
+       en: { tag: 'My work', h: 'The first project I built', cap: 'A portfolio website for a video editor and motion designer.' } },
+  5: { ar: { tag: 'ليه موقع؟', h: 'ليه محتاج<br>موقع لبيزنسك؟', cards: [['key', 'الموقع بتاعك أنت، مش بتاع فيسبوك'], ['search', 'بيظهر في جوجل لما الناس تدور'], ['clock', 'الأسعار والتفاصيل متاحة للعميل في أي وقت']] },
+       en: { tag: 'Why a website?', h: 'Why your business<br>needs a website', cards: [['key', 'Your website is yours, not Facebook’s'], ['search', 'It shows up on Google when people search'], ['clock', 'Prices and details are there for clients anytime']] } },
+  6: { ar: { tag: 'مع كل موقع', h: 'مع كل موقع<br>هتستلم', cards: [['check', 'تصميم مظبوط على الموبايل'], ['check', 'ربط واتساب للطلب والتواصل'], ['check', 'ملف تسليم بيشرح موقعك بالتفصيل']] },
+       en: { tag: 'Included', h: 'With every website<br>you get', cards: [['check', 'A mobile-ready design'], ['check', 'WhatsApp ordering &amp; contact setup'], ['check', 'A handover document that explains your site']] } },
+  7: { ar: { h: 'احجز استشارة<br><em>مجانية</em>', p: 'نتكلم عن فكرتك وتصميم موقعك، من غير أي فلوس.', btn: 'الرابط في البايو', handle: 'إنستجرام' },
+       en: { h: 'Book a free<br><em>consultation</em>', p: 'We talk about your idea and your website design, no cost.', btn: 'Link in bio', handle: 'Instagram' } },
+};
+const t = T[N === 4 && ALT ? '4ark' : N][L];
+const M = document.getElementById('main');
+const g = document.getElementById('grid'), gl = document.getElementById('glow');
+g.style.webkitMaskImage = 'radial-gradient(ellipse 85% 60% at 50% 0%, #000 10%, transparent 70%)';
+Object.assign(gl.style, { width: '1300px', height: '900px', top: '-560px' });
+const tag = t.tag ? `<div class="tag">${t.tag}</div>` : '';
+let html = '';
+if (N === 1) {
+  M.classList.add('cover');
+  g.style.webkitMaskImage = 'radial-gradient(ellipse 70% 55% at 50% 45%, #000 10%, transparent 75%)';
+  Object.assign(gl.style, { width: '1100px', height: '1100px', top: '120px', opacity: .8 });
+  html = `<img class="mark-big" src="../../../logo/logo-mark-on-dark.svg" alt=""><h1>${t.h}</h1><p class="lead">${t.p}</p>`;
+} else if (N === 2) {
+  html = `${tag}<h2>${t.h}</h2><p class="lead">${t.p}</p><div class="chips">${t.chips.map((c) => `<span class="chip">${c}</span>`).join('')}</div>`;
+} else if (N === 3) {
+  html = `${tag}<h2>${t.h}</h2><div class="shotwrap"><div class="shot desk"><img src="${shot('hero-desktop')}"></div></div><p class="cap">${t.cap}</p>`;
+} else if (N === 4) {
+  const d = ALT ? 'ark-desktop' : 'services-desktop', m = ALT ? 'ark-mobile' : 'services-mobile';
+  html = `${tag}<h2>${t.h}</h2><div class="shotwrap duo"><div class="shot desk"><img src="${shot(d)}"></div><div class="shot mob"><img src="${shot(m)}"></div></div><p class="cap" style="margin-top:96px">${t.cap}</p>`;
+} else if (N === 5 || N === 6) {
+  html = `${tag}<h2>${t.h}</h2><div class="cards ${N === 6 ? 'check' : ''}">${t.cards.map(([i, c]) => `<div class="card"><span class="ico">${ICON[i]}</span><p>${c}</p></div>`).join('')}</div>`;
+} else {
+  Object.assign(gl.style, { width: '1200px', height: '1200px', top: '260px', opacity: .9 });
+  g.style.webkitMaskImage = 'radial-gradient(ellipse 70% 55% at 50% 55%, #000 10%, transparent 75%)';
+  html = `<h1>${t.h}</h1><p class="lead">${t.p}</p><span class="cta-btn">${t.btn}${ICON.arrow}</span><p class="handle"><span dir="ltr"><b>@me.web.design</b></span></p>`;
+}
+M.innerHTML = html;
+document.getElementById('count').innerHTML = `<b>${String(N).padStart(2, '0')}</b> / ${String(TOTAL).padStart(2, '0')}`;
+document.getElementById('dots').innerHTML = Array.from({ length: TOTAL }, (_, i) => `<i class="${i + 1 === N ? 'on' : ''}"></i>`).join('');
+document.getElementById('swipe').innerHTML = N < TOTAL ? `${ar ? 'اسحب' : 'Swipe'}${ICON.arrow}` : '';
+</script>
+</body></html>
