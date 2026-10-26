@@ -9,9 +9,9 @@ window.SITE = {
   defaultLang: "ar",
 
   // رقم واتساب بالصيغة الدولية بدون + أو مسافات
-  whatsapp: "201096452755",
+  whatsapp: "201105684641",
   // نفس الرقم كما يظهر للزوار
-  whatsappDisplay: "+20 109 645 2755",
+  whatsappDisplay: "+20 110 568 4641",
 
   // بريدك الإلكتروني
   email: "mohammed.emad.official110@gmail.com",
