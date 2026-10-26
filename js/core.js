@@ -66,10 +66,45 @@
     } else if (page === '404') {
       document.title = '404 — ' + t('brand.name');
     }
+    updateSeoLinks();
     listeners.forEach((fn) => fn(lang()));
     applyI18n();
     updateWhatsAppLinks();
     observeReveals();
+  }
+
+  /* ---------- Search engines ----------
+     Tells Google the main address of this page and where its Arabic and
+     English versions live (?lang=en), so both languages can be indexed. */
+  function updateSeoLinks() {
+    if (page === '404') return;
+    const base = (SITE.siteUrl || location.origin).replace(/\/+$/, '');
+    const path = location.pathname.replace(/\/index\.html$/, '/');
+    const slug = new URLSearchParams(location.search).get('p');
+    const urlFor = (l) => {
+      const q = new URLSearchParams();
+      if (slug) q.set('p', slug);
+      if (l === 'en') q.set('lang', 'en');
+      const qs = q.toString();
+      return base + path + (qs ? '?' + qs : '');
+    };
+    const link = (rel, hreflang, url) => {
+      const sel = `link[rel="${rel}"]` + (hreflang ? `[hreflang="${hreflang}"]` : '');
+      let el = document.head.querySelector(sel);
+      if (!el) {
+        el = document.createElement('link');
+        el.rel = rel;
+        if (hreflang) el.hreflang = hreflang;
+        document.head.appendChild(el);
+      }
+      el.href = url;
+    };
+    link('canonical', null, urlFor(lang()));
+    link('alternate', 'ar', urlFor('ar'));
+    link('alternate', 'en', urlFor('en'));
+    link('alternate', 'x-default', urlFor('ar'));
+    const og = document.head.querySelector('meta[property="og:url"]');
+    if (og) og.setAttribute('content', urlFor(lang()));
   }
 
   /* ---------- Links ---------- */

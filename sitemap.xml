@@ -1,8 +1,65 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://mohammed-emad-portfolio.vercel.app/</loc></url>
-  <url><loc>https://mohammed-emad-portfolio.vercel.app/automation.html</loc></url>
-  <url><loc>https://mohammed-emad-portfolio.vercel.app/consultation.html</loc></url>
-  <url><loc>https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches</loc></url>
-  <url><loc>https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark</loc></url>
+<!-- Every page in both languages. After adding a new project, copy one of the
+     project blocks and change the slug (p=...) in all four places. -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/automation.html</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/automation.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/automation.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/automation.html"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/automation.html?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/automation.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/automation.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/automation.html"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/consultation.html</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/consultation.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/consultation.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/consultation.html"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/consultation.html?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/consultation.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/consultation.html?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/consultation.html"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches&amp;lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches&amp;lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches&amp;lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=mad-watches"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark&amp;lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark"/>
+  </url>
+  <url>
+    <loc>https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark&amp;lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark&amp;lang=en"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://mohammed-emad-portfolio.vercel.app/project.html?p=ahmed-ark"/>
+  </url>
 </urlset>

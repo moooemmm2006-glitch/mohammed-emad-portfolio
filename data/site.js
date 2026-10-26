@@ -5,6 +5,10 @@
 window.SITE = {
   // اسمك كما يظهر في الموقع موجود في js/i18n.js تحت brand.name
 
+  // عنوان الموقع على الإنترنت بدون / في الآخر. لو اشتريت دومين بعدين غيّره هنا
+  // (وفي sitemap.xml و robots.txt) عشان جوجل يعرف العنوان الأساسي للموقع.
+  siteUrl: "https://mohammed-emad-portfolio.vercel.app",
+
   // لغة الموقع الافتراضية: "ar" للعربية أو "en" للإنجليزية
   defaultLang: "ar",
 
