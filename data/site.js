@@ -19,10 +19,10 @@ window.SITE = {
   // روابط السوشيال: المكان الوحيد اللي بتتحط فيه الروابط.
   // حط الرابط كامل بين علامتي التنصيص، والأيقونة هتظهر لوحدها في كل الموقع
   // (قسم التواصل والفوتر). أي رابط فاضي "" أيقونته مش بتظهر خالص.
-  // ترتيب الظهور: Instagram ثم TikTok ثم Facebook ثم YouTube.
+  // ترتيب الظهور: Instagram ثم Facebook ثم YouTube ثم TikTok.
   social: {
     instagram: "https://www.instagram.com/me.web.design/",
-    tiktok: "",
+    tiktok: "https://www.tiktok.com/@me.web.design",
     facebook: "",
     youtube: "https://www.youtube.com/@MohammedEmad-ilden"
   },

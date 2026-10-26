@@ -104,7 +104,7 @@
   }
 
   // Social profiles in display order; an empty link in SITE.social hides that icon everywhere.
-  const SOCIAL_ORDER = ['instagram', 'tiktok', 'facebook', 'youtube'];
+  const SOCIAL_ORDER = ['instagram', 'facebook', 'youtube', 'tiktok'];
   function socialHref(key) {
     const v = ((SITE.social || {})[key] || '').trim();
     return /^https?:\/\//i.test(v) ? v : '';
