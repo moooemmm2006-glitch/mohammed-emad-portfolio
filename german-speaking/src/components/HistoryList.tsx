@@ -11,15 +11,15 @@ export function HistoryList({ items }: { items: { id: string; level: string; top
       {items.map((s) => (
         <li key={s.id} className={`level-${s.level.toLowerCase()}`}>
           <Link href={s.hasReport ? `/reports/${s.id}` : `/reports/${s.id}?generate=1`} className="flex items-center gap-3 py-3 hover:bg-surface-2 rounded-lg px-2">
-            <span className="rounded-full px-2 py-0.5 text-xs font-bold text-white bg-accent de">{s.level}</span>
-            <span className="text-sm">
+            <span className="shrink-0 rounded-full px-2 py-0.5 text-xs font-bold text-white bg-accent de">{s.level}</span>
+            <span className="text-sm min-w-0 flex-1">
               {new Date(s.startedAt).toLocaleString(lang === "ar" ? "ar-EG" : "en-GB", { dateStyle: "medium", timeStyle: "short" })}
-              {s.topic && <span className="block text-xs text-muted de">{s.topic}</span>}
+              <span className="block text-xs text-muted">
+                {s.topic && <span className="de">{s.topic} · </span>}
+                {t("info_turns")}: {s.userTurns}
+              </span>
             </span>
-            <span className="ms-auto text-sm text-muted">
-              {t("info_turns")}: {s.userTurns}
-            </span>
-            {s.overall != null ? <b className="tabular-nums w-10 text-end">{s.overall}</b> : <span className="text-xs text-gold">{t("reports_pending")}</span>}
+            {s.overall != null ? <b className="tabular-nums w-10 text-end shrink-0">{s.overall}</b> : <span className="text-xs text-gold shrink-0">{t("reports_pending")}</span>}
           </Link>
         </li>
       ))}

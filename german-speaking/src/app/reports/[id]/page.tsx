@@ -130,7 +130,7 @@ function ReportPage() {
         {(["ar", "en", "de"] as const).map((l) => (
           <button
             key={l}
-            className="chip"
+            className="chip min-h-[40px]"
             aria-pressed={(reportLang ?? r.language) === l}
             onClick={() => {
               setReportLang(l);
@@ -140,7 +140,7 @@ function ReportPage() {
             {t(`lang_${l}` as TKey)}
           </button>
         ))}
-        <button className="chip ms-auto" onClick={() => void generate(r.language)}>
+        <button className="chip ms-auto min-h-[40px]" onClick={() => void generate(r.language)}>
           <IconRepeat size={14} /> {t("report_regenerate")}
         </button>
       </div>

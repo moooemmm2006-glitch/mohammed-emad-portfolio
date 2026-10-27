@@ -129,7 +129,7 @@ function LevelPage() {
   const p = cfg.persona;
   return (
     <div className={`level-${level.toLowerCase()} max-w-2xl mx-auto space-y-6 px-4 py-6`}>
-      <Link href="/speak" className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink md:hidden">
+      <Link href="/speak" className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink md:hidden min-h-[40px] -my-2 pe-3">
         <IconArrow size={16} className="rotate-180 rtl:rotate-0" /> {t("back")}
       </Link>
       <div className="card overflow-hidden">
