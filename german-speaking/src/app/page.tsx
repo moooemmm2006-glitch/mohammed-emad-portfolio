@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { LevelCard } from "@/components/LevelCard";
+import { LevelGroups } from "@/components/LevelCard";
 import { IconChart, IconClock, IconFile, IconFlame, IconMic, IconSparkle } from "@/components/Icons";
 import { useProviders, useStats } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
-import { LEVELS } from "@/lib/levels";
 
 export default function HomePage() {
   const { t } = useUI();
@@ -46,11 +45,7 @@ export default function HomePage() {
 
       <section>
         <h2 className="text-2xl font-bold mb-4">{t("levels_title")}</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {LEVELS.map((l) => (
-            <LevelCard key={l} level={l} compact lastSessionAt={stats?.levels[l].lastSessionAt} lastScore={stats?.levels[l].lastScore} />
-          ))}
-        </div>
+        <LevelGroups levels={stats?.levels} compact />
       </section>
 
       <section>

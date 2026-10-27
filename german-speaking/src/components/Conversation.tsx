@@ -485,7 +485,7 @@ export function Conversation(p: Props) {
         {turns.map((m) =>
           m.role === "partner" ? (
             <div key={m.key} className="msg-in flex gap-2.5 items-end">
-              <Avatar level={level} size={32} className="mb-1" />
+              <Avatar level={level} size={32} className="mb-1" decorative />
               <div className="max-w-[88%] sm:max-w-[80%] rounded-3xl rounded-es-lg bg-surface border border-line/70 px-5 py-3 shadow-card">
                 {m.pending && !m.text ? (
                   <span className="wave inline-flex items-center h-7" aria-label={t("conv_state_thinking")}>

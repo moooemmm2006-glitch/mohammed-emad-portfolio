@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { Correction } from "./corrections";
 
 // What the model must return. Kept free of numeric min/max so it works with native structured
 // outputs; ranges are enforced afterwards by `normalizeReport`.
@@ -78,6 +79,10 @@ export interface StoredReport extends LLMReport {
   generatedBy: "anthropic" | "mock";
   /** Deterministic tracker diff (tags), shown next to the model's "since last time" text. */
   trackerChanges?: { improved: string[]; regressed: string[]; new: string[]; unresolved: string[] };
+  /** Every learner sentence with its correction (older reports may not have this). */
+  corrections?: Correction[];
+  /** "ai" = corrected by Claude; "rules" = demo rule-based checker. */
+  correctionsMode?: "ai" | "rules";
 }
 
 const TAG_RE = /^[a-z0-9_]+$/;
@@ -101,7 +106,7 @@ const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(Number.isFinit
 /** Clamp scores, normalise tags, cap list sizes and make sure tracker counts cover every mistake tag. */
 export function normalizeReport(r: LLMReport): LLMReport {
   const scores = Object.fromEntries(ScoreKeys.map((k) => [k, clamp(r.scores[k])])) as Record<ScoreKey, number>;
-  const mistakes = r.mistakes.slice(0, 30).map((m) => ({ ...m, tag: normalizeTag(m.tag) }));
+  const mistakes = r.mistakes.slice(0, 300).map((m) => ({ ...m, tag: normalizeTag(m.tag) }));
   const pronNotes = r.pronunciation.notes.slice(0, 12).map((n) => ({ ...n, tag: normalizeTag(n.tag) }));
 
   const counts = new Map<string, { tag: string; kind: WeaknessKind; count: number }>();
@@ -135,7 +140,7 @@ export function normalizeReport(r: LLMReport): LLMReport {
 
 export function kindForTag(tag: string): WeaknessKind {
   if (tag.startsWith("pron_")) return "pronunciation";
-  if (tag.startsWith("fluency")) return "fluency";
+  if (tag.startsWith("fluency") || tag === "doppeltes_wort") return "fluency";
   if (tag === "wortschatz" || tag.startsWith("vocab")) return "vocabulary";
   return "grammar";
 }

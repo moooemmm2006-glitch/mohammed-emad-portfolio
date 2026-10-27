@@ -134,20 +134,27 @@ function LevelPage() {
       </Link>
       <div className="card overflow-hidden">
         <div className="bg-accent-soft p-6 flex items-center gap-5">
-          <Avatar level={level} size={96} />
+          <Avatar level={level} size={112} scene />
           <div>
             <span className="rounded-full px-2.5 py-0.5 text-sm font-bold text-white bg-accent de">{level}</span>
-            <h1 className="text-2xl font-extrabold mt-1 de">{level === "B2" ? "Dr. Tobias Wendt" : p.name}</h1>
+            <h1 className="text-2xl font-extrabold mt-1">{cfg.info.name[lang]}</h1>
+            {cfg.info.note && <p className="text-sm text-muted">{cfg.info.note[lang]}</p>}
             <p className="text-muted">
-              {p.role[lang]} · <span className="de">{p.city} · {p.age} Jahre</span>
+              {t("level_partner")}: <span className="de font-semibold text-ink">{level === "B2" ? "Dr. Tobias Wendt" : p.name}</span>
             </p>
           </div>
         </div>
         <div className="p-6 space-y-3">
-          <p>{p.description[lang]}</p>
-          <p className="text-sm text-muted">
-            <b className="text-accent">{t("level_cansay")}:</b> {p.canSay[lang]}
+          <p>
+            <b className="text-accent">{t("level_topics")}:</b> {cfg.info.topics[lang]}
           </p>
+          <div className="flex flex-wrap gap-1.5">
+            {cfg.info.exampleTopics.map((x) => (
+              <span key={x.en} className="rounded-full bg-accent-soft text-accent px-2.5 py-0.5 text-xs font-semibold">
+                {x[lang]}
+              </span>
+            ))}
+          </div>
         </div>
       </div>
 

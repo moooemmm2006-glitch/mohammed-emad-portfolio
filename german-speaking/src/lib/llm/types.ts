@@ -7,7 +7,7 @@ export interface ChatMessage {
 }
 
 export type ChatPurpose = "partner" | "simplify" | "summary";
-export type JsonPurpose = "check" | "report" | "hint";
+export type JsonPurpose = "check" | "report" | "hint" | "corrections";
 
 export interface ChatParams {
   model: string;

@@ -240,7 +240,10 @@ export function buildMockReport(ctx: ReportContext): LLMReport {
 
   if (avgTurn < 4 && learner.length > 1) bump("fluency_pausen", "fluency");
 
-  const grammarScore = Math.max(25, 88 - mistakes.length * 9);
+  // With sentence corrections available, count their fixes; correct sentences are the only ones to praise.
+  const fixesCount = ctx.corrections ? ctx.corrections.reduce((n, c) => n + c.fixes.length, 0) : mistakes.length;
+  const correctSentences = ctx.corrections ? new Set(ctx.corrections.filter((c) => c.isCorrect).map((c) => c.original)) : null;
+  const grammarScore = Math.max(25, 88 - fixesCount * 9);
   const scores = {
     grammar: grammarScore,
     vocabulary: Math.min(92, 40 + unique.size),
@@ -279,11 +282,12 @@ export function buildMockReport(ctx: ReportContext): LLMReport {
   const focus = [...counts.entries()].filter(([, v]) => v.kind === "grammar").sort((a, b) => b[1].count - a[1].count)[0]?.[0] ?? null;
 
   const strengths: LLMReport["strengths"] = [];
-  const longest = [...sentences].sort((a, b) => countWords(b.s) - countWords(a.s))[0];
+  const praisable = correctSentences ? sentences.filter((x) => correctSentences.has(x.turn.text.trim())) : sentences;
+  const longest = [...praisable].sort((a, b) => countWords(b.s) - countWords(a.s))[0];
   if (longest && countWords(longest.s) >= 5) strengths.push({ point: t.strengthLong, example: longest.s });
-  const q = sentences.find((x) => x.s.endsWith("?"));
+  const q = praisable.find((x) => x.s.endsWith("?"));
   if (q) strengths.push({ point: t.strengthQuestion, example: q.s });
-  if (learner.length && !learner.some((x) => /[؀-ۿ]/.test(x.text))) strengths.push({ point: t.strengthTalk, example: learner[0].text });
+  if (praisable.length && !learner.some((x) => /[؀-ۿ]/.test(x.text))) strengths.push({ point: t.strengthTalk, example: praisable[0].s });
 
   const homework: LLMReport["homework"] = [];
   if (focus) homework.push({ title: t.hwTitleGrammar, description: t.hwSay(tagLabel(focus, lang)) });

@@ -12,10 +12,7 @@ export interface Persona {
   name: string;
   age: number;
   city: string;
-  role: { ar: string; en: string };
   personality: string; // English, used in the system prompt
-  description: { ar: string; en: string };
-  canSay: { ar: string; en: string };
   gender: "female" | "male";
 }
 
@@ -48,8 +45,19 @@ export interface LevelForbiddenPattern {
   pattern: RegExp;
 }
 
+export interface LevelInfo {
+  /** Arabic/English level name shown under the code (A1 → مبتدئ). */
+  name: { ar: string; en: string };
+  note?: { ar: string; en: string };
+  /** What you talk about and practise at this level (shown on the cards instead of the partner's job). */
+  topics: { ar: string; en: string };
+  exampleTopics: { ar: string; en: string }[];
+  group: "grundlagen" | "aufbau";
+}
+
 export interface LevelConfig {
   level: Level;
+  info: LevelInfo;
   accent: string; // hex, also exposed as CSS var
   accentSoft: string;
   persona: Persona;
@@ -91,23 +99,27 @@ const C1_IDIOMS = ["nichtsdestotrotz", "infolgedessen", "demzufolge", "diesbezü
 export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
   A1: {
     level: "A1",
+    info: {
+      name: { ar: "مبتدئ", en: "Beginner" },
+      topics: {
+        ar: "أساسيات الحياة اليومية: التعارف، العيلة، الأكل والشرب، الشراء، المواعيد والأرقام، الاتجاهات.",
+        en: "Everyday basics: introductions, family, food and drink, shopping, times and numbers, directions.",
+      },
+      exampleTopics: [
+        { ar: "التعارف", en: "Introductions" },
+        { ar: "الأكل والشرب", en: "Food & drink" },
+        { ar: "المواعيد والأرقام", en: "Times & numbers" },
+      ],
+      group: "grundlagen",
+    },
     accent: "#059669",
     accentSoft: "#d1fae5",
     persona: {
       name: "Lena",
       age: 52,
       city: "Hamburg",
-      role: { ar: "مُدرِّسة صبورة وودودة", en: "A warm, patient teacher" },
       personality:
         "You are Lena, 52, a warm and very patient German teacher from Hamburg. You smile a lot, you praise small successes, you speak slowly and clearly, and you never rush the learner.",
-      description: {
-        ar: "لينا بتتكلم ببطء وبجمل قصيرة جداً. مناسبة لو لسه بادئ وعايز تتكلم من غير خوف.",
-        en: "Lena speaks slowly in very short sentences. Perfect if you are just starting and want to talk without fear.",
-      },
-      canSay: {
-        ar: "التعارف، الأرقام، الأكل، العيلة، الشغل ببساطة، الوقت — في المضارع وجمل قصيرة.",
-        en: "Introductions, numbers, food, family, simple work talk, time — present tense, short sentences.",
-      },
       gender: "female",
     },
     voice: { rate: 0.95, pitch: 1.12, preferLangs: ["de-DE", "de-AT", "de-CH"] },
@@ -177,23 +189,27 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
 
   A2: {
     level: "A2",
+    info: {
+      name: { ar: "متوسط", en: "Elementary" },
+      topics: {
+        ar: "يومك وروتينك، السفر والمواصلات، الشغل والدراسة ببساطة، الدكتور والصحة، تحكي عن حاجة حصلت (Perfekt).",
+        en: "Your day and routine, travel and transport, simple work and study talk, the doctor and health, telling what happened (Perfekt).",
+      },
+      exampleTopics: [
+        { ar: "السفر والمواصلات", en: "Travel & transport" },
+        { ar: "عند الدكتور", en: "At the doctor" },
+        { ar: "إيه اللي حصل امبارح", en: "What happened yesterday" },
+      ],
+      group: "grundlagen",
+    },
     accent: "#0284c7",
     accentSoft: "#e0f2fe",
     persona: {
       name: "Jonas",
       age: 27,
       city: "Köln",
-      role: { ar: "صاحب ودود وكاجوال", en: "A friendly, casual buddy" },
       personality:
-        "You are Jonas, 27, from Köln. You work part-time in a bike shop and study media. You are relaxed, friendly and curious, you like football, cooking and travelling, and you talk like a nice young person, not like a textbook.",
-      description: {
-        ar: "يوناس شاب لطيف وكاجوال. بيتكلم عن الحاجات اليومية، السفر، الشغل والتسوق.",
-        en: "Jonas is a relaxed young guy. He talks about everyday life, travel, work and shopping.",
-      },
-      canSay: {
-        ar: "الماضي (Perfekt)، أفعال المودال، الأفعال المنفصلة، جمل بسيطة بـ weil و dass و wenn.",
-        en: "Past (Perfekt), modal verbs, separable verbs, simple clauses with weil, dass, wenn.",
-      },
+        "You are Jonas, 27. You grew up in Amman with a German mother and an Arab father and moved to Köln four years ago, so you remember very well how it feels to learn German and settle in a new country. You work part-time in a bike shop and study media. You are relaxed, friendly and curious, you like football, cooking and travelling, and you talk like a nice young person, not like a textbook.",
       gender: "male",
     },
     voice: { rate: 1.0, pitch: 0.98, preferLangs: ["de-AT", "de-DE", "de-CH"] },
@@ -262,23 +278,27 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
 
   B1: {
     level: "B1",
+    info: {
+      name: { ar: "فوق المتوسط", en: "Intermediate" },
+      topics: {
+        ar: "تقول رأيك وتدافع عنه، تحكي تجارب، الشغل والعملاء، مكالمات تليفون، مقابلة شغل، مشاكل وحلول.",
+        en: "Giving and defending your opinion, telling experiences, work and customers, phone calls, job interviews, problems and solutions.",
+      },
+      exampleTopics: [
+        { ar: "مقابلة شغل", en: "Job interview" },
+        { ar: "مكالمة مع عميل", en: "Calling a customer" },
+        { ar: "رأيك في الشغل من البيت", en: "Your view on remote work" },
+      ],
+      group: "aufbau",
+    },
     accent: "#7c3aed",
     accentSoft: "#ede9fe",
     persona: {
       name: "Mira",
       age: 34,
       city: "München",
-      role: { ar: "زميلة شغل وصاحبة", en: "A coworker and friend" },
       personality:
         "You are Mira, 34, a project coordinator at a mid-sized logistics company in München. You are a normal, friendly coworker: you chat about work, plans, experiences and opinions, you have a dry sense of humour and you like hiking and podcasts.",
-      description: {
-        ar: "ميرا زميلة في الشغل. بتحكي عن تجارب، آراء، خطط، ومواقف شغل حقيقية.",
-        en: "Mira is a coworker. She talks about experiences, opinions, plans and real work situations.",
-      },
-      canSay: {
-        ar: "جمل متصلة، obwohl / damit / während، جمل الوصل، المبني للمجهول في المضارع، Konjunktiv II للنصيحة والأمنيات.",
-        en: "Connected speech, obwohl / damit / während, relative clauses, present passive, Konjunktiv II for wishes and advice.",
-      },
       gender: "female",
     },
     voice: { rate: 1.05, pitch: 1.04, preferLangs: ["de-DE", "de-CH", "de-AT"] },
@@ -343,23 +363,28 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
 
   B2: {
     level: "B2",
+    info: {
+      name: { ar: "متقدم", en: "Upper intermediate" },
+      note: { ar: "قريب من الطلاقة في المواضيع العامة", en: "Close to fluent on general topics" },
+      topics: {
+        ar: "نقاشات ومواضيع عامة: التكنولوجيا، المجتمع، الثقافة، الاقتصاد، الأخبار، مواضيع مهنية، تتكلم بطلاقة وتجادل.",
+        en: "Discussions and general topics: technology, society, culture, the economy, the news, professional topics — speaking fluently and debating.",
+      },
+      exampleTopics: [
+        { ar: "التكنولوجيا والذكاء الاصطناعي", en: "Tech & AI" },
+        { ar: "المجتمع والثقافة", en: "Society & culture" },
+        { ar: "نقاش مهني", en: "Professional debate" },
+      ],
+      group: "aufbau",
+    },
     accent: "#e11d48",
     accentSoft: "#ffe4e6",
     persona: {
       name: "Tobias",
       age: 45,
       city: "Berlin",
-      role: { ar: "مستشار محترف وبيتحداك", en: "A professional, slightly challenging partner" },
       personality:
         "You are Dr. Tobias Wendt, 45, a management consultant from Berlin. You are polite but direct, you like a good argument, you play devil's advocate, you ask for reasons and examples, and you expect the learner to defend their opinion — always respectfully.",
-      description: {
-        ar: "توبياس مستشار في شركات. بيناقش، بيعارض، وبيطلب منك تدافع عن رأيك بشكل احترافي.",
-        en: "Tobias is a consultant. He debates, pushes back and asks you to defend your view professionally.",
-      },
-      canSay: {
-        ar: "كلام طبيعي سلس، جمل مركبة، المبني للمجهول بكل أشكاله، Konjunktiv I و II، مواضيع مهنية ومجردة، تعبيرات شائعة.",
-        en: "Fluent natural speech, complex sentences, all common passive forms, Konjunktiv I and II, professional and abstract topics, common idioms.",
-      },
       gender: "male",
     },
     voice: { rate: 1.1, pitch: 0.86, preferLangs: ["de-DE", "de-CH", "de-AT"] },
@@ -439,6 +464,7 @@ export const GRAMMAR_TAGS: Record<string, { ar: string; en: string }> = {
   pron_vokallaenge: { ar: "طول الحروف المتحركة", en: "Vowel length" },
   pron_z_w_v: { ar: "نطق z و w و v", en: "z, w, v" },
   pron_auslautverhaertung: { ar: "تقسية الحرف الأخير", en: "Final devoicing" },
+  doppeltes_wort: { ar: "كلمات مكررة", en: "Repeated words" },
   fluency_pausen: { ar: "التوقفات والتردد", en: "Pauses & hesitation" },
 };
 

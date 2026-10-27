@@ -204,34 +204,44 @@ function ReportPage() {
         )}
 
         <Section title={`${t("report_mistakes")} (${r.mistakes.length})`}>
+          {r.correctionsMode === "rules" && <DemoCorrectionNote />}
           {r.mistakes.length === 0 ? (
-            <p className="text-muted">—</p>
+            <p className="text-muted">{t("report_no_mistakes")}</p>
           ) : (
-            <ul className="space-y-3">
-              {r.mistakes.map((m, i) => (
-                <li key={i} className="rounded-xl border border-line p-4">
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    <span className="chip !py-0.5 text-xs">{tagLabel(m.tag, r.language)}</span>
-                    <span className={`text-xs font-semibold ${m.severity === "high" ? "text-danger" : m.severity === "medium" ? "text-gold" : "text-muted"}`}>
-                      {t(`report_severity_${m.severity}` as TKey)}
-                    </span>
-                  </div>
-                  <p className="text-sm">
-                    <span className="text-muted">{t("report_said")}: </span>
-                    <s className="de text-danger decoration-danger/50" lang="de">
-                      {m.said}
-                    </s>
-                  </p>
-                  <p className="text-sm">
-                    <span className="text-muted">{t("report_correct")}: </span>
-                    <b className="de text-ok" lang="de">
-                      {m.corrected}
-                    </b>
-                  </p>
-                  <p className="text-sm mt-1">{m.explanation}</p>
-                </li>
-              ))}
-            </ul>
+            <>
+              {/* categories with counts — they also feed the weakness tracker */}
+              <p className="flex flex-wrap gap-1.5 mb-4">
+                {mistakeGroups(r.mistakes).map(([tag, n]) => (
+                  <span key={tag} className="chip !py-0.5 text-sm">
+                    {tagLabel(tag, r.language)} <b className="tabular-nums">({n})</b>
+                  </span>
+                ))}
+              </p>
+              <ul className="space-y-3">
+                {[...r.mistakes]
+                  .sort((a, b) => mistakeGroups(r.mistakes).findIndex(([g]) => g === a.tag) - mistakeGroups(r.mistakes).findIndex(([g]) => g === b.tag))
+                  .map((m, i) => (
+                    <li key={i} className="rounded-xl border border-line p-4">
+                      <div className="flex flex-wrap items-center gap-2 mb-2">
+                        <span className="chip !py-0.5 text-xs">{tagLabel(m.tag, r.language)}</span>
+                        <SeverityBadge severity={m.severity} />
+                      </div>
+                      <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1" dir="ltr">
+                        <s className="de text-danger decoration-danger/60 decoration-2" lang="de">
+                          {m.said}
+                        </s>
+                        <span className="text-muted">→</span>
+                        <b className="de text-ok" lang="de">
+                          {m.corrected}
+                        </b>
+                      </p>
+                      <p className="text-sm mt-1.5" dir="auto">
+                        {m.explanation}
+                      </p>
+                    </li>
+                  ))}
+              </ul>
+            </>
           )}
         </Section>
 
@@ -378,31 +388,139 @@ function WordList({ title, words }: { title: string; words: string[] }) {
   );
 }
 
+function mistakeGroups(mistakes: StoredReport["mistakes"]): [string, number][] {
+  const counts = new Map<string, number>();
+  for (const m of mistakes) counts.set(m.tag, (counts.get(m.tag) ?? 0) + 1);
+  return [...counts.entries()].sort((a, b) => b[1] - a[1]);
+}
+
+function SeverityBadge({ severity }: { severity: "low" | "medium" | "high" }) {
+  const { t } = useUI();
+  const cls = severity === "high" ? "bg-danger/15 text-danger" : severity === "medium" ? "bg-gold/15 text-gold" : "bg-surface-2 text-muted";
+  return <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cls}`}>{t(`report_severity_${severity}` as TKey)}</span>;
+}
+
+function DemoCorrectionNote() {
+  const { t } = useUI();
+  return <p className="mb-3 rounded-lg bg-gold/10 px-3 py-2 text-xs">⚠ {t("report_demo_corrections")}</p>;
+}
+
+/** Wrap every occurrence of `parts` in `text` with a highlight (case-insensitive). */
+function Highlight({ text, parts, className }: { text: string; parts: string[]; className: string }) {
+  const clean = parts.map((p) => p.trim()).filter(Boolean);
+  if (!clean.length) return <>{text}</>;
+  const esc = clean.sort((a, b) => b.length - a.length).map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+  const pieces = text.split(new RegExp(`(${esc.join("|")})`, "gi"));
+  return (
+    <>
+      {pieces.map((piece, i) =>
+        i % 2 === 1 ? (
+          <mark key={i} className={className}>
+            {piece}
+          </mark>
+        ) : (
+          piece
+        ),
+      )}
+    </>
+  );
+}
+
+function CorrectionsList({ report }: { report: StoredReport }) {
+  const { t } = useUI();
+  const list = report.corrections;
+  // Reports created before sentence-by-sentence corrections only have the corrected pairs.
+  if (!list) {
+    return report.correctedSentences.length ? (
+      <ul className="space-y-3" dir="ltr">
+        {report.correctedSentences.map((c, i) => (
+          <li key={i} className="de text-sm" lang="de">
+            <s className="text-danger">{c.original}</s>
+            <br />
+            <b className="text-ok">→ {c.corrected}</b>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      <p className="text-muted">—</p>
+    );
+  }
+  if (!list.length) return <p className="text-muted">—</p>;
+  return (
+    <>
+      {report.correctionsMode === "rules" && <DemoCorrectionNote />}
+      <ol className="space-y-3">
+        {list.map((c) => (
+          <li key={c.turn} className={`rounded-2xl border p-4 ${c.isCorrect ? "border-ok/40 bg-ok/5" : "border-line"}`}>
+            {c.isCorrect ? (
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-ok">{t("report_sentence_ok")} ✓</p>
+                <p className="de text-[1.05rem]" lang="de" dir="ltr">
+                  {c.original}
+                </p>
+                {c.natural && c.natural !== c.original && (
+                  <p className="text-sm text-muted">
+                    {t("report_more_natural")}:{" "}
+                    <span className="de text-ink" lang="de">
+                      {c.natural}
+                    </span>
+                  </p>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="rounded-xl bg-danger/5 p-3">
+                    <p className="text-xs font-semibold text-danger mb-1">{t("report_said")}</p>
+                    <p className="de text-[1.05rem] leading-relaxed" lang="de" dir="ltr">
+                      <Highlight text={c.original} parts={c.fixes.map((f) => f.wrong)} className="bg-transparent text-danger line-through decoration-2 decoration-danger/70" />
+                    </p>
+                  </div>
+                  <div className="rounded-xl bg-ok/5 p-3">
+                    <p className="text-xs font-semibold text-ok mb-1">{t("report_correct")}</p>
+                    <p className="de text-[1.05rem] leading-relaxed" lang="de" dir="ltr">
+                      <Highlight text={c.corrected} parts={c.fixes.map((f) => f.right)} className="bg-ok/15 text-ok font-semibold rounded px-0.5" />
+                    </p>
+                  </div>
+                </div>
+                <ul className="mt-3 space-y-1.5">
+                  {c.fixes.map((f, i) => (
+                    <li key={i} className="text-sm flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="chip !py-0 text-xs">{tagLabel(f.tag, report.language)}</span>
+                      <SeverityBadge severity={f.severity} />
+                      <span dir="auto">{f.explanation}</span>
+                    </li>
+                  ))}
+                </ul>
+                {c.natural && c.natural !== c.corrected && (
+                  <p className="text-sm text-muted mt-2">
+                    {t("report_more_natural")}:{" "}
+                    <span className="de text-ink" lang="de">
+                      {c.natural}
+                    </span>
+                  </p>
+                )}
+              </>
+            )}
+          </li>
+        ))}
+      </ol>
+    </>
+  );
+}
+
 function TranscriptView({ turns, report }: { turns: Payload["turns"]; report: StoredReport }) {
   const { t } = useUI();
-  const [view, setView] = useState<"transcript" | "corrected">("transcript");
-  const highlight = (text: string) => {
-    const hit = report.mistakes.find((m) => m.said && text.toLowerCase().includes(m.said.toLowerCase()));
-    if (!hit) return text;
-    const i = text.toLowerCase().indexOf(hit.said.toLowerCase());
-    return (
-      <>
-        {text.slice(0, i)}
-        <mark className="bg-danger/15 text-inherit rounded px-0.5" title={hit.corrected}>
-          {text.slice(i, i + hit.said.length)}
-        </mark>
-        {text.slice(i + hit.said.length)}
-      </>
-    );
-  };
+  const [view, setView] = useState<"transcript" | "corrected">("corrected");
+  const wrongParts = report.corrections ? report.corrections.flatMap((c) => c.fixes.map((f) => f.wrong)) : report.mistakes.map((m) => m.said);
   return (
     <section className="card p-5 sm:p-6">
       <div className="flex gap-2 mb-4" role="tablist">
-        <button role="tab" className="chip" aria-selected={view === "transcript"} onClick={() => setView("transcript")}>
-          {t("report_view_transcript")}
-        </button>
         <button role="tab" className="chip" aria-selected={view === "corrected"} onClick={() => setView("corrected")}>
           {t("report_view_corrected")}
+        </button>
+        <button role="tab" className="chip" aria-selected={view === "transcript"} onClick={() => setView("transcript")}>
+          {t("report_view_transcript")}
         </button>
       </div>
       {view === "transcript" ? (
@@ -410,22 +528,12 @@ function TranscriptView({ turns, report }: { turns: Payload["turns"]; report: St
           {turns.map((x) => (
             <li key={x.id} className={`de text-sm ${x.role === "user" ? "font-medium" : "text-muted"}`} lang="de">
               <span className="text-xs uppercase tracking-wide me-2 opacity-70">{x.role === "user" ? t("conv_you") : "Partner"}</span>
-              {x.role === "user" ? highlight(x.text) : x.text}
+              {x.role === "user" ? <Highlight text={x.text} parts={wrongParts} className="bg-danger/15 text-inherit rounded px-0.5" /> : x.text}
             </li>
           ))}
         </ol>
-      ) : report.correctedSentences.length ? (
-        <ul className="space-y-3" dir="ltr">
-          {report.correctedSentences.map((c, i) => (
-            <li key={i} className="de text-sm" lang="de">
-              <s className="text-danger">{c.original}</s>
-              <br />
-              <b className="text-ok">→ {c.corrected}</b>
-            </li>
-          ))}
-        </ul>
       ) : (
-        <p className="text-muted">—</p>
+        <CorrectionsList report={report} />
       )}
     </section>
   );

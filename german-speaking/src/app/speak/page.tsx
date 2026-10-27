@@ -1,10 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { LevelCard } from "@/components/LevelCard";
+import { LevelGroups } from "@/components/LevelCard";
 import { useStats } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
-import { LEVELS } from "@/lib/levels";
 
 export default function SpeakPage() {
   const { t, lang } = useUI();
@@ -46,11 +45,7 @@ export default function SpeakPage() {
         </section>
       )}
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        {LEVELS.map((l) => (
-          <LevelCard key={l} level={l} lastSessionAt={stats?.levels[l].lastSessionAt} lastScore={stats?.levels[l].lastScore} />
-        ))}
-      </div>
+      <LevelGroups levels={stats?.levels} />
     </div>
   );
 }
