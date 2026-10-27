@@ -1,0 +1,49 @@
+import { createClient, type Client } from "@libsql/client";
+import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
+import fs from "fs";
+import path from "path";
+import * as schema from "./schema";
+
+// libSQL: a plain SQLite file locally, or a hosted Turso database in production
+// (Vercel's filesystem is temporary, so a file there would lose your history).
+export type DB = LibSQLDatabase<typeof schema>;
+
+export type StorageKind = "remote" | "file" | "temporary";
+
+export function dbTarget(): { url: string; authToken?: string; kind: StorageKind } {
+  const remote = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;
+  if (remote) return { url: remote, authToken: process.env.TURSO_AUTH_TOKEN || process.env.DATABASE_AUTH_TOKEN, kind: "remote" };
+  if (process.env.VERCEL) return { url: "file:/tmp/german-speaking.db", kind: "temporary" };
+  const file = path.resolve(process.cwd(), process.env.DATABASE_PATH || "./data/german-speaking.db");
+  return { url: `file:${file}`, kind: "file" };
+}
+
+const g = globalThis as unknown as { __gsDb?: { url: string; db: DB; client: Client; ready: Promise<void> } };
+
+function open() {
+  const target = dbTarget();
+  if (g.__gsDb?.url === target.url) return g.__gsDb;
+  if (target.url.startsWith("file:")) fs.mkdirSync(path.dirname(target.url.slice(5)), { recursive: true });
+  const client = createClient({ url: target.url, authToken: target.authToken });
+  const ready = (async () => {
+    if (target.url.startsWith("file:")) await client.execute("PRAGMA journal_mode = WAL").catch(() => {});
+    await client.executeMultiple(schema.DDL);
+  })();
+  g.__gsDb = { url: target.url, db: drizzle(client, { schema }), client, ready };
+  return g.__gsDb;
+}
+
+/** The database, with tables created on first use. */
+export async function getDb(): Promise<DB> {
+  const h = open();
+  await h.ready;
+  return h.db;
+}
+
+/** Test helper: close the connection so the next getDb() opens a fresh database. */
+export function resetDbForTests() {
+  g.__gsDb?.client.close();
+  delete g.__gsDb;
+}
+
+export { schema };
