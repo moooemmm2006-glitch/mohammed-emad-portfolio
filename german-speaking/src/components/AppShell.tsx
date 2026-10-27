@@ -32,7 +32,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { t, lang, setLang, theme, setTheme } = useUI();
   const path = usePathname();
   const [menu, setMenu] = useState(false);
-  const inConversation = /^\/speak\/(A1|A2|B1|B2)/.test(path);
+  // The speaking screen is full-screen: no site nav on mobile, no page padding.
+  const inConversation = /^\/speak\/(A1|A2|B1|B2)/i.test(path);
 
   useEffect(() => setMenu(false), [path]);
 
@@ -41,7 +42,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 btn btn-primary">
         {lang === "ar" ? "انتقل للمحتوى" : "Skip to content"}
       </a>
-      <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
+      <header className={`sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur ${inConversation ? "hidden md:block" : ""}`}>
         <div className="mx-auto max-w-6xl px-4 h-16 flex items-center gap-3">
           <Link href="/" className="flex items-center gap-2 font-bold text-lg">
             <span className="grid place-items-center w-9 h-9 rounded-xl bg-brand text-brand-ink" aria-hidden="true">
@@ -121,7 +122,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       )}
 
-      <main id="main" className={`flex-1 mx-auto w-full max-w-6xl px-4 ${inConversation ? "pb-6" : "pb-28 md:pb-12"} pt-6`}>
+      <main id="main" className={inConversation ? "flex-1 w-full" : "flex-1 mx-auto w-full max-w-6xl px-4 pb-28 md:pb-12 pt-6"}>
         {children}
       </main>
 

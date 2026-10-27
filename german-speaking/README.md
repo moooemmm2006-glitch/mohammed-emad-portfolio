@@ -37,6 +37,13 @@ npm run dev                     # http://localhost:3000
   speakers is filtered out.
 - The circle shows motivating German words (*Sprich einfach!*, *Du schaffst das!* …) and the state:
   *Ich höre zu…*, *Moment…*, *Hör gut zu!*.
+- The partner behaves like a voice assistant limited only in *language*: it answers what you actually
+  asked first (explanations, meanings, opinions, stories, advice), then keeps chatting. Grammar
+  explanations follow a fixed shape (what it is, rule, 3–5 examples, a typical mistake, "now you try");
+  A1/A2 may add one or two short Arabic sentences, which are shown but not read aloud.
+- Partner voice: waits for the browser's voice list, unlocks speech on the first tap, cancels stale
+  speech before each reply, retries a failed sentence once with another German voice (then the default
+  voice), and only then shows an error with a "try again" button.
 - Speed control 1×–2.5× per partner (saved). Browser network voices top out around 2×; the app clamps and
   shows the real maximum.
 
@@ -139,7 +146,9 @@ rephrase that is checked against the level as well.
   can't cancel the partner's voice from the microphone, so an echo filter ignores words the partner just
   said; with loud speakers it can still occasionally trigger. Headphones work best; it can be switched
   off in Settings.
-- Demo mode (no API key) uses pre-written replies and explanations; real conversation needs the key.
+- Demo mode (no API key) uses pre-written replies: explanations for 13 grammar topics per level, answers
+  to simple questions about the partner, and reactions that pick up a word you used. Real conversation
+  needs the key.
 - Browser voices differ per device; pick and preview them in Settings.
 
 ## Project structure
