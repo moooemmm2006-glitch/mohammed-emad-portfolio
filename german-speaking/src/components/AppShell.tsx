@@ -48,14 +48,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         {lang === "ar" ? "انتقل للمحتوى" : "Skip to content"}
       </a>
       <header className={`sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur ${inConversation ? "hidden md:block" : ""}`}>
-        <div className="mx-auto max-w-6xl px-4 h-16 flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg">
-            <span className="grid place-items-center w-9 h-9 rounded-xl bg-brand text-brand-ink" aria-hidden="true">
+        <div className="mx-auto max-w-6xl px-3 sm:px-4 h-16 flex items-center gap-2 sm:gap-3">
+          <Link href="/" className="flex items-center gap-2 font-bold text-lg min-w-0 shrink">
+            <span className="grid place-items-center w-9 h-9 shrink-0 rounded-xl bg-brand text-brand-ink" aria-hidden="true">
               <IconMic size={18} />
             </span>
-            <span className="leading-tight">
+            <span className="leading-tight whitespace-nowrap text-base min-[400px]:text-lg">
               {t("appName")}
-              <span className="block text-xs font-medium text-muted de">{t("appTagline")}</span>
+              <span className="hidden min-[400px]:block text-xs font-medium text-muted de">{t("appTagline")}</span>
             </span>
           </Link>
 
@@ -73,19 +73,20 @@ export function AppShell({ children }: { children: ReactNode }) {
             <SoonMenu />
           </nav>
 
-          <div className="ms-auto flex items-center gap-1">
-            <button className="btn btn-ghost !px-3 !min-h-[40px] text-sm" onClick={() => setLang(lang === "ar" ? "en" : "ar")} aria-label="Language">
-              {t("lang_toggle")}
+          <div className="ms-auto flex items-center gap-1 shrink-0">
+            <button className="btn btn-ghost !px-2.5 sm:!px-3 !min-h-[40px] text-sm" onClick={() => setLang(lang === "ar" ? "en" : "ar")} aria-label={lang === "ar" ? "Switch to English" : "التبديل للعربي"}>
+              <span className="hidden sm:inline">{t("lang_toggle")}</span>
+              <span className="sm:hidden">{lang === "ar" ? "EN" : "ع"}</span>
             </button>
             <button
-              className="btn btn-ghost !px-3 !min-h-[40px]"
+              className="btn btn-ghost !px-2.5 sm:!px-3 !min-h-[40px]"
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               aria-label={t("theme_toggle")}
             >
               {theme === "dark" ? <IconSun /> : <IconMoon />}
             </button>
             {!bare && (
-              <button className="btn btn-ghost !px-3 !min-h-[40px] md:hidden" onClick={() => setMenu(true)} aria-label={t("nav_more")} aria-expanded={menu}>
+              <button className="btn btn-ghost !px-2.5 sm:!px-3 !min-h-[40px] md:hidden" onClick={() => setMenu(true)} aria-label={t("nav_more")} aria-expanded={menu}>
                 <IconMenu />
               </button>
             )}

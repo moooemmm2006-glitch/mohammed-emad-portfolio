@@ -316,7 +316,7 @@ export function Conversation(p: Props) {
   // The page itself scrolls (no inner box): keep the newest message in view above the dock.
   useEffect(() => {
     window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
-  }, [turns, live]);
+  }, [turns, live, listening, dockH]);
 
   const dockRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -562,10 +562,11 @@ export function Conversation(p: Props) {
               </div>
             )}
 
-            <div className="flex sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-0.5 [scrollbar-width:none]">
+            {/* Wraps instead of scrolling sideways, so no button is hidden off-screen on small phones. */}
+            <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
               <ToolButton onClick={() => speaker.current?.speakNow(lastPartner.current, speakOpts())} disabled={!lastPartner.current || busy} icon={<IconRepeat size={17} />} label={t("conv_repeat")} />
               <button
-                className="chip shrink-0 whitespace-nowrap hover:bg-surface-2 min-h-[38px] tabular-nums"
+                className="chip shrink-0 whitespace-nowrap hover:bg-surface-2 min-h-[36px] sm:min-h-[40px] !px-2.5 sm:!px-3 tabular-nums"
                 onClick={cycleSpeed}
                 aria-label={`${t("conv_speed")}: ${speed}×`}
                 title={capped ? `${t("conv_speed_max")}: ${maxSpeed}×` : undefined}
@@ -580,6 +581,7 @@ export function Conversation(p: Props) {
                 pressed={!showText}
                 icon={showText ? <IconEyeOff size={17} /> : <IconEye size={17} />}
                 label={showText ? t("conv_hide_text") : t("conv_show_text")}
+                title={t("conv_hide_text_hint")}
               />
               <ToolButton onClick={toggleAutoTurn} pressed={autoTurn} icon={<IconMic size={17} />} label={t("conv_autoturn")} />
             </div>
@@ -673,9 +675,9 @@ export function Conversation(p: Props) {
   );
 }
 
-function ToolButton({ onClick, icon, label, disabled, pressed }: { onClick: () => void; icon: React.ReactNode; label: string; disabled?: boolean; pressed?: boolean }) {
+function ToolButton({ onClick, icon, label, disabled, pressed, title }: { onClick: () => void; icon: React.ReactNode; label: string; disabled?: boolean; pressed?: boolean; title?: string }) {
   return (
-    <button className="chip shrink-0 whitespace-nowrap hover:bg-surface-2 disabled:opacity-40 min-h-[40px]" onClick={onClick} disabled={disabled} aria-pressed={pressed}>
+    <button className="chip shrink-0 whitespace-nowrap hover:bg-surface-2 disabled:opacity-40 min-h-[36px] sm:min-h-[40px] !px-2.5 sm:!px-3" onClick={onClick} disabled={disabled} aria-pressed={pressed} title={title}>
       {icon}
       <span className="text-xs sm:text-sm">{label}</span>
     </button>
