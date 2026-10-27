@@ -32,7 +32,7 @@ export default function SpeakPage() {
                   {t("info_turns")}: {s.userTurns}
                 </span>
                 <span className="ms-auto flex gap-2">
-                  <Link className="btn btn-ghost !min-h-[36px] !py-1 text-sm" href={`/speak/${s.level}?session=${s.id}`}>
+                  <Link className="btn btn-ghost !min-h-[36px] !py-1 text-sm" href={`/speak/${s.level}/chat?session=${s.id}`}>
                     {t("unfinished_resume")}
                   </Link>
                   <Link className="btn btn-primary !min-h-[36px] !py-1 text-sm" href={`/reports/${s.id}?generate=1`}>

@@ -19,6 +19,10 @@ export interface TurnMeta {
   violations?: unknown;
   greeting?: boolean;
   hint?: boolean;
+  /** Guided book conversation: the book sentence number the partner asked about. */
+  bookQ?: number;
+  /** Learner turn in a guided book conversation: closest book sentence and its score. */
+  book?: { n: number; score: number };
 }
 
 export async function ensureUser(userId: string) {
@@ -43,7 +47,7 @@ export async function saveSettings(patch: Partial<Settings>, userId: string): Pr
 }
 
 // ---------- sessions ----------
-export async function createSession(level: Level, topic: string | null, focusTag: string | null, userId: string): Promise<SessionRow> {
+export async function createSession(level: Level, topic: string | null, focusTag: string | null, userId: string, bookTopic: number | null = null): Promise<SessionRow> {
   await ensureUser(userId);
   const now = Date.now();
   const row: SessionRow = {
@@ -59,6 +63,7 @@ export async function createSession(level: Level, topic: string | null, focusTag
     summaryUpto: 0,
     focusTag,
     pendingFeedback: null,
+    bookTopic,
   };
   const db = await getDb();
   await db.insert(schema.sessions).values(row).run();
@@ -221,6 +226,8 @@ export async function deleteAll(userId: string) {
     db.delete(schema.reports).where(eq(schema.reports.userId, userId)),
     db.delete(schema.weaknesses).where(eq(schema.weaknesses.userId, userId)),
     db.delete(schema.settings).where(eq(schema.settings.userId, userId)),
+    db.delete(schema.bookProgress).where(eq(schema.bookProgress.userId, userId)),
+    db.delete(schema.bookPractice).where(eq(schema.bookPractice.userId, userId)),
   ]);
 }
 

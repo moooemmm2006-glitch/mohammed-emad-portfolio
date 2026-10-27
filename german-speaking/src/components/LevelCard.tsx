@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { LEVEL_CONFIG, type Level } from "@/lib/levels";
+import { TOPIC_RANGE, topicCount } from "@/lib/bookLevels";
+import { fill } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { Avatar } from "./Avatar";
 import { IconArrow } from "./Icons";
@@ -29,6 +31,9 @@ export function LevelCard({ level, lastSessionAt, lastScore, compact = false }: 
         </div>
       </div>
       {!compact && <p className="text-[0.95rem] leading-relaxed">{cfg.info.topics[lang]}</p>}
+      <p className="text-sm font-semibold text-accent">
+        📖 {fill(t("book_level_topics"), { n: topicCount(level), a: TOPIC_RANGE[level][0], b: TOPIC_RANGE[level][1] })}
+      </p>
       <div className="flex flex-wrap gap-1.5">
         {cfg.info.exampleTopics.map((x) => (
           <span key={x.en} className="rounded-full bg-accent-soft text-accent px-2.5 py-0.5 text-xs font-semibold">

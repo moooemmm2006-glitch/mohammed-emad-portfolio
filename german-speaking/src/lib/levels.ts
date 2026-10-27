@@ -100,7 +100,7 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
   A1: {
     level: "A1",
     info: {
-      name: { ar: "مبتدئ", en: "Beginner" },
+      name: { ar: "المبتدئ", en: "Beginner" },
       topics: {
         ar: "أساسيات الحياة اليومية: التعارف، العيلة، الأكل والشرب، الشراء، المواعيد والأرقام، الاتجاهات.",
         en: "Everyday basics: introductions, family, food and drink, shopping, times and numbers, directions.",
@@ -190,7 +190,7 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
   A2: {
     level: "A2",
     info: {
-      name: { ar: "متوسط", en: "Elementary" },
+      name: { ar: "الأساسي", en: "Elementary" },
       topics: {
         ar: "يومك وروتينك، السفر والمواصلات، الشغل والدراسة ببساطة، الدكتور والصحة، تحكي عن حاجة حصلت (Perfekt).",
         en: "Your day and routine, travel and transport, simple work and study talk, the doctor and health, telling what happened (Perfekt).",
@@ -279,7 +279,7 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
   B1: {
     level: "B1",
     info: {
-      name: { ar: "فوق المتوسط", en: "Intermediate" },
+      name: { ar: "المتوسط", en: "Intermediate" },
       topics: {
         ar: "تقول رأيك وتدافع عنه، تحكي تجارب، الشغل والعملاء، مكالمات تليفون، مقابلة شغل، مشاكل وحلول.",
         en: "Giving and defending your opinion, telling experiences, work and customers, phone calls, job interviews, problems and solutions.",
@@ -364,7 +364,7 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
   B2: {
     level: "B2",
     info: {
-      name: { ar: "متقدم", en: "Upper intermediate" },
+      name: { ar: "فوق المتوسط", en: "Upper intermediate" },
       note: { ar: "قريب من الطلاقة في المواضيع العامة", en: "Close to fluent on general topics" },
       topics: {
         ar: "نقاشات ومواضيع عامة: التكنولوجيا، المجتمع، الثقافة، الاقتصاد، الأخبار، مواضيع مهنية، تتكلم بطلاقة وتجادل.",

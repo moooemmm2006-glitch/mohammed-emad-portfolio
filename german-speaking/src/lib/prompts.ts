@@ -3,6 +3,7 @@
 import type { GrammarTopic, Intent } from "./intent";
 import { ARABIC_SPEAKER_MISTAKES, LEVEL_KNOWLEDGE } from "./levelKnowledge";
 import { LEVEL_CONFIG, tagLabel, type Level } from "./levels";
+import type { BookTopic } from "./book";
 
 export const START_SIGNAL = "[START]";
 
@@ -14,6 +15,27 @@ export interface PartnerPromptOptions {
   summary?: string | null;
   /** Open weakness tags from earlier sessions (learner memory). */
   weaknesses?: string[];
+  /** A topic from the learner's book: the conversation stays inside it. */
+  bookTopic?: BookTopic | null;
+}
+
+/** The book topic for the system prompt: title, intro, vocabulary, sections, ~30 example sentences, grammar. */
+export function bookTopicBlock(t: BookTopic): string {
+  const perSection = Math.max(1, Math.ceil(30 / t.sections.length));
+  const sample = t.sections.flatMap((sec) => {
+    const step = Math.max(1, Math.floor(sec.sentences.length / perSection));
+    return sec.sentences.filter((_, i) => i % step === 0).slice(0, perSection).map((x) => `- ${x.de}`);
+  });
+  return `
+# Today's topic — from the learner's own book "Sprich Deutsch" (topic ${t.number}: ${t.title_de} / ${t.title_ar})
+${t.intro_ar}
+Sections (go through them roughly in this order): ${t.sections.map((s) => `${s.number}. ${s.title_de}`).join(" · ")}
+Key words: ${t.vocab.map((v) => v.de).join(", ")}
+Sentence patterns from the book (reuse them, ask the questions, expect answers like these):
+${sample.join("\n")}
+Grammar of this topic (steer the learner to use it; explain it when asked):
+${t.grammar.map((g) => `- ${g.title_de}: ${g.formula}`).join("\n")}
+Rules for this topic: keep the whole conversation inside this topic and its situations. Use the book's vocabulary and sentence patterns. Ask one question at a time, like the book's dialogues. If the learner drifts away, answer briefly and bring them back to the topic. You may still answer their questions and explain grammar or words, then return to the topic. Your level rules above always win.`;
 }
 
 const list = (items: string[]) => items.map((i) => `- ${i}`).join("\n");
@@ -94,6 +116,7 @@ Open weak points: ${o.weaknesses.map((w) => tagLabel(w, "en")).join(", ")}. Keep
     ? `The learner picked the topic/scenario: "${o.topic}". If it is a role-play (customer, phone call, interview, meeting), play the other person and stay in role — but if the learner steps out of the role to ask a question (grammar, a word, anything), answer it fully first.`
     : "Free conversation: the learner can talk about anything. Follow their lead and bring in your own ideas.";
 
+  const book = o.bookTopic ? bookTopicBlock(o.bookTopic) : "";
   const summary = o.summary ? `\n# Earlier in this conversation (summary)\n${o.summary}` : "";
 
   return `You are a German conversation partner in a voice app — think of yourself as a fluent, warm, talkative voice assistant (like Claude, ChatGPT or Gemini in voice mode) who happens to speak ONLY at CEFR level ${o.level}. The learner is an Arabic speaker (mostly from Egypt) who needs to practise SPEAKING German for work. Everything you write is read aloud by a speech engine.
@@ -140,7 +163,7 @@ ${knowledgeBlock(o.level)}
 
 # Session
 ${topic}
-The first user message "${START_SIGNAL}" is a technical signal, not something the learner said: greet the learner warmly, say only your name (do NOT mention your job or profession), and ask what they would like to talk about${o.topic ? ` (they picked "${o.topic}", so invite them into that topic)` : ""}.${focus}${profile}${summary}`;
+The first user message "${START_SIGNAL}" is a technical signal, not something the learner said: greet the learner warmly, say only your name (do NOT mention your job or profession), and ${o.bookTopic ? `say that today you practise the book topic "${o.bookTopic.title_de}", then ask the first question of its first section` : `ask what they would like to talk about${o.topic ? ` (they picked "${o.topic}", so invite them into that topic)` : ""}`}.${focus}${profile}${summary}${book}`;
 }
 
 /** Extra instruction for this turn only, based on what the learner just asked for. */

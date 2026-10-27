@@ -17,6 +17,7 @@ import { briefFromReport, reportSystemPrompt, reportUserPrompt, sessionInfoFrom,
 import { correctAllTurns, learnerTurnsToCorrect, mistakesFromCorrections, quotesWrongSentence } from "./corrections";
 import { LLMReportSchema, normalizeReport, overallScore, type StoredReport } from "./schema";
 import { diffTracker, updateWeaknessTracker } from "./weakness";
+import { bookReportForSession } from "./book";
 
 export class ReportError extends Error {
   constructor(
@@ -99,8 +100,11 @@ export async function generateReport(sessionId: string, opts: { language?: "ar" 
   const sessionCounts = { sessionId, date: ctx.info.date, counts: report.weaknessCounts };
   const afterThis = updateWeaknessTracker(before, sessionCounts);
 
+  const sessionRow = (await getSession(sessionId))!;
+  const book = await bookReportForSession(ctx.userId, sessionRow.bookTopic, await getTurns(sessionId), !(await getReport(sessionId)));
   const stored: StoredReport = {
     ...report,
+    ...(book ? { book } : {}),
     session: ctx.info,
     language: ctx.language,
     overall: overallScore(report.scores),
