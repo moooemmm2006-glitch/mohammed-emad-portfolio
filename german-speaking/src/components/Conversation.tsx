@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiError, api, streamNdjson, type ServerProviders } from "@/lib/client/api";
@@ -16,12 +17,12 @@ import {
   type TurnSession,
 } from "@/lib/client/stt";
 import type { TurnResult } from "@/lib/client/transcript";
-import { Speaker, speakOptionsFor, webSpeechMaxSpeed } from "@/lib/client/tts";
+import { loadVoices, Speaker, speakOptionsFor, unlockSpeech, webSpeechMaxSpeed } from "@/lib/client/tts";
 import type { Hint, TurnEvent } from "@/lib/conversation";
 import { LEVEL_CONFIG, tagLabel, type Level } from "@/lib/levels";
 import { SPEEDS, type Settings } from "@/lib/settings";
 import { Avatar } from "./Avatar";
-import { IconEye, IconEyeOff, IconHelp, IconMic, IconRepeat, IconStop, IconX } from "./Icons";
+import { IconArrow, IconEye, IconEyeOff, IconHelp, IconMic, IconRepeat, IconStop, IconX } from "./Icons";
 
 export interface UITurn {
   key: string;
@@ -76,7 +77,9 @@ export function Conversation(p: Props) {
   const [live, setLive] = useState("");
   const [ring, setRing] = useState(0);
   const [error, setError] = useState<TKey | null>(null);
-  const [audioWarn, setAudioWarn] = useState(false);
+  const [audioError, setAudioError] = useState(false);
+  const [bannerHidden, setBannerHidden] = useState(false);
+  const [dockH, setDockH] = useState(260);
   const [canRetry, setCanRetry] = useState(false);
   const [hint, setHint] = useState<Hint | null>(null);
   const [hintLoading, setHintLoading] = useState(false);
@@ -99,7 +102,6 @@ export function Conversation(p: Props) {
   const autoTurnRef = useRef(autoTurn);
   const settingsRef = useRef(settings);
   const speedRef = useRef(speed);
-  const listRef = useRef<HTMLDivElement>(null);
   autoTurnRef.current = autoTurn;
   settingsRef.current = settings;
   speedRef.current = speed;
@@ -133,6 +135,8 @@ export function Conversation(p: Props) {
       setCanRetry(false);
       setHint(null);
       if (text) setPhrase((i) => (i + 1) % MOTIVATION.length);
+      speaker.current?.beginReply();
+      setAudioError(false);
       const partnerKey = nextKey();
       lastPartner.current = "";
       setTurns((ts) => [
@@ -235,7 +239,8 @@ export function Conversation(p: Props) {
   useEffect(() => {
     const s = new Speaker(() => useServerTts);
     speaker.current = s;
-    s.onError = () => setAudioWarn(true);
+    // Only reached when a sentence failed even after the retry with a fallback voice.
+    s.onError = () => setAudioError(true);
     s.onSentenceStart = () => {
       if (turnEndedAt.current !== null) {
         if (DEV) console.info(`[latency] end of turn → first audio: ${Math.round(performance.now() - turnEndedAt.current)} ms`);
@@ -305,9 +310,42 @@ export function Conversation(p: Props) {
     };
   }, [sessionId]);
 
+  // The page itself scrolls (no inner box): keep the newest message in view above the dock.
   useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
-  }, [turns, live, hint]);
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+  }, [turns, live]);
+
+  const dockRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = dockRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setDockH(el.offsetHeight));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  useEffect(() => {
+    try {
+      setBannerHidden(sessionStorage.getItem("gs.demoBanner") === "hidden");
+    } catch {
+      /* ignore */
+    }
+    void loadVoices(); // voices load asynchronously; start early
+  }, []);
+  const hideBanner = () => {
+    setBannerHidden(true);
+    try {
+      sessionStorage.setItem("gs.demoBanner", "hidden");
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const retryAudio = () => {
+    unlockSpeech();
+    setAudioError(false);
+    if (lastPartner.current) speaker.current?.speakNow(lastPartner.current, speakOpts());
+  };
 
   // ---------- actions ----------
   const endConversation = async () => {
@@ -354,6 +392,7 @@ export function Conversation(p: Props) {
   // One big button: tap = start talking; while talking tap = "I'm done, send now";
   // while the partner talks tap = interrupt and talk.
   const onMain = () => {
+    unlockSpeech(); // a tap is the user gesture browsers need before speech can play
     if (listening) session.current?.finish();
     else if (busy) return;
     else {
@@ -393,37 +432,50 @@ export function Conversation(p: Props) {
   const RING_C = 2 * Math.PI * RING_R;
   const capped = maxSpeed !== null && speed > maxSpeed;
 
+  const bubbleText = "text-[1.12rem] sm:text-[1.2rem] leading-relaxed";
+
   return (
-    <div className={`level-${level.toLowerCase()} flex flex-col h-[calc(100dvh-7.5rem)] md:h-[calc(100dvh-8.5rem)] max-w-3xl mx-auto`}>
+    <div className={`level-${level.toLowerCase()} min-h-[100dvh] md:min-h-[calc(100dvh-4rem)] flex flex-col`}>
       {/* top bar */}
-      <div className="flex items-center gap-3 pb-3 border-b border-line">
-        <Avatar level={level} size={44} />
-        <div className="min-w-0">
-          <div className="font-bold">
-            <span className="de">{partnerName}</span> <span className="rounded-full px-2 py-0.5 text-xs font-bold text-white bg-accent de">{level}</span>
+      <header className="sticky top-0 md:top-16 z-20 bg-bg/85 backdrop-blur-md border-b border-line/70">
+        <div className="mx-auto max-w-[820px] px-4 h-14 flex items-center gap-3">
+          <Link href="/speak" className="grid place-items-center w-9 h-9 -ms-1 rounded-full hover:bg-surface-2 text-muted" aria-label={t("back")}>
+            <IconArrow size={20} className="rotate-180 rtl:rotate-0" />
+          </Link>
+          <Avatar level={level} size={36} />
+          <div className="min-w-0 leading-tight">
+            <div className="font-bold text-[0.95rem] flex items-center gap-1.5">
+              <span className="de truncate">{partnerName}</span>
+              <span className="rounded-full px-1.5 py-px text-[10px] font-bold text-white bg-accent de">{level}</span>
+            </div>
+            <div className="text-xs text-muted truncate" aria-live="polite">
+              {t(statusKey)}
+            </div>
           </div>
-          <div className="text-sm text-muted" aria-live="polite">
-            {t(statusKey)}
-          </div>
-        </div>
-        <button className="btn btn-ghost ms-auto !border-danger/50 text-danger" onClick={endConversation} disabled={ending}>
-          <IconStop size={18} />
-          <span>
+          <button className="ms-auto inline-flex items-center gap-1.5 rounded-full border border-danger/40 text-danger px-3 h-9 text-sm font-semibold hover:bg-danger/10" onClick={endConversation} disabled={ending}>
+            <IconStop size={15} />
             {t("conv_end")}
-            <span className="hidden sm:inline de text-muted text-xs"> · {t("conv_end_de")}</span>
-          </span>
-        </button>
-      </div>
+          </button>
+        </div>
+        {providers.llm === "mock" && !bannerHidden && (
+          <div className="border-t border-line/60 bg-gold/10">
+            <div className="mx-auto max-w-[820px] px-4 py-1.5 flex items-center gap-2 text-xs">
+              <span className="flex-1">{t("mock_banner")}</span>
+              <button onClick={hideBanner} className="p-1 rounded-full hover:bg-surface-2" aria-label={t("conv_hint_close")}>
+                <IconX size={14} />
+              </button>
+            </div>
+          </div>
+        )}
+        {offline && (
+          <p role="alert" className="bg-danger/10 text-danger text-center text-sm py-1.5">
+            {t("err_offline")}
+          </p>
+        )}
+      </header>
 
-      {providers.llm === "mock" && <p className="mt-2 rounded-lg bg-gold/10 px-3 py-1.5 text-xs">{t("mock_banner")}</p>}
-      {offline && (
-        <p role="alert" className="mt-2 rounded-lg bg-danger/10 text-danger px-3 py-1.5 text-sm">
-          {t("err_offline")}
-        </p>
-      )}
-
-      {/* messages */}
-      <div ref={listRef} className="flex-1 overflow-y-auto py-4 space-y-3" aria-live="polite" aria-relevant="additions">
+      {/* messages: the page scrolls, no inner box */}
+      <main className="flex-1 mx-auto w-full max-w-[820px] px-4 pt-5 space-y-4" style={{ paddingBottom: dockH + 24 }} aria-live="polite" aria-relevant="additions">
         {p.resumed && <p className="text-center text-xs text-muted">{t("conv_resumed")}</p>}
         {p.focusTag && settings.focusSteering && (
           <p className="text-center text-xs text-muted">
@@ -432,22 +484,22 @@ export function Conversation(p: Props) {
         )}
         {turns.map((m) =>
           m.role === "partner" ? (
-            <div key={m.key} className="flex gap-2 items-end">
-              <Avatar level={level} size={30} className="hidden sm:block" />
-              <div className="max-w-[85%] rounded-2xl rounded-es-md bg-surface border border-line px-4 py-2.5 shadow-card">
+            <div key={m.key} className="msg-in flex gap-2.5 items-end">
+              <Avatar level={level} size={32} className="mb-1" />
+              <div className="max-w-[88%] sm:max-w-[80%] rounded-3xl rounded-es-lg bg-surface border border-line/70 px-5 py-3 shadow-card">
                 {m.pending && !m.text ? (
-                  <span className="wave inline-flex items-center h-6" aria-label={t("conv_state_thinking")}>
+                  <span className="wave inline-flex items-center h-7" aria-label={t("conv_state_thinking")}>
                     <span />
                     <span />
                     <span />
                   </span>
                 ) : showText || m.revealed ? (
-                  <p className="de text-[1.05rem]" lang="de">
+                  <p className={`${bubbleText} [unicode-bidi:plaintext]`} lang="de" dir="auto">
                     {m.text}
                   </p>
                 ) : (
                   <button className="text-start" onClick={() => setTurns((ts) => ts.map((x) => (x.key === m.key ? { ...x, revealed: true } : x)))}>
-                    <span className="de blur-text" aria-hidden="true">
+                    <span className={`de blur-text ${bubbleText}`} aria-hidden="true">
                       {m.text}
                     </span>
                     <span className="block text-xs text-muted mt-1">{t("conv_reveal")}</span>
@@ -456,30 +508,132 @@ export function Conversation(p: Props) {
               </div>
             </div>
           ) : (
-            <div key={m.key} className="flex justify-end">
-              <div className="max-w-[85%] rounded-2xl rounded-ee-md bg-accent text-white px-4 py-2.5">
-                <p className="de" lang="de">
+            <div key={m.key} className="msg-in flex justify-end">
+              <div className="max-w-[88%] sm:max-w-[80%] rounded-3xl rounded-ee-lg bg-accent text-white px-5 py-3 shadow-card">
+                <p className={`de ${bubbleText}`} lang="de">
                   {m.text}
                 </p>
-                {m.confidence != null && m.confidence < 0.6 && <p className="text-[11px] opacity-80 mt-0.5">⚠ {t("conv_low_conf")}</p>}
+                {m.confidence != null && m.confidence < 0.6 && <p className="text-xs opacity-80 mt-0.5">⚠ {t("conv_low_conf")}</p>}
               </div>
             </div>
           ),
         )}
         {listening && (
-          <div className="flex justify-end">
-            <div className="max-w-[85%] rounded-2xl rounded-ee-md border-2 border-dashed border-accent px-4 py-2.5 text-accent min-w-24">
-              <p className="de" lang="de">
-                {live || <span className="wave inline-flex items-center h-6" aria-hidden="true"><span /><span /><span /></span>}
+          <div className="msg-in flex justify-end">
+            <div className="max-w-[88%] sm:max-w-[80%] rounded-3xl rounded-ee-lg border-2 border-dashed border-accent bg-accent-soft px-5 py-3 text-accent min-w-24">
+              <p className={`de ${bubbleText}`} lang="de">
+                {live || (
+                  <span className="wave inline-flex items-center h-7" aria-hidden="true">
+                    <span />
+                    <span />
+                    <span />
+                  </span>
+                )}
               </p>
             </div>
           </div>
         )}
-        {hint && (
-          <div className="card p-4 space-y-2 border-gold/60" role="region" aria-label={t("conv_stuck")}>
-            <div className="flex justify-between items-start">
-              <h3 className="font-bold text-gold">{t("conv_stuck")} 🙂</h3>
-              <button className="btn btn-ghost !min-h-[32px] !px-2" onClick={() => setHint(null)} aria-label={t("conv_hint_close")}>
+      </main>
+
+      {/* dock */}
+      <div ref={dockRef} className="fixed bottom-0 inset-x-0 z-20">
+        <div className="h-8 bg-gradient-to-t from-bg to-transparent pointer-events-none" aria-hidden="true" />
+        <div className="bg-bg/90 backdrop-blur-md pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+          <div className="mx-auto max-w-[820px] px-4 space-y-3">
+            {error && (
+              <div role="alert" className="rounded-2xl bg-danger/10 text-danger px-4 py-2 text-sm flex items-center gap-3">
+                <span className="flex-1">{t(error)}</span>
+                {canRetry && (
+                  <button className="btn btn-ghost !min-h-[32px] !py-1 text-sm" onClick={() => void sendTurn(null)}>
+                    {t("conv_retry")}
+                  </button>
+                )}
+              </div>
+            )}
+            {audioError && !error && (
+              <div role="alert" className="rounded-2xl bg-danger/10 text-danger px-4 py-2 text-sm flex items-center gap-3">
+                <span className="flex-1">{t("err_audio")}</span>
+                <button className="btn btn-ghost !min-h-[32px] !py-1 text-sm" onClick={retryAudio}>
+                  {t("conv_retry")}
+                </button>
+              </div>
+            )}
+
+            <div className="flex sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-0.5 [scrollbar-width:none]">
+              <ToolButton onClick={() => speaker.current?.speakNow(lastPartner.current, speakOpts())} disabled={!lastPartner.current || busy} icon={<IconRepeat size={17} />} label={t("conv_repeat")} />
+              <button
+                className="chip shrink-0 whitespace-nowrap hover:bg-surface-2 min-h-[38px] tabular-nums"
+                onClick={cycleSpeed}
+                aria-label={`${t("conv_speed")}: ${speed}×`}
+                title={capped ? `${t("conv_speed_max")}: ${maxSpeed}×` : undefined}
+              >
+                <span className="text-xs sm:text-sm">{t("conv_speed")}</span>
+                <b className="de text-sm">{speed}×</b>
+                {capped && <span className="text-[10px] text-muted de">(max {maxSpeed}×)</span>}
+              </button>
+              <ToolButton onClick={askHint} disabled={!lastPartner.current || hintLoading || busy} icon={<IconHelp size={17} />} label={hintLoading ? t("loading") : t("conv_stuck")} />
+              <ToolButton
+                onClick={toggleShowText}
+                pressed={!showText}
+                icon={showText ? <IconEyeOff size={17} /> : <IconEye size={17} />}
+                label={showText ? t("conv_hide_text") : t("conv_show_text")}
+              />
+              <ToolButton onClick={toggleAutoTurn} pressed={autoTurn} icon={<IconMic size={17} />} label={t("conv_autoturn")} />
+            </div>
+
+            {provider ? (
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="relative w-36 h-36 sm:w-40 sm:h-40 grid place-items-center">
+                  {/* silence ring: fills while you are quiet; full = your turn is sent */}
+                  <svg className="absolute inset-0 -rotate-90 pointer-events-none" viewBox="0 0 100 100" aria-hidden="true">
+                    <circle cx="50" cy="50" r={RING_R} fill="none" stroke="var(--line)" strokeWidth="2" opacity={listening ? 1 : 0} />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r={RING_R}
+                      fill="none"
+                      stroke="var(--accent)"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeDasharray={RING_C}
+                      strokeDashoffset={RING_C * (1 - ring)}
+                      opacity={listening ? 1 : 0}
+                    />
+                  </svg>
+                  <div className="orb !w-[7.25rem] !h-[7.25rem] sm:!w-[8.25rem] sm:!h-[8.25rem]" data-state={phase} style={{ ["--lvl" as string]: listening ? 0.35 : 0 }}>
+                    <button
+                      className="relative z-10 grid place-items-center w-full h-full rounded-full text-white select-none px-3 disabled:cursor-wait"
+                      onClick={onMain}
+                      disabled={ending || phase === "thinking"}
+                      aria-pressed={listening}
+                      aria-label={t(buttonAria)}
+                    >
+                      <span className="de font-extrabold text-[1.05rem] sm:text-lg leading-tight text-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]" lang="de">
+                        {buttonText}
+                      </span>
+                    </button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted text-center max-w-xs">{caption}</p>
+              </div>
+            ) : (
+              <p role="alert" className="rounded-2xl bg-danger/10 text-danger px-4 py-3 text-sm text-center">
+                {t("err_no_stt")}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* "مش فاهم" help: a bottom sheet over the dock */}
+      {hint && (
+        <div className="fixed inset-0 z-40" role="dialog" aria-modal="true" aria-label={t("conv_stuck")}>
+          <button className="absolute inset-0 bg-black/35 sheet-fade" aria-label={t("conv_hint_close")} onClick={() => setHint(null)} />
+          <div className="sheet-up absolute bottom-0 inset-x-0 mx-auto max-w-[820px] max-h-[78dvh] overflow-y-auto rounded-t-3xl bg-surface shadow-2xl px-5 pt-3 pb-[max(1.25rem,env(safe-area-inset-bottom))] space-y-3">
+            <div className="mx-auto w-10 h-1.5 rounded-full bg-line" aria-hidden="true" />
+            <div className="flex justify-between items-center">
+              <h3 className="font-bold text-lg text-gold">{t("conv_stuck")} 🙂</h3>
+              <button className="btn btn-ghost !min-h-[34px] !px-2" onClick={() => setHint(null)} aria-label={t("conv_hint_close")}>
                 <IconX size={16} />
               </button>
             </div>
@@ -489,105 +643,29 @@ export function Conversation(p: Props) {
             <p>
               <b>{t("conv_hint_tip")}:</b> <span dir="auto">{hint.hint}</span>
             </p>
-            <p className="flex flex-wrap items-center gap-2">
-              <b>{t("conv_hint_simpler")}:</b>
-              <span className="de" lang="de">
-                {hint.rephrase}
-              </span>
-              <button className="btn btn-ghost !min-h-[30px] !py-0 !px-2 text-xs" onClick={() => speaker.current?.speakNow(hint.rephrase, speakOpts())} aria-label={t("conv_repeat")}>
-                <IconRepeat size={14} />
+            <div className="rounded-2xl bg-surface-2 p-3 flex items-center gap-2">
+              <div className="flex-1">
+                <b className="block text-sm text-muted">{t("conv_hint_simpler")}</b>
+                <span className={`de ${bubbleText}`} lang="de">
+                  {hint.rephrase}
+                </span>
+              </div>
+              <button className="btn btn-ghost !min-h-[36px] !px-3" onClick={() => speaker.current?.speakNow(hint.rephrase, speakOpts())} aria-label={t("conv_repeat")}>
+                <IconRepeat size={16} />
               </button>
-            </p>
+            </div>
             <p>
               <b>{t("conv_hint_starter")}:</b>{" "}
               <span className="de" lang="de">
                 {hint.starter}
               </span>
             </p>
-            <button className="btn btn-primary !min-h-[36px] !py-1 text-sm" onClick={() => setHint(null)}>
+            <button className="btn btn-primary w-full" onClick={() => setHint(null)}>
               {t("conv_hint_close")}
             </button>
           </div>
-        )}
-      </div>
-
-      {error && (
-        <div role="alert" className="mb-2 rounded-xl bg-danger/10 text-danger px-4 py-2 text-sm flex items-center gap-3">
-          <span className="flex-1">{t(error)}</span>
-          {canRetry && (
-            <button className="btn btn-ghost !min-h-[32px] !py-1 text-sm" onClick={() => void sendTurn(null)}>
-              {t("conv_retry")}
-            </button>
-          )}
         </div>
       )}
-      {audioWarn && !error && <p className="mb-2 text-center text-xs text-muted">{t("err_audio")}</p>}
-
-      {/* dock */}
-      <div className="border-t border-line pt-3 space-y-3">
-        <div className="flex sm:flex-wrap sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
-          <ToolButton onClick={() => speaker.current?.speakNow(lastPartner.current, speakOpts())} disabled={!lastPartner.current || busy} icon={<IconRepeat size={18} />} label={t("conv_repeat")} />
-          <button
-            className="chip shrink-0 whitespace-nowrap hover:bg-surface-2 min-h-[40px] tabular-nums"
-            onClick={cycleSpeed}
-            aria-label={`${t("conv_speed")}: ${speed}×`}
-            title={capped ? `${t("conv_speed_max")}: ${maxSpeed}×` : undefined}
-          >
-            <span className="text-xs sm:text-sm">{t("conv_speed")}</span>
-            <b className="de text-sm">{speed}×</b>
-            {capped && <span className="text-[10px] text-muted de">(max {maxSpeed}×)</span>}
-          </button>
-          <ToolButton onClick={askHint} disabled={!lastPartner.current || hintLoading || busy} icon={<IconHelp size={18} />} label={hintLoading ? t("loading") : t("conv_stuck")} />
-          <ToolButton
-            onClick={toggleShowText}
-            pressed={!showText}
-            icon={showText ? <IconEyeOff size={18} /> : <IconEye size={18} />}
-            label={showText ? t("conv_hide_text") : t("conv_show_text")}
-          />
-          <ToolButton onClick={toggleAutoTurn} pressed={autoTurn} icon={<IconMic size={18} />} label={t("conv_autoturn")} />
-        </div>
-
-        {provider ? (
-          <div className="flex flex-col items-center gap-2 pb-1">
-            <div className="relative w-36 h-36 sm:w-40 sm:h-40 grid place-items-center">
-              {/* silence ring: fills while you are quiet; full = your turn is sent */}
-              <svg className="absolute inset-0 -rotate-90 pointer-events-none" viewBox="0 0 100 100" aria-hidden="true">
-                <circle cx="50" cy="50" r={RING_R} fill="none" stroke="var(--line)" strokeWidth="2" opacity={listening ? 1 : 0} />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={RING_R}
-                  fill="none"
-                  stroke="var(--accent)"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  strokeDasharray={RING_C}
-                  strokeDashoffset={RING_C * (1 - ring)}
-                  opacity={listening ? 1 : 0}
-                />
-              </svg>
-              <div className="orb !w-[7.25rem] !h-[7.25rem] sm:!w-[8.25rem] sm:!h-[8.25rem]" data-state={phase} style={{ ["--lvl" as string]: listening ? 0.35 : 0 }}>
-                <button
-                  className="relative z-10 grid place-items-center w-full h-full rounded-full text-white select-none px-3 disabled:cursor-wait"
-                  onClick={onMain}
-                  disabled={ending || phase === "thinking"}
-                  aria-pressed={listening}
-                  aria-label={t(buttonAria)}
-                >
-                  <span className="de font-extrabold text-[1.05rem] sm:text-lg leading-tight text-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]" lang="de">
-                    {buttonText}
-                  </span>
-                </button>
-              </div>
-            </div>
-            <p className="text-xs text-muted text-center max-w-xs">{caption}</p>
-          </div>
-        ) : (
-          <p role="alert" className="rounded-xl bg-danger/10 text-danger px-4 py-3 text-sm text-center">
-            {t("err_no_stt")}
-          </p>
-        )}
-      </div>
     </div>
   );
 }

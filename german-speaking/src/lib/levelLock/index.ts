@@ -13,9 +13,9 @@ import { z } from "zod";
 import type { Intent } from "../intent";
 import { LEVEL_CONFIG, type Level } from "../levels";
 import { SentenceBuffer } from "../text";
-import { heuristicCheck, maxSentencesFor, normalizeSentence, sentenceCheck, type Violation } from "./heuristics";
+import { heuristicCheck, isArabicSentence, MAX_ARABIC_SENTENCES, maxSentencesFor, normalizeSentence, sentenceCheck, type Violation } from "./heuristics";
 
-export { heuristicCheck, sentenceCheck, stripArabicHints, normalizeSentence, maxSentencesFor, type Violation } from "./heuristics";
+export { heuristicCheck, sentenceCheck, stripArabicHints, normalizeSentence, maxSentencesFor, isArabicSentence, type Violation } from "./heuristics";
 
 export const CheckSchema = z.object({
   ok: z.boolean(),
@@ -42,6 +42,8 @@ export interface StreamLockOptions {
   mode?: "strict" | "fast";
   /** Sentences the partner already said in this conversation. */
   previous?: string[];
+  /** A1/A2: allow a short Arabic explanation (explanations, or the learner asked in Arabic). */
+  allowArabic?: boolean;
   onSentence: (text: string) => void;
   onViolation?: (index: number, violations: Violation[]) => void;
   random?: () => number;
@@ -65,7 +67,7 @@ export const FOLLOW_UPS: Record<Level, string[]> = {
 };
 
 export async function streamLevelLocked(deps: StreamLockDeps, opts: StreamLockOptions): Promise<StreamLockResult> {
-  const { level, intent = "chat", mode = "strict" } = opts;
+  const { level, intent = "chat", mode = "strict", allowArabic } = opts;
   const max = maxSentencesFor(level, intent);
   const previous = new Set((opts.previous ?? []).map(normalizeSentence));
   const ctrl = new AbortController();
@@ -84,9 +86,11 @@ export async function streamLevelLocked(deps: StreamLockDeps, opts: StreamLockOp
     const before = raw.slice(0, i);
     // No repeats: neither earlier turns nor earlier sentences of this reply.
     const seen = new Set([...previous, ...before.map(normalizeSentence)]);
-    const h = sentenceCheck(level, s, { intent, previous: seen });
+    const h = sentenceCheck(level, s, { intent, previous: seen, allowArabic });
     let found: Violation[] = h.violations;
     let suggestion: string | null = null;
+    // An allowed Arabic explanation sentence needs no German-level check.
+    if (h.ok && allowArabic && isArabicSentence(s)) return s;
     if (h.ok && mode === "strict") {
       try {
         const c = await deps.check(s, before);
@@ -113,7 +117,7 @@ export async function streamLevelLocked(deps: StreamLockDeps, opts: StreamLockOp
       } catch {
         c = null;
       }
-      if (c && sentenceCheck(level, c, { intent, previous: seen }).ok) {
+      if (c && sentenceCheck(level, c, { intent, previous: seen, allowArabic }).ok) {
         fixed++;
         return c.trim();
       }
@@ -122,8 +126,13 @@ export async function streamLevelLocked(deps: StreamLockDeps, opts: StreamLockOp
     return null;
   };
 
+  let german = 0;
+  let arabic = 0;
   const push = (s: string) => {
-    if (queue.length >= max) {
+    if (isArabicSentence(s)) {
+      // A short Arabic explanation (A1/A2) doesn't count towards the German limit, but stays short.
+      if (++arabic > MAX_ARABIC_SENTENCES) return;
+    } else if (++german > max) {
       truncated = true;
       ctrl.abort(); // enough sentences for this turn: stop generating
       return;

@@ -4,8 +4,8 @@
 
 import { z } from "zod";
 import { serverConfig } from "./config";
-import { addTurn, getSession, getSettings, getTurns, logViolation, updateSession, type TurnRow } from "./db/repo";
-import { detectIntent } from "./intent";
+import { addTurn, getSession, getSettings, getTurns, getWeaknesses, logViolation, updateSession, type TurnRow } from "./db/repo";
+import { detectIntent, hasArabic } from "./intent";
 import { checkAfterTheFact, CheckSchema, streamLevelLocked, type LockStatus, type Violation } from "./levelLock";
 import { heuristicCheck, stripArabicHints } from "./levelLock/heuristics";
 import { isLevel, LEVEL_CONFIG, type Level } from "./levels";
@@ -82,7 +82,7 @@ export interface TurnInput {
 export async function runPartnerTurn(inp: TurnInput): Promise<void> {
   const started = Date.now();
   const { emit } = inp;
-  const [session, settings] = await Promise.all([getSession(inp.sessionId), getSettings()]);
+  const [session, settings, weaknesses] = await Promise.all([getSession(inp.sessionId), getSettings(), getWeaknesses().catch(() => [])]);
   if (!session || !isLevel(session.level)) {
     emit({ type: "error", code: "not_found", message: "Session not found" });
     return;
@@ -106,6 +106,13 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
   const isGreeting = prior.length === 0 && !userText;
 
   const { intent, topic } = userText ? detectIntent(userText) : { intent: "chat" as const, topic: null };
+  const learnerUsedArabic = userText ? hasArabic(userText) || /\b(what|how|why|please|explain)\b/i.test(userText) : false;
+  // A1/A2 may add a short Arabic explanation when explaining, or when the learner asked in Arabic/English.
+  const allowArabic = (level === "A1" || level === "A2") && (intent === "explain" || learnerUsedArabic);
+  const openWeaknesses = weaknesses
+    .filter((w) => w.status === "new" || w.status === "persisting")
+    .slice(0, 5)
+    .map((w) => w.tag);
   const messages = toMessages(turns.slice(session.summaryUpto), session.summaryUpto === 0);
   const system =
     buildPartnerSystemPrompt({
@@ -114,9 +121,10 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
       correctionMode: settings.correctionMode,
       focus: settings.focusSteering && session.focusTag ? { tag: session.focusTag } : null,
       summary: session.summary,
+      weaknesses: openWeaknesses,
     }) +
     (session.pendingFeedback ?? "") +
-    turnInstruction(level, intent, topic);
+    turnInstruction(level, intent, topic, learnerUsedArabic);
 
   const limits = LEVEL_CONFIG[level].limits;
   const maxTokens = intent === "chat" ? limits.maxTokens : limits.maxTokensLong;
@@ -166,6 +174,7 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
     {
       level,
       intent,
+      allowArabic,
       mode: settings.levelCheckMode,
       previous,
       onViolation: recordViolations,

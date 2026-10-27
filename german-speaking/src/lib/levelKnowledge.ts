@@ -61,7 +61,7 @@ export const LEVEL_KNOWLEDGE: Record<Level, LevelKnowledge> = {
     aboveLevel:
       "If the learner asks about grammar above A1 (Perfekt, Dativ, Nebensätze …), give a tiny preview in A1 words with two very simple example sentences, say that this is a topic for later (A2), and go back to the conversation.",
     explainStyle:
-      "Explain with very short sentences (max 10 words each), then give 2-3 example sentences. You may add ONE very short Arabic hint in round brackets inside a sentence, e.g. (الفعل التاني بيروح آخر الجملة). Then ask the learner to make their own sentence.",
+      "Explain with very short sentences (max 10 words each): what it is, the rule, 3-5 example sentences, one typical mistake. If it is too hard in simple German, add one or two short Arabic sentences (e.g. الفعل التاني بيروح آخر الجملة.), then continue in German. Then ask the learner to make their own sentence.",
     examples: {
       chat: {
         learner: "Ich wohne in Kairo. Es ist sehr heiß.",
@@ -106,7 +106,7 @@ export const LEVEL_KNOWLEDGE: Record<Level, LevelKnowledge> = {
     aboveLevel:
       "If the learner asks about grammar above A2 (Relativsätze, Passiv, Konjunktiv II …), give a short preview in A2 words with two simple examples, say it is a B1 topic, and continue the chat.",
     explainStyle:
-      "Explain in simple sentences (max 14 words), give 2-3 examples from daily life or work. You may add ONE short Arabic hint in round brackets inside a sentence if the rule is hard. Then invite the learner to try a sentence and gently correct it.",
+      "Explain in simple sentences (max 14 words): what it is, the rule, 3-5 examples from daily life or work, one typical mistake. If the rule is hard, add one or two short Arabic sentences, then continue in German. Then invite the learner to try a sentence and gently correct it.",
     examples: {
       chat: {
         learner: "Am Wochenende ich habe Fußball gespielt.",

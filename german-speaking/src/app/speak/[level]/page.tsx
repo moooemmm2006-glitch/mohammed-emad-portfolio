@@ -5,9 +5,10 @@ import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Avatar } from "@/components/Avatar";
 import { Conversation, type UITurn } from "@/components/Conversation";
-import { IconMic } from "@/components/Icons";
+import { IconArrow, IconMic } from "@/components/Icons";
 import { MicCheck } from "@/components/MicCheck";
 import { api, useProviders, useSettings } from "@/lib/client/api";
+import { unlockSpeech } from "@/lib/client/tts";
 import { useUI } from "@/lib/client/ui";
 import { isLevel, LEVEL_CONFIG, type Level } from "@/lib/levels";
 
@@ -85,11 +86,12 @@ function LevelPage() {
   };
 
   const start = () => {
+    unlockSpeech(); // this tap is the user gesture browsers need before the partner may speak
     if (settings && !settings.micTested) setStage("mic");
     else void create();
   };
 
-  if (!settings || !providers) return <p className="py-20 text-center text-muted">{t("loading")}</p>;
+  if (!settings || !providers) return <p className="px-4 py-20 text-center text-muted">{t("loading")}</p>;
 
   if (stage === "chat" && session) {
     return (
@@ -109,21 +111,27 @@ function LevelPage() {
 
   if (stage === "mic") {
     return (
+      <div className="px-4 py-6">
       <MicCheck
         level={level}
         settings={settings}
         useServerTts={settings.ttsProvider === "server" || (settings.ttsProvider === "auto" && providers.tts !== "webspeech")}
         onDone={() => {
+          unlockSpeech();
           void update({ micTested: true });
           void create();
         }}
       />
+      </div>
     );
   }
 
   const p = cfg.persona;
   return (
-    <div className={`level-${level.toLowerCase()} max-w-2xl mx-auto space-y-6`}>
+    <div className={`level-${level.toLowerCase()} max-w-2xl mx-auto space-y-6 px-4 py-6`}>
+      <Link href="/speak" className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink md:hidden">
+        <IconArrow size={16} className="rotate-180 rtl:rotate-0" /> {t("back")}
+      </Link>
       <div className="card overflow-hidden">
         <div className="bg-accent-soft p-6 flex items-center gap-5">
           <Avatar level={level} size={96} />

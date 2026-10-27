@@ -88,6 +88,33 @@ export async function webSpeechMaxSpeed(level: Level, settings: Settings): Promi
   return Math.floor((maxRateFor(pickVoice(voices, level, v?.voiceURI)) / base) * 100) / 100;
 }
 
+/**
+ * Browsers only play speech after a user gesture. Call this inside a click handler (the big
+ * button, "Gespräch starten"): a silent utterance unlocks speech for the rest of the page.
+ */
+let unlocked = false;
+export function unlockSpeech() {
+  if (unlocked || typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  try {
+    const u = new SpeechSynthesisUtterance(" ");
+    u.volume = 0;
+    window.speechSynthesis.speak(u);
+    unlocked = true;
+    void loadVoices();
+  } catch {
+    /* ignore */
+  }
+}
+
+export class SpeechError extends Error {
+  constructor(public code: string) {
+    super(code);
+    this.name = "SpeechError";
+  }
+}
+
+const isAndroidUA = () => typeof navigator !== "undefined" && /android/i.test(navigator.userAgent);
+
 export class WebSpeechTTS implements TTSProvider {
   id = "webspeech" as const;
   // Chrome may garbage-collect utterances before `end` fires; keep references alive.
@@ -97,33 +124,64 @@ export class WebSpeechTTS implements TTSProvider {
     return typeof window !== "undefined" && "speechSynthesis" in window;
   }
 
+  /** Speak one sentence. Retries once with a fallback voice before giving up. */
   async speak(text: string, o: SpeakOptions): Promise<void> {
-    if (!WebSpeechTTS.supported()) throw new Error("no_tts");
+    if (!WebSpeechTTS.supported()) throw new SpeechError("no_tts");
     const voices = await loadVoices();
-    const cfg = LEVEL_CONFIG[o.level].voice;
     const chosen = pickVoice(voices, o.level, o.voiceURI);
+    try {
+      await this.utter(text, o, chosen ?? null);
+    } catch (err) {
+      const code = err instanceof SpeechError ? err.code : "unknown";
+      if (code === "not-allowed") throw err; // needs a tap; a retry can't help
+      // Retry once: another German voice (prefer an on-device one), else the browser default.
+      const fallback = voices.find((v) => v !== chosen && v.localService) ?? voices.find((v) => v !== chosen) ?? null;
+      await new Promise((r) => setTimeout(r, 120));
+      await this.utter(text, o, fallback);
+    }
+  }
+
+  private utter(text: string, o: SpeakOptions, voice: SpeechSynthesisVoice | null): Promise<void> {
+    const cfg = LEVEL_CONFIG[o.level].voice;
+    const synth = window.speechSynthesis;
     return new Promise((resolve, reject) => {
       const u = new SpeechSynthesisUtterance(text);
-      u.lang = chosen?.lang ?? "de-DE";
-      if (chosen) u.voice = chosen;
-      u.rate = Math.max(0.5, Math.min(maxRateFor(chosen), (o.rate ?? cfg.rate) * (o.speed ?? 1)));
+      u.lang = voice?.lang ?? "de-DE";
+      if (voice) u.voice = voice;
+      u.rate = Math.max(0.5, Math.min(maxRateFor(voice), (o.rate ?? cfg.rate) * (o.speed ?? 1)));
       u.pitch = o.pitch ?? cfg.pitch;
       this.live.add(u);
-      // Some browsers occasionally never fire `end`; don't let the conversation hang on it.
-      const guard = setTimeout(() => finish(), 4000 + (text.length * 110) / u.rate);
-      const finish = () => {
+      // Chrome stops long utterances after ~15 s unless "nudged"; sentences are short, but be safe.
+      const keepAlive = isAndroidUA()
+        ? null
+        : setInterval(() => {
+            if (synth.speaking && !synth.paused) {
+              synth.pause();
+              synth.resume();
+            }
+          }, 10000);
+      const done = () => {
         clearTimeout(guard);
+        if (keepAlive) clearInterval(keepAlive);
         this.live.delete(u);
+      };
+      // Some browsers occasionally never fire `end`; don't let the conversation hang on it.
+      const guard = setTimeout(() => {
+        done();
+        resolve();
+      }, 4000 + (text.length * 110) / u.rate);
+      u.onend = () => {
+        done();
         resolve();
       };
-      u.onend = finish;
       u.onerror = (e) => {
-        clearTimeout(guard);
-        this.live.delete(u);
+        done();
         if (e.error === "interrupted" || e.error === "canceled") resolve();
-        else reject(new Error(e.error));
+        else reject(new SpeechError(e.error));
       };
-      window.speechSynthesis.speak(u);
+      synth.speak(u);
+      // Chrome sometimes leaves the queue paused after a cancel(); make sure it plays.
+      if (synth.paused) synth.resume();
     });
   }
 
@@ -192,6 +250,7 @@ export class Speaker {
   private web = new WebSpeechTTS();
   private server = new ServerTTS();
   private serverBroken = false;
+  private afterCancel = false;
   onState: (s: SpeakerState) => void = () => {};
   onError: (e: Error) => void = () => {};
   /** Fires when a sentence starts playing (used to measure end-of-turn → first audio). */
@@ -211,6 +270,12 @@ export class Speaker {
     if (!this.running) void this.run();
   }
 
+  /** Start of a new partner reply: cancel anything stale in the browser's speech queue first. */
+  beginReply() {
+    this.stop();
+    this.afterCancel = true;
+  }
+
   speakNow(text: string, o: OptionsSource) {
     this.stop();
     this.enqueue(text, o);
@@ -218,6 +283,7 @@ export class Speaker {
 
   stop() {
     this.generation++;
+    this.afterCancel = true;
     this.queue = [];
     this.web.stop();
     this.server.stop();
@@ -243,6 +309,11 @@ export class Speaker {
     const gen = this.generation;
     this.running = true;
     this.onState("speaking");
+    // Speaking immediately after speechSynthesis.cancel() is silently dropped by some browsers.
+    if (this.afterCancel) {
+      this.afterCancel = false;
+      await new Promise((r) => setTimeout(r, 80));
+    }
     while (this.queue.length && gen === this.generation) {
       const next = this.queue.shift()!;
       const text = next.text;

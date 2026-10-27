@@ -253,6 +253,29 @@ html[lang="ar"] body {
   }
 }
 
+/* conversation: new messages fade in, the help sheet slides up */
+.msg-in {
+  animation: msg-in 0.28s ease-out both;
+}
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+.sheet-up {
+  animation: sheet-up 0.25s ease-out both;
+}
+@keyframes sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+.sheet-fade {
+  animation: sheet-fade 0.2s ease-out both;
+}
+@keyframes sheet-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .blur-text {
   filter: blur(6px);
   user-select: none;

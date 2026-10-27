@@ -3,7 +3,8 @@
 // already given in the conversation, react to keywords, and answer grammar questions with
 // pre-written explanations.
 
-import { detectIntent, type GrammarTopic } from "../intent";
+import { detectIntent } from "../intent";
+import { EXPLANATIONS } from "./mockExplanations";
 import { LEVEL_KNOWLEDGE } from "../levelKnowledge";
 import { LEVEL_CONFIG, LEVELS, type Level } from "../levels";
 import { START_SIGNAL } from "../prompts";
@@ -145,63 +146,64 @@ export const CHAT_POOL: Record<Level, string[]> = {
   ],
 };
 
-type ExplainKey = GrammarTopic | "generic";
+export { EXPLANATIONS };
 
-// Pre-written explanations (demo mode). A1/A2 may contain one short Arabic hint in brackets.
-export const EXPLANATIONS: Record<Level, Partial<Record<ExplainKey, string>>> = {
-  A1: {
-    modalverben: LEVEL_KNOWLEDGE.A1.examples.explain.partner,
-    perfekt:
-      "Das Perfekt ist für gestern und letzte Woche. Man braucht haben oder sein (فعل مساعد). Das zweite Verb kommt ans Ende. Ich habe Pizza gegessen. Ich bin nach Hause gegangen. Das lernen wir genau bei A2. Was isst du heute?",
-    trennbar:
-      "Trennbare Verben haben zwei Teile, zum Beispiel aufstehen. Der kleine Teil geht ans Ende (الجزء الصغير بيروح آخر الجملة). Ich stehe um sieben Uhr auf. Ich kaufe heute ein. Ich rufe meine Mutter an. Jetzt du: Wann stehst du auf?",
-    kasus:
-      "Gute Frage! Bei A1 ist der Akkusativ wichtig. Nur der ändert sich: der wird den oder einen. Ich trinke einen Kaffee. Ich sehe den Bus. Die und das bleiben gleich. Den Dativ lernen wir später. Was trinkst du gern?",
-    artikel:
-      "Jedes Nomen hat einen Artikel: der, die oder das. Lern das Nomen immer mit Artikel (احفظ الاسم مع الأداة). Der Tisch, die Tür, das Buch. Es gibt leider keine einfache Regel. Wörter auf -ung sind immer die: die Zeitung. Welches Wort möchtest du lernen?",
-    generic: "Gute Frage! Ich erkläre es gern einfach. Sag mir bitte ein Beispiel. Dann sprechen wir zusammen darüber. Welches Wort ist schwer für dich?",
-  },
-  A2: {
-    modalverben:
-      "Gern! Modalverben sind können, müssen, wollen, dürfen, sollen und möchten. Das Modalverb steht auf Platz zwei und ändert sich. Das zweite Verb steht im Infinitiv ganz am Ende. Ich muss heute lange arbeiten. Darf ich hier parken? Bei der Arbeit sagt man oft: Können Sie mir helfen? Jetzt du: Was musst du diese Woche machen?",
-    perfekt: LEVEL_KNOWLEDGE.A2.examples.explain.partner,
-    trennbar:
-      "Trennbare Verben wie anrufen, einkaufen oder aufstehen haben ein Präfix. Im Präsens steht das Präfix am Ende: Ich rufe den Kunden an. Im Perfekt kommt ge in die Mitte: Ich habe den Kunden angerufen. Mit Modalverb bleibt das Verb zusammen am Ende: Ich muss morgen früh aufstehen. Jetzt du: Wann bist du heute aufgestanden?",
-    kasus:
-      "Gute Frage! Bei der Frage wo kommt der Dativ: Ich arbeite im Büro. Bei der Frage wohin kommt der Akkusativ: Ich gehe ins Büro. Nach mit, bei, von und zu kommt immer Dativ: mit dem Bus. Akkusativ ist oft das Ding, das man kauft: Ich kaufe einen Laptop. Jetzt du: Wohin fährst du am Wochenende?",
-    artikel:
-      "Der, die oder das musst du leider mit jedem Nomen lernen. Es gibt aber ein paar Tipps. Wörter auf -ung, -heit und -keit sind immer die: die Zeitung, die Freiheit. Wörter auf -chen sind immer das: das Mädchen. Im Dativ wird der zu dem und die zu der. Welches Wort ist für dich schwer?",
-    generic: "Gute Frage! Ich erkläre es dir gern. Sag mir bitte einen Beispielsatz. Dann zeige ich dir die Regel daran. Welcher Satz ist für dich schwierig?",
-  },
-  B1: {
-    modalverben:
-      "Klar! Modalverben wie können, müssen, dürfen, sollen, wollen und möchten zeigen, ob etwas möglich, nötig oder erlaubt ist. Das Modalverb steht auf Position zwei, das andere Verb im Infinitiv am Ende. Im Nebensatz steht das Modalverb ganz am Ende: Ich weiß, dass ich morgen früher kommen muss. Für die Vergangenheit benutzt man meistens das Präteritum: Ich musste gestern lange arbeiten. Ein typischer Fehler ist: Ich kann sprechen Deutsch. Richtig ist: Ich kann Deutsch sprechen. Probier mal: Was durftest du als Kind nicht machen?",
-    perfekt:
-      "Das Perfekt benutzt man vor allem, wenn man über die Vergangenheit spricht. Man bildet es mit haben oder sein auf Position zwei und dem Partizip am Ende. Sein nimmt man bei Bewegung und Veränderung, zum Beispiel gehen, fahren, aufstehen oder einschlafen. Ich habe gestern einen Bericht geschrieben, dann bin ich nach Hause gefahren. Beim Schreiben benutzt man öfter das Präteritum. Erzähl mal: Was hast du am Wochenende erlebt?",
-    trennbar:
-      "Trennbare Verben bestehen aus einem Präfix und einem Verb, zum Beispiel anrufen oder vorbereiten. Im Hauptsatz steht das Präfix am Ende: Ich bereite die Präsentation vor. Im Nebensatz bleibt das Verb zusammen: Ich weiß, dass er morgen anruft. Im Perfekt steht ge in der Mitte: Ich habe den Kunden angerufen. Bei zu steht zu auch in der Mitte: Ich habe vergessen, ihn anzurufen. Was bereitest du gerade vor?",
-    kasus: LEVEL_KNOWLEDGE.B1.examples.explain.partner,
-    artikel:
-      "Leider muss man die Artikel meistens zusammen mit dem Nomen lernen. Es gibt aber hilfreiche Regeln: Wörter auf -ung, -heit, -keit und -ion sind feminin, also die. Wörter auf -chen und -lein sind immer neutral, also das. Männliche Personen und Wochentage sind meistens der. Ein guter Trick ist, neue Wörter immer mit Artikel und Farbe aufzuschreiben. Welches Wort möchtest du gerade lernen?",
-    generic:
-      "Gute Frage! Gib mir am besten ein Beispiel aus deinem Alltag, dann erkläre ich es dir daran. So kann man sich die Regel viel leichter merken. Welcher Satz macht dir Probleme?",
-  },
-  B2: {
-    modalverben:
-      "Gern. Modalverben drücken Möglichkeit, Notwendigkeit, Erlaubnis oder Absicht aus, also können, müssen, dürfen, sollen, wollen und mögen. Interessant wird es im Perfekt: Dort steht der Infinitiv statt des Partizips, etwa: Ich habe gestern nicht kommen können. Im Nebensatz steht das Hilfsverb dann sogar vor den beiden Infinitiven: weil ich nicht habe kommen können. Außerdem haben einige Modalverben eine subjektive Bedeutung, zum Beispiel: Er soll sehr kompetent sein, also man sagt es. Können Sie einen Satz mit einer solchen Bedeutung bilden?",
-    perfekt:
-      "Das Perfekt ist im gesprochenen Deutsch die Standardform für die Vergangenheit, während das Präteritum eher in schriftlichen Texten vorkommt. Ausnahmen sind sein, haben und die Modalverben, die man auch mündlich meist im Präteritum verwendet. Mit sein bilden das Perfekt vor allem Verben der Bewegung und der Zustandsveränderung, etwa: Der Umsatz ist deutlich gestiegen. Wie würden Sie Ihren letzten Arbeitstag im Perfekt zusammenfassen?",
-    trennbar:
-      "Bei trennbaren Verben rückt das Präfix im Hauptsatz ans Satzende, etwa: Wir schließen das Projekt nächste Woche ab. Im Nebensatz bleibt das Verb zusammen, und beim Infinitiv mit zu steht zu in der Mitte: Es ist wichtig, die Frist einzuhalten. Achtung: Manche Präfixe wie über, unter oder um können trennbar oder untrennbar sein und ändern dann die Bedeutung. Können Sie einen Satz mit einhalten oder abschließen bilden?",
-    kasus:
-      "Grob gesagt markiert der Akkusativ das direkte Objekt, während der Dativ meist den Empfänger einer Handlung bezeichnet. Bei Verben wie geben, schicken oder erklären haben Sie oft beides: Ich erkläre dem Kunden die neuen Konditionen. Wechselpräpositionen folgen der Logik Ort oder Richtung: Das Dokument liegt auf dem Tisch, aber ich lege es auf den Tisch. Wem haben Sie heute schon etwas geschickt?",
-    artikel:
-      "Das Genus ist im Deutschen weitgehend grammatisch und nicht logisch, deshalb lohnt es sich, Nomen konsequent mit Artikel zu lernen. Es gibt allerdings verlässliche Endungen: -ung, -heit, -keit, -schaft und -ion sind feminin, -chen und -ment meist neutral. Bei zusammengesetzten Wörtern bestimmt immer das letzte Wort den Artikel, also die Haustür. Mit welchen Artikeln haben Sie die meisten Schwierigkeiten?",
-    konjunktiv: LEVEL_KNOWLEDGE.B2.examples.explain.partner,
-    generic:
-      "Gute Frage. Am besten erkläre ich das an einem konkreten Beispiel aus Ihrem Berufsalltag. Nennen Sie mir doch einen Satz, bei dem Sie unsicher sind, dann gehen wir ihn gemeinsam durch. Welcher wäre das?",
-  },
+// Answers to questions about the partner (demo mode).
+const PERSONA_QA: Record<Level, { match: RegExp; reply: string }[]> = {
+  A1: [
+    { match: /wie geht/, reply: "Mir geht es gut, danke! Ich trinke gerade Tee. Und wie geht es dir?" },
+    { match: /wie heißt|dein name|ihr name/, reply: "Ich heiße Lena. Ich bin Lehrerin. Und wie heißt du?" },
+    { match: /woher kommst|wo wohnst|woher kommen|wo wohnen/, reply: "Ich komme aus Hamburg. Hamburg ist groß und schön. Und woher kommst du?" },
+    { match: /beruf|arbeitest du|was machst du|arbeiten sie/, reply: "Ich bin Deutschlehrerin. Ich arbeite gern mit Menschen. Was ist dein Beruf?" },
+    { match: /wie alt/, reply: "Ich bin zweiundfünfzig Jahre alt. Und wie alt bist du?" },
+  ],
+  A2: [
+    { match: /wie geht/, reply: "Danke, mir geht's super! Heute war viel los im Laden. Und bei dir?" },
+    { match: /wie heißt|dein name/, reply: "Ich heiße Jonas und komme aus Köln. Und du, wie heißt du?" },
+    { match: /woher kommst|wo wohnst/, reply: "Ich wohne in Köln, direkt am Rhein. Ich mag die Stadt sehr. Wo wohnst du?" },
+    { match: /beruf|arbeitest du|was machst du/, reply: "Ich arbeite in einem Fahrradladen und studiere Medien. Und was machst du beruflich?" },
+    { match: /wie alt/, reply: "Ich bin siebenundzwanzig. Und du?" },
+  ],
+  B1: [
+    { match: /wie geht/, reply: "Danke, gut! Die Woche ist ziemlich voll, aber heute ist es ruhiger. Wie läuft es bei dir?" },
+    { match: /wie heißt|dein name/, reply: "Ich bin Mira, ich arbeite in der Logistik hier in München. Und wie heißt du?" },
+    { match: /woher kommst|wo wohnst/, reply: "Ich wohne in München, ursprünglich komme ich aber aus Leipzig. Wo lebst du gerade?" },
+    { match: /beruf|arbeitest du|was machst du/, reply: "Ich bin Projektkoordinatorin, das heißt, ich plane Lieferungen und spreche viel mit Kunden. Was machst du beruflich?" },
+  ],
+  B2: [
+    { match: /wie geht/, reply: "Danke der Nachfrage, sehr gut. Ich komme gerade aus einer langen Verhandlung. Und wie geht es Ihnen?" },
+    { match: /wie heißen|ihr name/, reply: "Tobias Wendt, ich bin Unternehmensberater in Berlin. Mit wem habe ich das Vergnügen?" },
+    { match: /woher kommen|wo wohnen/, reply: "Ich lebe in Berlin, bin aber in Hannover aufgewachsen. Wo leben Sie zurzeit?" },
+    { match: /beruf|arbeiten sie|was machen sie/, reply: "Ich berate mittelständische Unternehmen bei Strategie und Verhandlungen. Und in welcher Branche sind Sie tätig?" },
+  ],
 };
+
+// Replies that pick up a word from what the learner said ({K}), so the partner reacts to the content.
+const CONTENT_REPLIES: Record<Level, string[]> = {
+  A1: ["{K}? Oh, interessant! Erzähl mir mehr, bitte.", "Ah, {K}! Das finde ich gut. Was magst du daran?", "Hmm, {K}. Was meinst du genau?"],
+  A2: ["Echt, {K}? Das klingt spannend! Erzähl mal mehr darüber.", "Ach so, {K}! Wie bist du darauf gekommen?", "{K} finde ich auch interessant. Was ist für dich daran wichtig?"],
+  B1: ["Ah, {K}! Darüber habe ich neulich auch nachgedacht. Wie ist deine Erfahrung damit?", "Stimmt, {K} ist ein spannendes Thema. Was genau meinst du damit?", "Das mit {K} kann ich gut verstehen. Erzähl mal, wie war das für dich?"],
+  B2: ["{K} ist in der Tat ein interessanter Punkt. Was genau verstehen Sie darunter?", "Spannend, dass Sie {K} ansprechen. Welche Erfahrungen haben Sie damit gemacht?", "Bei {K} gehen die Meinungen ja auseinander. Wie positionieren Sie sich?"],
+};
+const QUESTION_REPLIES: Record<Level, string[]> = {
+  A1: ["Gute Frage! Über {K} weiß ich nicht so viel. Was denkst du?", "Hmm, {K}? Das ist eine gute Frage. Was meinst du?"],
+  A2: ["Hmm, gute Frage zu {K}! Ich bin nicht ganz sicher. Was weißt du darüber?", "Gute Frage! Zu {K} habe ich keine Antwort im Demo-Modus. Was denkst du?"],
+  B1: ["Gute Frage! Zu {K} habe ich ehrlich gesagt keine feste Meinung. Was denkst du selbst?", "Hmm, {K} ist eine schwierige Frage. Wie würdest du sie beantworten?"],
+  B2: ["Interessante Frage zu {K}. Im Demo-Modus kann ich darauf nur kurz eingehen. Wie sehen Sie das?", "Eine berechtigte Frage zu {K}. Was ist Ihre eigene Einschätzung?"],
+};
+
+const STOP = new Set(
+  "ich du er sie es wir ihr mein dein sein ihr unser euer und oder aber denn weil dass wenn ob als wie was wer wo wann warum woher wohin welche welcher welches der die das den dem des ein eine einen einem einer eines kein keine nicht auch noch schon sehr gern gerne ja nein doch mal bitte danke heute morgen gestern jetzt hier dort dann also bin bist ist sind war habe hast hat haben hatte kann kannst können muss musst möchte möchten will willst mit von zu bei aus nach für auf in im am an um über unter vor hinter zwischen durch ohne gegen viel viele mehr sehr gut äh ähm hm okay genau so".split(" "),
+);
+
+/** The most "content-like" word of the learner's message: a noun if possible, else the longest word. */
+export function contentKeyword(text: string): string | null {
+  const words: string[] = text.match(/[\p{L}-]+/gu) ?? [];
+  const candidates = words.filter((w) => w.length >= 4 && !STOP.has(w.toLowerCase()));
+  // Capitalised words after the first one are nouns (speech recognition capitalises German nouns).
+  const nouns = candidates.filter((w) => /^[A-ZÄÖÜ]/.test(w) && words.indexOf(w) > 0);
+  return [...(nouns.length ? nouns : candidates)].sort((a, b) => b.length - a.length)[0] ?? null;
+}
 
 function levelFromSystem(system: string, fallback?: Level): Level {
   const m = system.match(/LEVEL: (A1|A2|B1|B2)/) ?? system.match(/level (A1|A2|B1|B2)/i);
@@ -227,17 +229,28 @@ export function mockPartnerReply(level: Level, messages: ChatParams["messages"])
   if (lastUser === START_SIGNAL) return fresh(GREETINGS[level], said, Math.floor(Math.random() * GREETINGS[level].length)) ?? GREETINGS[level][0];
 
   const { intent, topic } = detectIntent(lastUser);
-  if (intent === "explain") {
-    const ex = EXPLANATIONS[level][topic ?? "generic"] ?? EXPLANATIONS[level].generic!;
-    if (!said.has(ex)) return ex;
-  }
+  // Explanations are always given, also when the learner asks again — never deflect.
+  if (intent === "explain") return EXPLANATIONS[level][topic ?? "generic"];
   const k = LEVEL_KNOWLEDGE[level].examples;
   if (intent === "opinion" && !said.has(k.opinion.partner)) return k.opinion.partner;
   if (intent === "story" && !said.has(k.story.partner)) return k.story.partner;
 
+  const lower = lastUser.toLowerCase();
+  const persona = PERSONA_QA[level].find((q) => q.match.test(lower));
+  if (persona && !said.has(persona.reply)) return persona.reply;
+
   const keyword = TOPIC_REPLIES[level].find((r) => r.match.test(lastUser));
   const byKeyword = keyword ? fresh(keyword.replies, said, offset) : null;
-  return byKeyword ?? fresh(CHAT_POOL[level], said, offset) ?? CHAT_POOL[level][offset % CHAT_POOL[level].length];
+  if (byKeyword) return byKeyword;
+
+  // Otherwise react to the content: pick up a word the learner used.
+  const kw = contentKeyword(lastUser);
+  if (kw) {
+    const templates = intent === "question" || intent === "opinion" || intent === "story" ? QUESTION_REPLIES[level] : CONTENT_REPLIES[level];
+    const reply = fresh(templates.map((t) => t.replaceAll("{K}", kw)), said, offset);
+    if (reply) return reply;
+  }
+  return fresh(CHAT_POOL[level], said, offset) ?? CHAT_POOL[level][offset % CHAT_POOL[level].length];
 }
 
 export class MockLLM implements LLM {
@@ -249,8 +262,10 @@ export class MockLLM implements LLM {
     if (p.purpose === "summary") {
       text = "Earlier the learner talked about: " + p.messages.map((m) => m.content).join(" / ").slice(0, 400);
     } else if (p.purpose === "simplify") {
-      const used = p.messages.map((m) => m.content).join(" ");
-      text = LEVEL_CONFIG[level].safeFallbacks.find((f) => !used.includes(f)) ?? LEVEL_CONFIG[level].safeFallbacks[0];
+      // Demo mode can't rewrite: return the sentence unchanged. If it still fails the level check the
+      // pipeline drops it — never replace content with an unrelated generic question.
+      const prompt = p.messages.map((m) => m.content).join("\n");
+      text = prompt.match(/Sentence: (.*)$/m)?.[1]?.trim() ?? "";
     } else {
       text = mockPartnerReply(level, p.messages);
     }
