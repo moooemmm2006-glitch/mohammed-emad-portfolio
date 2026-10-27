@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Login and sign-up pages: header with language/theme only, no navigation.
   const bare = PUBLIC_PATHS.includes(path);
   // The speaking screen is full-screen: no site nav on mobile, no page padding.
-  const inConversation = /^\/speak\/(A1|A2|B1|B2)/i.test(path);
+  const inConversation = /^\/speak\/(A1|A2|B1|B2)\/chat/i.test(path);
 
   useEffect(() => setMenu(false), [path]);
 

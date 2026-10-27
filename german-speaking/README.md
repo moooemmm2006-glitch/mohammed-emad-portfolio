@@ -90,6 +90,32 @@ Every push to the connected branch redeploys automatically.
 If a premium provider is selected but its key is missing, the app silently falls back to the browser
 (Web Speech API). In **Settings** you can also choose per device: automatic / browser / server.
 
+## The book: "Sprich Deutsch" (A1 → B2)
+
+The learner's own book lives in `data/book/` (`a1.json` … `b2.json`, `index.json`): 100 topics,
+10,000 sentences with Egyptian-Arabic meanings, 546 grammar boxes. A1 = topics 1–15, A2 = 16–40,
+B1 = 41–70, B2 = 71–100. It is loaded on the server only (`src/lib/book.ts`, one lazy chunk per level,
+validated with zod once); the browser only receives the topic that is opened.
+
+Each level page lists only its own topics (with ✓ when finished), plus "محادثة حرة" and today's review.
+A topic page has three modes, all working **without an API key**:
+
+- **اسمع وكرر (shadowing):** the partner reads a sentence, you repeat it, the app compares word by word
+  (`src/lib/bookCompare.ts`: normalised, digits = number words, one-letter recognition slips allowed,
+  word order matters) and marks missed words. "اعكس" shows only the Arabic; auto-play goes through the
+  sentences hands-free. "إنهاء وتقرير" saves a practice report (sentences to repeat, book version,
+  Arabic meaning, related grammar point).
+- **اتكلم في الموضوع (guided conversation):** without a key the partner asks the book's questions in
+  order (`src/lib/bookScript.ts`), compares your answer with the book's answers and corrects gently;
+  sections without questions use "Wie sagt man das auf Deutsch?". With a key the level's AI partner gets
+  the topic (title, intro, vocabulary, sections, ~30 book sentences, grammar formulas) in its system
+  prompt and stays inside it — the level lock is unchanged. The report lists book sentences said wrong.
+- **القواعد:** the topic's grammar boxes with playable examples and "اتمرن على القاعدة دي".
+
+Progress is per user (`book_progress`): best score per sentence; a topic is finished when 80% of its
+sentences were said correctly once. Sentences said wrong come back in "مراجعة النهارده" after 1 day,
+then 3 days, then a week.
+
 ## Accounts
 
 - **Sign-up:** name, username (unique, lowercase, `a-z 0-9 _`, 3–20 chars), password (≥ 8, bcrypt-hashed,
@@ -193,6 +219,8 @@ src/lib/levelLock/  heuristic checker + regenerate/fallback wrapper
 src/lib/llm/        Anthropic client, offline mock, JSON retry
 src/lib/report/     report schema, generation, mock report, weakness tracker
 src/lib/db/         SQLite/libSQL (Drizzle) schema, additive migration and repository
+src/lib/book*.ts    the book: loader, comparison, scripted conversation, progress/review
+data/book/          the book "Sprich Deutsch" as JSON
 src/lib/auth/       accounts: signed tokens, bcrypt, rate limiting, session helpers
 src/lib/usage.ts    daily usage and limits · src/lib/admin.ts admin overview · src/lib/photo.ts Blob/DB photos
 src/lib/client/     browser TTS/STT providers, i18n (AR/EN), API helpers

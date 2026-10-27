@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Correction } from "./corrections";
+import type { BookReport } from "./book";
 
 // What the model must return. Kept free of numeric min/max so it works with native structured
 // outputs; ranges are enforced afterwards by `normalizeReport`.
@@ -83,6 +84,8 @@ export interface StoredReport extends LLMReport {
   corrections?: Correction[];
   /** "ai" = corrected by Claude; "rules" = demo rule-based checker. */
   correctionsMode?: "ai" | "rules";
+  /** Guided conversation about a book topic: book sentences said wrong, with the book's version. */
+  book?: BookReport;
 }
 
 const TAG_RE = /^[a-z0-9_]+$/;

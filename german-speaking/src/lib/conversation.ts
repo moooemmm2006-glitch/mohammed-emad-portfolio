@@ -23,6 +23,9 @@ import {
   turnInstruction,
 } from "./prompts";
 import { splitSentences } from "./text";
+import { getTopicByNumber, type BookTopic } from "./book";
+import { CLOSING, greeting as scriptGreeting, judgeAnswer, nextItem, reaction, scriptFor } from "./bookScript";
+import { parseMeta, type SessionRow } from "./db/repo";
 
 export type TurnEvent =
   | { type: "status"; value: LockStatus | "listening" }
@@ -97,6 +100,12 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
 
   const prior = await getTurns(session.id);
   const userText = inp.userText?.trim();
+  const bookTopic = session.bookTopic ? await getTopicByNumber(session.bookTopic) : null;
+  // Guided book conversation without an API key: the book's own questions and answers.
+  if (bookTopic && llm.provider === "mock") {
+    await runScriptedTurn({ session, topic: bookTopic, prior, userText, inp, started, background });
+    return;
+  }
   // Save the learner's turn in the background; the reply doesn't need to wait for it.
   const userSaved = userText
     ? addTurn(session.id, "user", userText, {
@@ -124,6 +133,7 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
       focus: settings.focusSteering && session.focusTag ? { tag: session.focusTag } : null,
       summary: session.summary,
       weaknesses: openWeaknesses,
+      bookTopic,
     }) +
     (session.pendingFeedback ?? "") +
     turnInstruction(level, intent, topic, learnerUsedArabic);
@@ -209,6 +219,53 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
 }
 
 // ---------- "I'm stuck" hint ----------
+/** One turn of the scripted (no API key) guided conversation about a book topic. */
+async function runScriptedTurn(o: {
+  session: SessionRow;
+  topic: BookTopic;
+  prior: TurnRow[];
+  userText: string | undefined;
+  inp: TurnInput;
+  started: number;
+  background: Promise<unknown>[];
+}) {
+  const { session, topic, prior, userText, inp, started, background } = o;
+  const items = scriptFor(topic);
+  const lastPartner = [...prior].reverse().find((t) => t.role === "partner");
+  const lastAsked = lastPartner ? (parseMeta(lastPartner).bookQ ?? null) : null;
+  const finished = lastAsked === 0;
+  inp.emit({ type: "status", value: "generating" });
+
+  let reply: string;
+  let asked: number;
+  if (!userText || lastAsked === null) {
+    const first = nextItem(items, null);
+    reply = scriptGreeting(topic, first);
+    asked = first?.n ?? 0;
+  } else if (finished) {
+    reply = CLOSING;
+    asked = 0;
+  } else {
+    const item = items.find((x) => x.n === lastAsked) ?? items[0];
+    const verdict = judgeAnswer(userText, item);
+    const next = nextItem(items, lastAsked);
+    const learnerTurns = prior.filter((t) => t.role === "user").length;
+    reply = `${reaction(verdict, item, learnerTurns)} ${next ? next.ask : CLOSING}`;
+    asked = next?.n ?? 0;
+    background.push(
+      addTurn(session.id, "user", userText, {
+        confidence: inp.confidence ?? null,
+        meta: { input: inp.input ?? "voice", alternatives: inp.alternatives?.slice(0, 4), book: { n: verdict.best.n, score: verdict.score } },
+      }),
+    );
+  }
+  // One event for the whole reply: the bracketed Arabic must stay together so it is shown, not spoken.
+  inp.emit({ type: "sentence", text: reply });
+  inp.emit({ type: "done", text: reply, fallback: "none", ms: Date.now() - started });
+  await Promise.allSettled(background);
+  await addTurn(session.id, "partner", reply, { meta: { bookQ: asked, greeting: !userText } });
+}
+
 export const HintSchema = z.object({
   meaning: z.string(),
   hint: z.string(),

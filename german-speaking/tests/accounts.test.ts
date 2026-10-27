@@ -25,6 +25,8 @@ const turnRoute = await import("@/app/api/sessions/[id]/turn/route");
 const reportRoute = await import("@/app/api/sessions/[id]/report/route");
 const adminRoute = await import("@/app/api/admin/users/route");
 const meRoute = await import("@/app/api/me/route");
+const bookLevelRoute = await import("@/app/api/book/level/[level]/route");
+const bookAttemptsRoute = await import("@/app/api/book/attempts/route");
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gs-accounts-"));
 let n = 0;
@@ -193,7 +195,21 @@ describe("data isolation between two learners", () => {
     // Students can't open the admin page.
     expect((await adminRoute.GET()).status).toBe(403);
 
+    // Book progress is per user too.
+    const levelCtx = { params: Promise.resolve({ level: "A1" }) };
+    const omarTopics = (await (await bookLevelRoute.GET(req("/x"), levelCtx)).json()) as { topics: { number: number; progress: { correct: number } }[] };
+    expect(omarTopics.topics).toHaveLength(15);
+    expect(omarTopics.topics[0].progress.correct).toBe(0);
+
     // Sara still has hers.
+    await loginAs(a);
+    const scored = (await (await bookAttemptsRoute.POST(req("/x", { heard: [{ n: 1, said: "Hallo" }, { n: 2, said: "Guten Morgen" }] }))).json()) as { results: { score: number }[] };
+    expect(scored.results.map((r) => r.score)).toEqual([100, 100]);
+    const saraTopics = (await (await bookLevelRoute.GET(req("/x"), levelCtx)).json()) as { topics: { number: number; progress: { correct: number } }[] };
+    expect(saraTopics.topics[0].progress.correct).toBe(2);
+    await loginAs(b);
+    expect(((await (await bookLevelRoute.GET(req("/x"), levelCtx)).json()) as typeof saraTopics).topics[0].progress.correct).toBe(0);
+
     await loginAs(a);
     expect((await sessionRoute.GET(req("/x"), ctx(sid))).status).toBe(200);
     const admin = (await (await adminRoute.GET()).json()) as { students: { username: string; sessions: number }[] };

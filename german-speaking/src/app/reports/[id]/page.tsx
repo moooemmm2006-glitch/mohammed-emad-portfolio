@@ -10,6 +10,7 @@ import type { TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { isLevel, tagLabel, type Level } from "@/lib/levels";
 import { ScoreKeys, type StoredReport } from "@/lib/report/schema";
+import { BookReportSection } from "@/components/book/BookReportSection";
 
 interface Payload {
   session: { id: string; level: string; startedAt: number; topic: string | null };
@@ -202,6 +203,8 @@ function ReportPage() {
             </ul>
           </Section>
         )}
+
+        {r.book && <BookReportSection book={r.book} level={r.session.level} />}
 
         <Section title={`${t("report_mistakes")} (${r.mistakes.length})`}>
           {r.correctionsMode === "rules" && <DemoCorrectionNote />}

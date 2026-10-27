@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { HistoryList } from "@/components/HistoryList";
+import { BookProgressCard } from "@/components/book/BookProgressCard";
 import { IconClock, IconFile, IconFlame, IconMic } from "@/components/Icons";
 import { useStats } from "@/lib/client/api";
 import type { TKey } from "@/lib/client/i18n";
@@ -48,6 +49,8 @@ export default function ProgressPage() {
         <Tile icon={<IconMic />} value={stats.totals.words} label={t("stats_words")} />
         <Tile icon={<IconFlame />} value={stats.totals.streak} label={t("stats_streak")} />
       </section>
+
+      <BookProgressCard />
 
       {stats.scoreTimeline.length === 0 ? (
         <div className="card p-8 text-center text-muted">

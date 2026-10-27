@@ -21,6 +21,34 @@ export const users = sqliteTable("users", {
   lastActiveAt: integer("last_active_at"),
 });
 
+/** Per user and book sentence: best score, and when to review it again (spaced repetition). */
+export const bookProgress = sqliteTable(
+  "book_progress",
+  {
+    userId: text("user_id").notNull(),
+    n: integer("n").notNull(), // global sentence number 1–10000
+    topic: integer("topic").notNull(),
+    best: integer("best").notNull(),
+    attempts: integer("attempts").notNull(),
+    correct: integer("correct").notNull(),
+    lastAt: integer("last_at").notNull(),
+    /** 0 = review after 1 day, 1 = 3 days, 2 = a week; null = nothing to review */
+    reviewStage: integer("review_stage"),
+    dueAt: integer("due_at"),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.n] })],
+);
+
+/** One shadowing / review run, kept for its report. */
+export const bookPractice = sqliteTable("book_practice", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  topic: integer("topic"), // null for a mixed review run
+  mode: text("mode").notNull(), // shadow | reverse | review | grammar
+  createdAt: integer("created_at").notNull(),
+  json: text("json").notNull(),
+});
+
 /** Failed logins, for rate limiting across serverless instances. */
 export const loginAttempts = sqliteTable("login_attempts", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -58,6 +86,8 @@ export const sessions = sqliteTable("sessions", {
   summaryUpto: integer("summary_upto").notNull().default(0),
   focusTag: text("focus_tag"),
   pendingFeedback: text("pending_feedback"),
+  /** Book topic number (1–100) for a guided conversation about one topic of the book. */
+  bookTopic: integer("book_topic"),
 });
 
 export const turns = sqliteTable("turns", {
@@ -133,6 +163,17 @@ CREATE TABLE IF NOT EXISTS usage (
   user_id TEXT NOT NULL, day TEXT NOT NULL, replies INTEGER NOT NULL DEFAULT 0, ms INTEGER NOT NULL DEFAULT 0,
   PRIMARY KEY (user_id, day)
 );
+CREATE TABLE IF NOT EXISTS book_progress (
+  user_id TEXT NOT NULL, n INTEGER NOT NULL, topic INTEGER NOT NULL, best INTEGER NOT NULL, attempts INTEGER NOT NULL,
+  correct INTEGER NOT NULL, last_at INTEGER NOT NULL, review_stage INTEGER, due_at INTEGER,
+  PRIMARY KEY (user_id, n)
+);
+CREATE INDEX IF NOT EXISTS book_progress_topic ON book_progress(user_id, topic);
+CREATE INDEX IF NOT EXISTS book_progress_due ON book_progress(user_id, due_at);
+CREATE TABLE IF NOT EXISTS book_practice (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER, mode TEXT NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS book_practice_user ON book_practice(user_id, created_at);
 CREATE TABLE IF NOT EXISTS violation_log (
   id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT NOT NULL, level TEXT NOT NULL, attempt INTEGER NOT NULL,
   violations TEXT NOT NULL, created_at INTEGER NOT NULL
@@ -150,6 +191,7 @@ export const ADDED_COLUMNS: { table: string; column: string; sql: string }[] = [
   { table: "users", column: "daily_minutes", sql: "daily_minutes INTEGER" },
   { table: "users", column: "daily_replies", sql: "daily_replies INTEGER" },
   { table: "users", column: "last_active_at", sql: "last_active_at INTEGER" },
+  { table: "sessions", column: "book_topic", sql: "book_topic INTEGER" },
 ];
 
 /** Runs after ADDED_COLUMNS, so it may use the new columns. */

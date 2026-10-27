@@ -1,0 +1,3202 @@
+[
+ {
+  "level": "A1",
+  "number": 1,
+  "title_de": "Begrüßung und Vorstellung",
+  "title_ar": "التحية والتعارف",
+  "sections": [
+   {
+    "title_de": "Hallo sagen",
+    "title_ar": "نسلم على بعض"
+   },
+   {
+    "title_de": "Wie geht's?",
+    "title_ar": "إزيك؟ وعامل إيه؟"
+   },
+   {
+    "title_de": "Sich vorstellen",
+    "title_ar": "نعرف نفسنا"
+   },
+   {
+    "title_de": "Herkunft und Sprachen",
+    "title_ar": "إنت منين وبتتكلم إيه"
+   },
+   {
+    "title_de": "Tschüss sagen",
+    "title_ar": "نودع بعض"
+   }
+  ],
+  "sentences": [
+   1,
+   100
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 2,
+  "title_de": "Persönliche Angaben",
+  "title_ar": "بياناتك الشخصية (الاسم، السن، البلد، التليفون)",
+  "sections": [
+   {
+    "title_de": "Alter und Geburtstag",
+    "title_ar": "السن وعيد الميلاد"
+   },
+   {
+    "title_de": "Die Adresse",
+    "title_ar": "العنوان"
+   },
+   {
+    "title_de": "Telefon und E-Mail",
+    "title_ar": "التليفون والإيميل"
+   },
+   {
+    "title_de": "Beruf und Familienstand",
+    "title_ar": "الشغل والحالة الاجتماعية"
+   },
+   {
+    "title_de": "Ein Formular ausfüllen",
+    "title_ar": "نملا استمارة"
+   }
+  ],
+  "sentences": [
+   101,
+   200
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 3,
+  "title_de": "Familie",
+  "title_ar": "العيلة",
+  "sections": [
+   {
+    "title_de": "Meine Familie",
+    "title_ar": "عيلتي"
+   },
+   {
+    "title_de": "Geschwister",
+    "title_ar": "الإخوات"
+   },
+   {
+    "title_de": "Eltern und Großeltern",
+    "title_ar": "الأهل والجدود"
+   },
+   {
+    "title_de": "Kinder",
+    "title_ar": "الأولاد"
+   },
+   {
+    "title_de": "Fotos und Familienleben",
+    "title_ar": "صور وحياة العيلة"
+   }
+  ],
+  "sentences": [
+   201,
+   300
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 4,
+  "title_de": "Zahlen, Uhrzeit und Datum",
+  "title_ar": "الأرقام والساعة والتاريخ",
+  "sections": [
+   {
+    "title_de": "Zahlen und Preise",
+    "title_ar": "الأرقام والأسعار"
+   },
+   {
+    "title_de": "Wie spät ist es?",
+    "title_ar": "الساعة كام؟"
+   },
+   {
+    "title_de": "Wann? Zeiten verabreden",
+    "title_ar": "إمتى؟ نتفق على ميعاد"
+   },
+   {
+    "title_de": "Wochentage und Tageszeiten",
+    "title_ar": "أيام الأسبوع وأوقات اليوم"
+   },
+   {
+    "title_de": "Datum und Monate",
+    "title_ar": "التاريخ والشهور"
+   }
+  ],
+  "sentences": [
+   301,
+   400
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 5,
+  "title_de": "Der Morgen",
+  "title_ar": "الصبح وروتين اليوم",
+  "sections": [
+   {
+    "title_de": "Aufwachen",
+    "title_ar": "الصحيان"
+   },
+   {
+    "title_de": "Im Bad",
+    "title_ar": "في الحمام"
+   },
+   {
+    "title_de": "Anziehen",
+    "title_ar": "اللبس"
+   },
+   {
+    "title_de": "Frühstück",
+    "title_ar": "الفطار"
+   },
+   {
+    "title_de": "Aus dem Haus",
+    "title_ar": "نازلين من البيت"
+   }
+  ],
+  "sentences": [
+   401,
+   500
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 6,
+  "title_de": "Essen und Trinken",
+  "title_ar": "الأكل والشرب",
+  "sections": [
+   {
+    "title_de": "Hunger und Durst",
+    "title_ar": "جعان وعطشان"
+   },
+   {
+    "title_de": "Was isst du gern?",
+    "title_ar": "بتحب تاكل إيه؟"
+   },
+   {
+    "title_de": "Frühstück, Mittag- und Abendessen",
+    "title_ar": "الفطار والغدا والعشا"
+   },
+   {
+    "title_de": "Am Tisch",
+    "title_ar": "على السفرة"
+   },
+   {
+    "title_de": "Kochen und Einkaufen",
+    "title_ar": "الطبخ وشراء الأكل"
+   }
+  ],
+  "sentences": [
+   501,
+   600
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 7,
+  "title_de": "Einkaufen – die Grundlagen",
+  "title_ar": "الشراء: الأساسيات",
+  "sections": [
+   {
+    "title_de": "Wo finde ich …?",
+    "title_ar": "ألاقي... فين؟"
+   },
+   {
+    "title_de": "Preise und Mengen",
+    "title_ar": "الأسعار والكميات"
+   },
+   {
+    "title_de": "Kleidung kaufen",
+    "title_ar": "شراء الهدوم"
+   },
+   {
+    "title_de": "An der Kasse",
+    "title_ar": "عند الكاشير"
+   },
+   {
+    "title_de": "Einkaufsliste und Probleme",
+    "title_ar": "ليستة الطلبات والمشاكل"
+   }
+  ],
+  "sentences": [
+   601,
+   700
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 8,
+  "title_de": "Wohnung und Zimmer",
+  "title_ar": "البيت والأوض",
+  "sections": [
+   {
+    "title_de": "Wo wohnst du?",
+    "title_ar": "ساكن فين؟"
+   },
+   {
+    "title_de": "Die Zimmer",
+    "title_ar": "الأوض"
+   },
+   {
+    "title_de": "Möbel: Was steht wo?",
+    "title_ar": "العفش: إيه فين؟"
+   },
+   {
+    "title_de": "Miete und Wohnungssuche",
+    "title_ar": "الإيجار والدور على شقة"
+   },
+   {
+    "title_de": "Zu Hause und die Nachbarn",
+    "title_ar": "في البيت والجيران"
+   }
+  ],
+  "sentences": [
+   701,
+   800
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 9,
+  "title_de": "Das Wetter",
+  "title_ar": "الجو",
+  "sections": [
+   {
+    "title_de": "Wie ist das Wetter heute?",
+    "title_ar": "الجو عامل إيه النهارده؟"
+   },
+   {
+    "title_de": "Temperatur und Gefühl",
+    "title_ar": "درجة الحرارة وإحساسك"
+   },
+   {
+    "title_de": "Morgen und die Wettervorhersage",
+    "title_ar": "بكرة والنشرة الجوية"
+   },
+   {
+    "title_de": "Die Jahreszeiten",
+    "title_ar": "فصول السنة"
+   },
+   {
+    "title_de": "Smalltalk über das Wetter",
+    "title_ar": "دردشة عن الجو"
+   }
+  ],
+  "sentences": [
+   801,
+   900
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 10,
+  "title_de": "Wege in der Stadt",
+  "title_ar": "الطريق والاتجاهات في المدينة",
+  "sections": [
+   {
+    "title_de": "Nach dem Weg fragen",
+    "title_ar": "تسأل عن الطريق"
+   },
+   {
+    "title_de": "Den Weg erklären",
+    "title_ar": "توصف الطريق"
+   },
+   {
+    "title_de": "Mit Bus und Bahn",
+    "title_ar": "بالأتوبيس والقطر"
+   },
+   {
+    "title_de": "Orte in der Stadt",
+    "title_ar": "أماكن في المدينة"
+   },
+   {
+    "title_de": "Navigation und Probleme unterwegs",
+    "title_ar": "الـ GPS ومشاكل في الطريق"
+   }
+  ],
+  "sentences": [
+   901,
+   1000
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 11,
+  "title_de": "Hobbys und Freizeit",
+  "title_ar": "الهوايات ووقت الفراغ",
+  "sections": [
+   {
+    "title_de": "Was machst du gern?",
+    "title_ar": "بتحب تعمل إيه؟"
+   },
+   {
+    "title_de": "Wie oft?",
+    "title_ar": "بتعملها كام مرة؟"
+   },
+   {
+    "title_de": "Sport und draußen",
+    "title_ar": "الرياضة والخروج برا"
+   },
+   {
+    "title_de": "Zu Hause und Kultur",
+    "title_ar": "في البيت والثقافة"
+   },
+   {
+    "title_de": "Zusammen etwas machen",
+    "title_ar": "نعمل حاجة سوا"
+   }
+  ],
+  "sentences": [
+   1001,
+   1100
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 12,
+  "title_de": "Gefühle – einfach",
+  "title_ar": "المشاعر ببساطة",
+  "sections": [
+   {
+    "title_de": "Wie geht’s dir?",
+    "title_ar": "عامل إيه؟"
+   },
+   {
+    "title_de": "Gute Gefühle",
+    "title_ar": "مشاعر حلوة"
+   },
+   {
+    "title_de": "Nicht so gute Gefühle",
+    "title_ar": "مشاعر مش حلوة"
+   },
+   {
+    "title_de": "Körper: Hunger, Durst, krank",
+    "title_ar": "الجسم: جوع وعطش وعيا"
+   },
+   {
+    "title_de": "Reagieren und trösten",
+    "title_ar": "الرد والطبطبة"
+   }
+  ],
+  "sentences": [
+   1101,
+   1200
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 13,
+  "title_de": "Deutsch lernen",
+  "title_ar": "تعلم الألماني والفصل",
+  "sections": [
+   {
+    "title_de": "Ich lerne Deutsch",
+    "title_ar": "أنا بتعلم ألماني"
+   },
+   {
+    "title_de": "Ich verstehe nicht",
+    "title_ar": "مش فاهم"
+   },
+   {
+    "title_de": "Im Unterricht",
+    "title_ar": "في الحصة"
+   },
+   {
+    "title_de": "Hausaufgaben und Prüfung",
+    "title_ar": "الواجب والامتحان"
+   },
+   {
+    "title_de": "Tipps und Sprache im Alltag",
+    "title_ar": "نصايح واللغة في الحياة اليومية"
+   }
+  ],
+  "sentences": [
+   1201,
+   1300
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 14,
+  "title_de": "Im Café",
+  "title_ar": "في الكافيه",
+  "sections": [
+   {
+    "title_de": "Ankommen und Platz finden",
+    "title_ar": "الوصول وإيجاد مكان"
+   },
+   {
+    "title_de": "Getränke bestellen",
+    "title_ar": "طلب المشروبات"
+   },
+   {
+    "title_de": "Kuchen und Snacks",
+    "title_ar": "الكيك والسناكس"
+   },
+   {
+    "title_de": "Zum Mitnehmen",
+    "title_ar": "تيك أواي"
+   },
+   {
+    "title_de": "Bezahlen",
+    "title_ar": "الدفع"
+   }
+  ],
+  "sentences": [
+   1301,
+   1400
+  ]
+ },
+ {
+  "level": "A1",
+  "number": 15,
+  "title_de": "Die Woche und Termine",
+  "title_ar": "الأسبوع والمواعيد",
+  "sections": [
+   {
+    "title_de": "Die Tage der Woche",
+    "title_ar": "أيام الأسبوع"
+   },
+   {
+    "title_de": "Mein Wochenplan",
+    "title_ar": "برنامجي في الأسبوع"
+   },
+   {
+    "title_de": "Sich verabreden",
+    "title_ar": "الاتفاق على ميعاد مع صحاب"
+   },
+   {
+    "title_de": "Einen Termin machen",
+    "title_ar": "حجز ميعاد رسمي"
+   },
+   {
+    "title_de": "Absagen und verschieben",
+    "title_ar": "الإلغاء والتأجيل"
+   }
+  ],
+  "sentences": [
+   1401,
+   1500
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 16,
+  "title_de": "Was hast du am Wochenende gemacht?",
+  "title_ar": "عملت إيه في الويك إند؟ (الكلام عن الماضي)",
+  "sections": [
+   {
+    "title_de": "Wie war dein Wochenende?",
+    "title_ar": "الويك إند كان عامل إزاي؟"
+   },
+   {
+    "title_de": "Unterwegs: Ausflüge und Aktivitäten",
+    "title_ar": "برا البيت: خروجات وأنشطة"
+   },
+   {
+    "title_de": "Leute treffen und feiern",
+    "title_ar": "مقابلة ناس والاحتفال"
+   },
+   {
+    "title_de": "Erzählen: zuerst, dann, danach",
+    "title_ar": "الحكي: الأول وبعدين"
+   },
+   {
+    "title_de": "Nachfragen und reagieren",
+    "title_ar": "السؤال والتعليق"
+   }
+  ],
+  "sentences": [
+   1501,
+   1600
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 17,
+  "title_de": "Beim Arzt",
+  "title_ar": "عند الدكتور",
+  "sections": [
+   {
+    "title_de": "Einen Termin vereinbaren",
+    "title_ar": "حجز ميعاد"
+   },
+   {
+    "title_de": "Symptome beschreiben",
+    "title_ar": "وصف الأعراض"
+   },
+   {
+    "title_de": "Die Untersuchung",
+    "title_ar": "الكشف"
+   },
+   {
+    "title_de": "Diagnose, Rezept und Tipps",
+    "title_ar": "التشخيص والروشتة والنصايح"
+   },
+   {
+    "title_de": "Nachfragen und besondere Situationen",
+    "title_ar": "أسئلة ومواقف خاصة"
+   }
+  ],
+  "sentences": [
+   1601,
+   1700
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 18,
+  "title_de": "In der Apotheke",
+  "title_ar": "في الصيدلية",
+  "sections": [
+   {
+    "title_de": "Etwas gegen Beschwerden kaufen",
+    "title_ar": "تطلب دوا لحاجة معينة"
+   },
+   {
+    "title_de": "Beratung in der Apotheke",
+    "title_ar": "الصيدلي بينصحك"
+   },
+   {
+    "title_de": "Einnahme und Dosierung",
+    "title_ar": "إزاي تاخد الدوا"
+   },
+   {
+    "title_de": "Rezept, Zuzahlung und Bestellung",
+    "title_ar": "الروشتة والفلوس وطلب الدوا"
+   },
+   {
+    "title_de": "Nebenwirkungen und andere Produkte",
+    "title_ar": "الأعراض الجانبية وحاجات تانية من الصيدلية"
+   }
+  ],
+  "sentences": [
+   1701,
+   1800
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 19,
+  "title_de": "Kleidung kaufen",
+  "title_ar": "شراء الهدوم",
+  "sections": [
+   {
+    "title_de": "Im Geschäft",
+    "title_ar": "في المحل"
+   },
+   {
+    "title_de": "Größe und Anprobe",
+    "title_ar": "المقاس والبروفة"
+   },
+   {
+    "title_de": "Farbe, Stil und Meinung",
+    "title_ar": "اللون والستايل والرأي"
+   },
+   {
+    "title_de": "An der Kasse und Umtausch",
+    "title_ar": "عند الكاشير والتبديل والترجيع"
+   },
+   {
+    "title_de": "Online-Shopping und Kleidung im Alltag",
+    "title_ar": "الشوبينج أونلاين والهدوم في الحياة اليومية"
+   }
+  ],
+  "sentences": [
+   1801,
+   1900
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 20,
+  "title_de": "Supermarkt und Kochen",
+  "title_ar": "السوبرماركت والطبخ",
+  "sections": [
+   {
+    "title_de": "Einkaufen im Supermarkt",
+    "title_ar": "الشرا من السوبرماركت"
+   },
+   {
+    "title_de": "An der Theke und an der Kasse",
+    "title_ar": "عند الكاونتر والكاشير"
+   },
+   {
+    "title_de": "Halal, Zutaten und Ernährung",
+    "title_ar": "الحلال والمكونات ونظام الأكل"
+   },
+   {
+    "title_de": "Zusammen kochen",
+    "title_ar": "بنطبخ سوا"
+   },
+   {
+    "title_de": "Am Tisch",
+    "title_ar": "على السفرة"
+   }
+  ],
+  "sentences": [
+   1901,
+   2000
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 21,
+  "title_de": "Im Restaurant",
+  "title_ar": "في المطعم",
+  "sections": [
+   {
+    "title_de": "Einen Tisch reservieren und ankommen",
+    "title_ar": "حجز ترابيزة والوصول"
+   },
+   {
+    "title_de": "Die Speisekarte und Fragen zum Essen",
+    "title_ar": "المنيو والأسئلة عن الأكل"
+   },
+   {
+    "title_de": "Bestellen",
+    "title_ar": "الطلب"
+   },
+   {
+    "title_de": "Beim Essen: Lob und Probleme",
+    "title_ar": "وقت الأكل: مدح ومشاكل"
+   },
+   {
+    "title_de": "Bezahlen und Trinkgeld",
+    "title_ar": "الدفع والبقشيش"
+   }
+  ],
+  "sentences": [
+   2001,
+   2100
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 22,
+  "title_de": "Bus, Bahn und Taxi",
+  "title_ar": "المواصلات",
+  "sections": [
+   {
+    "title_de": "Tickets kaufen",
+    "title_ar": "شراء التذاكر"
+   },
+   {
+    "title_de": "Nach dem Weg und der Verbindung fragen",
+    "title_ar": "السؤال عن الطريق والخط"
+   },
+   {
+    "title_de": "Im Bus und im Zug",
+    "title_ar": "جوه الأتوبيس والقطر"
+   },
+   {
+    "title_de": "Verspätungen und Probleme",
+    "title_ar": "التأخير والمشاكل"
+   },
+   {
+    "title_de": "Mit dem Taxi",
+    "title_ar": "بالتاكسي"
+   }
+  ],
+  "sentences": [
+   2101,
+   2200
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 23,
+  "title_de": "Reisen und Urlaub",
+  "title_ar": "السفر والأجازات",
+  "sections": [
+   {
+    "title_de": "Urlaubspläne",
+    "title_ar": "خطط الأجازة"
+   },
+   {
+    "title_de": "Koffer packen und Vorbereitungen",
+    "title_ar": "تجهيز الشنطة والتحضيرات"
+   },
+   {
+    "title_de": "Am Flughafen",
+    "title_ar": "في المطار"
+   },
+   {
+    "title_de": "Unterwegs: Sehenswürdigkeiten und Aktivitäten",
+    "title_ar": "في السفر: الأماكن والأنشطة"
+   },
+   {
+    "title_de": "Vom Urlaub erzählen",
+    "title_ar": "الحكي عن الأجازة"
+   }
+  ],
+  "sentences": [
+   2201,
+   2300
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 24,
+  "title_de": "Im Hotel",
+  "title_ar": "في الفندق",
+  "sections": [
+   {
+    "title_de": "Ein Zimmer buchen",
+    "title_ar": "حجز أوضة"
+   },
+   {
+    "title_de": "Ankommen und einchecken",
+    "title_ar": "الوصول والتشيك إن"
+   },
+   {
+    "title_de": "Wünsche und Service",
+    "title_ar": "الطلبات والخدمة"
+   },
+   {
+    "title_de": "Probleme im Zimmer",
+    "title_ar": "مشاكل في الأوضة"
+   },
+   {
+    "title_de": "Auschecken und Bewertung",
+    "title_ar": "التشيك أوت والتقييم"
+   }
+  ],
+  "sentences": [
+   2301,
+   2400
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 25,
+  "title_de": "Wohnungssuche",
+  "title_ar": "البحث عن شقة والإيجار",
+  "sections": [
+   {
+    "title_de": "Was für eine Wohnung suchst du?",
+    "title_ar": "بتدور على شقة إزاي؟"
+   },
+   {
+    "title_de": "Die Anzeige und der erste Anruf",
+    "title_ar": "الإعلان وأول مكالمة"
+   },
+   {
+    "title_de": "Die Besichtigung",
+    "title_ar": "المعاينة"
+   },
+   {
+    "title_de": "Unterlagen und Mietvertrag",
+    "title_ar": "الأوراق وعقد الإيجار"
+   },
+   {
+    "title_de": "Umzug und Einzug",
+    "title_ar": "النقل والسكن الجديد"
+   }
+  ],
+  "sentences": [
+   2401,
+   2500
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 26,
+  "title_de": "Nachbarn",
+  "title_ar": "الجيران",
+  "sections": [
+   {
+    "title_de": "Sich kennenlernen",
+    "title_ar": "التعارف"
+   },
+   {
+    "title_de": "Hilfe und Gefallen",
+    "title_ar": "المساعدة والخدمات"
+   },
+   {
+    "title_de": "Die Hausordnung",
+    "title_ar": "قواعد العمارة"
+   },
+   {
+    "title_de": "Lärm und Probleme",
+    "title_ar": "الدوشة والمشاكل"
+   },
+   {
+    "title_de": "Gute Nachbarschaft",
+    "title_ar": "الجيرة الحلوة"
+   }
+  ],
+  "sentences": [
+   2501,
+   2600
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 27,
+  "title_de": "Arbeit und Berufe",
+  "title_ar": "الشغل والوظايف",
+  "sections": [
+   {
+    "title_de": "Über Berufe sprechen",
+    "title_ar": "الكلام عن الشغل والمهنة"
+   },
+   {
+    "title_de": "Der Arbeitsalltag",
+    "title_ar": "يوم الشغل"
+   },
+   {
+    "title_de": "Kollegen und Chef",
+    "title_ar": "الزملا والمدير"
+   },
+   {
+    "title_de": "Jobsuche und Bewerbung",
+    "title_ar": "التدوير على شغل والتقديم"
+   },
+   {
+    "title_de": "Gehalt, Urlaub und Vertrag",
+    "title_ar": "المرتب والإجازات والعقد"
+   }
+  ],
+  "sentences": [
+   2601,
+   2700
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 28,
+  "title_de": "Telefonieren",
+  "title_ar": "المكالمات التليفونية",
+  "sections": [
+   {
+    "title_de": "Ein Gespräch beginnen",
+    "title_ar": "بداية المكالمة"
+   },
+   {
+    "title_de": "Jemanden sprechen und Nachrichten hinterlassen",
+    "title_ar": "عاوز تكلم حد / تسيب رسالة"
+   },
+   {
+    "title_de": "Termine am Telefon",
+    "title_ar": "المواعيد في التليفون"
+   },
+   {
+    "title_de": "Probleme beim Telefonieren",
+    "title_ar": "مشاكل في المكالمة"
+   },
+   {
+    "title_de": "Private Anrufe und das Handy",
+    "title_ar": "مكالمات شخصية والموبايل"
+   }
+  ],
+  "sentences": [
+   2701,
+   2800
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 29,
+  "title_de": "Einladungen und Partys",
+  "title_ar": "العزومات والحفلات",
+  "sections": [
+   {
+    "title_de": "Jemanden einladen",
+    "title_ar": "تعزم حد"
+   },
+   {
+    "title_de": "Zusagen und absagen",
+    "title_ar": "توافق أو تعتذر"
+   },
+   {
+    "title_de": "Was soll ich mitbringen?",
+    "title_ar": "أجيب إيه معايا؟"
+   },
+   {
+    "title_de": "Auf der Party",
+    "title_ar": "في الحفلة"
+   },
+   {
+    "title_de": "Sich verabschieden und bedanken",
+    "title_ar": "تسلم وتشكر"
+   }
+  ],
+  "sentences": [
+   2801,
+   2900
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 30,
+  "title_de": "Feste und Feiertage",
+  "title_ar": "الأعياد والمناسبات",
+  "sections": [
+   {
+    "title_de": "Geburtstag",
+    "title_ar": "عيد الميلاد"
+   },
+   {
+    "title_de": "Weihnachten und Silvester",
+    "title_ar": "الكريسماس وراس السنة"
+   },
+   {
+    "title_de": "Ramadan und Eid",
+    "title_ar": "رمضان والعيد"
+   },
+   {
+    "title_de": "Hochzeiten und Familienfeste",
+    "title_ar": "الأفراح ومناسبات العيلة"
+   },
+   {
+    "title_de": "Feiertage in Deutschland",
+    "title_ar": "الإجازات الرسمية في ألمانيا"
+   }
+  ],
+  "sentences": [
+   2901,
+   3000
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 31,
+  "title_de": "Sport und Fitness",
+  "title_ar": "الرياضة والجيم",
+  "sections": [
+   {
+    "title_de": "Welchen Sport machst du?",
+    "title_ar": "بتلعب رياضة إيه؟"
+   },
+   {
+    "title_de": "Im Fitnessstudio",
+    "title_ar": "في الجيم"
+   },
+   {
+    "title_de": "Fußball schauen",
+    "title_ar": "الفرجة على الكورة"
+   },
+   {
+    "title_de": "Nach dem Training",
+    "title_ar": "بعد التمرين"
+   },
+   {
+    "title_de": "Motivation und Ziele",
+    "title_ar": "الحماس والأهداف"
+   }
+  ],
+  "sentences": [
+   3001,
+   3100
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 32,
+  "title_de": "Körper und Aussehen",
+  "title_ar": "الجسم والشكل",
+  "sections": [
+   {
+    "title_de": "Körperteile",
+    "title_ar": "أجزاء الجسم"
+   },
+   {
+    "title_de": "Wie sieht er aus?",
+    "title_ar": "شكله إيه؟"
+   },
+   {
+    "title_de": "Beim Friseur",
+    "title_ar": "عند الحلاق"
+   },
+   {
+    "title_de": "Komplimente und Veränderungen",
+    "title_ar": "المجاملات والتغيير"
+   },
+   {
+    "title_de": "Körperpflege",
+    "title_ar": "العناية بالجسم"
+   }
+  ],
+  "sentences": [
+   3101,
+   3200
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 33,
+  "title_de": "Charakter beschreiben",
+  "title_ar": "وصف الشخصية",
+  "sections": [
+   {
+    "title_de": "Wie ist er so?",
+    "title_ar": "هو عامل إزاي كشخص؟"
+   },
+   {
+    "title_de": "Nicht so positive Seiten",
+    "title_ar": "الجوانب اللي مش حلوة أوي"
+   },
+   {
+    "title_de": "Über mich selbst",
+    "title_ar": "عن نفسي"
+   },
+   {
+    "title_de": "Familie und Freunde",
+    "title_ar": "العيلة والصحاب"
+   },
+   {
+    "title_de": "Der erste Eindruck",
+    "title_ar": "أول انطباع"
+   }
+  ],
+  "sentences": [
+   3201,
+   3300
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 34,
+  "title_de": "Bank und Geld",
+  "title_ar": "البنك والفلوس",
+  "sections": [
+   {
+    "title_de": "Ein Konto eröffnen",
+    "title_ar": "فتح حساب"
+   },
+   {
+    "title_de": "Am Geldautomaten",
+    "title_ar": "عند مكنة الصرف"
+   },
+   {
+    "title_de": "Überweisen und bezahlen",
+    "title_ar": "التحويل والدفع"
+   },
+   {
+    "title_de": "Probleme mit der Karte",
+    "title_ar": "مشاكل الكارت"
+   },
+   {
+    "title_de": "Geld im Alltag",
+    "title_ar": "الفلوس في الحياة اليومية"
+   }
+  ],
+  "sentences": [
+   3301,
+   3400
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 35,
+  "title_de": "Post und Pakete",
+  "title_ar": "البريد والطرود",
+  "sections": [
+   {
+    "title_de": "Einen Brief schicken",
+    "title_ar": "بعت جواب"
+   },
+   {
+    "title_de": "Ein Paket verschicken",
+    "title_ar": "بعت طرد"
+   },
+   {
+    "title_de": "Ein Paket abholen",
+    "title_ar": "استلام طرد"
+   },
+   {
+    "title_de": "Online bestellen",
+    "title_ar": "الطلب أونلاين"
+   },
+   {
+    "title_de": "Probleme und Rücksendung",
+    "title_ar": "المشاكل والترجيع"
+   }
+  ],
+  "sentences": [
+   3401,
+   3500
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 36,
+  "title_de": "Handy und Internet",
+  "title_ar": "الموبايل والإنترنت",
+  "sections": [
+   {
+    "title_de": "Akku und Handy",
+    "title_ar": "البطارية والموبايل"
+   },
+   {
+    "title_de": "WLAN und Internet",
+    "title_ar": "الواي فاي والإنترنت"
+   },
+   {
+    "title_de": "Nachrichten und Apps",
+    "title_ar": "الرسايل والأبلكيشنات"
+   },
+   {
+    "title_de": "Handyvertrag und Tarif",
+    "title_ar": "عقد الموبايل والباقة"
+   },
+   {
+    "title_de": "Technische Probleme",
+    "title_ar": "مشاكل تقنية"
+   }
+  ],
+  "sentences": [
+   3501,
+   3600
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 37,
+  "title_de": "Pläne mit Freunden",
+  "title_ar": "الخروج والتخطيط مع الصحاب",
+  "sections": [
+   {
+    "title_de": "Was machen wir?",
+    "title_ar": "نعمل إيه؟"
+   },
+   {
+    "title_de": "Zeit und Ort ausmachen",
+    "title_ar": "نتفق على الميعاد والمكان"
+   },
+   {
+    "title_de": "Unterwegs und zu spät",
+    "title_ar": "في السكة ومتأخر"
+   },
+   {
+    "title_de": "Pläne ändern",
+    "title_ar": "تغيير الخطة"
+   },
+   {
+    "title_de": "Wie war's?",
+    "title_ar": "كانت عاملة إيه؟"
+   }
+  ],
+  "sentences": [
+   3601,
+   3700
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 38,
+  "title_de": "Hausarbeit",
+  "title_ar": "شغل البيت",
+  "sections": [
+   {
+    "title_de": "Putzen und aufräumen",
+    "title_ar": "التنضيف والترويق"
+   },
+   {
+    "title_de": "In der Küche",
+    "title_ar": "في المطبخ"
+   },
+   {
+    "title_de": "Wäsche waschen",
+    "title_ar": "الغسيل"
+   },
+   {
+    "title_de": "Aufgaben verteilen",
+    "title_ar": "تقسيم الشغل"
+   },
+   {
+    "title_de": "Müll und kleine Probleme",
+    "title_ar": "الزبالة والمشاكل الصغيرة"
+   }
+  ],
+  "sentences": [
+   3701,
+   3800
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 39,
+  "title_de": "Vergleichen",
+  "title_ar": "المقارنة بين الحاجات",
+  "sections": [
+   {
+    "title_de": "Menschen vergleichen",
+    "title_ar": "المقارنة بين الناس"
+   },
+   {
+    "title_de": "Preise und Einkaufen",
+    "title_ar": "الأسعار والشوبينج"
+   },
+   {
+    "title_de": "Deutschland und Ägypten",
+    "title_ar": "ألمانيا ومصر"
+   },
+   {
+    "title_de": "Was magst du lieber?",
+    "title_ar": "بتحب إيه أكتر؟"
+   },
+   {
+    "title_de": "Entscheiden und begründen",
+    "title_ar": "تختار وتقول ليه"
+   }
+  ],
+  "sentences": [
+   3801,
+   3900
+  ]
+ },
+ {
+  "level": "A2",
+  "number": 40,
+  "title_de": "Smalltalk",
+  "title_ar": "الكلام الخفيف (سمول توك)",
+  "sections": [
+   {
+    "title_de": "Über das Wetter",
+    "title_ar": "الكلام عن الجو"
+   },
+   {
+    "title_de": "Sich kennenlernen",
+    "title_ar": "التعارف"
+   },
+   {
+    "title_de": "In der Kaffeeküche",
+    "title_ar": "في مطبخ الشغل"
+   },
+   {
+    "title_de": "Mit Nachbarn und im Alltag",
+    "title_ar": "مع الجيران وفي اليوم العادي"
+   },
+   {
+    "title_de": "Reagieren und das Gespräch beenden",
+    "title_ar": "تتفاعل وتنهي الكلام"
+   }
+  ],
+  "sentences": [
+   3901,
+   4000
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 41,
+  "title_de": "Erlebnisse erzählen",
+  "title_ar": "حكي المواقف والتجارب",
+  "sections": [
+   {
+    "title_de": "Was ist passiert?",
+    "title_ar": "إيه اللي حصل؟"
+   },
+   {
+    "title_de": "Reiseerlebnisse",
+    "title_ar": "مواقف من السفر"
+   },
+   {
+    "title_de": "Peinliche und lustige Momente",
+    "title_ar": "مواقف محرجة ومضحكة"
+   },
+   {
+    "title_de": "Pech und Pannen",
+    "title_ar": "سوء حظ ومشاكل"
+   },
+   {
+    "title_de": "Zuhören, reagieren, nachfragen",
+    "title_ar": "تسمع وتتفاعل وتسأل"
+   }
+  ],
+  "sentences": [
+   4001,
+   4100
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 42,
+  "title_de": "Meinung sagen, zustimmen, widersprechen",
+  "title_ar": "إبداء الرأي والموافقة والاعتراض",
+  "sections": [
+   {
+    "title_de": "Die eigene Meinung sagen",
+    "title_ar": "تقول رأيك"
+   },
+   {
+    "title_de": "Zustimmen",
+    "title_ar": "توافق"
+   },
+   {
+    "title_de": "Widersprechen – höflich und direkt",
+    "title_ar": "تعترض بأدب أو بصراحة"
+   },
+   {
+    "title_de": "Argumentieren und begründen",
+    "title_ar": "تدي أسباب وحجج"
+   },
+   {
+    "title_de": "Diskussion lenken und Kompromisse finden",
+    "title_ar": "تدير النقاش وتلاقي حل وسط"
+   }
+  ],
+  "sentences": [
+   4101,
+   4200
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 43,
+  "title_de": "Jobsuche und Bewerbung",
+  "title_ar": "البحث عن شغل والتقديم",
+  "sections": [
+   {
+    "title_de": "Auf Jobsuche",
+    "title_ar": "بدور على شغل"
+   },
+   {
+    "title_de": "Stellenanzeigen verstehen",
+    "title_ar": "تفهم إعلانات الوظايف"
+   },
+   {
+    "title_de": "Lebenslauf und Unterlagen",
+    "title_ar": "السي في والورق"
+   },
+   {
+    "title_de": "Das Anschreiben",
+    "title_ar": "جواب التقديم"
+   },
+   {
+    "title_de": "Nach der Bewerbung",
+    "title_ar": "بعد ما تقدم"
+   }
+  ],
+  "sentences": [
+   4201,
+   4300
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 44,
+  "title_de": "Das Vorstellungsgespräch",
+  "title_ar": "مقابلة الشغل (الإنترفيو)",
+  "sections": [
+   {
+    "title_de": "Ankommen und Smalltalk",
+    "title_ar": "الوصول والكلام الخفيف"
+   },
+   {
+    "title_de": "Sich vorstellen und den Werdegang erklären",
+    "title_ar": "تعرف نفسك وتشرح مشوارك"
+   },
+   {
+    "title_de": "Stärken, Schwächen und schwierige Fragen",
+    "title_ar": "نقط القوة والضعف والأسئلة الصعبة"
+   },
+   {
+    "title_de": "Gehalt und Arbeitsbedingungen",
+    "title_ar": "المرتب وشروط الشغل"
+   },
+   {
+    "title_de": "Eigene Fragen und Abschluss",
+    "title_ar": "أسئلتك والختام"
+   }
+  ],
+  "sentences": [
+   4301,
+   4400
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 45,
+  "title_de": "Kommunikation im Büro",
+  "title_ar": "التواصل في الشغل",
+  "sections": [
+   {
+    "title_de": "Smalltalk mit Kollegen",
+    "title_ar": "دردشة مع الزمايل"
+   },
+   {
+    "title_de": "Besprechungen und Termine",
+    "title_ar": "الاجتماعات والمواعيد"
+   },
+   {
+    "title_de": "Aufgaben verteilen und um Hilfe bitten",
+    "title_ar": "توزيع المهام وطلب المساعدة"
+   },
+   {
+    "title_de": "E-Mails und Telefon",
+    "title_ar": "الإيميلات والتليفون"
+   },
+   {
+    "title_de": "Probleme, Feedback und Feierabend",
+    "title_ar": "مشاكل وفيدباك ونهاية اليوم"
+   }
+  ],
+  "sentences": [
+   4401,
+   4500
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 46,
+  "title_de": "Höfliche Bitten und Anfragen",
+  "title_ar": "الطلبات المؤدبة والاستفسارات",
+  "sections": [
+   {
+    "title_de": "Unterwegs um Hilfe bitten",
+    "title_ar": "تطلب مساعدة في الشارع"
+   },
+   {
+    "title_de": "Im Geschäft und im Restaurant",
+    "title_ar": "في المحل والمطعم"
+   },
+   {
+    "title_de": "Am Telefon und per E-Mail",
+    "title_ar": "على التليفون وفي الإيميل"
+   },
+   {
+    "title_de": "Bei Nachbarn und Freunden",
+    "title_ar": "مع الجيران والصحاب"
+   },
+   {
+    "title_de": "Höflich ablehnen und nachhaken",
+    "title_ar": "ترفض بأدب وتسأل تاني"
+   }
+  ],
+  "sentences": [
+   4501,
+   4600
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 47,
+  "title_de": "Sich beschweren",
+  "title_ar": "الشكوى",
+  "sections": [
+   {
+    "title_de": "Im Restaurant und im Café",
+    "title_ar": "في المطعم والكافيه"
+   },
+   {
+    "title_de": "Ärger mit den Nachbarn",
+    "title_ar": "مشاكل مع الجيران"
+   },
+   {
+    "title_de": "Probleme mit der Wohnung",
+    "title_ar": "مشاكل في الشقة"
+   },
+   {
+    "title_de": "Reklamation im Geschäft",
+    "title_ar": "ترجيع حاجة للمحل"
+   },
+   {
+    "title_de": "Beschwerde beim Kundenservice",
+    "title_ar": "شكوى لخدمة العملاء"
+   }
+  ],
+  "sentences": [
+   4601,
+   4700
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 48,
+  "title_de": "Auf dem Amt",
+  "title_ar": "في المصالح الحكومية والأوراق",
+  "sections": [
+   {
+    "title_de": "Termin und Wartezimmer",
+    "title_ar": "الميعاد وأوضة الانتظار"
+   },
+   {
+    "title_de": "Die Wohnung anmelden",
+    "title_ar": "تسجيل السكن"
+   },
+   {
+    "title_de": "Bei der Ausländerbehörde",
+    "title_ar": "في مكتب الأجانب"
+   },
+   {
+    "title_de": "Formulare und Unterlagen",
+    "title_ar": "الاستمارات والورق"
+   },
+   {
+    "title_de": "Briefe, Bescheide und Probleme",
+    "title_ar": "الجوابات والقرارات والمشاكل"
+   }
+  ],
+  "sentences": [
+   4701,
+   4800
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 49,
+  "title_de": "Symptome genau beschreiben",
+  "title_ar": "وصف الأعراض بالتفصيل",
+  "sections": [
+   {
+    "title_de": "Schmerzen beschreiben",
+    "title_ar": "توصف الوجع"
+   },
+   {
+    "title_de": "Erkältung, Grippe und Fieber",
+    "title_ar": "البرد والإنفلونزا والسخونية"
+   },
+   {
+    "title_de": "Magen und Verdauung",
+    "title_ar": "المعدة والهضم"
+   },
+   {
+    "title_de": "Verletzungen und Unfälle",
+    "title_ar": "الإصابات والحوادث"
+   },
+   {
+    "title_de": "Verlauf, Vorerkrankungen und Psyche",
+    "title_ar": "تطور الحالة والأمراض السابقة والنفسية"
+   }
+  ],
+  "sentences": [
+   4801,
+   4900
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 50,
+  "title_de": "Freundschaft",
+  "title_ar": "الصداقة",
+  "sections": [
+   {
+    "title_de": "Neue Leute kennenlernen",
+    "title_ar": "تتعرف على ناس جديدة"
+   },
+   {
+    "title_de": "Sich verabreden",
+    "title_ar": "تتفقوا على خروجة"
+   },
+   {
+    "title_de": "Über Freunde sprechen",
+    "title_ar": "تتكلم عن صحابك"
+   },
+   {
+    "title_de": "Streit und Versöhnung",
+    "title_ar": "الخناق والمصالحة"
+   },
+   {
+    "title_de": "Was Freundschaft bedeutet",
+    "title_ar": "يعني إيه صداقة"
+   }
+  ],
+  "sentences": [
+   4901,
+   5000
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 51,
+  "title_de": "Liebe und Dating",
+  "title_ar": "الحب والتعارف",
+  "sections": [
+   {
+    "title_de": "Jemanden kennenlernen",
+    "title_ar": "التعارف على حد"
+   },
+   {
+    "title_de": "Das erste Date",
+    "title_ar": "أول ديت"
+   },
+   {
+    "title_de": "Gefühle zeigen",
+    "title_ar": "التعبير عن المشاعر"
+   },
+   {
+    "title_de": "Beziehungsalltag",
+    "title_ar": "الحياة اليومية في العلاقة"
+   },
+   {
+    "title_de": "Probleme und Trennung",
+    "title_ar": "المشاكل والانفصال"
+   }
+  ],
+  "sentences": [
+   5001,
+   5100
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 52,
+  "title_de": "Streit und Konflikte",
+  "title_ar": "الخناقات والخلافات",
+  "sections": [
+   {
+    "title_de": "Ärger ausdrücken",
+    "title_ar": "التعبير عن الضيق"
+   },
+   {
+    "title_de": "Streit in der WG und mit Nachbarn",
+    "title_ar": "خناقات في السكن المشترك ومع الجيران"
+   },
+   {
+    "title_de": "Konflikte bei der Arbeit",
+    "title_ar": "خلافات في الشغل"
+   },
+   {
+    "title_de": "Ruhig bleiben und deeskalieren",
+    "title_ar": "الهدوء وتهدية الجو"
+   },
+   {
+    "title_de": "Lösungen finden und sich versöhnen",
+    "title_ar": "إيجاد حلول والمصالحة"
+   }
+  ],
+  "sentences": [
+   5101,
+   5200
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 53,
+  "title_de": "Sich entschuldigen",
+  "title_ar": "الاعتذار والأعذار",
+  "sections": [
+   {
+    "title_de": "Kleine Entschuldigungen im Alltag",
+    "title_ar": "اعتذارات صغيرة كل يوم"
+   },
+   {
+    "title_de": "Zu spät kommen",
+    "title_ar": "التأخير"
+   },
+   {
+    "title_de": "Absagen und Termine verschieben",
+    "title_ar": "إلغاء وتأجيل المواعيد"
+   },
+   {
+    "title_de": "Sich ernsthaft entschuldigen",
+    "title_ar": "الاعتذار بجد"
+   },
+   {
+    "title_de": "Auf eine Entschuldigung reagieren",
+    "title_ar": "الرد على الاعتذار"
+   }
+  ],
+  "sentences": [
+   5201,
+   5300
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 54,
+  "title_de": "Zukunftspläne und Träume",
+  "title_ar": "خطط المستقبل والأحلام",
+  "sections": [
+   {
+    "title_de": "Pläne für die nächste Zeit",
+    "title_ar": "خطط الفترة الجاية"
+   },
+   {
+    "title_de": "Beruf und Karriere",
+    "title_ar": "الشغل والمستقبل المهني"
+   },
+   {
+    "title_de": "Familie und Privatleben",
+    "title_ar": "العيلة والحياة الشخصية"
+   },
+   {
+    "title_de": "Große Träume",
+    "title_ar": "أحلام كبيرة"
+   },
+   {
+    "title_de": "Zweifel, Ängste und Hoffnungen",
+    "title_ar": "شكوك ومخاوف وأمل"
+   }
+  ],
+  "sentences": [
+   5301,
+   5400
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 55,
+  "title_de": "Schule und Studium",
+  "title_ar": "المدرسة والجامعة",
+  "sections": [
+   {
+    "title_de": "Erinnerungen an die Schulzeit",
+    "title_ar": "ذكريات أيام المدرسة"
+   },
+   {
+    "title_de": "Studienbeginn und Uni-Alltag",
+    "title_ar": "بداية الدراسة والحياة الجامعية"
+   },
+   {
+    "title_de": "Lernen und Prüfungen",
+    "title_ar": "المذاكرة والامتحانات"
+   },
+   {
+    "title_de": "Organisation, Geld und Wohnen",
+    "title_ar": "التنظيم والفلوس والسكن"
+   },
+   {
+    "title_de": "Abschluss und Vergleich",
+    "title_ar": "التخرج والمقارنة"
+   }
+  ],
+  "sentences": [
+   5401,
+   5500
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 56,
+  "title_de": "Medien und Nachrichten",
+  "title_ar": "الإعلام والأخبار",
+  "sections": [
+   {
+    "title_de": "Wie informierst du dich?",
+    "title_ar": "بتعرف الأخبار منين؟"
+   },
+   {
+    "title_de": "Über aktuelle Ereignisse sprechen",
+    "title_ar": "الكلام عن اللي بيحصل دلوقتي"
+   },
+   {
+    "title_de": "Fernsehen, Streaming und Radio",
+    "title_ar": "التلفزيون والستريمينج والراديو"
+   },
+   {
+    "title_de": "Quellen und Falschmeldungen",
+    "title_ar": "المصادر والأخبار الكدابة"
+   },
+   {
+    "title_de": "Meinungen zu den Medien",
+    "title_ar": "رأيك في الإعلام"
+   }
+  ],
+  "sentences": [
+   5501,
+   5600
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 57,
+  "title_de": "Social Media",
+  "title_ar": "السوشيال ميديا",
+  "sections": [
+   {
+    "title_de": "Apps und Profile",
+    "title_ar": "الأبلكيشنز والبروفايلات"
+   },
+   {
+    "title_de": "Posten, liken, kommentieren",
+    "title_ar": "تنزل بوست وتعمل لايك وكومنت"
+   },
+   {
+    "title_de": "Gruppen und Messenger",
+    "title_ar": "الجروبات والشات"
+   },
+   {
+    "title_de": "Bildschirmzeit, Datenschutz und Hass",
+    "title_ar": "وقت الشاشة والخصوصية والكراهية"
+   },
+   {
+    "title_de": "Vor- und Nachteile diskutieren",
+    "title_ar": "نتناقش في المميزات والعيوب"
+   }
+  ],
+  "sentences": [
+   5601,
+   5700
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 58,
+  "title_de": "Umwelt im Alltag",
+  "title_ar": "البيئة في حياتنا اليومية",
+  "sections": [
+   {
+    "title_de": "Mülltrennung",
+    "title_ar": "فرز الزبالة"
+   },
+   {
+    "title_de": "Einkaufen mit weniger Plastik",
+    "title_ar": "نشتري ببلاستيك أقل"
+   },
+   {
+    "title_de": "Energie und Wasser sparen",
+    "title_ar": "توفير الكهربا والمية"
+   },
+   {
+    "title_de": "Unterwegs: Rad, Bahn und Auto",
+    "title_ar": "في الطريق: عجلة وقطر وعربية"
+   },
+   {
+    "title_de": "Klima und Umwelt diskutieren",
+    "title_ar": "نتناقش عن المناخ والبيئة"
+   }
+  ],
+  "sentences": [
+   5701,
+   5800
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 59,
+  "title_de": "Kulturunterschiede: Ägypten und Deutschland",
+  "title_ar": "الفرق بين ثقافة مصر وألمانيا",
+  "sections": [
+   {
+    "title_de": "Pünktlichkeit und Planung",
+    "title_ar": "المواعيد والتخطيط"
+   },
+   {
+    "title_de": "Gastfreundschaft und Essen",
+    "title_ar": "الضيافة والأكل"
+   },
+   {
+    "title_de": "Familie und Freundschaft",
+    "title_ar": "العيلة والصحاب"
+   },
+   {
+    "title_de": "Direktheit und Kommunikation",
+    "title_ar": "الصراحة وطريقة الكلام"
+   },
+   {
+    "title_de": "Alltag, Feste und Regeln",
+    "title_ar": "الحياة اليومية والأعياد والقواعد"
+   }
+  ],
+  "sentences": [
+   5801,
+   5900
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 60,
+  "title_de": "Leben im Ausland",
+  "title_ar": "الحياة برا والاندماج",
+  "sections": [
+   {
+    "title_de": "Die ersten Wochen",
+    "title_ar": "أول أسابيع"
+   },
+   {
+    "title_de": "Ämter und Aufenthalt",
+    "title_ar": "المصالح والإقامة"
+   },
+   {
+    "title_de": "Heimweh und Kontakt nach Hause",
+    "title_ar": "الغربة والتواصل مع البلد"
+   },
+   {
+    "title_de": "Ankommen und sich integrieren",
+    "title_ar": "إنك تستقر وتندمج"
+   },
+   {
+    "title_de": "Bilanz und Zukunftspläne",
+    "title_ar": "الحصيلة وخطط المستقبل"
+   }
+  ],
+  "sentences": [
+   5901,
+   6000
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 61,
+  "title_de": "Probleme auf Reisen",
+  "title_ar": "مشاكل السفر",
+  "sections": [
+   {
+    "title_de": "Verspätung und Zugausfall",
+    "title_ar": "تأخير وإلغاء القطر"
+   },
+   {
+    "title_de": "Das Gepäck ist weg",
+    "title_ar": "الشنطة ضاعت"
+   },
+   {
+    "title_de": "Ärger im Hotel",
+    "title_ar": "مشاكل في الفندق"
+   },
+   {
+    "title_de": "Pass, Geld oder Handy verloren",
+    "title_ar": "الباسبور أو الفلوس أو الموبايل ضاع"
+   },
+   {
+    "title_de": "Hilfe holen und sich beschweren",
+    "title_ar": "طلب المساعدة والشكوى"
+   }
+  ],
+  "sentences": [
+   6001,
+   6100
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 62,
+  "title_de": "Auto und Verkehr",
+  "title_ar": "العربية والمرور",
+  "sections": [
+   {
+    "title_de": "Unterwegs und an der Tankstelle",
+    "title_ar": "على الطريق وفي البنزينة"
+   },
+   {
+    "title_de": "Parken",
+    "title_ar": "الركنة"
+   },
+   {
+    "title_de": "Panne und Werkstatt",
+    "title_ar": "العطل والورشة"
+   },
+   {
+    "title_de": "Ein Unfall",
+    "title_ar": "حادثة"
+   },
+   {
+    "title_de": "Führerschein, Stau und Alternativen",
+    "title_ar": "الرخصة والزحمة والبدائل"
+   }
+  ],
+  "sentences": [
+   6101,
+   6200
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 63,
+  "title_de": "Gefühle genauer ausdrücken",
+  "title_ar": "التعبير عن المشاعر بعمق",
+  "sections": [
+   {
+    "title_de": "Freude und Begeisterung",
+    "title_ar": "الفرحة والحماس"
+   },
+   {
+    "title_de": "Ärger und Frust",
+    "title_ar": "الغضب والإحباط"
+   },
+   {
+    "title_de": "Traurigkeit und Enttäuschung",
+    "title_ar": "الحزن وخيبة الأمل"
+   },
+   {
+    "title_de": "Angst, Sorgen und Nervosität",
+    "title_ar": "الخوف والقلق والتوتر"
+   },
+   {
+    "title_de": "Über Gefühle sprechen und trösten",
+    "title_ar": "الكلام عن المشاعر والمواساة"
+   }
+  ],
+  "sentences": [
+   6201,
+   6300
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 64,
+  "title_de": "Ratschläge geben",
+  "title_ar": "النصايح والاقتراحات",
+  "sections": [
+   {
+    "title_de": "Um Rat bitten",
+    "title_ar": "طلب النصيحة"
+   },
+   {
+    "title_de": "Ratschläge geben",
+    "title_ar": "إزاي تدي نصيحة"
+   },
+   {
+    "title_de": "Tipps für Arbeit und Sprache",
+    "title_ar": "نصايح للشغل واللغة"
+   },
+   {
+    "title_de": "Warnen und abraten",
+    "title_ar": "التحذير والنصح بعدم عمل حاجة"
+   },
+   {
+    "title_de": "Auf Ratschläge reagieren",
+    "title_ar": "الرد على النصيحة"
+   }
+  ],
+  "sentences": [
+   6301,
+   6400
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 65,
+  "title_de": "Gesund leben",
+  "title_ar": "الحياة الصحية",
+  "sections": [
+   {
+    "title_de": "Gesund essen und trinken",
+    "title_ar": "الأكل والشرب الصحي"
+   },
+   {
+    "title_de": "Sport und Bewegung",
+    "title_ar": "الرياضة والحركة"
+   },
+   {
+    "title_de": "Schlaf und Stress",
+    "title_ar": "النوم والضغط"
+   },
+   {
+    "title_de": "Schlechte Gewohnheiten ändern",
+    "title_ar": "تغيير العادات الوحشة"
+   },
+   {
+    "title_de": "Vorsorge und Einstellung",
+    "title_ar": "الوقاية ونظرتك للصحة"
+   }
+  ],
+  "sentences": [
+   6401,
+   6500
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 66,
+  "title_de": "Geld sparen und ausgeben",
+  "title_ar": "التوفير والصرف والميزانية",
+  "sections": [
+   {
+    "title_de": "Das Monatsbudget",
+    "title_ar": "ميزانية الشهر"
+   },
+   {
+    "title_de": "Sparen und Sparziele",
+    "title_ar": "التوفير وأهدافه"
+   },
+   {
+    "title_de": "Einkaufen und Geld ausgeben",
+    "title_ar": "الشرا والصرف"
+   },
+   {
+    "title_de": "Bank, Konto und Bezahlen",
+    "title_ar": "البنك والحساب والدفع"
+   },
+   {
+    "title_de": "Geldsorgen und Schulden",
+    "title_ar": "هم الفلوس والديون"
+   }
+  ],
+  "sentences": [
+   6501,
+   6600
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 67,
+  "title_de": "Probleme in der Wohnung",
+  "title_ar": "مشاكل الشقة والتصليحات",
+  "sections": [
+   {
+    "title_de": "Etwas ist kaputt",
+    "title_ar": "فيه حاجة بايظة"
+   },
+   {
+    "title_de": "Den Vermieter informieren",
+    "title_ar": "تبلغ صاحب الشقة"
+   },
+   {
+    "title_de": "Der Handwerker kommt",
+    "title_ar": "الصنايعي جاي"
+   },
+   {
+    "title_de": "Ärger mit den Nachbarn",
+    "title_ar": "مشاكل مع الجيران"
+   },
+   {
+    "title_de": "Rechte als Mieter",
+    "title_ar": "حقوقك كمستأجر"
+   }
+  ],
+  "sentences": [
+   6601,
+   6700
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 68,
+  "title_de": "Kundenservice am Telefon",
+  "title_ar": "خدمة العملاء في التليفون",
+  "sections": [
+   {
+    "title_de": "Anrufen und durchkommen",
+    "title_ar": "تتصل وتوصل لحد"
+   },
+   {
+    "title_de": "Das Problem beschreiben",
+    "title_ar": "تشرح المشكلة"
+   },
+   {
+    "title_de": "Einen Vertrag kündigen",
+    "title_ar": "تلغي عقد"
+   },
+   {
+    "title_de": "Bestellung und Reklamation",
+    "title_ar": "الأوردر والمرتجعات"
+   },
+   {
+    "title_de": "Sich beschweren und eine Lösung finden",
+    "title_ar": "تشتكي وتوصل لحل"
+   }
+  ],
+  "sentences": [
+   6701,
+   6800
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 69,
+  "title_de": "Rezepte und Essenskultur",
+  "title_ar": "الوصفات وثقافة الأكل",
+  "sections": [
+   {
+    "title_de": "Ein Rezept erklären",
+    "title_ar": "تشرح وصفة"
+   },
+   {
+    "title_de": "Gemeinsam kochen",
+    "title_ar": "نطبخ مع بعض"
+   },
+   {
+    "title_de": "Essen in Deutschland",
+    "title_ar": "الأكل في ألمانيا"
+   },
+   {
+    "title_de": "Ägyptisches Essen erklären",
+    "title_ar": "تشرح الأكل المصري"
+   },
+   {
+    "title_de": "Zu Gast beim Essen",
+    "title_ar": "معزوم على الأكل"
+   }
+  ],
+  "sentences": [
+   6801,
+   6900
+  ]
+ },
+ {
+  "level": "B1",
+  "number": 70,
+  "title_de": "Filme, Musik und Bücher",
+  "title_ar": "الأفلام والمزيكا والكتب",
+  "sections": [
+   {
+    "title_de": "Filme und Serien",
+    "title_ar": "أفلام ومسلسلات"
+   },
+   {
+    "title_de": "Ins Kino gehen",
+    "title_ar": "نروح السينما"
+   },
+   {
+    "title_de": "Musik hören und machen",
+    "title_ar": "سماع المزيكا وعزفها"
+   },
+   {
+    "title_de": "Bücher und Lesen",
+    "title_ar": "الكتب والقراية"
+   },
+   {
+    "title_de": "Meinungen und Empfehlungen",
+    "title_ar": "الآراء والترشيحات"
+   }
+  ],
+  "sentences": [
+   6901,
+   7000
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 71,
+  "title_de": "Diskutieren und argumentieren",
+  "title_ar": "النقاش وتقديم الحجج",
+  "sections": [
+   {
+    "title_de": "Die eigene Meinung sagen",
+    "title_ar": "تقول رأيك"
+   },
+   {
+    "title_de": "Zustimmen und widersprechen",
+    "title_ar": "توافق أو تعترض"
+   },
+   {
+    "title_de": "Argumente begründen",
+    "title_ar": "تدعم كلامك بحجج"
+   },
+   {
+    "title_de": "Nachfragen und die Diskussion lenken",
+    "title_ar": "تسأل وتوجه النقاش"
+   },
+   {
+    "title_de": "Kompromisse und Fazit",
+    "title_ar": "الحل الوسط والخلاصة"
+   }
+  ],
+  "sentences": [
+   7001,
+   7100
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 72,
+  "title_de": "Etwas präsentieren und erklären",
+  "title_ar": "العرض والشرح",
+  "sections": [
+   {
+    "title_de": "Einstieg und Gliederung",
+    "title_ar": "البداية وتقسيم العرض"
+   },
+   {
+    "title_de": "Überleitungen",
+    "title_ar": "الانتقال من نقطة لنقطة"
+   },
+   {
+    "title_de": "Grafiken und Abläufe erklären",
+    "title_ar": "تشرح رسم بياني أو خطوات"
+   },
+   {
+    "title_de": "Fragen und Pannen",
+    "title_ar": "الأسئلة والمشاكل اللي بتحصل"
+   },
+   {
+    "title_de": "Abschluss und Feedback",
+    "title_ar": "الختام ورأي الناس"
+   }
+  ],
+  "sentences": [
+   7101,
+   7200
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 73,
+  "title_de": "Was wäre, wenn …? (Konjunktiv II)",
+  "title_ar": "لو كان... (الافتراضات)",
+  "sections": [
+   {
+    "title_de": "Wünsche und Träume",
+    "title_ar": "الأمنيات والأحلام"
+   },
+   {
+    "title_de": "Was würdest du tun, wenn …?",
+    "title_ar": "كنت هتعمل إيه لو...؟"
+   },
+   {
+    "title_de": "Höflich bitten und Ratschläge geben",
+    "title_ar": "تطلب بأدب وتدي نصيحة"
+   },
+   {
+    "title_de": "Was wäre gewesen, wenn …?",
+    "title_ar": "الندم على اللي فات"
+   },
+   {
+    "title_de": "Als ob … und andere irreale Sätze",
+    "title_ar": "\"كأن...\" وجمل تانية مش حقيقية"
+   }
+  ],
+  "sentences": [
+   7201,
+   7300
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 74,
+  "title_de": "Was andere gesagt haben (indirekte Rede)",
+  "title_ar": "نقل كلام الآخرين",
+  "sections": [
+   {
+    "title_de": "Was hat sie gesagt?",
+    "title_ar": "قالت إيه؟"
+   },
+   {
+    "title_de": "Nachrichten weitergeben",
+    "title_ar": "توصيل الرسايل"
+   },
+   {
+    "title_de": "Gerüchte und Klatsch",
+    "title_ar": "الإشاعات والرغي"
+   },
+   {
+    "title_de": "In den Nachrichten",
+    "title_ar": "في الأخبار"
+   },
+   {
+    "title_de": "Fragen und Bitten wiedergeben",
+    "title_ar": "نقل الأسئلة والطلبات"
+   }
+  ],
+  "sentences": [
+   7301,
+   7400
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 75,
+  "title_de": "Verhandeln: Gehalt und Preise",
+  "title_ar": "التفاوض على المرتب والأسعار",
+  "sections": [
+   {
+    "title_de": "Auf dem Flohmarkt",
+    "title_ar": "الفصال في سوق الروبابيكيا"
+   },
+   {
+    "title_de": "Beim Händler",
+    "title_ar": "عند التاجر"
+   },
+   {
+    "title_de": "Gehalt im Vorstellungsgespräch",
+    "title_ar": "المرتب في الإنترفيو"
+   },
+   {
+    "title_de": "Eine Gehaltserhöhung verlangen",
+    "title_ar": "طلب زيادة في المرتب"
+   },
+   {
+    "title_de": "Kompromisse und Taktik",
+    "title_ar": "الحلول الوسط والتكتيك"
+   }
+  ],
+  "sentences": [
+   7401,
+   7500
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 76,
+  "title_de": "Meetings im Job",
+  "title_ar": "الاجتماعات في الشغل",
+  "sections": [
+   {
+    "title_de": "Ein Meeting planen",
+    "title_ar": "تنظيم اجتماع"
+   },
+   {
+    "title_de": "Eröffnung und Tagesordnung",
+    "title_ar": "البداية وجدول الأعمال"
+   },
+   {
+    "title_de": "Meinungen und Diskussion",
+    "title_ar": "الرأي والنقاش"
+   },
+   {
+    "title_de": "Online-Meetings",
+    "title_ar": "الاجتماعات أونلاين"
+   },
+   {
+    "title_de": "Ergebnisse und Abschluss",
+    "title_ar": "النتايج والختام"
+   }
+  ],
+  "sentences": [
+   7501,
+   7600
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 77,
+  "title_de": "Karriere und Ehrgeiz",
+  "title_ar": "المستقبل المهني والطموح",
+  "sections": [
+   {
+    "title_de": "Berufliche Ziele",
+    "title_ar": "الأهداف المهنية"
+   },
+   {
+    "title_de": "Aufstieg und Beförderung",
+    "title_ar": "الترقي والترقية"
+   },
+   {
+    "title_de": "Weiterbildung und Neuorientierung",
+    "title_ar": "التدريب وتغيير المسار"
+   },
+   {
+    "title_de": "Ehrgeiz, Druck und Balance",
+    "title_ar": "الطموح والضغط والتوازن"
+   },
+   {
+    "title_de": "Rückblick und Zukunft",
+    "title_ar": "نظرة لورا ولقدام"
+   }
+  ],
+  "sentences": [
+   7601,
+   7700
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 78,
+  "title_de": "Politik und Gesellschaft",
+  "title_ar": "السياسة والمجتمع",
+  "sections": [
+   {
+    "title_de": "Über Politik reden",
+    "title_ar": "الكلام في السياسة"
+   },
+   {
+    "title_de": "Wahlen und Demokratie",
+    "title_ar": "الانتخابات والديمقراطية"
+   },
+   {
+    "title_de": "Gesellschaftliche Probleme",
+    "title_ar": "مشاكل المجتمع"
+   },
+   {
+    "title_de": "Migration und Integration",
+    "title_ar": "الهجرة والاندماج"
+   },
+   {
+    "title_de": "Sich engagieren und Stellung beziehen",
+    "title_ar": "المشاركة وإبداء الرأي"
+   }
+  ],
+  "sentences": [
+   7701,
+   7800
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 79,
+  "title_de": "Wirtschaft",
+  "title_ar": "الاقتصاد",
+  "sections": [
+   {
+    "title_de": "Preise und Inflation im Alltag",
+    "title_ar": "الأسعار والتضخم في الحياة اليومية"
+   },
+   {
+    "title_de": "Sparen und Geld anlegen",
+    "title_ar": "التحويش واستثمار الفلوس"
+   },
+   {
+    "title_de": "Arbeitsmarkt und Unternehmen",
+    "title_ar": "سوق الشغل والشركات"
+   },
+   {
+    "title_de": "Wirtschaftsnachrichten verstehen",
+    "title_ar": "فهم أخبار الاقتصاد"
+   },
+   {
+    "title_de": "Konsum, Gerechtigkeit und Wirtschaftssystem",
+    "title_ar": "الاستهلاك والعدالة والنظام الاقتصادي"
+   }
+  ],
+  "sentences": [
+   7801,
+   7900
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 80,
+  "title_de": "Technik und künstliche Intelligenz",
+  "title_ar": "التكنولوجيا والذكاء الاصطناعي",
+  "sections": [
+   {
+    "title_de": "Technik im Alltag",
+    "title_ar": "التكنولوجيا في الحياة اليومية"
+   },
+   {
+    "title_de": "KI im Alltag nutzen",
+    "title_ar": "استخدام الذكاء الاصطناعي كل يوم"
+   },
+   {
+    "title_de": "KI und die Arbeitswelt",
+    "title_ar": "الذكاء الاصطناعي وعالم الشغل"
+   },
+   {
+    "title_de": "Datenschutz, Fakes und Sicherheit",
+    "title_ar": "الخصوصية والتزييف والأمان"
+   },
+   {
+    "title_de": "Die Zukunft mit KI",
+    "title_ar": "المستقبل مع الذكاء الاصطناعي"
+   }
+  ],
+  "sentences": [
+   7901,
+   8000
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 81,
+  "title_de": "Wissenschaft und Gesundheit",
+  "title_ar": "العلم والصحة",
+  "sections": [
+   {
+    "title_de": "Neue Studien und Gesundheitsnachrichten",
+    "title_ar": "دراسات جديدة وأخبار صحية"
+   },
+   {
+    "title_de": "Impfungen und Medikamente",
+    "title_ar": "التطعيمات والأدوية"
+   },
+   {
+    "title_de": "Ernährung zwischen Wissen und Mythen",
+    "title_ar": "الأكل بين العلم والخرافات"
+   },
+   {
+    "title_de": "Medizinischer Fortschritt",
+    "title_ar": "التقدم الطبي"
+   },
+   {
+    "title_de": "Kritisch diskutieren",
+    "title_ar": "نقاش بعقلية نقدية"
+   }
+  ],
+  "sentences": [
+   8001,
+   8100
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 82,
+  "title_de": "Psyche und Stress",
+  "title_ar": "الصحة النفسية والضغط",
+  "sections": [
+   {
+    "title_de": "Stress im Alltag",
+    "title_ar": "ضغط الحياة اليومية"
+   },
+   {
+    "title_de": "Druck im Job und Burnout",
+    "title_ar": "ضغط الشغل والاحتراق النفسي"
+   },
+   {
+    "title_de": "Für andere da sein",
+    "title_ar": "تكون جنب غيرك"
+   },
+   {
+    "title_de": "Hilfe suchen und Therapie",
+    "title_ar": "طلب المساعدة والعلاج"
+   },
+   {
+    "title_de": "Abschalten und auf sich achten",
+    "title_ar": "تريح دماغك وتاخد بالك من نفسك"
+   }
+  ],
+  "sentences": [
+   8101,
+   8200
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 83,
+  "title_de": "Bildungssystem",
+  "title_ar": "نظام التعليم",
+  "sections": [
+   {
+    "title_de": "Das Schulsystem verstehen",
+    "title_ar": "تفهم نظام المدارس"
+   },
+   {
+    "title_de": "Die Schule der Kinder",
+    "title_ar": "مدرسة الولاد"
+   },
+   {
+    "title_de": "Ausbildung oder Studium?",
+    "title_ar": "تدريب مهني ولا جامعة؟"
+   },
+   {
+    "title_de": "Abschlüsse anerkennen lassen",
+    "title_ar": "معادلة الشهادات"
+   },
+   {
+    "title_de": "Bildungsgerechtigkeit",
+    "title_ar": "العدالة في التعليم"
+   }
+  ],
+  "sentences": [
+   8201,
+   8300
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 84,
+  "title_de": "Migration",
+  "title_ar": "الهجرة",
+  "sections": [
+   {
+    "title_de": "Ankommen",
+    "title_ar": "الوصول والبداية"
+   },
+   {
+    "title_de": "Warum man auswandert",
+    "title_ar": "ليه الناس بتهاجر"
+   },
+   {
+    "title_de": "Zwischen zwei Kulturen",
+    "title_ar": "بين ثقافتين"
+   },
+   {
+    "title_de": "Aufenthalt und Einbürgerung",
+    "title_ar": "الإقامة والجنسية"
+   },
+   {
+    "title_de": "Die gesellschaftliche Debatte",
+    "title_ar": "النقاش في المجتمع"
+   }
+  ],
+  "sentences": [
+   8301,
+   8400
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 85,
+  "title_de": "Rollen in Familie und Gesellschaft",
+  "title_ar": "أدوار الراجل والست والأسرة",
+  "sections": [
+   {
+    "title_de": "Aufgabenteilung im Haushalt",
+    "title_ar": "تقسيم شغل البيت"
+   },
+   {
+    "title_de": "Beruf und Familie vereinbaren",
+    "title_ar": "التوفيق بين الشغل والعيلة"
+   },
+   {
+    "title_de": "Erwartungen der Familie und Generationen",
+    "title_ar": "توقعات العيلة والأجيال"
+   },
+   {
+    "title_de": "Gleichberechtigung im Beruf",
+    "title_ar": "المساواة في الشغل"
+   },
+   {
+    "title_de": "Kulturen im Vergleich und eigene Meinung",
+    "title_ar": "مقارنة بين الثقافات ورأيك الشخصي"
+   }
+  ],
+  "sentences": [
+   8401,
+   8500
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 86,
+  "title_de": "Globalisierung",
+  "title_ar": "العولمة",
+  "sections": [
+   {
+    "title_de": "Globalisierung im Alltag",
+    "title_ar": "العولمة في حياتنا اليومية"
+   },
+   {
+    "title_de": "Handel und Lieferketten",
+    "title_ar": "التجارة وسلاسل التوريد"
+   },
+   {
+    "title_de": "Leben und Arbeiten über Grenzen hinweg",
+    "title_ar": "العيشة والشغل عبر الحدود"
+   },
+   {
+    "title_de": "Kultur: Vielfalt oder Einheitsbrei?",
+    "title_ar": "الثقافة: تنوع ولا كله شبه بعضه؟"
+   },
+   {
+    "title_de": "Gewinner, Verlierer und Ausblick",
+    "title_ar": "مين كسبان ومين خسران، والمستقبل"
+   }
+  ],
+  "sentences": [
+   8501,
+   8600
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 87,
+  "title_de": "Klimadebatte",
+  "title_ar": "النقاش عن المناخ",
+  "sections": [
+   {
+    "title_de": "Spürbare Veränderungen",
+    "title_ar": "تغييرات بنحس بيها"
+   },
+   {
+    "title_de": "Was jeder selbst tun kann",
+    "title_ar": "كل واحد يقدر يعمل إيه"
+   },
+   {
+    "title_de": "Politik und Energiewende",
+    "title_ar": "السياسة وتحول الطاقة"
+   },
+   {
+    "title_de": "Argumente dafür und dagegen",
+    "title_ar": "حجج مع وضد"
+   },
+   {
+    "title_de": "Richtig diskutieren",
+    "title_ar": "إزاي تناقش صح"
+   }
+  ],
+  "sentences": [
+   8601,
+   8700
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 88,
+  "title_de": "Rechte im Alltag: Miete und Arbeit",
+  "title_ar": "حقوقك في الإيجار والشغل",
+  "sections": [
+   {
+    "title_de": "Mietvertrag und Kaution",
+    "title_ar": "عقد الإيجار والتأمين"
+   },
+   {
+    "title_de": "Mängel und Nebenkosten",
+    "title_ar": "العيوب والمصاريف الإضافية"
+   },
+   {
+    "title_de": "Mieterhöhung und Kündigung",
+    "title_ar": "زيادة الإيجار وفسخ العقد"
+   },
+   {
+    "title_de": "Rechte am Arbeitsplatz",
+    "title_ar": "حقوقك في الشغل"
+   },
+   {
+    "title_de": "Kündigung und Hilfe holen",
+    "title_ar": "الفصل من الشغل وتجيب مساعدة منين"
+   }
+  ],
+  "sentences": [
+   8701,
+   8800
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 89,
+  "title_de": "Moral und Ethik",
+  "title_ar": "الأخلاق والقيم",
+  "sections": [
+   {
+    "title_de": "Ehrlichkeit und Notlügen",
+    "title_ar": "الصراحة والكدبة البيضا"
+   },
+   {
+    "title_de": "Hilfsbereitschaft und Zivilcourage",
+    "title_ar": "المساعدة والوقوف مع الحق"
+   },
+   {
+    "title_de": "Moralische Dilemmata",
+    "title_ar": "مواقف أخلاقية صعبة"
+   },
+   {
+    "title_de": "Ethische Fragen unserer Zeit",
+    "title_ar": "أسئلة أخلاقية في عصرنا"
+   },
+   {
+    "title_de": "Werte, Religion und Erziehung",
+    "title_ar": "القيم والدين والتربية"
+   }
+  ],
+  "sentences": [
+   8801,
+   8900
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 90,
+  "title_de": "Redewendungen",
+  "title_ar": "التعبيرات والأمثال الألمانية",
+  "sections": [
+   {
+    "title_de": "Gefühle und Stimmung",
+    "title_ar": "المشاعر والمزاج"
+   },
+   {
+    "title_de": "Arbeit, Schule und Erfolg",
+    "title_ar": "الشغل والدراسة والنجاح"
+   },
+   {
+    "title_de": "Menschen und Beziehungen",
+    "title_ar": "الناس والعلاقات"
+   },
+   {
+    "title_de": "Geld, Essen und Alltag",
+    "title_ar": "الفلوس والأكل والحياة اليومية"
+   },
+   {
+    "title_de": "Sprichwörter und ihre Entsprechungen",
+    "title_ar": "أمثال ألمانية ومقابلها عندنا"
+   }
+  ],
+  "sentences": [
+   8901,
+   9000
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 91,
+  "title_de": "Umgangssprache",
+  "title_ar": "لغة الشارع والكلام العامي",
+  "sections": [
+   {
+    "title_de": "Locker begrüßen und quatschen",
+    "title_ar": "سلامات ورغي على الخفيف"
+   },
+   {
+    "title_de": "Zustimmen, ablehnen und reagieren",
+    "title_ar": "توافق وترفض وترد"
+   },
+   {
+    "title_de": "Wie es einem geht – umgangssprachlich",
+    "title_ar": "تقول حالك بالعامي"
+   },
+   {
+    "title_de": "Typische Redewendungen im Alltag",
+    "title_ar": "تعبيرات شعبية في الحياة اليومية"
+   },
+   {
+    "title_de": "Jugendsprache und Kurzformen verstehen",
+    "title_ar": "تفهم كلام الشباب والاختصارات"
+   }
+  ],
+  "sentences": [
+   9001,
+   9100
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 92,
+  "title_de": "Reaktionen und Gefühle mit Nuancen",
+  "title_ar": "الردود والتعليقات بإحساس",
+  "sections": [
+   {
+    "title_de": "Freude und Begeisterung zeigen",
+    "title_ar": "تعبر عن الفرحة والانبهار"
+   },
+   {
+    "title_de": "Überraschung und Unglauben",
+    "title_ar": "المفاجأة وعدم التصديق"
+   },
+   {
+    "title_de": "Enttäuschung und Ärger ausdrücken",
+    "title_ar": "تعبر عن خيبة الأمل والضيق"
+   },
+   {
+    "title_de": "Mitgefühl zeigen und trösten",
+    "title_ar": "تواسي وتبين تعاطفك"
+   },
+   {
+    "title_de": "Erleichterung, Zweifel und gemischte Gefühle",
+    "title_ar": "الارتياح والشك والمشاعر المتلخبطة"
+   }
+  ],
+  "sentences": [
+   9101,
+   9200
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 93,
+  "title_de": "Höflich kritisieren und überzeugen",
+  "title_ar": "النقد بأدب والإقناع",
+  "sections": [
+   {
+    "title_de": "Feedback einleiten und Positives betonen",
+    "title_ar": "تبدأ الفيدباك وتقول الحلو الأول"
+   },
+   {
+    "title_de": "Kritik vorsichtig formulieren",
+    "title_ar": "تقول النقد بلطف"
+   },
+   {
+    "title_de": "Mit Kritik umgehen",
+    "title_ar": "تتعامل مع النقد"
+   },
+   {
+    "title_de": "Argumentieren und überzeugen",
+    "title_ar": "تجادل وتقنع"
+   },
+   {
+    "title_de": "Einen Kompromiss finden",
+    "title_ar": "توصلوا لحل وسط"
+   }
+  ],
+  "sentences": [
+   9201,
+   9300
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 94,
+  "title_de": "Lustige Geschichten erzählen",
+  "title_ar": "حكي القصص بخفة دم",
+  "sections": [
+   {
+    "title_de": "Eine Geschichte anfangen",
+    "title_ar": "تبدأ الحكاية"
+   },
+   {
+    "title_de": "Spannung aufbauen",
+    "title_ar": "تبني التشويق"
+   },
+   {
+    "title_de": "Peinliche Momente",
+    "title_ar": "مواقف محرجة"
+   },
+   {
+    "title_de": "Die Pointe und Reaktionen der Zuhörer",
+    "title_ar": "القفلة ورد فعل اللي بيسمعوا"
+   },
+   {
+    "title_de": "Lustige Missverständnisse mit Sprache und Kultur",
+    "title_ar": "مواقف لطيفة بسبب اللغة والثقافة"
+   }
+  ],
+  "sentences": [
+   9301,
+   9400
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 95,
+  "title_de": "Offizielle Beschwerden",
+  "title_ar": "الشكاوى الرسمية بالتفصيل",
+  "sections": [
+   {
+    "title_de": "Am Telefon und am Schalter",
+    "title_ar": "في التليفون وعند الشباك"
+   },
+   {
+    "title_de": "Der Beschwerdebrief",
+    "title_ar": "جواب الشكوى"
+   },
+   {
+    "title_de": "Beschwerden bei Behörden",
+    "title_ar": "الشكاوى عند الجهات الحكومية"
+   },
+   {
+    "title_de": "Reise und Verkehr",
+    "title_ar": "السفر والمواصلات"
+   },
+   {
+    "title_de": "Wenn nichts mehr hilft",
+    "title_ar": "لما مفيش حاجة تنفع"
+   }
+  ],
+  "sentences": [
+   9401,
+   9500
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 96,
+  "title_de": "Ehrenamt und Engagement",
+  "title_ar": "التطوع وخدمة المجتمع",
+  "sections": [
+   {
+    "title_de": "Ein passendes Ehrenamt finden",
+    "title_ar": "إزاي تلاقي تطوع يناسبك"
+   },
+   {
+    "title_de": "Bei der Tafel und im Verein",
+    "title_ar": "في بنك الطعام وفي الجمعية"
+   },
+   {
+    "title_de": "Nachbarschaftshilfe und Integration",
+    "title_ar": "مساعدة الجيران والاندماج"
+   },
+   {
+    "title_de": "Motivation und persönliche Erfahrungen",
+    "title_ar": "الدافع والتجارب الشخصية"
+   },
+   {
+    "title_de": "Ehrenamt in der Gesellschaft – eine Debatte",
+    "title_ar": "التطوع في المجتمع: نقاش"
+   }
+  ],
+  "sentences": [
+   9501,
+   9600
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 97,
+  "title_de": "Über Sport und Events diskutieren",
+  "title_ar": "النقاش عن الماتشات والأحداث",
+  "sections": [
+   {
+    "title_de": "Spiele zusammen schauen",
+    "title_ar": "نتفرج على الماتشات سوا"
+   },
+   {
+    "title_de": "Ein Spiel analysieren",
+    "title_ar": "تحليل الماتش"
+   },
+   {
+    "title_de": "Fans, Stimmung und Stadion",
+    "title_ar": "الجمهور والجو في الاستاد"
+   },
+   {
+    "title_de": "Große Turniere und Events",
+    "title_ar": "البطولات والأحداث الكبيرة"
+   },
+   {
+    "title_de": "Kontroverse Themen im Sport",
+    "title_ar": "مواضيع جدلية في الرياضة"
+   }
+  ],
+  "sentences": [
+   9601,
+   9700
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 98,
+  "title_de": "Kunst und Kultur bewerten",
+  "title_ar": "تقييم الفن والثقافة",
+  "sections": [
+   {
+    "title_de": "Im Museum und in Ausstellungen",
+    "title_ar": "في المتاحف والمعارض"
+   },
+   {
+    "title_de": "Filme und Serien besprechen",
+    "title_ar": "النقاش عن الأفلام والمسلسلات"
+   },
+   {
+    "title_de": "Theater, Konzert und Oper",
+    "title_ar": "المسرح والحفلات والأوبرا"
+   },
+   {
+    "title_de": "Bücher und Literatur",
+    "title_ar": "الكتب والأدب"
+   },
+   {
+    "title_de": "Kunst kritisch beurteilen",
+    "title_ar": "تقييم الفن بنظرة نقدية"
+   }
+  ],
+  "sentences": [
+   9701,
+   9800
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 99,
+  "title_de": "Reiseerfahrungen und Empfehlungen",
+  "title_ar": "تجارب السفر والترشيحات",
+  "sections": [
+   {
+    "title_de": "Von der letzten Reise erzählen",
+    "title_ar": "الحكي عن آخر سفرية"
+   },
+   {
+    "title_de": "Pannen und Pech unterwegs",
+    "title_ar": "مشاكل ومطبات في السفر"
+   },
+   {
+    "title_de": "Empfehlungen geben und bekommen",
+    "title_ar": "تدي وتاخد ترشيحات"
+   },
+   {
+    "title_de": "Ägypten empfehlen",
+    "title_ar": "ترشيحات عن مصر"
+   },
+   {
+    "title_de": "Reisen und Verantwortung",
+    "title_ar": "السفر والمسؤولية"
+   }
+  ],
+  "sentences": [
+   9801,
+   9900
+  ]
+ },
+ {
+  "level": "B2",
+  "number": 100,
+  "title_de": "Verbindungswörter und Diskursmarker",
+  "title_ar": "أدوات الربط وتنظيم الكلام",
+  "sections": [
+   {
+    "title_de": "Ein Gespräch eröffnen und Themen einleiten",
+    "title_ar": "تفتح الكلام وتدخل في الموضوع"
+   },
+   {
+    "title_de": "Gründe und Folgen ausdrücken",
+    "title_ar": "الأسباب والنتايج"
+   },
+   {
+    "title_de": "Gegensätze und Einschränkungen",
+    "title_ar": "التناقض والاستدراك"
+   },
+   {
+    "title_de": "Strukturieren, aufzählen, zusammenfassen",
+    "title_ar": "ترتيب الكلام والتلخيص"
+   },
+   {
+    "title_de": "Reagieren, abschwächen und Zeit gewinnen",
+    "title_ar": "ردود الفعل وتلطيف الكلام وكسب الوقت"
+   }
+  ],
+  "sentences": [
+   9901,
+   10000
+  ]
+ }
+]

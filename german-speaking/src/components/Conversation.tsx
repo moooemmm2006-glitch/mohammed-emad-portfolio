@@ -45,6 +45,8 @@ interface Props {
   settings: Settings;
   updateSettings: (p: Partial<Settings>) => Promise<unknown>;
   providers: ServerProviders;
+  /** Guided conversation about a book topic. */
+  bookTopic?: { number: number; title_de: string; title_ar: string } | null;
 }
 
 // Shown inside the big button while it waits for the learner.
@@ -442,7 +444,11 @@ export function Conversation(p: Props) {
       {/* top bar */}
       <header className="sticky top-0 md:top-16 z-20 bg-bg/85 backdrop-blur-md border-b border-line/70">
         <div className="mx-auto max-w-[820px] px-4 h-14 flex items-center gap-3">
-          <Link href="/speak" className="grid place-items-center w-9 h-9 -ms-1 rounded-full hover:bg-surface-2 text-muted" aria-label={t("back")}>
+          <Link
+            href={p.bookTopic ? `/speak/${level}/topic/${p.bookTopic.number}` : `/speak/${level}`}
+            className="grid place-items-center w-9 h-9 -ms-1 rounded-full hover:bg-surface-2 text-muted"
+            aria-label={t("back")}
+          >
             <IconArrow size={20} className="rotate-180 rtl:rotate-0" />
           </Link>
           <Avatar level={level} size={36} />
@@ -452,7 +458,13 @@ export function Conversation(p: Props) {
               <span className="rounded-full px-1.5 py-px text-[10px] font-bold text-white bg-accent de">{level}</span>
             </div>
             <div className="text-xs text-muted truncate" aria-live="polite">
-              {t(statusKey)}
+              {p.bookTopic ? (
+                <>
+                  <span className="de">{p.bookTopic.number}. {p.bookTopic.title_de}</span> · {t(statusKey)}
+                </>
+              ) : (
+                t(statusKey)
+              )}
             </div>
           </div>
           <button className="ms-auto inline-flex items-center gap-1.5 rounded-full border border-danger/40 text-danger px-3 h-9 text-sm font-semibold hover:bg-danger/10" onClick={endConversation} disabled={ending}>
@@ -498,7 +510,7 @@ export function Conversation(p: Props) {
                   </span>
                 ) : showText || m.revealed ? (
                   <p className={`${bubbleText} [unicode-bidi:plaintext]`} lang="de" dir="auto">
-                    {m.text}
+                    <PartnerText text={m.text} />
                   </p>
                 ) : (
                   <button className="text-start" onClick={() => setTurns((ts) => ts.map((x) => (x.key === m.key ? { ...x, revealed: true } : x)))}>
@@ -682,4 +694,26 @@ function ToolButton({ onClick, icon, label, disabled, pressed, title }: { onClic
       <span className="text-xs sm:text-sm">{label}</span>
     </button>
   );
+}
+
+const ARABIC_NOTE = /\(([^()]*[\u0600-\u06FF][^()]*)\)/g;
+
+/** German reply with any bracketed Arabic meaning on its own right-to-left line (shown, not spoken). */
+function PartnerText({ text }: { text: string }) {
+  if (!/[\u0600-\u06FF]/.test(text) || !text.includes("(")) return <>{text}</>;
+  const parts: React.ReactNode[] = [];
+  let last = 0;
+  for (const m of text.matchAll(ARABIC_NOTE)) {
+    const before = text.slice(last, m.index).trim();
+    if (before) parts.push(<span key={`d${last}`} dir="ltr" className="block text-start">{before}</span>);
+    parts.push(
+      <span key={`a${m.index}`} dir="rtl" lang="ar" className="block text-start text-[0.95rem] text-muted my-0.5">
+        {m[1].trim()}
+      </span>,
+    );
+    last = (m.index ?? 0) + m[0].length;
+  }
+  const rest = text.slice(last).trim();
+  if (rest) parts.push(<span key="end" dir="ltr" className="block text-start">{rest}</span>);
+  return <>{parts}</>;
 }
