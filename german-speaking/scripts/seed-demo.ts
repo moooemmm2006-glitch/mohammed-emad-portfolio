@@ -1,7 +1,9 @@
 // Adds a few FAKE past sessions (no personal data) so the dashboard and the
 // "since last time" comparison can be demoed. Uses the offline mock reporter,
-// so it needs no API key. Run: npm run seed:demo
-import { addTurn, createSession, updateSession } from "../src/lib/db/repo";
+// so it needs no API key. Run: npm run seed:demo [username]
+// The data goes to the given account; with no accounts yet it waits for the first sign-up.
+import { addTurn, createSession, LOCAL_USER, updateSession } from "../src/lib/db/repo";
+import { findByUsername } from "../src/lib/auth/users";
 import type { Level } from "../src/lib/levels";
 import { MockLLM } from "../src/lib/llm/mock";
 import { generateReport } from "../src/lib/report/generate";
@@ -76,9 +78,13 @@ const DEMO: { daysAgo: number; level: Level; topic: string | null; minutes: numb
 
 async function main() {
   const llm = new MockLLM();
+  const username = process.argv[2];
+  const owner = username ? await findByUsername(username) : undefined;
+  if (username && !owner) throw new Error(`No account named "${username}"`);
+  const userId = owner?.id ?? LOCAL_USER;
   for (const d of DEMO) {
     const start = Date.now() - d.daysAgo * DAY + 18 * 3_600_000 - (Date.now() % DAY);
-    const s = await createSession(d.level, d.topic, null);
+    const s = await createSession(d.level, d.topic, null, userId);
     await updateSession(s.id, { startedAt: start, lastActiveAt: start });
     let at = start;
     const step = (d.minutes * 60_000) / (d.lines.length * 2 + 1);

@@ -110,7 +110,7 @@ describe("report with corrections (demo mode, end to end)", () => {
 
   it("lists every sentence with its correction, all mistakes, and never praises a wrong sentence", async () => {
     const llm = new MockLLM();
-    const s = await createSession("A2", null, null);
+    const s = await createSession("A2", null, null, "u1");
     const said = ["ich habe viele Probleme mit mit meine Lieben", "Sehr Hilfe mir", "ich möchte mit dir sprechen über meine Liebe", "Mhm", "Ich wohne in Kairo."];
     for (const t of [undefined, ...said]) await runPartnerTurn({ sessionId: s.id, userText: t, emit: () => {}, llm });
     const r = await generateReport(s.id, { llm });

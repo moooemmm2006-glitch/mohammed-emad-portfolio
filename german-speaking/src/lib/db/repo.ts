@@ -21,19 +21,19 @@ export interface TurnMeta {
   hint?: boolean;
 }
 
-export async function ensureUser(userId = LOCAL_USER) {
+export async function ensureUser(userId: string) {
   const db = await getDb();
   await db.insert(schema.users).values({ id: userId, name: null, createdAt: Date.now() }).onConflictDoNothing().run();
 }
 
 // ---------- settings ----------
-export async function getSettings(userId = LOCAL_USER): Promise<Settings> {
+export async function getSettings(userId: string): Promise<Settings> {
   const db = await getDb();
   const row = await db.select().from(schema.settings).where(eq(schema.settings.userId, userId)).get();
   return parseSettings(row ? JSON.parse(row.json) : {});
 }
 
-export async function saveSettings(patch: Partial<Settings>, userId = LOCAL_USER): Promise<Settings> {
+export async function saveSettings(patch: Partial<Settings>, userId: string): Promise<Settings> {
   await ensureUser(userId);
   const merged = parseSettings({ ...(await getSettings(userId)), ...patch });
   const json = JSON.stringify(merged);
@@ -43,7 +43,7 @@ export async function saveSettings(patch: Partial<Settings>, userId = LOCAL_USER
 }
 
 // ---------- sessions ----------
-export async function createSession(level: Level, topic: string | null, focusTag: string | null, userId = LOCAL_USER): Promise<SessionRow> {
+export async function createSession(level: Level, topic: string | null, focusTag: string | null, userId: string): Promise<SessionRow> {
   await ensureUser(userId);
   const now = Date.now();
   const row: SessionRow = {
@@ -75,7 +75,7 @@ export async function updateSession(id: string, patch: Partial<SessionRow>) {
   await db.update(schema.sessions).set(patch).where(eq(schema.sessions.id, id)).run();
 }
 
-export async function listSessions(userId = LOCAL_USER): Promise<SessionRow[]> {
+export async function listSessions(userId: string): Promise<SessionRow[]> {
   const db = await getDb();
   return db.select().from(schema.sessions).where(eq(schema.sessions.userId, userId)).orderBy(desc(schema.sessions.startedAt)).all();
 }
@@ -122,7 +122,7 @@ export function parseMeta(t: TurnRow): TurnMeta {
 }
 
 // ---------- reports ----------
-export async function saveReport(report: StoredReport, userId = LOCAL_USER) {
+export async function saveReport(report: StoredReport, userId: string) {
   const json = JSON.stringify(report);
   const values = { sessionId: report.session.sessionId, userId, createdAt: Date.now(), language: report.language, overall: report.overall, json };
   const db = await getDb();
@@ -141,14 +141,14 @@ export async function getReport(sessionId: string): Promise<StoredReport | null>
 }
 
 /** Reports ordered oldest → newest by session date. */
-export async function listReports(userId = LOCAL_USER): Promise<StoredReport[]> {
+export async function listReports(userId: string): Promise<StoredReport[]> {
   const db = await getDb();
   const rows = await db.select().from(schema.reports).where(eq(schema.reports.userId, userId)).all();
   return rows.map((r) => JSON.parse(r.json) as StoredReport).sort((a, b) => a.session.date.localeCompare(b.session.date));
 }
 
 // ---------- weaknesses ----------
-export async function getWeaknesses(userId = LOCAL_USER): Promise<WeaknessEntry[]> {
+export async function getWeaknesses(userId: string): Promise<WeaknessEntry[]> {
   const db = await getDb();
   const rows = await db.select().from(schema.weaknesses).where(eq(schema.weaknesses.userId, userId)).all();
   return rows.map((r) => ({
@@ -163,7 +163,7 @@ export async function getWeaknesses(userId = LOCAL_USER): Promise<WeaknessEntry[
   }));
 }
 
-export async function saveWeaknesses(entries: WeaknessEntry[], userId = LOCAL_USER) {
+export async function saveWeaknesses(entries: WeaknessEntry[], userId: string) {
   const db = await getDb();
   // One batch = one transaction, so the tracker is never left half-written.
   await db.batch([
@@ -193,7 +193,7 @@ export async function logViolation(sessionId: string, level: string, attempt: nu
 // ---------- export / import / delete ----------
 export const EXPORT_VERSION = 1;
 
-export async function exportAll(userId = LOCAL_USER) {
+export async function exportAll(userId: string) {
   const db = await getDb();
   const sessionRows = await listSessions(userId);
   const turnRows = await turnsForSessions(sessionRows.map((s) => s.id));
@@ -211,7 +211,7 @@ export async function exportAll(userId = LOCAL_USER) {
 
 export type ExportData = Awaited<ReturnType<typeof exportAll>>;
 
-export async function deleteAll(userId = LOCAL_USER) {
+export async function deleteAll(userId: string) {
   const db = await getDb();
   const ids = (await db.select({ id: schema.sessions.id }).from(schema.sessions).where(eq(schema.sessions.userId, userId)).all()).map((r) => r.id);
   await db.batch([
@@ -225,7 +225,7 @@ export async function deleteAll(userId = LOCAL_USER) {
 }
 
 /** Replace all of the user's data with an export file. */
-export async function importAll(data: ExportData, userId = LOCAL_USER) {
+export async function importAll(data: ExportData, userId: string) {
   if (data?.app !== "german-speaking" || !Array.isArray(data.sessions)) throw new Error("Not a German Speaking export file");
   await deleteAll(userId);
   await ensureUser(userId);
@@ -247,7 +247,7 @@ async function turnsForSessions(ids: string[]): Promise<TurnRow[]> {
   return db.select().from(schema.turns).where(inArray(schema.turns.sessionId, ids)).orderBy(asc(schema.turns.id)).all();
 }
 
-export async function sessionsWithTurnCounts(userId = LOCAL_USER) {
+export async function sessionsWithTurnCounts(userId: string) {
   const all = await listSessions(userId);
   const bySession = new Map<string, TurnRow[]>();
   for (const t of await turnsForSessions(all.map((s) => s.id))) {
@@ -261,7 +261,7 @@ export async function sessionsWithTurnCounts(userId = LOCAL_USER) {
   });
 }
 
-export async function lastSessionForLevel(level: Level, userId = LOCAL_USER) {
+export async function lastSessionForLevel(level: Level, userId: string) {
   const db = await getDb();
   return db
     .select()

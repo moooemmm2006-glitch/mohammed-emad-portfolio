@@ -53,13 +53,16 @@ Other commands: `npm run build` · `npm start` · `npm test` · `npm run lint` �
 
 1. In Vercel: **Add New… → Project → Import** this GitHub repository.
 2. **Root Directory:** `german-speaking` (framework is detected as Next.js; keep the defaults).
-3. **Environment Variables:** `ANTHROPIC_API_KEY` and **`APP_PASSWORD`** (the site is public, so the
-   password stops other people from using your API key or seeing your data).
+3. **Environment Variables:** `ANTHROPIC_API_KEY` and **`AUTH_SECRET`** (a long random string, e.g. from
+   `openssl rand -base64 32`; it signs the login cookies — without it login is refused on Vercel).
 4. **Storage → Turso (Marketplace) → Create database → connect it to this project.** This adds
    `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. Without it the app still runs, but Vercel's disk is
    temporary, so sessions and reports can disappear (the home page shows a warning).
-5. **Deploy**, open the URL in Chrome on Android/desktop (HTTPS is needed for the microphone), log in with
-   the password, and allow microphone access.
+5. *(Optional)* **Storage → Blob → Create → connect it to this project** for profile photos
+   (adds `BLOB_READ_WRITE_TOKEN`). Without Blob, photos are stored small in the database.
+6. **Deploy**, open the URL in Chrome on Android/desktop (HTTPS is needed for the microphone),
+   **create the first account — it becomes the admin** and takes over any data saved before accounts
+   existed — and allow microphone access.
 
 Every push to the connected branch redeploys automatically.
 
@@ -79,11 +82,31 @@ Every push to the connected branch redeploys automatically.
 | `STT_PROVIDER` | `webspeech` | `webspeech` · `openai` (Whisper) |
 | `DATABASE_PATH` | `./data/german-speaking.db` | Local SQLite file |
 | `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | – | Hosted libSQL database (used instead of the file when set) |
-| `APP_PASSWORD` | – | Password page for public deployments |
+| `AUTH_SECRET` | dev secret locally | Signs session cookies (required on Vercel, ≥ 16 chars) |
+| `BLOB_READ_WRITE_TOKEN` | – | Vercel Blob for profile photos (falls back to the database) |
+| `USAGE_TZ` | `Africa/Cairo` | Time zone of the "day" for daily usage limits |
 | `LOG_LEVEL_VIOLATIONS=1` | on in dev | Print level-checker violations to the console |
 
 If a premium provider is selected but its key is missing, the app silently falls back to the browser
 (Web Speech API). In **Settings** you can also choose per device: automatic / browser / server.
+
+## Accounts
+
+- **Sign-up:** name, username (unique, lowercase, `a-z 0-9 _`, 3–20 chars), password (≥ 8, bcrypt-hashed,
+  never stored or logged in plain text), optional photo (cropped to a circle in the browser → 256×256 WebP).
+- **Login:** username + password; "remember me" keeps you logged in for 30 days, otherwise until the
+  browser closes. 5 failed tries per username + IP lock that pair for 15 minutes.
+- **Sessions:** signed, `httpOnly`, `sameSite=lax`, `secure` cookies (HMAC-SHA256 with `AUTH_SECRET`).
+  Changing a password, a reset by the admin or disabling an account logs out every device at once.
+- **Every API route checks the session**, and every session, report, weakness, setting and usage row
+  belongs to one user. Other people's sessions answer 404. The partner's memory and the report
+  comparison only use the logged-in learner's own history.
+- **Admin:** the first account. `/admin` lists students (joined, last activity, sessions, minutes in the
+  last 7 days), sets a new temporary password, disables/enables or deletes accounts, and sets daily
+  limits (minutes and/or partner replies). When a limit is reached the conversation shows a friendly
+  message instead of a reply.
+- Built so email or Google login can be added later (nullable columns next to `username`).
+- `npm run seed:demo [username]` adds demo sessions to that account.
 
 ## How the level lock works
 
@@ -169,9 +192,11 @@ src/lib/levels.ts   personas, level rules, few-shot examples, topics, tags
 src/lib/levelLock/  heuristic checker + regenerate/fallback wrapper
 src/lib/llm/        Anthropic client, offline mock, JSON retry
 src/lib/report/     report schema, generation, mock report, weakness tracker
-src/lib/db/         SQLite/libSQL (Drizzle) schema and repository
+src/lib/db/         SQLite/libSQL (Drizzle) schema, additive migration and repository
+src/lib/auth/       accounts: signed tokens, bcrypt, rate limiting, session helpers
+src/lib/usage.ts    daily usage and limits · src/lib/admin.ts admin overview · src/lib/photo.ts Blob/DB photos
 src/lib/client/     browser TTS/STT providers, i18n (AR/EN), API helpers
-tests/              Vitest: level lock, report schema, tracker, full mocked flow
+tests/              Vitest: level lock, report schema, tracker, full mocked flow, accounts/isolation/limits
 scripts/seed-demo.ts
 ```
 
@@ -194,7 +219,8 @@ B1 ميرا، B2 د. توبياس). كل شريك ممنوع يتكلم فوق �
 شغّل `npm run seed:demo` (بيانات وهمية مش شخصية).
 
 **النشر على Vercel عشان تجربه من الموبايل:** اعمل Project جديد من نفس الريبو، وخلي الـ Root Directory
-`german-speaking`، وحط `ANTHROPIC_API_KEY` و `APP_PASSWORD`، ووصّل قاعدة بيانات Turso من Storage عشان
-جلساتك متتمسحش. التفاصيل فوق في قسم "Deploy on Vercel".
+`german-speaking`، وحط `ANTHROPIC_API_KEY` و `AUTH_SECRET` (نص عشوائي طويل)، ووصّل قاعدة بيانات Turso
+من Storage عشان جلساتك متتمسحش، و Blob (اختياري) لصور البروفايل. أول حساب يتعمل بيبقى هو المسؤول.
+التفاصيل فوق في قسم "Deploy on Vercel".
 
 **تنبيه:** ملاحظات النطق استرشادية بس، مش تقييم معتمد.

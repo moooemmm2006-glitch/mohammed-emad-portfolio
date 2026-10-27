@@ -42,12 +42,12 @@ export async function buildReportContext(sessionId: string, language?: "ar" | "e
     };
   });
   const info = sessionInfoFrom(s, transcript);
-  const previous = (await listReports())
+  const previous = (await listReports(s.userId))
     .filter((r) => r.session.sessionId !== sessionId && r.session.date < info.date)
     .slice(-5)
     .map(briefFromReport);
-  const tracker = (await getWeaknesses()).map(({ tag, kind, status, totalCount, firstSeen, lastSeen }) => ({ tag, kind, status, totalCount, firstSeen, lastSeen }));
-  return { info, level: s.level, language: language ?? (await getSettings()).reportLang, transcript, previous, tracker };
+  const tracker = (await getWeaknesses(s.userId)).map(({ tag, kind, status, totalCount, firstSeen, lastSeen }) => ({ tag, kind, status, totalCount, firstSeen, lastSeen }));
+  return { userId: s.userId, info, level: s.level, language: language ?? (await getSettings(s.userId)).reportLang, transcript, previous, tracker };
 }
 
 /** Generate (or regenerate) the report for a session, update the weakness tracker, persist both. */
@@ -94,7 +94,7 @@ export async function generateReport(sessionId: string, opts: { language?: "ar" 
 
   // Regenerating a report must not count the same session twice in the tracker:
   // rebuild the tracker from all reports in date order with this one replaced.
-  const others = (await listReports()).filter((r) => r.session.sessionId !== sessionId);
+  const others = (await listReports(ctx.userId)).filter((r) => r.session.sessionId !== sessionId);
   const before = rebuildTracker(others.filter((r) => r.session.date < ctx.info.date));
   const sessionCounts = { sessionId, date: ctx.info.date, counts: report.weaknessCounts };
   const afterThis = updateWeaknessTracker(before, sessionCounts);
@@ -118,8 +118,8 @@ export async function generateReport(sessionId: string, opts: { language?: "ar" 
 
   const s = (await getSession(sessionId))!;
   if (!s.endedAt) await updateSession(sessionId, { endedAt: s.lastActiveAt, status: "ended" });
-  await saveReport(stored);
-  await saveWeaknesses(finalTracker);
+  await saveReport(stored, ctx.userId);
+  await saveWeaknesses(finalTracker, ctx.userId);
   return stored;
 }
 

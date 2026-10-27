@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { serverConfig } from "@/lib/config";
+import { currentUser, unauthorized } from "@/lib/auth/session";
 import { jsonError } from "@/lib/api";
 
 export const runtime = "nodejs";
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 // Whisper-style transcription of a MediaRecorder clip. Returns { text, confidence }.
 // Confidence is derived from the segments' average log-probability (whisper-1 verbose_json).
 export async function POST(req: Request) {
+  if (!(await currentUser())) return unauthorized();
   if (serverConfig().stt !== "openai") return jsonError(501, "webspeech", "Server STT is not configured");
   const form = await req.formData().catch(() => null);
   const audio = form?.get("audio");

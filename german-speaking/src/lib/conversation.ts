@@ -82,11 +82,13 @@ export interface TurnInput {
 export async function runPartnerTurn(inp: TurnInput): Promise<void> {
   const started = Date.now();
   const { emit } = inp;
-  const [session, settings, weaknesses] = await Promise.all([getSession(inp.sessionId), getSettings(), getWeaknesses().catch(() => [])]);
+  const session = await getSession(inp.sessionId);
   if (!session || !isLevel(session.level)) {
     emit({ type: "error", code: "not_found", message: "Session not found" });
     return;
   }
+  // Memory (settings, weaknesses) always comes from the session owner's own history.
+  const [settings, weaknesses] = await Promise.all([getSettings(session.userId), getWeaknesses(session.userId).catch(() => [])]);
   const level: Level = session.level;
   const cfg = serverConfig();
   const llm = inp.llm ?? getLLM();
@@ -219,7 +221,7 @@ export async function getHint(sessionId: string, llm: LLM = getLLM()): Promise<H
   const session = await getSession(sessionId);
   if (!session || !isLevel(session.level)) throw new Error("Session not found");
   const level = session.level;
-  const lang = (await getSettings()).hintLang;
+  const lang = (await getSettings(session.userId)).hintLang;
   const turns = await getTurns(sessionId);
   const lastPartner = [...turns].reverse().find((t) => t.role === "partner");
   const recent = turns.slice(-6).map((t) => `${t.role === "user" ? "Learner" : "Partner"}: ${t.text}`).join("\n");

@@ -1,12 +1,44 @@
 import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-// Single local learner by default ("local"), but every row carries user_id so auth can be added later.
+// Every row carries user_id. Before accounts existed everything belonged to "local";
+// the first account that signs up takes over that data (see migrate.ts).
 
 export const users = sqliteTable("users", {
   id: text("id").primaryKey(),
   name: text("name"),
   createdAt: integer("created_at").notNull(),
+  // Login: username/password now; email or Google can be added as more nullable columns later.
+  username: text("username"),
+  passwordHash: text("password_hash"),
+  role: text("role").notNull().default("student"), // admin | student
+  disabled: integer("disabled").notNull().default(0),
+  /** Bumped on password change/reset/disable so old cookies stop working. */
+  tokenVersion: integer("token_version").notNull().default(0),
+  /** Public Blob URL or a small data: URL (256×256 WebP). */
+  photo: text("photo"),
+  dailyMinutes: integer("daily_minutes"),
+  dailyReplies: integer("daily_replies"),
+  lastActiveAt: integer("last_active_at"),
 });
+
+/** Failed logins, for rate limiting across serverless instances. */
+export const loginAttempts = sqliteTable("login_attempts", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  key: text("key").notNull(),
+  at: integer("at").notNull(),
+});
+
+/** Speaking time and partner replies per user per day, for the admin's daily limits. */
+export const usage = sqliteTable(
+  "usage",
+  {
+    userId: text("user_id").notNull(),
+    day: text("day").notNull(), // YYYY-MM-DD in USAGE_TZ
+    replies: integer("replies").notNull().default(0),
+    ms: integer("ms").notNull().default(0),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.day] })],
+);
 
 export const settings = sqliteTable("settings", {
   userId: text("user_id").primaryKey(),
@@ -95,8 +127,32 @@ CREATE TABLE IF NOT EXISTS weaknesses (
   status TEXT NOT NULL, total_count INTEGER NOT NULL, absent_streak INTEGER NOT NULL, history TEXT NOT NULL,
   PRIMARY KEY (user_id, tag)
 );
+CREATE TABLE IF NOT EXISTS login_attempts (id INTEGER PRIMARY KEY AUTOINCREMENT, key TEXT NOT NULL, at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS login_attempts_key ON login_attempts(key, at);
+CREATE TABLE IF NOT EXISTS usage (
+  user_id TEXT NOT NULL, day TEXT NOT NULL, replies INTEGER NOT NULL DEFAULT 0, ms INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (user_id, day)
+);
 CREATE TABLE IF NOT EXISTS violation_log (
   id INTEGER PRIMARY KEY AUTOINCREMENT, session_id TEXT NOT NULL, level TEXT NOT NULL, attempt INTEGER NOT NULL,
   violations TEXT NOT NULL, created_at INTEGER NOT NULL
 );
+`;
+
+/** Columns added to tables that already exist in older databases (ALTER TABLE ADD COLUMN when missing). */
+export const ADDED_COLUMNS: { table: string; column: string; sql: string }[] = [
+  { table: "users", column: "username", sql: "username TEXT" },
+  { table: "users", column: "password_hash", sql: "password_hash TEXT" },
+  { table: "users", column: "role", sql: "role TEXT NOT NULL DEFAULT 'student'" },
+  { table: "users", column: "disabled", sql: "disabled INTEGER NOT NULL DEFAULT 0" },
+  { table: "users", column: "token_version", sql: "token_version INTEGER NOT NULL DEFAULT 0" },
+  { table: "users", column: "photo", sql: "photo TEXT" },
+  { table: "users", column: "daily_minutes", sql: "daily_minutes INTEGER" },
+  { table: "users", column: "daily_replies", sql: "daily_replies INTEGER" },
+  { table: "users", column: "last_active_at", sql: "last_active_at INTEGER" },
+];
+
+/** Runs after ADDED_COLUMNS, so it may use the new columns. */
+export const POST_DDL = `
+CREATE UNIQUE INDEX IF NOT EXISTS users_username ON users(username);
 `;

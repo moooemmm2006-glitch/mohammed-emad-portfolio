@@ -146,6 +146,7 @@ export function Conversation(p: Props) {
       ]);
       let finalText = "";
       let failed = false;
+      let limitHit = false;
       try {
         await streamNdjson<TurnEvent>(`/api/sessions/${sessionId}/turn`, { text: text ?? undefined, ...meta }, (e) => {
           if (e.type === "status") setLockStatus(e.value === "listening" ? null : e.value);
@@ -168,14 +169,16 @@ export function Conversation(p: Props) {
       } catch (err) {
         failed = true;
         if (err instanceof ApiError && err.code === "offline") setOffline(true);
+        limitHit = err instanceof ApiError && err.code === "usage_limit";
       }
       busyRef.current = false;
       setBusy(false);
       setLockStatus(null);
       if (failed || !finalText) {
         setTurns((ts) => ts.filter((x) => x.key !== partnerKey));
-        setError(navigator.onLine ? "err_api" : "err_offline");
-        setCanRetry(true);
+        // The daily limit isn't an error to retry: say so kindly and stop here.
+        setError(limitHit ? "err_usage_limit" : navigator.onLine ? "err_api" : "err_offline");
+        setCanRetry(!limitHit);
       }
     },
     [sessionId, speakOpts],
