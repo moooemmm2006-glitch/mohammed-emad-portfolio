@@ -27,6 +27,20 @@ npm run dev                     # http://localhost:3000
 
 Other commands: `npm run build` · `npm start` · `npm test` · `npm run lint` · `npm run typecheck`.
 
+## Deploy on Vercel (to use it on your phone)
+
+1. In Vercel: **Add New… → Project → Import** this GitHub repository.
+2. **Root Directory:** `german-speaking` (framework is detected as Next.js; keep the defaults).
+3. **Environment Variables:** `ANTHROPIC_API_KEY` and **`APP_PASSWORD`** (the site is public, so the
+   password stops other people from using your API key or seeing your data).
+4. **Storage → Turso (Marketplace) → Create database → connect it to this project.** This adds
+   `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. Without it the app still runs, but Vercel's disk is
+   temporary, so sessions and reports can disappear (the home page shows a warning).
+5. **Deploy**, open the URL in Chrome on Android/desktop (HTTPS is needed for the microphone), log in with
+   the password, and allow microphone access.
+
+Every push to the connected branch redeploys automatically.
+
 ## Configuration (`.env.local`)
 
 | Variable | Default | Purpose |
@@ -41,7 +55,9 @@ Other commands: `npm run build` · `npm start` · `npm test` · `npm run lint` �
 | `OPENAI_TTS_VOICE_A1…B2` | nova/echo/shimmer/onyx | One voice per level |
 | `ELEVENLABS_API_KEY`, `ELEVENLABS_VOICE_A1…B2` | – | ElevenLabs, one voice ID per level |
 | `STT_PROVIDER` | `webspeech` | `webspeech` · `openai` (Whisper) |
-| `DATABASE_PATH` | `./data/german-speaking.db` | SQLite file |
+| `DATABASE_PATH` | `./data/german-speaking.db` | Local SQLite file |
+| `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | – | Hosted libSQL database (used instead of the file when set) |
+| `APP_PASSWORD` | – | Password page for public deployments |
 | `LOG_LEVEL_VIOLATIONS=1` | on in dev | Print level-checker violations to the console |
 
 If a premium provider is selected but its key is missing, the app silently falls back to the browser
@@ -88,7 +104,7 @@ rephrase that is checked against the level as well.
   your top open grammar weakness, still at its own level.
 - The progress dashboard shows scores over time, minutes per day/week, a streak, words spoken,
   mistake types per session, open weaknesses and the full session history.
-- All data lives in SQLite (`data/`), with JSON export/import and "delete all my data" in Settings.
+- All data lives in SQLite via libSQL — a local file in `data/`, or a Turso database when deployed — with JSON export/import and "delete all my data" in Settings.
   The schema has a `user_id` everywhere so multi-user auth can be added later.
 - Sessions are saved turn by turn. If you close the tab mid-conversation, you can continue it or create
   its report later from the *Start speaking* page.
@@ -114,7 +130,7 @@ src/lib/levels.ts   personas, level rules, few-shot examples, topics, tags
 src/lib/levelLock/  heuristic checker + regenerate/fallback wrapper
 src/lib/llm/        Anthropic client, offline mock, JSON retry
 src/lib/report/     report schema, generation, mock report, weakness tracker
-src/lib/db/         SQLite (better-sqlite3 + Drizzle) schema and repository
+src/lib/db/         SQLite/libSQL (Drizzle) schema and repository
 src/lib/client/     browser TTS/STT providers, i18n (AR/EN), API helpers
 tests/              Vitest: level lock, report schema, tracker, full mocked flow
 scripts/seed-demo.ts
@@ -137,5 +153,9 @@ B1 ميرا، B2 د. توبياس). كل شريك ممنوع يتكلم فوق �
 
 من غير مفتاح الموقع بيشتغل في **وضع تجريبي** بردود بسيطة. ولو عايز تشوف لوحة التقدّم فيها بيانات،
 شغّل `npm run seed:demo` (بيانات وهمية مش شخصية).
+
+**النشر على Vercel عشان تجربه من الموبايل:** اعمل Project جديد من نفس الريبو، وخلي الـ Root Directory
+`german-speaking`، وحط `ANTHROPIC_API_KEY` و `APP_PASSWORD`، ووصّل قاعدة بيانات Turso من Storage عشان
+جلساتك متتمسحش. التفاصيل فوق في قسم "Deploy on Vercel".
 
 **تنبيه:** ملاحظات النطق استرشادية بس، مش تقييم معتمد.

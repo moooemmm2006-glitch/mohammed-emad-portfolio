@@ -59,6 +59,7 @@ export interface ServerProviders {
   llm: "anthropic" | "mock";
   tts: "webspeech" | "openai" | "elevenlabs";
   stt: "webspeech" | "openai";
+  storage?: "remote" | "file" | "temporary";
 }
 
 export function useProviders() {

@@ -1,4 +1,7 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import fs from "fs";
+import os from "os";
+import path from "path";
 import { runPartnerTurn, getHint, toMessages, type TurnEvent } from "@/lib/conversation";
 import { resetDbForTests } from "@/lib/db";
 import { createSession, exportAll, getTurns, getWeaknesses, importAll, listReports, saveSettings, updateSession } from "@/lib/db/repo";
@@ -17,20 +20,31 @@ async function turn(sessionId: string, text?: string) {
 }
 
 async function session(level: Level, lines: string[], dayOffset: number) {
-  const s = createSession(level, null, null);
+  const s = await createSession(level, null, null);
   const start = Date.now() - dayOffset * 86_400_000;
-  updateSession(s.id, { startedAt: start, lastActiveAt: start });
+  await updateSession(s.id, { startedAt: start, lastActiveAt: start });
   await turn(s.id);
   for (const l of lines) await turn(s.id, l);
-  updateSession(s.id, { endedAt: start + 6 * 60_000, lastActiveAt: start + 6 * 60_000 });
+  await updateSession(s.id, { endedAt: start + 6 * 60_000, lastActiveAt: start + 6 * 60_000 });
   return s.id;
 }
 
 describe("conversation + report flow (mock LLM, in-memory DB)", () => {
-  beforeEach(() => resetDbForTests());
+  // A fresh SQLite file per test (libSQL in-memory databases don't survive batches/transactions).
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gs-test-"));
+  let n = 0;
+  const freshDb = () => {
+    resetDbForTests();
+    process.env.DATABASE_PATH = path.join(dir, `t${n++}.db`);
+  };
+  beforeEach(freshDb);
+  afterAll(() => {
+    resetDbForTests();
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
 
   it("greets at level, saves turns and streams sentences", async () => {
-    const s = createSession("A1", null, null);
+    const s = await createSession("A1", null, null);
     const greet = await turn(s.id);
     const done = greet.find((e) => e.type === "done");
     expect(done && done.type === "done" && heuristicCheck("A1", done.text).ok).toBe(true);
@@ -38,14 +52,14 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
 
     const reply = await turn(s.id, "Ich heiße Mohammed und ich komme aus Ägypten.");
     expect(reply[0]).toMatchObject({ type: "user_saved" });
-    const turns = getTurns(s.id);
+    const turns = await getTurns(s.id);
     expect(turns.map((t) => t.role)).toEqual(["partner", "user", "partner"]);
     expect(turns[1].confidence).toBe(0.9);
   });
 
   it("works in fast (streaming) mode too", async () => {
-    saveSettings({ levelCheckMode: "fast" });
-    const s = createSession("B1", null, null);
+    await saveSettings({ levelCheckMode: "fast" });
+    const s = await createSession("B1", null, null);
     const events = await turn(s.id);
     expect(events.some((e) => e.type === "sentence")).toBe(true);
     expect(events.at(-1)?.type).toBe("done");
@@ -85,15 +99,15 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
     const r3 = await generateReport(d3, { llm });
     expect(r3.trackerChanges?.improved).toContain("trennbare_verben");
 
-    const status = Object.fromEntries(getWeaknesses().map((w) => [w.tag, w.status]));
+    const status = Object.fromEntries((await getWeaknesses()).map((w) => [w.tag, w.status]));
     expect(status.modalverben).toBe("resolved");
     expect(status.trennbare_verben).toBe("improving");
 
     // Regenerating an old report must not double count it
     await generateReport(d2, { llm });
-    expect(getWeaknesses().find((w) => w.tag === "trennbare_verben")?.totalCount).toBe(2);
+    expect((await getWeaknesses()).find((w) => w.tag === "trennbare_verben")?.totalCount).toBe(2);
 
-    const stats = computeStats(0);
+    const stats = await computeStats(0);
     expect(stats.totals.sessions).toBe(3);
     expect(stats.scoreTimeline).toHaveLength(3);
     expect(stats.levels.A2.sessions).toBe(3);
@@ -101,7 +115,7 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
   });
 
   it("refuses a report for an empty session and gives level-safe hints", async () => {
-    const s = createSession("A1", null, null);
+    const s = await createSession("A1", null, null);
     await turn(s.id);
     await expect(generateReport(s.id, { llm })).rejects.toThrow(/Nothing was said/);
     const hint = await getHint(s.id, llm);
@@ -112,10 +126,10 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
   it("exports and re-imports all data", async () => {
     const id = await session("B1", ["Ich arbeite in einem Team mit fünf Kollegen."], 0);
     await generateReport(id, { llm });
-    const dump = JSON.parse(JSON.stringify(exportAll()));
-    resetDbForTests();
-    importAll(dump);
-    expect(listReports()).toHaveLength(1);
-    expect(getTurns(id).length).toBe(dump.turns.length);
+    const dump = JSON.parse(JSON.stringify(await exportAll()));
+    freshDb();
+    await importAll(dump);
+    expect(await listReports()).toHaveLength(1);
+    expect((await getTurns(id)).length).toBe(dump.turns.length);
   });
 });

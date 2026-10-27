@@ -26,10 +26,10 @@ export class ReportError extends Error {
   }
 }
 
-export function buildReportContext(sessionId: string, language?: "ar" | "en" | "de"): ReportContext {
-  const s = getSession(sessionId);
+export async function buildReportContext(sessionId: string, language?: "ar" | "en" | "de"): Promise<ReportContext> {
+  const s = await getSession(sessionId);
   if (!s || !isLevel(s.level)) throw new ReportError("Session not found", "not_found");
-  const transcript: TranscriptTurn[] = getTurns(sessionId).map((t) => {
+  const transcript: TranscriptTurn[] = (await getTurns(sessionId)).map((t) => {
     const meta = parseMeta(t);
     return {
       role: t.role === "user" ? "learner" : "partner",
@@ -41,17 +41,17 @@ export function buildReportContext(sessionId: string, language?: "ar" | "en" | "
     };
   });
   const info = sessionInfoFrom(s, transcript);
-  const previous = listReports()
+  const previous = (await listReports())
     .filter((r) => r.session.sessionId !== sessionId && r.session.date < info.date)
     .slice(-5)
     .map(briefFromReport);
-  const tracker = getWeaknesses().map(({ tag, kind, status, totalCount, firstSeen, lastSeen }) => ({ tag, kind, status, totalCount, firstSeen, lastSeen }));
-  return { info, level: s.level, language: language ?? getSettings().reportLang, transcript, previous, tracker };
+  const tracker = (await getWeaknesses()).map(({ tag, kind, status, totalCount, firstSeen, lastSeen }) => ({ tag, kind, status, totalCount, firstSeen, lastSeen }));
+  return { info, level: s.level, language: language ?? (await getSettings()).reportLang, transcript, previous, tracker };
 }
 
 /** Generate (or regenerate) the report for a session, update the weakness tracker, persist both. */
 export async function generateReport(sessionId: string, opts: { language?: "ar" | "en" | "de"; llm?: LLM } = {}): Promise<StoredReport> {
-  const ctx = buildReportContext(sessionId, opts.language);
+  const ctx = await buildReportContext(sessionId, opts.language);
   if (ctx.info.userTurns === 0) throw new ReportError("Nothing was said in this session yet", "too_short");
 
   const llm = opts.llm ?? getLLM();
@@ -75,7 +75,7 @@ export async function generateReport(sessionId: string, opts: { language?: "ar" 
 
   // Regenerating a report must not count the same session twice in the tracker:
   // rebuild the tracker from all reports in date order with this one replaced.
-  const others = listReports().filter((r) => r.session.sessionId !== sessionId);
+  const others = (await listReports()).filter((r) => r.session.sessionId !== sessionId);
   const before = rebuildTracker(others.filter((r) => r.session.date < ctx.info.date));
   const sessionCounts = { sessionId, date: ctx.info.date, counts: report.weaknessCounts };
   const afterThis = updateWeaknessTracker(before, sessionCounts);
@@ -95,10 +95,10 @@ export async function generateReport(sessionId: string, opts: { language?: "ar" 
     finalTracker = updateWeaknessTracker(finalTracker, { sessionId: r.session.sessionId, date: r.session.date, counts: r.weaknessCounts });
   }
 
-  const s = getSession(sessionId)!;
-  if (!s.endedAt) updateSession(sessionId, { endedAt: s.lastActiveAt, status: "ended" });
-  saveReport(stored);
-  saveWeaknesses(finalTracker);
+  const s = (await getSession(sessionId))!;
+  if (!s.endedAt) await updateSession(sessionId, { endedAt: s.lastActiveAt, status: "ended" });
+  await saveReport(stored);
+  await saveWeaknesses(finalTracker);
   return stored;
 }
 

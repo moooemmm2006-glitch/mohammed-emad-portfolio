@@ -11,7 +11,7 @@ type Ctx = { params: Promise<{ id: string }> };
 
 export async function GET(_req: Request, { params }: Ctx) {
   const { id } = await params;
-  const r = getReport(id);
+  const r = await getReport(id);
   return r ? NextResponse.json(r) : jsonError(404, "not_found", "No report yet");
 }
 

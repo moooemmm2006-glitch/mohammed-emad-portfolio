@@ -3,5 +3,5 @@ import path from "path";
 
 export default defineConfig({
   resolve: { alias: { "@": path.resolve(__dirname, "src") } },
-  test: { environment: "node", include: ["tests/**/*.test.ts"], env: { DATABASE_PATH: ":memory:", LLM_PROVIDER: "mock" } },
+  test: { environment: "node", include: ["tests/**/*.test.ts"], env: { LLM_PROVIDER: "mock" } },
 });

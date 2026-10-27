@@ -9,15 +9,15 @@ type Ctx = { params: Promise<{ id: string }> };
 
 export async function GET(_req: Request, { params }: Ctx) {
   const { id } = await params;
-  const session = getSession(id);
+  const session = await getSession(id);
   if (!session) return jsonError(404, "not_found", "Session not found");
-  const turns = getTurns(id).map((t) => ({ ...t, meta: parseMeta(t) }));
-  return NextResponse.json({ session, turns, report: getReport(id) });
+  const turns = (await getTurns(id)).map((t) => ({ ...t, meta: parseMeta(t) }));
+  return NextResponse.json({ session, turns, report: await getReport(id) });
 }
 
 export async function DELETE(_req: Request, { params }: Ctx) {
   const { id } = await params;
-  if (!getSession(id)) return jsonError(404, "not_found", "Session not found");
-  deleteSession(id);
+  if (!await getSession(id)) return jsonError(404, "not_found", "Session not found");
+  await deleteSession(id);
   return NextResponse.json({ ok: true });
 }

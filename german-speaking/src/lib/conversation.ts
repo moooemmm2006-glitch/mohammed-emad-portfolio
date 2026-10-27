@@ -56,7 +56,7 @@ async function maybeSummarise(llm: LLM, sessionId: string, turns: TurnRow[], sum
       maxTokens: 300,
       purpose: "summary",
     });
-    updateSession(sessionId, { summary: newSummary, summaryUpto: cut });
+    await updateSession(sessionId, { summary: newSummary, summaryUpto: cut });
     return { summary: newSummary, upto: cut };
   } catch {
     return { summary, upto }; // not critical: keep the full context this time
@@ -76,27 +76,27 @@ export interface TurnInput {
 
 export async function runPartnerTurn(inp: TurnInput): Promise<void> {
   const { emit } = inp;
-  const session = getSession(inp.sessionId);
+  const session = await getSession(inp.sessionId);
   if (!session || !isLevel(session.level)) {
     emit({ type: "error", code: "not_found", message: "Session not found" });
     return;
   }
-  if (session.status !== "active") updateSession(session.id, { status: "active", endedAt: null });
+  if (session.status !== "active") await updateSession(session.id, { status: "active", endedAt: null });
   const level: Level = session.level;
-  const settings = getSettings();
+  const settings = await getSettings();
   const cfg = serverConfig();
   const llm = inp.llm ?? getLLM();
 
   const userText = inp.userText?.trim();
   if (userText) {
-    const row = addTurn(session.id, "user", userText, {
+    const row = await addTurn(session.id, "user", userText, {
       confidence: inp.confidence ?? null,
       meta: { input: inp.input ?? "voice", alternatives: inp.alternatives?.slice(0, 4) },
     });
     emit({ type: "user_saved", turnId: row.id });
   }
 
-  const turns = getTurns(session.id);
+  const turns = await getTurns(session.id);
   const isGreeting = turns.length === 0;
   const { summary, upto } = await maybeSummarise(llm, session.id, turns, session.summary, session.summaryUpto);
   const messages = toMessages(turns.slice(upto), upto === 0);
@@ -122,7 +122,7 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
     });
 
   const recordViolations = (attempt: number, vs: Violation[]) => {
-    logViolation(session.id, level, attempt, vs);
+    void logViolation(session.id, level, attempt, vs).catch(() => {});
     if (cfg.logViolations) console.warn(`[level-lock] ${level} attempt ${attempt}:`, vs.map((v) => `${v.rule} → "${v.excerpt}"`).join(" | "));
   };
 
@@ -147,7 +147,7 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
     buf.flush().forEach((s) => emit({ type: "sentence", text: s }));
     const vs = await checkAfterTheFact(level, finalText, check);
     if (vs.length) recordViolations(0, vs);
-    updateSession(session.id, { pendingFeedback: vs.length ? regenerationFeedback(level, vs) : null });
+    await updateSession(session.id, { pendingFeedback: vs.length ? regenerationFeedback(level, vs) : null });
   } else {
     const result = await levelLockedReply(
       {
@@ -172,7 +172,7 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
     for (const s of splitSentences(finalText)) emit({ type: "sentence", text: s });
   }
 
-  const row = addTurn(session.id, "partner", finalText, { meta: { fallback, attempts, greeting: isGreeting } });
+  const row = await addTurn(session.id, "partner", finalText, { meta: { fallback, attempts, greeting: isGreeting } });
   emit({ type: "done", turnId: row.id, text: finalText, fallback, attempts });
 }
 
@@ -186,11 +186,11 @@ export const HintSchema = z.object({
 export type Hint = z.infer<typeof HintSchema>;
 
 export async function getHint(sessionId: string, llm: LLM = getLLM()): Promise<Hint> {
-  const session = getSession(sessionId);
+  const session = await getSession(sessionId);
   if (!session || !isLevel(session.level)) throw new Error("Session not found");
   const level = session.level;
-  const lang = getSettings().hintLang;
-  const turns = getTurns(sessionId);
+  const lang = (await getSettings()).hintLang;
+  const turns = await getTurns(sessionId);
   const lastPartner = [...turns].reverse().find((t) => t.role === "partner");
   const recent = turns.slice(-6).map((t) => `${t.role === "user" ? "Learner" : "Partner"}: ${t.text}`).join("\n");
   const hint = await llm.json({

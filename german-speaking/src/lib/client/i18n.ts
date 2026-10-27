@@ -221,6 +221,12 @@ const ar = {
   lang_de: "Deutsch",
   loading: "بيحمّل…",
   back: "رجوع",
+  login_title: "ادخل بكلمة السر",
+  login_body: "الموقع ده محمي عشان محدش غيرك يستخدمه.",
+  login_password: "كلمة السر",
+  login_wrong: "كلمة السر غلط.",
+  login_enter: "دخول",
+  storage_temp: "تنبيه: مفيش قاعدة بيانات دائمة متوصّلة، فالجلسات والتقارير ممكن تتمسح. وصّل Turso من Vercel عشان تتحفظ.",
 };
 
 const en: Record<keyof typeof ar, string> = {
@@ -442,6 +448,12 @@ const en: Record<keyof typeof ar, string> = {
   lang_de: "Deutsch",
   loading: "Loading…",
   back: "Back",
+  login_title: "Enter the password",
+  login_body: "This site is protected so only you can use it.",
+  login_password: "Password",
+  login_wrong: "Wrong password.",
+  login_enter: "Enter",
+  storage_temp: "Warning: no permanent database is connected, so sessions and reports can be lost. Connect Turso in Vercel to keep them.",
 };
 
 export const DICT = { ar, en };

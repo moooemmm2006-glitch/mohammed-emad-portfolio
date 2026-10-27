@@ -13,7 +13,7 @@ const Body = z.object({ level: z.enum(LEVELS), topic: z.string().max(200).nullab
 export async function POST(req: Request) {
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return jsonError(400, "invalid_body", parsed.error.message);
-  const focus = getSettings().focusSteering ? pickFocus(getWeaknesses()) : null;
-  const s = createSession(parsed.data.level, parsed.data.topic ?? null, focus?.tag ?? null);
+  const focus = (await getSettings()).focusSteering ? pickFocus(await getWeaknesses()) : null;
+  const s = await createSession(parsed.data.level, parsed.data.topic ?? null, focus?.tag ?? null);
   return NextResponse.json({ session: s, focus: focus?.tag ?? null });
 }

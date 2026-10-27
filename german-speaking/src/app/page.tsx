@@ -3,16 +3,22 @@
 import Link from "next/link";
 import { LevelCard } from "@/components/LevelCard";
 import { IconChart, IconClock, IconFile, IconFlame, IconMic, IconSparkle } from "@/components/Icons";
-import { useStats } from "@/lib/client/api";
+import { useProviders, useStats } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
 import { LEVELS } from "@/lib/levels";
 
 export default function HomePage() {
   const { t } = useUI();
   const { stats } = useStats();
+  const providers = useProviders();
 
   return (
     <div className="space-y-12">
+      {providers?.storage === "temporary" && (
+        <p role="alert" className="rounded-xl bg-danger/10 text-danger px-4 py-3 text-sm">
+          {t("storage_temp")}
+        </p>
+      )}
       <section className="relative overflow-hidden rounded-[2rem] bg-surface border border-line px-6 py-10 sm:px-10 sm:py-14">
         <div aria-hidden="true" className="pointer-events-none absolute -top-24 -end-24 w-80 h-80 rounded-full opacity-25 blur-3xl" style={{ background: "conic-gradient(var(--a1), var(--a2), var(--b1), var(--b2), var(--a1))" }} />
         <p className="inline-flex items-center gap-2 rounded-full bg-surface-2 px-3 py-1 text-sm font-semibold text-gold">

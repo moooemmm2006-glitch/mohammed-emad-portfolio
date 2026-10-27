@@ -1,30 +1,48 @@
-import Database from "better-sqlite3";
-import { drizzle, type BetterSQLite3Database } from "drizzle-orm/better-sqlite3";
+import { createClient, type Client } from "@libsql/client";
+import { drizzle, type LibSQLDatabase } from "drizzle-orm/libsql";
 import fs from "fs";
 import path from "path";
 import * as schema from "./schema";
 
-export type DB = BetterSQLite3Database<typeof schema>;
+// libSQL: a plain SQLite file locally, or a hosted Turso database in production
+// (Vercel's filesystem is temporary, so a file there would lose your history).
+export type DB = LibSQLDatabase<typeof schema>;
 
-const g = globalThis as unknown as { __gsDb?: { path: string; db: DB; raw: Database.Database } };
+export type StorageKind = "remote" | "file" | "temporary";
 
-export function getDb(): DB {
-  const file = process.env.DATABASE_PATH || "./data/german-speaking.db";
-  const resolved = file === ":memory:" ? file : path.resolve(process.cwd(), file);
-  if (g.__gsDb?.path === resolved) return g.__gsDb.db;
-  if (resolved !== ":memory:") fs.mkdirSync(path.dirname(resolved), { recursive: true });
-  const raw = new Database(resolved);
-  raw.pragma("journal_mode = WAL");
-  raw.pragma("foreign_keys = ON");
-  raw.exec(schema.DDL);
-  const db = drizzle(raw, { schema });
-  g.__gsDb = { path: resolved, db, raw };
-  return db;
+export function dbTarget(): { url: string; authToken?: string; kind: StorageKind } {
+  const remote = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL;
+  if (remote) return { url: remote, authToken: process.env.TURSO_AUTH_TOKEN || process.env.DATABASE_AUTH_TOKEN, kind: "remote" };
+  if (process.env.VERCEL) return { url: "file:/tmp/german-speaking.db", kind: "temporary" };
+  const file = path.resolve(process.cwd(), process.env.DATABASE_PATH || "./data/german-speaking.db");
+  return { url: `file:${file}`, kind: "file" };
 }
 
-/** Test helper: drop the cached connection so the next getDb() starts fresh. */
+const g = globalThis as unknown as { __gsDb?: { url: string; db: DB; client: Client; ready: Promise<void> } };
+
+function open() {
+  const target = dbTarget();
+  if (g.__gsDb?.url === target.url) return g.__gsDb;
+  if (target.url.startsWith("file:")) fs.mkdirSync(path.dirname(target.url.slice(5)), { recursive: true });
+  const client = createClient({ url: target.url, authToken: target.authToken });
+  const ready = (async () => {
+    if (target.url.startsWith("file:")) await client.execute("PRAGMA journal_mode = WAL").catch(() => {});
+    await client.executeMultiple(schema.DDL);
+  })();
+  g.__gsDb = { url: target.url, db: drizzle(client, { schema }), client, ready };
+  return g.__gsDb;
+}
+
+/** The database, with tables created on first use. */
+export async function getDb(): Promise<DB> {
+  const h = open();
+  await h.ready;
+  return h.db;
+}
+
+/** Test helper: close the connection so the next getDb() opens a fresh database. */
 export function resetDbForTests() {
-  g.__gsDb?.raw.close();
+  g.__gsDb?.client.close();
   delete g.__gsDb;
 }
 

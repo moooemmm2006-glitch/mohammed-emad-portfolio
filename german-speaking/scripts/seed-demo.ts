@@ -78,20 +78,20 @@ async function main() {
   const llm = new MockLLM();
   for (const d of DEMO) {
     const start = Date.now() - d.daysAgo * DAY + 18 * 3_600_000 - (Date.now() % DAY);
-    const s = createSession(d.level, d.topic, null);
-    updateSession(s.id, { startedAt: start, lastActiveAt: start });
+    const s = await createSession(d.level, d.topic, null);
+    await updateSession(s.id, { startedAt: start, lastActiveAt: start });
     let at = start;
     const step = (d.minutes * 60_000) / (d.lines.length * 2 + 1);
     const partner = await llm.chat({ model: "mock", system: `LEVEL: ${d.level}`, messages: [{ role: "user", content: "[START]" }], maxTokens: 100, purpose: "partner", level: d.level });
-    addTurn(s.id, "partner", partner, { at, meta: { greeting: true } });
+    await addTurn(s.id, "partner", partner, { at, meta: { greeting: true } });
     for (const [line, conf] of d.lines) {
       at += step;
-      addTurn(s.id, "user", line, { at, confidence: conf, meta: { input: "voice" } });
+      await addTurn(s.id, "user", line, { at, confidence: conf, meta: { input: "voice" } });
       at += step;
       const reply = await llm.chat({ model: "mock", system: `LEVEL: ${d.level}`, messages: [{ role: "user", content: line }], maxTokens: 100, purpose: "partner", level: d.level });
-      addTurn(s.id, "partner", reply, { at });
+      await addTurn(s.id, "partner", reply, { at });
     }
-    updateSession(s.id, { status: "ended", endedAt: start + d.minutes * 60_000, lastActiveAt: start + d.minutes * 60_000 });
+    await updateSession(s.id, { status: "ended", endedAt: start + d.minutes * 60_000, lastActiveAt: start + d.minutes * 60_000 });
     const r = await generateReport(s.id, { llm });
     console.log(`✓ ${d.level} ${new Date(start).toISOString().slice(0, 10)} — overall ${r.overall}, mistakes: ${r.mistakes.map((m) => m.tag).join(", ") || "none"}`);
   }
