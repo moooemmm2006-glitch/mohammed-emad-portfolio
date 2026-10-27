@@ -20,9 +20,9 @@ export function practiceStreak(days: Set<string>, today: string): number {
   return n;
 }
 
-export async function computeStats(tzOffsetMin = 0, now = Date.now()) {
-  const all = await sessionsWithTurnCounts();
-  const reports = await listReports();
+export async function computeStats(userId: string, tzOffsetMin = 0, now = Date.now()) {
+  const all = await sessionsWithTurnCounts(userId);
+  const reports = await listReports(userId);
   const reportBySession = new Map(reports.map((r) => [r.session.sessionId, r]));
   const spoken = all.filter((x) => x.userTurns > 0);
 
@@ -108,7 +108,7 @@ export async function computeStats(tzOffsetMin = 0, now = Date.now()) {
     topTags,
     mistakeTrend,
     levels,
-    weaknesses: await getWeaknesses(),
+    weaknesses: await getWeaknesses(userId),
     history,
     unfinished: history.filter((h) => !h.hasReport),
   };

@@ -24,6 +24,8 @@ export interface PreviousSessionBrief {
 }
 
 export interface ReportContext {
+  /** Owner of the session; memory and comparisons only use this learner's history. */
+  userId: string;
   info: SessionInfo;
   level: Level;
   language: "ar" | "en" | "de";

@@ -20,7 +20,7 @@ async function turn(sessionId: string, text?: string) {
 }
 
 async function session(level: Level, lines: string[], dayOffset: number) {
-  const s = await createSession(level, null, null);
+  const s = await createSession(level, null, null, "u1");
   const start = Date.now() - dayOffset * 86_400_000;
   await updateSession(s.id, { startedAt: start, lastActiveAt: start });
   await turn(s.id);
@@ -44,7 +44,7 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
   });
 
   it("greets at level, saves turns and streams sentences", async () => {
-    const s = await createSession("A1", null, null);
+    const s = await createSession("A1", null, null, "u1");
     const greet = await turn(s.id);
     const done = greet.find((e) => e.type === "done");
     expect(done && done.type === "done" && heuristicCheck("A1", done.text).ok).toBe(true);
@@ -58,15 +58,15 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
   });
 
   it("works in fast (streaming) mode too", async () => {
-    await saveSettings({ levelCheckMode: "fast" });
-    const s = await createSession("B1", null, null);
+    await saveSettings({ levelCheckMode: "fast" }, "u1");
+    const s = await createSession("B1", null, null, "u1");
     const events = await turn(s.id);
     expect(events.some((e) => e.type === "sentence")).toBe(true);
     expect(events.at(-1)?.type).toBe("done");
   });
 
   it("explains grammar when asked and never sends the same reply twice in a row", async () => {
-    const s = await createSession("A2", null, null);
+    const s = await createSession("A2", null, null, "u1");
     await turn(s.id);
     const ev = await turn(s.id, "Können Sie Modalverben erklären?");
     const done = ev.find((e) => e.type === "done");
@@ -115,15 +115,15 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
     const r3 = await generateReport(d3, { llm });
     expect(r3.trackerChanges?.improved).toContain("trennbare_verben");
 
-    const status = Object.fromEntries((await getWeaknesses()).map((w) => [w.tag, w.status]));
+    const status = Object.fromEntries((await getWeaknesses("u1")).map((w) => [w.tag, w.status]));
     expect(status.modalverben).toBe("resolved");
     expect(status.trennbare_verben).toBe("improving");
 
     // Regenerating an old report must not double count it
     await generateReport(d2, { llm });
-    expect((await getWeaknesses()).find((w) => w.tag === "trennbare_verben")?.totalCount).toBe(2);
+    expect((await getWeaknesses("u1")).find((w) => w.tag === "trennbare_verben")?.totalCount).toBe(2);
 
-    const stats = await computeStats(0);
+    const stats = await computeStats("u1", 0);
     expect(stats.totals.sessions).toBe(3);
     expect(stats.scoreTimeline).toHaveLength(3);
     expect(stats.levels.A2.sessions).toBe(3);
@@ -131,7 +131,7 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
   });
 
   it("refuses a report for an empty session and gives level-safe hints", async () => {
-    const s = await createSession("A1", null, null);
+    const s = await createSession("A1", null, null, "u1");
     await turn(s.id);
     await expect(generateReport(s.id, { llm })).rejects.toThrow(/Nothing was said/);
     const hint = await getHint(s.id, llm);
@@ -142,10 +142,10 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
   it("exports and re-imports all data", async () => {
     const id = await session("B1", ["Ich arbeite in einem Team mit fünf Kollegen."], 0);
     await generateReport(id, { llm });
-    const dump = JSON.parse(JSON.stringify(await exportAll()));
+    const dump = JSON.parse(JSON.stringify(await exportAll("u1")));
     freshDb();
-    await importAll(dump);
-    expect(await listReports()).toHaveLength(1);
+    await importAll(dump, "u1");
+    expect(await listReports("u1")).toHaveLength(1);
     expect((await getTurns(id)).length).toBe(dump.turns.length);
   });
 });

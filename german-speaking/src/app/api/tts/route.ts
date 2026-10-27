@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { serverConfig } from "@/lib/config";
+import { currentUser, unauthorized } from "@/lib/auth/session";
 import { LEVELS, LEVEL_CONFIG } from "@/lib/levels";
 import { jsonError, readJson } from "@/lib/api";
 
@@ -13,6 +14,7 @@ const OPENAI_DEFAULT_VOICES = { A1: "nova", A2: "echo", B1: "shimmer", B2: "onyx
 // Premium TTS (OpenAI or ElevenLabs), one distinct voice per level. Returns audio/mpeg.
 // The browser falls back to the Web Speech API on any non-200 answer.
 export async function POST(req: Request) {
+  if (!(await currentUser())) return unauthorized();
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return jsonError(400, "invalid_body", parsed.error.message);
   const { text, level } = parsed.data;

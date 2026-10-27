@@ -168,7 +168,7 @@ describe("explanation path with a (mocked) real model", () => {
   });
 
   const run = async (level: Level, llm: LLM, texts: string[]) => {
-    const s = await createSession(level, null, null);
+    const s = await createSession(level, null, null, "u1");
     const done: string[] = [];
     for (const t of [undefined, ...texts]) {
       const ev: TurnEvent[] = [];

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { generateReport, getReport, ReportError } from "@/lib/report/generate";
 import { jsonError, readJson } from "@/lib/api";
+import { currentUser, ownSession, unauthorized } from "@/lib/auth/session";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,7 +11,10 @@ export const maxDuration = 300;
 type Ctx = { params: Promise<{ id: string }> };
 
 export async function GET(_req: Request, { params }: Ctx) {
+  const user = await currentUser();
+  if (!user) return unauthorized();
   const { id } = await params;
+  if (!(await ownSession(id, user))) return jsonError(404, "not_found", "No report yet");
   const r = await getReport(id);
   return r ? NextResponse.json(r) : jsonError(404, "not_found", "No report yet");
 }
@@ -18,7 +22,10 @@ export async function GET(_req: Request, { params }: Ctx) {
 const Body = z.object({ language: z.enum(["ar", "en", "de"]).optional() });
 
 export async function POST(req: Request, { params }: Ctx) {
+  const user = await currentUser();
+  if (!user) return unauthorized();
   const { id } = await params;
+  if (!(await ownSession(id, user))) return jsonError(404, "not_found", "Session not found");
   const body = Body.safeParse((await readJson(req)) ?? {});
   try {
     const report = await generateReport(id, { language: body.success ? body.data.language : undefined });

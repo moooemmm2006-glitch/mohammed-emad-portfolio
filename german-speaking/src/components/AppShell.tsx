@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { useUI } from "@/lib/client/ui";
+import { PUBLIC_PATHS, useMe } from "@/lib/client/me";
+import { ProfileMenu } from "./ProfileMenu";
 import type { TKey } from "@/lib/client/i18n";
 import { IconBook, IconChart, IconFile, IconGear, IconHome, IconMenu, IconMic, IconMoon, IconSun, IconX } from "./Icons";
 
@@ -32,6 +34,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { t, lang, setLang, theme, setTheme } = useUI();
   const path = usePathname();
   const [menu, setMenu] = useState(false);
+  const { me, loading } = useMe();
+  // Login and sign-up pages: header with language/theme only, no navigation.
+  const bare = PUBLIC_PATHS.includes(path);
   // The speaking screen is full-screen: no site nav on mobile, no page padding.
   const inConversation = /^\/speak\/(A1|A2|B1|B2)/i.test(path);
 
@@ -54,7 +59,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             </span>
           </Link>
 
-          <nav aria-label="Main" className="hidden md:flex items-center gap-1 ms-6">
+          <nav aria-label="Main" className={bare ? "hidden" : "hidden md:flex items-center gap-1 ms-6"}>
             {MAIN.slice(1).map((n) => (
               <Link
                 key={n.href}
@@ -79,9 +84,21 @@ export function AppShell({ children }: { children: ReactNode }) {
             >
               {theme === "dark" ? <IconSun /> : <IconMoon />}
             </button>
-            <button className="btn btn-ghost !px-3 !min-h-[40px] md:hidden" onClick={() => setMenu(true)} aria-label={t("nav_more")} aria-expanded={menu}>
-              <IconMenu />
-            </button>
+            {!bare && (
+              <button className="btn btn-ghost !px-3 !min-h-[40px] md:hidden" onClick={() => setMenu(true)} aria-label={t("nav_more")} aria-expanded={menu}>
+                <IconMenu />
+              </button>
+            )}
+            {me ? (
+              <ProfileMenu />
+            ) : (
+              !loading &&
+              path !== "/login" && (
+                <Link href="/login" className="btn btn-primary !min-h-[40px] !px-4 text-sm">
+                  {t("login_button")}
+                </Link>
+              )
+            )}
           </div>
         </div>
       </header>
@@ -126,7 +143,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
 
-      {!inConversation && (
+      {!inConversation && !bare && (
         <nav aria-label="Main mobile" className="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-line bg-surface/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
           <ul className="grid grid-cols-5">
             {MAIN.map((n) => {

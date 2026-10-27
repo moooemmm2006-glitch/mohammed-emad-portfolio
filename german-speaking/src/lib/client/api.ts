@@ -37,7 +37,10 @@ export async function streamNdjson<E>(url: string, body: unknown, onEvent: (e: E
     if ((err as Error).name === "AbortError") throw err;
     throw new ApiError(0, "offline", "Network error");
   }
-  if (!res.ok || !res.body) throw new ApiError(res.status, "http_error", res.statusText);
+  if (!res.ok || !res.body) {
+    const err = (await res.json().catch(() => null)) as { error?: { code: string; message: string } } | null;
+    throw new ApiError(res.status, err?.error?.code ?? "http_error", err?.error?.message ?? res.statusText);
+  }
   const reader = res.body.getReader();
   const dec = new TextDecoder();
   let buf = "";

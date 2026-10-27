@@ -28,9 +28,31 @@ function open() {
   const ready = (async () => {
     if (target.url.startsWith("file:")) await client.execute("PRAGMA journal_mode = WAL").catch(() => {});
     await client.executeMultiple(schema.DDL);
+    await addMissingColumns(client);
+    await client.executeMultiple(schema.POST_DDL);
   })();
+  // A failed migration must not be cached forever (e.g. a network blip on Turso).
+  ready.catch(() => {
+    if (g.__gsDb?.ready === ready) delete g.__gsDb;
+  });
   g.__gsDb = { url: target.url, db: drizzle(client, { schema }), client, ready };
   return g.__gsDb;
+}
+
+/** Additive migration: works on local SQLite and Turso, and is safe to run on every cold start. */
+async function addMissingColumns(client: Client) {
+  const tables = [...new Set(schema.ADDED_COLUMNS.map((c) => c.table))];
+  for (const table of tables) {
+    const info = await client.execute(`PRAGMA table_info(${table})`);
+    const have = new Set(info.rows.map((r) => String(r.name)));
+    for (const c of schema.ADDED_COLUMNS) {
+      if (c.table !== table || have.has(c.column)) continue;
+      // Another instance may have added it a moment ago (parallel cold starts).
+      await client.execute(`ALTER TABLE ${table} ADD COLUMN ${c.sql}`).catch((e) => {
+        if (!/duplicate column/i.test(String(e))) throw e;
+      });
+    }
+  }
 }
 
 /** The database, with tables created on first use. */

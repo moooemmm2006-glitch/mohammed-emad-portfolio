@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { AppShell } from "@/components/AppShell";
 import { PREPAINT_SCRIPT, UIProvider } from "@/lib/client/ui";
+import { MeProvider } from "@/lib/client/me";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,7 +33,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <UIProvider>
-          <AppShell>{children}</AppShell>
+          <MeProvider>
+            <AppShell>{children}</AppShell>
+          </MeProvider>
         </UIProvider>
       </body>
     </html>

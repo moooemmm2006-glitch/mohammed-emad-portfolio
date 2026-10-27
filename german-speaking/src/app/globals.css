@@ -143,6 +143,18 @@ html[lang="ar"] body {
 .btn-ghost:hover {
   background: var(--surface-2);
 }
+.field {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0.75rem 1rem;
+  min-height: 48px;
+}
+.field[aria-invalid="true"] {
+  border-color: var(--danger);
+}
 .chip {
   display: inline-flex;
   align-items: center;

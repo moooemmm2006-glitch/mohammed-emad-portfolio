@@ -143,3 +143,30 @@ export const IconArrow = (p: P) => (
     <path d="M5 12h14M13 6l6 6-6 6" />
   </I>
 );
+export const IconCamera = (p: P) => (
+  <I {...p}>
+    <path d="M4 8h3l2-3h6l2 3h3v11H4z" />
+    <circle cx="12" cy="13" r="3.5" />
+  </I>
+);
+export const IconLogout = (p: P) => (
+  <I {...p}>
+    <path d="M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10" />
+  </I>
+);
+export const IconKey = (p: P) => (
+  <I {...p}>
+    <circle cx="8" cy="15" r="4" />
+    <path d="M11 12l9-9M16 7l3 3M14 9l2 2" />
+  </I>
+);
+export const IconPen = (p: P) => (
+  <I {...p}>
+    <path d="M4 20h4L19 9l-4-4L4 16zM13 7l4 4" />
+  </I>
+);
+export const IconShield = (p: P) => (
+  <I {...p}>
+    <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
+  </I>
+);
