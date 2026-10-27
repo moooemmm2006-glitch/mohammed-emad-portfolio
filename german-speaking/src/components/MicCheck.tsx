@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useUI } from "@/lib/client/ui";
-import { openMicMeter, WebSpeechSTT, webSpeechSupported } from "@/lib/client/stt";
+import { isAndroid, openMicMeter, WebSpeechTurn, webSpeechSupported } from "@/lib/client/stt";
 import { Speaker, speakOptionsFor } from "@/lib/client/tts";
 import type { Level } from "@/lib/levels";
 import type { Settings } from "@/lib/settings";
@@ -34,32 +34,34 @@ export function MicCheck({ level, settings, useServerTts, onDone }: { level: Lev
   const testMic = async () => {
     setErr(null);
     setHeard(null);
-    try {
-      closeMeter.current = await openMicMeter(setLvl);
-    } catch {
-      setErr(t("err_mic_denied"));
-      return;
-    }
     if (!webSpeechSupported()) {
       setErr(t("err_no_stt"));
-      setTimeout(() => closeMeter.current?.(), 4000);
       return;
     }
+    // Android Chrome can't share the microphone between a level meter and speech recognition.
+    if (!isAndroid()) {
+      try {
+        closeMeter.current = await openMicMeter(setLvl);
+      } catch {
+        setErr(t("err_mic_denied"));
+        return;
+      }
+    }
     setListening(true);
-    const s = new WebSpeechSTT().start(
+    const s = new WebSpeechTurn().start(
       {
-        onInterim: setHeard,
+        onTranscript: setHeard,
         onFinal: (r) => setHeard(r.text),
-        onError: (c) => setErr(c === "not-allowed" ? t("err_mic_denied") : c === "no-speech" ? t("err_no_speech") : t("err_generic")),
+        onError: (c) => setErr(c === "not-allowed" || c === "audio-capture" ? t("err_mic_denied") : t("err_generic")),
         onEnd: () => {
           setListening(false);
           closeMeter.current?.();
           setLvl(0);
         },
       },
-      { autoStopMs: 1500 },
+      { silenceMs: 1500, maxIdleMs: 8000 },
     );
-    setTimeout(() => s.stop(), 8000);
+    setTimeout(() => s.finish(), 10000);
   };
 
   return (

@@ -21,9 +21,24 @@ npm run dev                     # http://localhost:3000
   rule-based report, so you can click through the whole flow.
 - **Demo data:** `npm run seed:demo` adds five fake past sessions (no personal data) so the dashboard
   and the "since last time" comparison have something to show.
-- **Browsers:** use **Chrome or Edge** (desktop or Android) for speech recognition. Safari/Firefox can
-  still speak the partner's voice; type your answers in the text box, or enable the Whisper provider
-  (below), which works in any browser with `MediaRecorder`.
+- **Browsers:** use **Chrome or Edge** (desktop or Android). Conversations are voice-only; in browsers
+  without speech recognition the app says so in Arabic (or enable the Whisper provider below, which
+  works in any browser with `MediaRecorder`).
+
+## Speaking: how a turn works
+
+- Tap the big circle (or, in hands-free mode — the default — just start talking after the partner).
+- Pause, hesitate and think as long as you like: your turn ends **only after a silence** (default 3 s,
+  1.5–6 s in Settings). The browser stops recognition by itself during pauses; the app restarts it
+  automatically and keeps collecting the same turn, then sends everything as **one** message. A thin
+  ring around the circle fills during the silence so you can see when it is about to send.
+- Tap again while talking = "I'm done, send now". Start talking while the partner speaks = the
+  partner stops (barge-in) and your turn starts; the partner's own voice coming back through the
+  speakers is filtered out.
+- The circle shows motivating German words (*Sprich einfach!*, *Du schaffst das!* …) and the state:
+  *Ich höre zu…*, *Moment…*, *Hör gut zu!*.
+- Speed control 1×–2.5× per partner (saved). Browser network voices top out around 2×; the app clamps and
+  shows the real maximum.
 
 Other commands: `npm run build` · `npm start` · `npm test` · `npm run lint` · `npm run typecheck`.
 
@@ -68,23 +83,27 @@ If a premium provider is selected but its key is missing, the app silently falls
 The rule "the partner never speaks above its level" is enforced in code, not only in a prompt
 (`src/lib/levelLock/`):
 
-1. **Per-level system prompt** (`src/lib/prompts.ts`, `src/lib/levels.ts`): allowed and forbidden grammar,
-   vocabulary range, max words per sentence and sentences per turn, few-shot allowed/forbidden
-   sentences, "answer at YOUR level even if the learner is above/below it", talk less and always end with
-   a question, German only. The greeting follows the same rules.
-2. **Heuristic pre-check** on every draft: sentence length/count, over-long compounds, and regexes for
-   structures that are above the level (e.g. Konjunktiv II, Passiv, relative clauses and Nebensätze at A1;
-   Konjunktiv I or extended participle phrases at B1). A failing draft is regenerated without spending a
-   checker call.
-3. **Second-pass LLM checker** (fast model, structured JSON validated with zod): if it finds something
-   above the level, the reply is **regenerated with the violations fed back** (max 2 retries).
-4. **Fallbacks**: the checker's simplified version → an explicit "simplify" call → the sentences that
-   pass on their own → a canned level-safe line.
-5. Violations are logged to the `violation_log` table (and to the console in development).
+1. **Per-level system prompt** (`src/lib/prompts.ts`, `src/lib/levels.ts`, `src/lib/levelKnowledge.ts`):
+   a warm, talkative persona that talks about any topic, tells short anecdotes, gives opinions and
+   explains grammar/words with examples when asked — always inside its level. It contains allowed and
+   forbidden grammar, topics per level, what grammar it can explain and how simply, typical mistakes of
+   Arabic speakers, and few-shot replies (chat, explanation, opinion, story). Chat turns stay short;
+   explanations, stories and opinions may be longer (`src/lib/intent.ts` detects which one the learner asked for).
+   A1/A2 may add one short Arabic hint in brackets inside an explanation (shown, not read aloud).
+2. **Streaming, per-sentence checks** (`streamLevelLocked`): the reply streams in; each finished sentence
+   gets a heuristic check (length, over-long words, regexes for structures above the level, no repeated
+   sentences) and — in strict mode — a quick LLM check (fast model, small output). Checks run in parallel;
+   sentences are emitted in order, so speech starts after the **first** sentence passes.
+3. A sentence that fails is **regenerated on its own** (checker suggestion → one-sentence rewrite); if it
+   still fails it is dropped. A turn without any question gets a short level-safe follow-up question.
+4. Violations are logged to the `violation_log` table (and to the console in development).
 
-Settings → *Level checking*: **strict** (default; checks before speaking) or **fast** (streams and
-speaks sentence by sentence immediately, checks afterwards, and steers the next turn if it went
-above the level).
+Settings → *Level checking*: **strict** (default) or **fast** (heuristics only before speaking, LLM check
+afterwards to steer the next turn).
+
+Latency: database writes and context summaries happen after the reply was sent, old turns are
+summarised (last 10 kept verbatim), and in development the server logs the time to the first sentence
+and the browser logs end-of-turn → first audio (`[latency]` in the console).
 
 The "مش فاهم / I'm stuck" button gives the meaning and a tip in Arabic or English, plus a simpler German
 rephrase that is checked against the level as well.
@@ -116,9 +135,11 @@ rephrase that is checked against the level as well.
   as hints and adds typical pitfalls for Arabic speakers (ch/sch, ü/ö, p/b, r, final devoicing, vowel
   length, z/w/v), and says so clearly. A provider with real pronunciation scoring is not implemented yet.
 - Web Speech recognition only works in Chrome/Edge and sends audio to the browser vendor's service.
-- Barge-in (interrupting the partner) works in hands-free mode with Web Speech recognition; it uses an
-  echo filter, so with loud speakers it can occasionally be triggered by the partner's own voice.
-  Headphones work best; it can be switched off in Settings.
+- Barge-in (interrupting the partner) works in hands-free mode with Web Speech recognition. The browser
+  can't cancel the partner's voice from the microphone, so an echo filter ignores words the partner just
+  said; with loud speakers it can still occasionally trigger. Headphones work best; it can be switched
+  off in Settings.
+- Demo mode (no API key) uses pre-written replies and explanations; real conversation needs the key.
 - Browser voices differ per device; pick and preview them in Settings.
 
 ## Project structure

@@ -38,6 +38,9 @@ export interface LevelLimits {
   maxSentences: number;
   maxWordLength: number; // very long compounds are a strong "above level" signal at low levels
   maxTokens: number;
+  /** When the learner asks for an explanation, a story or an opinion the partner may talk longer. */
+  maxSentencesLong: number;
+  maxTokensLong: number;
 }
 
 export interface LevelForbiddenPattern {
@@ -107,8 +110,8 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       },
       gender: "female",
     },
-    voice: { rate: 0.78, pitch: 1.12, preferLangs: ["de-DE", "de-AT", "de-CH"] },
-    limits: { maxWordsPerSentence: 10, maxSentences: 3, maxWordLength: 14, maxTokens: 120 },
+    voice: { rate: 0.95, pitch: 1.12, preferLangs: ["de-DE", "de-AT", "de-CH"] },
+    limits: { maxWordsPerSentence: 10, maxSentences: 3, maxWordLength: 14, maxTokens: 140, maxSentencesLong: 8, maxTokensLong: 360 },
     allowedGrammar: [
       "Präsens (present tense) of regular verbs, sein, haben",
       "W-Fragen (Wie? Was? Wo? Woher? Wann?) and Ja/Nein-Fragen",
@@ -193,8 +196,8 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       },
       gender: "male",
     },
-    voice: { rate: 0.88, pitch: 0.98, preferLangs: ["de-AT", "de-DE", "de-CH"] },
-    limits: { maxWordsPerSentence: 14, maxSentences: 4, maxWordLength: 17, maxTokens: 160 },
+    voice: { rate: 1.0, pitch: 0.98, preferLangs: ["de-AT", "de-DE", "de-CH"] },
+    limits: { maxWordsPerSentence: 14, maxSentences: 4, maxWordLength: 17, maxTokens: 180, maxSentencesLong: 8, maxTokensLong: 420 },
     allowedGrammar: [
       "Präsens, Perfekt, Präteritum of sein/haben/Modalverben (war, hatte, konnte, musste, wollte)",
       "Modalverben (können, müssen, wollen, dürfen, sollen, möchten)",
@@ -278,8 +281,8 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       },
       gender: "female",
     },
-    voice: { rate: 0.96, pitch: 1.04, preferLangs: ["de-DE", "de-CH", "de-AT"] },
-    limits: { maxWordsPerSentence: 20, maxSentences: 4, maxWordLength: 22, maxTokens: 220 },
+    voice: { rate: 1.05, pitch: 1.04, preferLangs: ["de-DE", "de-CH", "de-AT"] },
+    limits: { maxWordsPerSentence: 20, maxSentences: 4, maxWordLength: 22, maxTokens: 240, maxSentencesLong: 9, maxTokensLong: 520 },
     allowedGrammar: [
       "Perfekt, Präteritum (common verbs), Futur I",
       "Nebensätze: weil, dass, wenn, ob, als, obwohl, damit, während, nachdem, bevor",
@@ -359,8 +362,8 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       },
       gender: "male",
     },
-    voice: { rate: 1.02, pitch: 0.86, preferLangs: ["de-DE", "de-CH", "de-AT"] },
-    limits: { maxWordsPerSentence: 28, maxSentences: 5, maxWordLength: 28, maxTokens: 300 },
+    voice: { rate: 1.1, pitch: 0.86, preferLangs: ["de-DE", "de-CH", "de-AT"] },
+    limits: { maxWordsPerSentence: 28, maxSentences: 5, maxWordLength: 28, maxTokens: 320, maxSentencesLong: 9, maxTokensLong: 620 },
     allowedGrammar: [
       "All tenses incl. Plusquamperfekt and Futur II where natural",
       "Passiv in all common forms incl. with Modalverben, Zustandspassiv",

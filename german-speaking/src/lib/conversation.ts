@@ -1,35 +1,38 @@
-// Server-side orchestration of one partner turn: save the learner's words, build the context
-// (with summarised older turns), generate a level-locked reply and save it.
+// Server-side orchestration of one partner turn, tuned for latency: the reply is streamed and
+// checked sentence by sentence, the first sentence goes out as soon as it passes, and database
+// writes and context summaries happen after the reply has been sent.
 
 import { z } from "zod";
 import { serverConfig } from "./config";
 import { addTurn, getSession, getSettings, getTurns, logViolation, updateSession, type TurnRow } from "./db/repo";
-import { checkAfterTheFact, CheckSchema, levelLockedReply, type LockStatus, type Violation } from "./levelLock";
-import { heuristicCheck } from "./levelLock/heuristics";
+import { detectIntent } from "./intent";
+import { checkAfterTheFact, CheckSchema, streamLevelLocked, type LockStatus, type Violation } from "./levelLock";
+import { heuristicCheck, stripArabicHints } from "./levelLock/heuristics";
 import { isLevel, LEVEL_CONFIG, type Level } from "./levels";
 import { getLLM, type ChatMessage, type LLM } from "./llm";
 import {
   buildPartnerSystemPrompt,
   checkerSystemPrompt,
   checkerUserPrompt,
+  fixSentenceSystemPrompt,
+  fixSentenceUserPrompt,
   hintSystemPrompt,
   regenerationFeedback,
-  simplifySystemPrompt,
   START_SIGNAL,
   summarySystemPrompt,
+  turnInstruction,
 } from "./prompts";
-import { SentenceBuffer, splitSentences } from "./text";
+import { splitSentences } from "./text";
 
 export type TurnEvent =
   | { type: "status"; value: LockStatus | "listening" }
-  | { type: "user_saved"; turnId: number }
   | { type: "sentence"; text: string }
-  | { type: "done"; turnId: number; text: string; fallback: string; attempts: number }
+  | { type: "done"; text: string; fallback: string; ms: number }
   | { type: "error"; code: string; message: string };
 
 // Keep the last N turns verbatim; older ones are folded into a running summary.
-const KEEP_RECENT = 12;
-const SUMMARISE_AFTER = 20;
+const KEEP_RECENT = 10;
+const SUMMARISE_AFTER = 16;
 
 export function toMessages(turns: Pick<TurnRow, "role" | "text">[], startedFresh: boolean): ChatMessage[] {
   const msgs: ChatMessage[] = startedFresh ? [{ role: "user", content: START_SIGNAL }] : [];
@@ -43,11 +46,14 @@ export function toMessages(turns: Pick<TurnRow, "role" | "text">[], startedFresh
   return msgs;
 }
 
-async function maybeSummarise(llm: LLM, sessionId: string, turns: TurnRow[], summary: string | null, upto: number) {
-  if (turns.length - upto <= SUMMARISE_AFTER) return { summary, upto };
+/** Fold older turns into the session summary. Runs after the reply was sent, so it never adds latency. */
+async function summariseIfNeeded(llm: LLM, sessionId: string, turns: Pick<TurnRow, "role" | "text">[], summary: string | null, upto: number) {
+  if (turns.length - upto <= SUMMARISE_AFTER) return;
   const cut = turns.length - KEEP_RECENT;
-  const older = turns.slice(upto, cut);
-  const text = older.map((t) => `${t.role === "user" ? "Learner" : "Partner"}: ${t.text}`).join("\n");
+  const text = turns
+    .slice(upto, cut)
+    .map((t) => `${t.role === "user" ? "Learner" : "Partner"}: ${t.text}`)
+    .join("\n");
   try {
     const newSummary = await llm.chat({
       model: serverConfig().checkModel,
@@ -57,9 +63,8 @@ async function maybeSummarise(llm: LLM, sessionId: string, turns: TurnRow[], sum
       purpose: "summary",
     });
     await updateSession(sessionId, { summary: newSummary, summaryUpto: cut });
-    return { summary: newSummary, upto: cut };
   } catch {
-    return { summary, upto }; // not critical: keep the full context this time
+    // not critical: the next turn simply sends a bit more context
   }
 }
 
@@ -75,105 +80,121 @@ export interface TurnInput {
 }
 
 export async function runPartnerTurn(inp: TurnInput): Promise<void> {
+  const started = Date.now();
   const { emit } = inp;
-  const session = await getSession(inp.sessionId);
+  const [session, settings] = await Promise.all([getSession(inp.sessionId), getSettings()]);
   if (!session || !isLevel(session.level)) {
     emit({ type: "error", code: "not_found", message: "Session not found" });
     return;
   }
-  if (session.status !== "active") await updateSession(session.id, { status: "active", endedAt: null });
   const level: Level = session.level;
-  const settings = await getSettings();
   const cfg = serverConfig();
   const llm = inp.llm ?? getLLM();
+  const background: Promise<unknown>[] = [];
+  if (session.status !== "active") background.push(updateSession(session.id, { status: "active", endedAt: null }));
 
+  const prior = await getTurns(session.id);
   const userText = inp.userText?.trim();
-  if (userText) {
-    const row = await addTurn(session.id, "user", userText, {
-      confidence: inp.confidence ?? null,
-      meta: { input: inp.input ?? "voice", alternatives: inp.alternatives?.slice(0, 4) },
-    });
-    emit({ type: "user_saved", turnId: row.id });
-  }
+  // Save the learner's turn in the background; the reply doesn't need to wait for it.
+  const userSaved = userText
+    ? addTurn(session.id, "user", userText, {
+        confidence: inp.confidence ?? null,
+        meta: { input: inp.input ?? "voice", alternatives: inp.alternatives?.slice(0, 4) },
+      })
+    : Promise.resolve(null);
+  const turns: Pick<TurnRow, "role" | "text">[] = userText ? [...prior, { role: "user", text: userText }] : prior;
+  const isGreeting = prior.length === 0 && !userText;
 
-  const turns = await getTurns(session.id);
-  const isGreeting = turns.length === 0;
-  const { summary, upto } = await maybeSummarise(llm, session.id, turns, session.summary, session.summaryUpto);
-  const messages = toMessages(turns.slice(upto), upto === 0);
-
+  const { intent, topic } = userText ? detectIntent(userText) : { intent: "chat" as const, topic: null };
+  const messages = toMessages(turns.slice(session.summaryUpto), session.summaryUpto === 0);
   const system =
     buildPartnerSystemPrompt({
       level,
       topic: session.topic,
       correctionMode: settings.correctionMode,
       focus: settings.focusSteering && session.focusTag ? { tag: session.focusTag } : null,
-      summary,
-    }) + (session.pendingFeedback ?? "");
+      summary: session.summary,
+    }) +
+    (session.pendingFeedback ?? "") +
+    turnInstruction(level, intent, topic);
 
-  const maxTokens = LEVEL_CONFIG[level].limits.maxTokens;
-  const check = (text: string) =>
+  const limits = LEVEL_CONFIG[level].limits;
+  const maxTokens = intent === "chat" ? limits.maxTokens : limits.maxTokensLong;
+  const previous = prior.filter((t) => t.role === "partner").flatMap((t) => splitSentences(t.text));
+
+  const recordViolations = (index: number, vs: Violation[]) => {
+    background.push(logViolation(session.id, level, index, vs).catch(() => {}));
+    if (cfg.logViolations) console.warn(`[level-lock] ${level} sentence ${index}:`, vs.map((v) => `${v.rule} → "${v.excerpt}"`).join(" | "));
+  };
+
+  const checkText = (text: string, before: string[] = []) =>
     llm.json({
       model: cfg.checkModel,
-      system: checkerSystemPrompt(level),
-      prompt: checkerUserPrompt(text),
+      system: checkerSystemPrompt(level, intent),
+      prompt: checkerUserPrompt(text, before),
       schema: CheckSchema,
-      maxTokens: 600,
+      maxTokens: 300,
       purpose: "check",
     });
 
-  const recordViolations = (attempt: number, vs: Violation[]) => {
-    void logViolation(session.id, level, attempt, vs).catch(() => {});
-    if (cfg.logViolations) console.warn(`[level-lock] ${level} attempt ${attempt}:`, vs.map((v) => `${v.rule} → "${v.excerpt}"`).join(" | "));
-  };
-
-  let finalText: string;
-  let fallback = "none";
-  let attempts = 1;
-
-  if (settings.levelCheckMode === "fast") {
-    // Stream sentences straight to the browser; validate afterwards and steer the next turn.
-    emit({ type: "status", value: "generating" });
-    const buf = new SentenceBuffer();
-    finalText = await llm.chat({
-      model: cfg.chatModel,
-      system,
-      messages,
-      maxTokens,
-      purpose: "partner",
+  emit({ type: "status", value: "generating" });
+  let firstSentenceMs: number | null = null;
+  const result = await streamLevelLocked(
+    {
+      generate: (onText, signal) =>
+        llm.chat({
+          model: cfg.chatModel,
+          system,
+          messages,
+          maxTokens,
+          purpose: "partner",
+          level,
+          onText,
+          signal: inp.signal ? AbortSignal.any([signal, inp.signal]) : signal,
+        }),
+      check: (s, before) => checkText(s, before),
+      fixSentence: (s, before, vs) =>
+        llm.chat({
+          model: cfg.chatModel,
+          system: fixSentenceSystemPrompt(level),
+          messages: [{ role: "user", content: fixSentenceUserPrompt(s, before, vs) }],
+          maxTokens: 120,
+          purpose: "simplify",
+          level,
+        }),
+    },
+    {
       level,
-      signal: inp.signal,
-      onText: (d) => buf.push(d).forEach((s) => emit({ type: "sentence", text: s })),
-    });
-    buf.flush().forEach((s) => emit({ type: "sentence", text: s }));
-    const vs = await checkAfterTheFact(level, finalText, check);
-    if (vs.length) recordViolations(0, vs);
-    await updateSession(session.id, { pendingFeedback: vs.length ? regenerationFeedback(level, vs) : null });
-  } else {
-    const result = await levelLockedReply(
-      {
-        generate: (feedback) =>
-          llm.chat({ model: cfg.chatModel, system: system + (feedback ?? ""), messages, maxTokens, purpose: "partner", level, signal: inp.signal }),
-        check,
-        simplify: (text) =>
-          llm.chat({
-            model: cfg.chatModel,
-            system: simplifySystemPrompt(level),
-            messages: [{ role: "user", content: text }],
-            maxTokens,
-            purpose: "simplify",
-            level,
-          }),
+      intent,
+      mode: settings.levelCheckMode,
+      previous,
+      onViolation: recordViolations,
+      onSentence: (text) => {
+        if (firstSentenceMs === null) {
+          firstSentenceMs = Date.now() - started;
+          if (cfg.logViolations) console.info(`[latency] ${level} first sentence ready after ${firstSentenceMs} ms (${intent})`);
+        }
+        emit({ type: "sentence", text });
       },
-      { level, onStatus: (s) => emit({ type: "status", value: s }), onViolation: recordViolations },
-    );
-    finalText = result.text;
-    fallback = result.fallback;
-    attempts = result.attempts;
-    for (const s of splitSentences(finalText)) emit({ type: "sentence", text: s });
-  }
+    },
+  );
 
-  const row = await addTurn(session.id, "partner", finalText, { meta: { fallback, attempts, greeting: isGreeting } });
-  emit({ type: "done", turnId: row.id, text: finalText, fallback, attempts });
+  const fallback = result.fallback ? "canned" : result.fixed || result.dropped ? "fixed" : "none";
+  emit({ type: "done", text: result.text, fallback, ms: firstSentenceMs ?? Date.now() - started });
+
+  // Everything below happens after the learner already has the reply.
+  await userSaved;
+  background.push(addTurn(session.id, "partner", result.text, { meta: { fallback, attempts: 1 + result.fixed, greeting: isGreeting } }));
+  if (settings.levelCheckMode === "fast") {
+    background.push(
+      checkAfterTheFact(level, result.text, (t) => checkText(t), intent).then((vs) => {
+        if (vs.length) recordViolations(0, vs);
+        return updateSession(session.id, { pendingFeedback: vs.length ? regenerationFeedback(level, vs) : null });
+      }),
+    );
+  }
+  background.push(summariseIfNeeded(llm, session.id, [...turns, { role: "partner", text: result.text }], session.summary, session.summaryUpto));
+  await Promise.allSettled(background);
 }
 
 // ---------- "I'm stuck" hint ----------
@@ -203,6 +224,6 @@ export async function getHint(sessionId: string, llm: LLM = getLLM()): Promise<H
     mockContext: { level, lang, partnerText: lastPartner?.text ?? "" },
   });
   // The simpler German rephrase is spoken by the partner, so it must obey the level too.
-  if (!heuristicCheck(level, hint.rephrase).ok) hint.rephrase = LEVEL_CONFIG[level].safeFallbacks[0];
+  if (!heuristicCheck(level, stripArabicHints(hint.rephrase)).ok) hint.rephrase = LEVEL_CONFIG[level].safeFallbacks[0];
   return hint;
 }

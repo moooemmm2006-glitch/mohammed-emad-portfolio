@@ -51,7 +51,7 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
     expect(greet.filter((e) => e.type === "sentence").length).toBeGreaterThan(0);
 
     const reply = await turn(s.id, "Ich heiße Mohammed und ich komme aus Ägypten.");
-    expect(reply[0]).toMatchObject({ type: "user_saved" });
+    expect(reply.at(-1)).toMatchObject({ type: "done" });
     const turns = await getTurns(s.id);
     expect(turns.map((t) => t.role)).toEqual(["partner", "user", "partner"]);
     expect(turns[1].confidence).toBe(0.9);
@@ -63,6 +63,22 @@ describe("conversation + report flow (mock LLM, in-memory DB)", () => {
     const events = await turn(s.id);
     expect(events.some((e) => e.type === "sentence")).toBe(true);
     expect(events.at(-1)?.type).toBe("done");
+  });
+
+  it("explains grammar when asked and never sends the same reply twice in a row", async () => {
+    const s = await createSession("A2", null, null);
+    await turn(s.id);
+    const ev = await turn(s.id, "Können Sie Modalverben erklären?");
+    const done = ev.find((e) => e.type === "done");
+    expect(done && done.type === "done" && done.text).toMatch(/Modalverb/);
+    const replies: string[] = [];
+    for (let i = 0; i < 6; i++) {
+      const e = (await turn(s.id, "Ja, ich arbeite heute.")).find((x) => x.type === "done");
+      replies.push(e && e.type === "done" ? e.text : "");
+    }
+    for (let i = 1; i < replies.length; i++) expect(replies[i]).not.toBe(replies[i - 1]);
+    const roles = (await getTurns(s.id)).map((t) => t.role);
+    expect(roles.slice(0, 4)).toEqual(["partner", "user", "partner", "user"]);
   });
 
   it("builds valid alternating messages", () => {

@@ -6,7 +6,7 @@ import { jsonError, readJson } from "@/lib/api";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const Body = z.object({ text: z.string().min(1).max(1500), level: z.enum(LEVELS), speed: z.number().min(0.5).max(1.5).optional() });
+const Body = z.object({ text: z.string().min(1).max(1500), level: z.enum(LEVELS), speed: z.number().min(0.5).max(2.5).optional() });
 
 const OPENAI_DEFAULT_VOICES = { A1: "nova", A2: "echo", B1: "shimmer", B2: "onyx" } as const;
 
@@ -18,7 +18,8 @@ export async function POST(req: Request) {
   const { text, level } = parsed.data;
   const cfg = serverConfig();
   const levelRate = LEVEL_CONFIG[level].voice.rate;
-  const speed = Math.max(0.5, Math.min(1.5, (parsed.data.speed ?? 1) * levelRate));
+  // OpenAI accepts 0.25-4; ElevenLabs only 0.7-1.2 (clamped below).
+  const speed = Math.max(0.5, Math.min(4, (parsed.data.speed ?? 1) * levelRate));
 
   try {
     let upstream: Response;

@@ -8,7 +8,7 @@ import { useProviders, useSettings } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
 import { defaultVoiceAssignment, loadVoices, Speaker, speakOptionsFor } from "@/lib/client/tts";
 import { LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
-import type { Settings } from "@/lib/settings";
+import { SPEEDS, type Settings } from "@/lib/settings";
 
 const SAMPLE: Record<Level, string> = {
   A1: "Hallo! Ich bin Lena. Wie heißt du?",
@@ -75,6 +75,7 @@ export default function SettingsPage() {
       <h1 className="text-3xl font-extrabold">{t("settings_title")}</h1>
 
       <Card title={t("set_voices")} sub={t("set_voices_sub")}>
+        <p className="text-xs text-muted -mt-2">{t("set_speed_sub")}</p>
         <ul className="space-y-4">
           {LEVELS.map((level) => {
             const v = settings.voices[level];
@@ -107,6 +108,21 @@ export default function SettingsPage() {
                     </option>
                   ))}
                 </select>
+                <label className="flex items-center justify-between gap-3 text-sm">
+                  <span className="font-medium">{t("set_speed")}</span>
+                  <select
+                    className="rounded-lg border border-line bg-surface px-3 py-1.5 tabular-nums"
+                    value={settings.speeds[level]}
+                    onChange={(e) => save({ speeds: { ...settings.speeds, [level]: Number(e.target.value) } })}
+                    dir="ltr"
+                  >
+                    {SPEEDS.map((x) => (
+                      <option key={x} value={x}>
+                        {x}×
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <Slider label={t("set_rate")} value={v.rate ?? cfg.rate} min={0.5} max={1.5} onChange={(x) => setVoice(level, { rate: x })} />
                   <Slider label={t("set_pitch")} value={v.pitch ?? cfg.pitch} min={0.5} max={1.5} onChange={(x) => setVoice(level, { pitch: x })} />
@@ -144,7 +160,18 @@ export default function SettingsPage() {
       </Card>
 
       <Card title={t("set_conversation")}>
-        <Slider label={t("set_speed")} value={settings.speechSpeed} min={0.6} max={1.4} onChange={(x) => save({ speechSpeed: x })} />
+        <div>
+          <Slider
+            label={t("set_silence")}
+            value={settings.silenceMs / 1000}
+            min={1.5}
+            max={6}
+            step={0.5}
+            format={(x) => `${x.toFixed(1)} ${t("seconds")}`}
+            onChange={(x) => save({ silenceMs: Math.round(x * 1000) })}
+          />
+          <p className="text-xs text-muted mt-1">{t("set_silence_sub")}</p>
+        </div>
         <Toggle label={t("set_autoturn")} checked={settings.autoTurn} onChange={(x) => save({ autoTurn: x })} />
         <Toggle label={t("set_bargein")} checked={settings.bargeIn} onChange={(x) => save({ bargeIn: x })} />
         <Toggle label={t("set_showtext")} checked={settings.showPartnerText} onChange={(x) => save({ showPartnerText: x })} />
@@ -269,19 +296,35 @@ function Select({ label, value, options, onChange }: { label: string; value: str
   );
 }
 
-function Slider({ label, value, min, max, onChange }: { label: string; value: number; min: number; max: number; onChange: (v: number) => void }) {
+function Slider({
+  label,
+  value,
+  min,
+  max,
+  step = 0.05,
+  format = (x: number) => `${x.toFixed(2)}×`,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step?: number;
+  format?: (v: number) => string;
+  onChange: (v: number) => void;
+}) {
   const [v, setV] = useState(value);
   useEffect(() => setV(value), [value]);
   return (
     <label className="block">
       <span className="flex justify-between text-sm font-medium mb-1">
-        {label} <span className="tabular-nums text-muted">{v.toFixed(2)}×</span>
+        {label} <span className="tabular-nums text-muted">{format(v)}</span>
       </span>
       <input
         type="range"
         min={min}
         max={max}
-        step={0.05}
+        step={step}
         value={v}
         className="w-full accent-[var(--brand)]"
         onChange={(e) => setV(Number(e.target.value))}

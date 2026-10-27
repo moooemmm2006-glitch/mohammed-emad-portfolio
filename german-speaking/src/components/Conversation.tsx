@@ -1,28 +1,27 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiError, api, streamNdjson, type ServerProviders } from "@/lib/client/api";
 import type { TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import {
-  looksLikeEcho,
-  openMicMeter,
-  ServerSTT,
+  ServerTurn,
   serverRecordingSupported,
-  WebSpeechSTT,
+  startBargeInDetector,
+  WebSpeechTurn,
   webSpeechSupported,
   type STTErrorCode,
-  type STTProvider,
-  type STTResult,
-  type STTSession,
+  type TurnProvider,
+  type TurnSession,
 } from "@/lib/client/stt";
-import { Speaker, speakOptionsFor } from "@/lib/client/tts";
+import type { TurnResult } from "@/lib/client/transcript";
+import { Speaker, speakOptionsFor, webSpeechMaxSpeed } from "@/lib/client/tts";
 import type { Hint, TurnEvent } from "@/lib/conversation";
 import { LEVEL_CONFIG, tagLabel, type Level } from "@/lib/levels";
-import type { Settings } from "@/lib/settings";
+import { SPEEDS, type Settings } from "@/lib/settings";
 import { Avatar } from "./Avatar";
-import { IconEye, IconEyeOff, IconHelp, IconMic, IconRepeat, IconSend, IconSlow, IconStop, IconX } from "./Icons";
+import { IconEye, IconEyeOff, IconHelp, IconMic, IconRepeat, IconStop, IconX } from "./Icons";
 
 export interface UITurn {
   key: string;
@@ -47,14 +46,18 @@ interface Props {
   providers: ServerProviders;
 }
 
-const STT_ERR: Partial<Record<STTErrorCode, TKey>> = {
+// Shown inside the big button while it waits for the learner.
+export const MOTIVATION = ["Sprich einfach!", "Weiter so!", "Du schaffst das!", "Los geht's!", "Mach weiter!", "Trau dich!", "Super, weiter!"];
+
+const STT_ERR: Record<STTErrorCode, TKey> = {
   "not-allowed": "err_mic_denied",
   "audio-capture": "err_mic_denied",
-  "no-speech": "err_no_speech",
   network: "err_offline",
   unsupported: "err_no_stt",
   server: "err_api",
 };
+
+const DEV = process.env.NODE_ENV !== "production";
 
 let keySeq = 0;
 const nextKey = () => `t${Date.now()}-${keySeq++}`;
@@ -70,57 +73,51 @@ export function Conversation(p: Props) {
   const [lockStatus, setLockStatus] = useState<LockStatus | null>(null);
   const [speaking, setSpeaking] = useState(false);
   const [listening, setListening] = useState(false);
-  const [interim, setInterim] = useState("");
-  const [micLevel, setMicLevel] = useState(0);
+  const [live, setLive] = useState("");
+  const [ring, setRing] = useState(0);
   const [error, setError] = useState<TKey | null>(null);
+  const [audioWarn, setAudioWarn] = useState(false);
   const [canRetry, setCanRetry] = useState(false);
-  const [typed, setTyped] = useState("");
   const [hint, setHint] = useState<Hint | null>(null);
   const [hintLoading, setHintLoading] = useState(false);
   const [showText, setShowText] = useState(settings.showPartnerText);
   const [autoTurn, setAutoTurn] = useState(settings.autoTurn);
+  const [speed, setSpeed] = useState<number>(settings.speeds?.[level] ?? 1);
+  const [maxSpeed, setMaxSpeed] = useState<number | null>(null);
   const [ending, setEnding] = useState(false);
   const [offline, setOffline] = useState(false);
+  const [phrase, setPhrase] = useState(() => Math.floor(Math.random() * MOTIVATION.length));
 
   const speaker = useRef<Speaker | null>(null);
-  const stt = useRef<STTSession | null>(null);
-  const bargeSession = useRef<STTSession | null>(null);
-  const meterClose = useRef<(() => void) | null>(null);
+  const session = useRef<TurnSession | null>(null);
+  const stopBarge = useRef<(() => void) | null>(null);
+  const lastActivity = useRef<number | null>(null);
+  const turnEndedAt = useRef<number | null>(null);
   const lastPartner = useRef<string>([...p.initialTurns].reverse().find((x) => x.role === "partner")?.text ?? "");
-  const pressStart = useRef(0);
   const endedRef = useRef(false);
-  const autoTurnRef = useRef(autoTurn);
   const busyRef = useRef(false);
+  const autoTurnRef = useRef(autoTurn);
+  const settingsRef = useRef(settings);
+  const speedRef = useRef(speed);
   const listRef = useRef<HTMLDivElement>(null);
   autoTurnRef.current = autoTurn;
+  settingsRef.current = settings;
+  speedRef.current = speed;
 
   const useServerTts = settings.ttsProvider === "server" || (settings.ttsProvider === "auto" && providers.tts !== "webspeech");
-  const sttProvider: STTProvider | null = (() => {
+  const provider: TurnProvider | null = useMemo(() => {
     const wantServer = settings.sttProvider === "server" || (settings.sttProvider === "auto" && providers.stt === "openai");
-    if (wantServer && serverRecordingSupported()) return new ServerSTT();
-    if (webSpeechSupported()) return new WebSpeechSTT();
-    if (providers.stt === "openai" && serverRecordingSupported()) return new ServerSTT();
+    if (wantServer && serverRecordingSupported()) return new ServerTurn();
+    if (webSpeechSupported()) return new WebSpeechTurn();
+    if (providers.stt === "openai" && serverRecordingSupported()) return new ServerTurn();
     return null;
-  })();
-  const sttRef = useRef(sttProvider);
-  sttRef.current = sttProvider;
+  }, [settings.sttProvider, providers.stt]);
 
-  const opts = useCallback((extra = 1) => speakOptionsFor(level, settings, extra), [level, settings]);
-
-  // ---------- mic meter for the orb ----------
-  const openMeter = useCallback(async () => {
-    if (meterClose.current) return;
-    try {
-      meterClose.current = await openMicMeter(setMicLevel);
-    } catch {
-      /* the recogniser reports permission errors itself */
-    }
-  }, []);
-  const closeMeter = useCallback(() => {
-    meterClose.current?.();
-    meterClose.current = null;
-    setMicLevel(0);
-  }, []);
+  // Read at speak time, so a speed change applies from the very next sentence.
+  const speakOpts = useCallback(
+    (extra = 1) => () => speakOptionsFor(level, { ...settingsRef.current, speeds: { ...settingsRef.current.speeds, [level]: speedRef.current } }, extra),
+    [level],
+  );
 
   // ---------- sending a turn ----------
   const sendTurn = useCallback(
@@ -135,7 +132,9 @@ export function Conversation(p: Props) {
       setError(null);
       setCanRetry(false);
       setHint(null);
+      if (text) setPhrase((i) => (i + 1) % MOTIVATION.length);
       const partnerKey = nextKey();
+      lastPartner.current = "";
       setTurns((ts) => [
         ...ts,
         ...(text ? [{ key: nextKey(), role: "user" as const, text, confidence: meta.confidence }] : []),
@@ -147,11 +146,17 @@ export function Conversation(p: Props) {
         await streamNdjson<TurnEvent>(`/api/sessions/${sessionId}/turn`, { text: text ?? undefined, ...meta }, (e) => {
           if (e.type === "status") setLockStatus(e.value === "listening" ? null : e.value);
           else if (e.type === "sentence") {
+            lastPartner.current = lastPartner.current ? `${lastPartner.current} ${e.text}` : e.text;
             setTurns((ts) => ts.map((x) => (x.key === partnerKey ? { ...x, text: x.text ? `${x.text} ${e.text}` : e.text } : x)));
-            speaker.current?.enqueue(e.text, opts());
+            speaker.current?.enqueue(e.text, speakOpts());
           } else if (e.type === "done") {
             finalText = e.text;
+            lastPartner.current = e.text;
             setTurns((ts) => ts.map((x) => (x.key === partnerKey ? { ...x, text: e.text, pending: false } : x)));
+            // The reply is complete; saving happens on the server in the background.
+            busyRef.current = false;
+            setBusy(false);
+            setLockStatus(null);
           } else if (e.type === "error") {
             failed = true;
           }
@@ -167,108 +172,103 @@ export function Conversation(p: Props) {
         setTurns((ts) => ts.filter((x) => x.key !== partnerKey));
         setError(navigator.onLine ? "err_api" : "err_offline");
         setCanRetry(true);
-        return;
       }
-      lastPartner.current = finalText;
     },
-    [sessionId, opts],
+    [sessionId, speakOpts],
   );
 
-  // ---------- listening ----------
-  const startListening = useCallback(() => {
-    if (endedRef.current || busyRef.current) return;
-    const provider = sttRef.current;
-    if (!provider) {
-      setError("err_no_stt");
-      return;
-    }
-    speaker.current?.stop(); // barge-in by button
-    bargeSession.current?.abort();
-    bargeSession.current = null;
-    setError(null);
-    setInterim("");
-    setListening(true);
-    void openMeter();
-    stt.current = provider.start(
-      {
-        onInterim: setInterim,
-        onFinal: (r: STTResult) => void sendTurn(r.text, { confidence: r.confidence, alternatives: r.alternatives, input: "voice" }),
-        onError: (code) => {
-          const k = STT_ERR[code];
-          if (k) setError(k);
+  // ---------- listening (one whole turn, through pauses) ----------
+  const startListening = useCallback(
+    (seed?: string) => {
+      if (endedRef.current || busyRef.current || session.current) return;
+      if (!provider) {
+        setError("err_no_stt");
+        return;
+      }
+      stopBarge.current?.();
+      stopBarge.current = null;
+      speaker.current?.stop();
+      setError(null);
+      setListening(true);
+      setLive(seed ?? "");
+      lastActivity.current = seed ? performance.now() : null;
+      session.current = provider.start(
+        {
+          onTranscript: setLive,
+          onActivity: (at) => (lastActivity.current = at),
+          onFinal: (r: TurnResult) => {
+            turnEndedAt.current = performance.now();
+            void sendTurn(r.text, { confidence: r.confidence, alternatives: r.alternatives, input: "voice" });
+          },
+          onError: (code) => setError(STT_ERR[code]),
+          onEnd: () => {
+            session.current = null;
+            lastActivity.current = null;
+            setListening(false);
+            setLive("");
+            setRing(0);
+          },
         },
-        onEnd: () => {
-          stt.current = null;
-          setListening(false);
-          setInterim("");
-          closeMeter();
-        },
-      },
-      { autoStopMs: autoTurnRef.current ? 1400 : undefined },
-    );
-  }, [openMeter, closeMeter, sendTurn]);
+        { silenceMs: settingsRef.current.silenceMs, maxIdleMs: 45000, seed },
+      );
+    },
+    [provider, sendTurn],
+  );
+  const startListeningRef = useRef(startListening);
+  startListeningRef.current = startListening;
 
-  const stopListening = useCallback(() => stt.current?.stop(), []);
+  // The thin ring fills during silence, so the learner sees when the turn is about to be sent.
+  useEffect(() => {
+    if (!listening) return;
+    let raf = 0;
+    const tick = () => {
+      const last = lastActivity.current;
+      const v = last === null ? 0 : Math.min(1, (performance.now() - last) / settingsRef.current.silenceMs);
+      setRing((r) => (Math.abs(r - v) > 0.01 ? v : r));
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [listening]);
 
   // ---------- speaker + barge-in ----------
-  // Refs keep the speaker alive across settings changes (recreating it would cut speech off).
-  const sendTurnRef = useRef(sendTurn);
-  sendTurnRef.current = sendTurn;
-  const bargeInRef = useRef(settings.bargeIn);
-  bargeInRef.current = settings.bargeIn;
-
   useEffect(() => {
     const s = new Speaker(() => useServerTts);
     speaker.current = s;
-    s.onError = () => setError("err_audio");
+    s.onError = () => setAudioWarn(true);
+    s.onSentenceStart = () => {
+      if (turnEndedAt.current !== null) {
+        if (DEV) console.info(`[latency] end of turn → first audio: ${Math.round(performance.now() - turnEndedAt.current)} ms`);
+        turnEndedAt.current = null;
+      }
+    };
     s.onState = (state) => {
       setSpeaking(state === "speaking");
-      if (state === "speaking" && autoTurnRef.current && bargeInRef.current && webSpeechSupported() && !bargeSession.current) {
-        // Listen while the partner talks; real speech (not our own voice echoing) stops the partner.
-        let triggered = false;
-        bargeSession.current = new WebSpeechSTT().start(
-          {
-            onInterim: (txt) => {
-              if (triggered || txt.trim().length < 3 || looksLikeEcho(txt, lastPartner.current)) return;
-              triggered = true;
-              s.stop();
-              stt.current = bargeSession.current;
-              bargeSession.current = null;
-              setListening(true);
-              setInterim(txt);
-              void openMeter();
-            },
-            onFinal: (r) => {
-              if (triggered) void sendTurnRef.current(r.text, { confidence: r.confidence, alternatives: r.alternatives, input: "voice" });
-            },
-            onEnd: () => {
-              if (triggered) {
-                stt.current = null;
-                setListening(false);
-                setInterim("");
-                closeMeter();
-              } else if (bargeSession.current) {
-                bargeSession.current = null;
-              }
-            },
+      if (state === "speaking" && autoTurnRef.current && settingsRef.current.bargeIn && provider?.id === "webspeech" && !stopBarge.current) {
+        // Listen while the partner talks; only real learner speech (not the partner's own voice) interrupts.
+        stopBarge.current = startBargeInDetector(
+          () => lastPartner.current,
+          (heard) => {
+            stopBarge.current = null;
+            s.stop();
+            startListeningRef.current(heard);
           },
-          { autoStopMs: 1400 },
         );
       }
       if (state === "idle") {
-        bargeSession.current?.abort();
-        bargeSession.current = null;
+        stopBarge.current?.();
+        stopBarge.current = null;
       }
     };
     return () => s.stop();
-  }, [useServerTts, openMeter, closeMeter]);
+  }, [useServerTts, provider]);
 
-  // Hands-free: after the partner has finished speaking, listen again automatically.
+  // Hands-free: when the partner has finished, start listening again.
   useEffect(() => {
-    if (!autoTurn || busy || speaking || listening || ending || error || !lastPartner.current) return;
-    const id = setTimeout(() => startListening(), 350);
+    if (!autoTurn || busy || speaking || listening || ending || error || hint || !lastPartner.current) return;
+    const id = setTimeout(() => startListeningRef.current(), 350);
     return () => clearTimeout(id);
-  }, [autoTurn, busy, speaking, listening, ending, error, startListening]);
+  }, [autoTurn, busy, speaking, listening, ending, error, hint]);
 
   // ---------- greeting on a new session ----------
   const greeted = useRef(false);
@@ -278,6 +278,12 @@ export function Conversation(p: Props) {
       void sendTurn(null);
     }
   }, [p.greet, sendTurn]);
+
+  // ---------- speed: show the real maximum of the browser voice ----------
+  useEffect(() => {
+    if (useServerTts) return setMaxSpeed(null);
+    void webSpeechMaxSpeed(level, settings).then(setMaxSpeed);
+  }, [level, settings, useServerTts]);
 
   // ---------- autosave / tab close ----------
   useEffect(() => {
@@ -293,31 +299,30 @@ export function Conversation(p: Props) {
       window.removeEventListener("pagehide", onHide);
       window.removeEventListener("online", on);
       window.removeEventListener("offline", off);
-      stt.current?.abort();
-      bargeSession.current?.abort();
-      meterClose.current?.();
+      session.current?.abort();
+      stopBarge.current?.();
       if (!endedRef.current) void fetch(`/api/sessions/${sessionId}/end`, { method: "POST", keepalive: true }).catch(() => {});
     };
   }, [sessionId]);
 
   useEffect(() => {
     listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
-  }, [turns, interim, hint]);
+  }, [turns, live, hint]);
 
   // ---------- actions ----------
   const endConversation = async () => {
     endedRef.current = true;
     setEnding(true);
     speaker.current?.stop();
-    stt.current?.abort();
-    bargeSession.current?.abort();
-    closeMeter();
+    session.current?.abort();
+    stopBarge.current?.();
     const hasUserTurns = turns.some((x) => x.role === "user");
     await fetch(`/api/sessions/${sessionId}/end`, { method: "POST" }).catch(() => {});
     router.push(hasUserTurns ? `/reports/${sessionId}?generate=1` : `/speak`);
   };
 
   const askHint = async () => {
+    session.current?.abort();
     setHintLoading(true);
     try {
       setHint(await api<Hint>(`/api/sessions/${sessionId}/hint`, { method: "POST" }));
@@ -336,30 +341,25 @@ export function Conversation(p: Props) {
     const v = !autoTurn;
     setAutoTurn(v);
     void p.updateSettings({ autoTurn: v });
-    if (!v) {
-      stt.current?.abort();
-      bargeSession.current?.abort();
+    if (!v) stopBarge.current?.();
+  };
+  const cycleSpeed = () => {
+    const i = SPEEDS.indexOf(speed as (typeof SPEEDS)[number]);
+    const next = SPEEDS[(i + 1) % SPEEDS.length];
+    setSpeed(next);
+    speedRef.current = next;
+    void p.updateSettings({ speeds: { ...settings.speeds, [level]: next } });
+  };
+
+  // One big button: tap = start talking; while talking tap = "I'm done, send now";
+  // while the partner talks tap = interrupt and talk.
+  const onMain = () => {
+    if (listening) session.current?.finish();
+    else if (busy) return;
+    else {
+      setError(null);
+      startListening();
     }
-  };
-
-  const submitTyped = (e: React.FormEvent) => {
-    e.preventDefault();
-    const v = typed.trim();
-    if (!v) return;
-    setTyped("");
-    stt.current?.abort();
-    speaker.current?.stop();
-    void sendTurn(v, { input: "text" });
-  };
-
-  // Mic button: quick tap toggles, press-and-hold is push-to-talk.
-  const onMicDown = () => {
-    pressStart.current = Date.now();
-    if (listening) stopListening();
-    else startListening();
-  };
-  const onMicUp = () => {
-    if (listening && Date.now() - pressStart.current > 400) stopListening();
   };
 
   const phase: "listening" | "speaking" | "thinking" | "idle" = listening ? "listening" : speaking ? "speaking" : busy ? "thinking" : "idle";
@@ -375,8 +375,23 @@ export function Conversation(p: Props) {
               ? "conv_state_retrying"
               : "conv_state_thinking"
           : "conv_state_idle";
+  const buttonText =
+    phase === "listening" ? "Ich höre zu…" : phase === "thinking" ? "Moment…" : phase === "speaking" ? "Hör gut zu!" : MOTIVATION[phrase];
+  const buttonAria: TKey =
+    phase === "listening" ? "conv_aria_done" : phase === "speaking" ? "conv_aria_barge" : phase === "thinking" ? "conv_aria_wait" : "conv_aria_start";
+  const caption: string =
+    phase === "listening"
+      ? t("conv_listening_help").replace("{s}", String(Math.round(settings.silenceMs / 100) / 10))
+      : phase === "speaking"
+        ? t("conv_speaking_help")
+        : autoTurn
+          ? t("conv_handsfree_on")
+          : t("conv_tap_to_start");
 
   const partnerName = level === "B2" ? "Dr. Tobias Wendt" : cfg.persona.name;
+  const RING_R = 47;
+  const RING_C = 2 * Math.PI * RING_R;
+  const capped = maxSpeed !== null && speed > maxSpeed;
 
   return (
     <div className={`level-${level.toLowerCase()} flex flex-col h-[calc(100dvh-7.5rem)] md:h-[calc(100dvh-8.5rem)] max-w-3xl mx-auto`}>
@@ -400,7 +415,7 @@ export function Conversation(p: Props) {
         </button>
       </div>
 
-      {providers.llm === "mock" && <p className="mt-2 rounded-lg bg-surface-2 px-3 py-1.5 text-xs text-muted">{t("mock_banner")}</p>}
+      {providers.llm === "mock" && <p className="mt-2 rounded-lg bg-gold/10 px-3 py-1.5 text-xs">{t("mock_banner")}</p>}
       {offline && (
         <p role="alert" className="mt-2 rounded-lg bg-danger/10 text-danger px-3 py-1.5 text-sm">
           {t("err_offline")}
@@ -451,11 +466,11 @@ export function Conversation(p: Props) {
             </div>
           ),
         )}
-        {interim && (
+        {listening && (
           <div className="flex justify-end">
-            <div className="max-w-[85%] rounded-2xl rounded-ee-md border-2 border-dashed border-accent px-4 py-2.5 text-accent">
+            <div className="max-w-[85%] rounded-2xl rounded-ee-md border-2 border-dashed border-accent px-4 py-2.5 text-accent min-w-24">
               <p className="de" lang="de">
-                {interim}
+                {live || <span className="wave inline-flex items-center h-6" aria-hidden="true"><span /><span /><span /></span>}
               </p>
             </div>
           </div>
@@ -479,16 +494,19 @@ export function Conversation(p: Props) {
               <span className="de" lang="de">
                 {hint.rephrase}
               </span>
-              <button className="btn btn-ghost !min-h-[30px] !py-0 !px-2 text-xs" onClick={() => speaker.current?.speakNow(hint.rephrase, opts(0.85))}>
+              <button className="btn btn-ghost !min-h-[30px] !py-0 !px-2 text-xs" onClick={() => speaker.current?.speakNow(hint.rephrase, speakOpts())} aria-label={t("conv_repeat")}>
                 <IconRepeat size={14} />
               </button>
             </p>
             <p>
               <b>{t("conv_hint_starter")}:</b>{" "}
-              <button className="de underline decoration-dotted" lang="de" onClick={() => setTyped(hint.starter.replace(/…/g, "").trim() + " ")}>
+              <span className="de" lang="de">
                 {hint.starter}
-              </button>
+              </span>
             </p>
+            <button className="btn btn-primary !min-h-[36px] !py-1 text-sm" onClick={() => setHint(null)}>
+              {t("conv_hint_close")}
+            </button>
           </div>
         )}
       </div>
@@ -503,13 +521,23 @@ export function Conversation(p: Props) {
           )}
         </div>
       )}
+      {audioWarn && !error && <p className="mb-2 text-center text-xs text-muted">{t("err_audio")}</p>}
 
       {/* dock */}
       <div className="border-t border-line pt-3 space-y-3">
         <div className="flex sm:flex-wrap sm:justify-center gap-1.5 sm:gap-2 overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0 pb-1">
-          <ToolButton onClick={() => speaker.current?.speakNow(lastPartner.current, opts())} disabled={!lastPartner.current} icon={<IconRepeat size={18} />} label={t("conv_repeat")} />
-          <ToolButton onClick={() => speaker.current?.speakNow(lastPartner.current, opts(0.7))} disabled={!lastPartner.current} icon={<IconSlow size={18} />} label={t("conv_slower")} />
-          <ToolButton onClick={askHint} disabled={!lastPartner.current || hintLoading} icon={<IconHelp size={18} />} label={hintLoading ? t("loading") : t("conv_stuck")} />
+          <ToolButton onClick={() => speaker.current?.speakNow(lastPartner.current, speakOpts())} disabled={!lastPartner.current || busy} icon={<IconRepeat size={18} />} label={t("conv_repeat")} />
+          <button
+            className="chip shrink-0 whitespace-nowrap hover:bg-surface-2 min-h-[40px] tabular-nums"
+            onClick={cycleSpeed}
+            aria-label={`${t("conv_speed")}: ${speed}×`}
+            title={capped ? `${t("conv_speed_max")}: ${maxSpeed}×` : undefined}
+          >
+            <span className="text-xs sm:text-sm">{t("conv_speed")}</span>
+            <b className="de text-sm">{speed}×</b>
+            {capped && <span className="text-[10px] text-muted de">(max {maxSpeed}×)</span>}
+          </button>
+          <ToolButton onClick={askHint} disabled={!lastPartner.current || hintLoading || busy} icon={<IconHelp size={18} />} label={hintLoading ? t("loading") : t("conv_stuck")} />
           <ToolButton
             onClick={toggleShowText}
             pressed={!showText}
@@ -519,48 +547,46 @@ export function Conversation(p: Props) {
           <ToolButton onClick={toggleAutoTurn} pressed={autoTurn} icon={<IconMic size={18} />} label={t("conv_autoturn")} />
         </div>
 
-        <div className="flex flex-col items-center gap-2">
-          <div className="orb !w-20 !h-20 sm:!w-28 sm:!h-28" data-state={phase} style={{ ["--lvl" as string]: micLevel }}>
-            <button
-              className="relative z-10 grid place-items-center w-full h-full rounded-full text-white touch-none select-none"
-              onPointerDown={onMicDown}
-              onPointerUp={onMicUp}
-              onPointerLeave={onMicUp}
-              onKeyDown={(e) => {
-                if ((e.key === " " || e.key === "Enter") && !e.repeat) {
-                  e.preventDefault();
-                  onMicDown();
-                }
-              }}
-              onKeyUp={(e) => {
-                if (e.key === " " || e.key === "Enter") onMicUp();
-              }}
-              disabled={busy || ending || !sttProvider}
-              aria-pressed={listening}
-              aria-label={listening ? t("conv_tap_stop") : t("conv_hold")}
-            >
-              {listening ? <IconSend size={30} /> : <IconMic size={34} />}
-            </button>
+        {provider ? (
+          <div className="flex flex-col items-center gap-2 pb-1">
+            <div className="relative w-36 h-36 sm:w-40 sm:h-40 grid place-items-center">
+              {/* silence ring: fills while you are quiet; full = your turn is sent */}
+              <svg className="absolute inset-0 -rotate-90 pointer-events-none" viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r={RING_R} fill="none" stroke="var(--line)" strokeWidth="2" opacity={listening ? 1 : 0} />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={RING_R}
+                  fill="none"
+                  stroke="var(--accent)"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeDasharray={RING_C}
+                  strokeDashoffset={RING_C * (1 - ring)}
+                  opacity={listening ? 1 : 0}
+                />
+              </svg>
+              <div className="orb !w-[7.25rem] !h-[7.25rem] sm:!w-[8.25rem] sm:!h-[8.25rem]" data-state={phase} style={{ ["--lvl" as string]: listening ? 0.35 : 0 }}>
+                <button
+                  className="relative z-10 grid place-items-center w-full h-full rounded-full text-white select-none px-3 disabled:cursor-wait"
+                  onClick={onMain}
+                  disabled={ending || phase === "thinking"}
+                  aria-pressed={listening}
+                  aria-label={t(buttonAria)}
+                >
+                  <span className="de font-extrabold text-[1.05rem] sm:text-lg leading-tight text-center drop-shadow-[0_1px_2px_rgba(0,0,0,0.35)]" lang="de">
+                    {buttonText}
+                  </span>
+                </button>
+              </div>
+            </div>
+            <p className="text-xs text-muted text-center max-w-xs">{caption}</p>
           </div>
-          <p className="text-xs text-muted text-center">{!sttProvider ? t("err_no_stt") : autoTurn ? t("conv_handsfree_on") : listening ? t("conv_tap_stop") : t("conv_hold")}</p>
-        </div>
-
-        <form onSubmit={submitTyped} className="flex gap-2">
-          <input
-            value={typed}
-            onChange={(e) => setTyped(e.target.value)}
-            placeholder={t("conv_type")}
-            lang="de"
-            dir="ltr"
-            autoComplete="off"
-            className="flex-1 rounded-full border border-line bg-surface px-4 py-2.5 de min-h-[44px]"
-            aria-label={t("conv_type")}
-            disabled={ending}
-          />
-          <button className="btn btn-primary !px-4" disabled={!typed.trim() || busy || ending} aria-label={t("conv_send")}>
-            <IconSend size={18} />
-          </button>
-        </form>
+        ) : (
+          <p role="alert" className="rounded-xl bg-danger/10 text-danger px-4 py-3 text-sm text-center">
+            {t("err_no_stt")}
+          </p>
+        )}
       </div>
     </div>
   );

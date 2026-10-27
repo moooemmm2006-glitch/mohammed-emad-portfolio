@@ -5,6 +5,7 @@
 // on any failure we silently fall back to the browser voice.
 
 import { LEVEL_CONFIG, LEVELS, type Level } from "../levels";
+import { stripArabicHints } from "../levelLock/heuristics";
 import type { Settings } from "../settings";
 
 export interface SpeakOptions {
@@ -29,15 +30,19 @@ export function germanVoices(): SpeechSynthesisVoice[] {
   return window.speechSynthesis.getVoices().filter((v) => v.lang.toLowerCase().startsWith("de"));
 }
 
-export function loadVoices(timeoutMs = 1500): Promise<SpeechSynthesisVoice[]> {
-  return new Promise((resolve) => {
-    if (typeof window === "undefined" || !("speechSynthesis" in window)) return resolve([]);
-    const now = germanVoices();
-    if (now.length) return resolve(now);
-    const done = () => resolve(germanVoices());
-    window.speechSynthesis.addEventListener("voiceschanged", done, { once: true });
-    setTimeout(done, timeoutMs);
+// Voices load asynchronously in some browsers. Wait for them once per page, not before every
+// sentence (a device without German voices would otherwise add a delay to each sentence).
+let voicesWait: Promise<void> | null = null;
+
+export async function loadVoices(timeoutMs = 1500): Promise<SpeechSynthesisVoice[]> {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return [];
+  if (germanVoices().length) return germanVoices();
+  voicesWait ??= new Promise<void>((resolve) => {
+    window.speechSynthesis.addEventListener("voiceschanged", () => resolve(), { once: true });
+    setTimeout(resolve, timeoutMs);
   });
+  await voicesWait;
+  return germanVoices();
 }
 
 /** Give each level a different default voice where possible (gender + regional variant preferences). */
@@ -63,6 +68,26 @@ export function defaultVoiceAssignment(voices: SpeechSynthesisVoice[]): Record<L
   return out;
 }
 
+/**
+ * Highest rate a browser voice really plays. Network voices (e.g. "Google Deutsch") stop getting
+ * faster around 2×; local system voices go higher.
+ */
+export function maxRateFor(voice: SpeechSynthesisVoice | null | undefined): number {
+  return voice && !voice.localService ? 2 : 4;
+}
+
+export function pickVoice(voices: SpeechSynthesisVoice[], level: Level, voiceURI?: string | null) {
+  return (voiceURI && voices.find((v) => v.voiceURI === voiceURI)) || defaultVoiceAssignment(voices)[level];
+}
+
+/** The fastest speed multiplier the chosen browser voice can actually play for this partner. */
+export async function webSpeechMaxSpeed(level: Level, settings: Settings): Promise<number> {
+  const voices = await loadVoices();
+  const v = settings.voices[level];
+  const base = v?.rate ?? LEVEL_CONFIG[level].voice.rate;
+  return Math.floor((maxRateFor(pickVoice(voices, level, v?.voiceURI)) / base) * 100) / 100;
+}
+
 export class WebSpeechTTS implements TTSProvider {
   id = "webspeech" as const;
   // Chrome may garbage-collect utterances before `end` fires; keep references alive.
@@ -76,12 +101,12 @@ export class WebSpeechTTS implements TTSProvider {
     if (!WebSpeechTTS.supported()) throw new Error("no_tts");
     const voices = await loadVoices();
     const cfg = LEVEL_CONFIG[o.level].voice;
-    const chosen = (o.voiceURI && voices.find((v) => v.voiceURI === o.voiceURI)) || defaultVoiceAssignment(voices)[o.level];
+    const chosen = pickVoice(voices, o.level, o.voiceURI);
     return new Promise((resolve, reject) => {
       const u = new SpeechSynthesisUtterance(text);
       u.lang = chosen?.lang ?? "de-DE";
       if (chosen) u.voice = chosen;
-      u.rate = Math.max(0.4, Math.min(1.6, (o.rate ?? cfg.rate) * (o.speed ?? 1)));
+      u.rate = Math.max(0.5, Math.min(maxRateFor(chosen), (o.rate ?? cfg.rate) * (o.speed ?? 1)));
       u.pitch = o.pitch ?? cfg.pitch;
       this.live.add(u);
       // Some browsers occasionally never fire `end`; don't let the conversation hang on it.
@@ -156,8 +181,11 @@ export type SpeakerState = "idle" | "speaking";
  * Sentence queue on top of a provider: enqueue sentences as they stream in,
  * stop() empties the queue immediately (barge-in), whenIdle() resolves after the last sentence.
  */
+type OptionsSource = SpeakOptions | (() => SpeakOptions);
+
 export class Speaker {
-  private queue: { text: string; o: SpeakOptions }[] = [];
+  // Options can be a getter so a speed change applies from the very next sentence.
+  private queue: { text: string; o: OptionsSource }[] = [];
   private running = false;
   private generation = 0;
   private idleWaiters: (() => void)[] = [];
@@ -166,6 +194,8 @@ export class Speaker {
   private serverBroken = false;
   onState: (s: SpeakerState) => void = () => {};
   onError: (e: Error) => void = () => {};
+  /** Fires when a sentence starts playing (used to measure end-of-turn → first audio). */
+  onSentenceStart: (text: string) => void = () => {};
 
   constructor(private useServer: () => boolean) {}
 
@@ -173,13 +203,15 @@ export class Speaker {
     return this.running;
   }
 
-  enqueue(text: string, o: SpeakOptions) {
-    if (!text.trim()) return;
-    this.queue.push({ text, o });
+  enqueue(text: string, o: OptionsSource) {
+    // Bracketed Arabic hints are shown on screen but not read by the German voice.
+    const spoken = stripArabicHints(text);
+    if (!spoken) return;
+    this.queue.push({ text: spoken, o });
     if (!this.running) void this.run();
   }
 
-  speakNow(text: string, o: SpeakOptions) {
+  speakNow(text: string, o: OptionsSource) {
     this.stop();
     this.enqueue(text, o);
   }
@@ -212,7 +244,10 @@ export class Speaker {
     this.running = true;
     this.onState("speaking");
     while (this.queue.length && gen === this.generation) {
-      const { text, o } = this.queue.shift()!;
+      const next = this.queue.shift()!;
+      const text = next.text;
+      const o = typeof next.o === "function" ? next.o() : next.o;
+      this.onSentenceStart(text);
       try {
         if (this.useServer() && !this.serverBroken) {
           try {
@@ -241,5 +276,5 @@ export class Speaker {
 
 export function speakOptionsFor(level: Level, settings: Settings, extraSpeed = 1): SpeakOptions {
   const v = settings.voices[level];
-  return { level, voiceURI: v?.voiceURI ?? null, rate: v?.rate, pitch: v?.pitch, speed: settings.speechSpeed * extraSpeed };
+  return { level, voiceURI: v?.voiceURI ?? null, rate: v?.rate, pitch: v?.pitch, speed: (settings.speeds?.[level] ?? 1) * extraSpeed };
 }

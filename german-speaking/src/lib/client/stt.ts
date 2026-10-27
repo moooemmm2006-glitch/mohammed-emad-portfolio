@@ -1,36 +1,51 @@
 "use client";
 
-// Speech-to-text. Default: the Web Speech API (`SpeechRecognition`, lang de-DE, Chrome/Edge).
-// Optional: record with MediaRecorder and transcribe on the server (/api/stt → Whisper).
-// Both expose the same small interface so the conversation screen doesn't care which one runs.
+// Speech-to-text for one learner TURN.
+//
+// The learner may pause, hesitate and think: a turn ends ONLY after `silenceMs` without any new
+// recognised speech (or when they tap "done"). Browsers stop recognition on their own after short
+// pauses (Chrome on Android especially), so the recogniser is restarted automatically and keeps
+// appending to the same transcript until the turn is really over. Then the whole turn is sent
+// once.
+//
+// Default provider: Web Speech API (de-DE, Chrome/Edge). Optional: record with MediaRecorder and
+// transcribe on the server (/api/stt → Whisper), with the same silence rule.
 
-export interface STTResult {
-  text: string;
-  confidence: number | null;
-  alternatives: string[];
-}
+import { isLearnerSpeech, TurnTranscript, type Segment, type TurnResult } from "./transcript";
 
-export type STTErrorCode = "not-allowed" | "no-speech" | "network" | "unsupported" | "audio-capture" | "aborted" | "server";
+export type STTErrorCode = "not-allowed" | "network" | "unsupported" | "audio-capture" | "server";
 
-export interface STTHandlers {
-  onInterim?: (text: string) => void;
-  onSpeechStart?: () => void;
-  onFinal: (r: STTResult) => void;
+export interface TurnHandlers {
+  /** Live text of the turn so far (Web Speech only). */
+  onTranscript?: (text: string) => void;
+  /** Time (performance.now()) of the latest recognised speech — drives the "about to send" ring. */
+  onActivity?: (at: number) => void;
+  /** The finished turn, sent once. Never called for an empty turn. */
+  onFinal: (r: TurnResult) => void;
   onError?: (code: STTErrorCode) => void;
+  /** Listening stopped (after sending, cancelling or an error). */
   onEnd?: () => void;
 }
 
-export interface STTSession {
-  /** Stop listening and deliver what was heard (onFinal fires if anything was recognised). */
-  stop(): void;
-  /** Stop and discard. */
-  abort(): void;
+export interface TurnOptions {
+  silenceMs: number;
+  /** Give up quietly if nothing at all is said for this long. */
+  maxIdleMs?: number;
+  /** Words already heard before the turn started (barge-in). */
+  seed?: string;
 }
 
-export interface STTProvider {
+export interface TurnSession {
+  /** "I'm done": send what was said now. */
+  finish(): void;
+  /** Stop and discard. */
+  abort(): void;
+  readonly hasSpeech: boolean;
+}
+
+export interface TurnProvider {
   id: "webspeech" | "server";
-  /** `autoStopMs`: in hands-free mode, finish after this much silence following speech. */
-  start(h: STTHandlers, opts: { autoStopMs?: number }): STTSession;
+  start(h: TurnHandlers, o: TurnOptions): TurnSession;
 }
 
 // ---- Web Speech API typings (not in lib.dom for all TS versions) ----
@@ -72,117 +87,259 @@ export function webSpeechSupported() {
   return srCtor() !== null;
 }
 
+export function isAndroid() {
+  return typeof navigator !== "undefined" && /android/i.test(navigator.userAgent);
+}
+
 export function serverRecordingSupported() {
   return typeof window !== "undefined" && "MediaRecorder" in window && !!navigator.mediaDevices?.getUserMedia;
 }
 
-export class WebSpeechSTT implements STTProvider {
+function segmentsOf(e: SREvent): Segment[] {
+  const out: Segment[] = [];
+  for (let i = 0; i < e.results.length; i++) {
+    const r = e.results[i];
+    const alts: string[] = [];
+    for (let a = 1; a < r.length; a++) alts.push(r[a].transcript.trim());
+    out.push({ text: r[0].transcript, isFinal: r.isFinal, confidence: r.isFinal ? (r[0].confidence ?? null) : null, alternatives: alts });
+  }
+  return out;
+}
+
+function newRecognizer(): SR | null {
+  const Ctor = srCtor();
+  if (!Ctor) return null;
+  const rec = new Ctor();
+  rec.lang = "de-DE";
+  rec.continuous = true;
+  rec.interimResults = true;
+  rec.maxAlternatives = 3;
+  return rec;
+}
+
+const FATAL: Record<string, STTErrorCode> = {
+  "not-allowed": "not-allowed",
+  "service-not-allowed": "not-allowed",
+  "audio-capture": "audio-capture",
+  network: "network",
+  "language-not-supported": "unsupported",
+};
+
+export class WebSpeechTurn implements TurnProvider {
   id = "webspeech" as const;
 
-  start(h: STTHandlers, opts: { autoStopMs?: number }): STTSession {
-    const Ctor = srCtor();
-    if (!Ctor) {
-      h.onError?.("unsupported");
-      h.onEnd?.();
-      return { stop() {}, abort() {} };
-    }
-    const rec = new Ctor();
-    rec.lang = "de-DE";
-    rec.continuous = true;
-    rec.interimResults = true;
-    rec.maxAlternatives = 3;
-
-    const finals: { text: string; conf: number | null; alts: string[] }[] = [];
-    let interim = "";
-    let discarded = false;
-    let delivered = false;
+  start(h: TurnHandlers, o: TurnOptions): TurnSession {
+    const transcript = new TurnTranscript(o.seed);
+    let rec: SR | null = null;
+    let open = true; // the turn is still going
+    let closing = false; // silence reached / "done" tapped: deliver on the next `end`
+    let ended = false;
     let silenceTimer: ReturnType<typeof setTimeout> | null = null;
+    let idleTimer: ReturnType<typeof setTimeout> | null = null;
+    let safetyTimer: ReturnType<typeof setTimeout> | null = null;
+    let restarts: number[] = [];
 
-    const deliver = () => {
-      if (delivered || discarded) return;
-      delivered = true;
-      // If the browser never finalised the last bit, use the interim text (no confidence).
-      const parts = finals.length ? finals : interim.trim() ? [{ text: interim.trim(), conf: null, alts: [] }] : [];
-      const text = parts.map((p) => p.text).join(" ").replace(/\s+/g, " ").trim();
-      if (!text) return;
-      const confs = parts.map((p) => p.conf).filter((c): c is number => c !== null && c > 0);
-      h.onFinal({
-        text,
-        confidence: confs.length ? confs.reduce((a, b) => a + b, 0) / confs.length : null,
-        alternatives: parts.flatMap((p) => p.alts).slice(0, 4),
-      });
+    const clearTimers = () => {
+      for (const t of [silenceTimer, idleTimer, safetyTimer]) if (t) clearTimeout(t);
+      silenceTimer = idleTimer = safetyTimer = null;
     };
 
-    rec.onspeechstart = () => h.onSpeechStart?.();
-    rec.onresult = (e) => {
-      interim = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) {
-        const r = e.results[i];
-        if (r.isFinal) {
-          const alts: string[] = [];
-          for (let a = 1; a < r.length; a++) alts.push(r[a].transcript.trim());
-          finals.push({ text: r[0].transcript.trim(), conf: r[0].confidence ?? null, alts });
-        } else {
-          interim += r[0].transcript;
-        }
+    const end = (deliver: boolean) => {
+      if (ended) return;
+      ended = true;
+      open = false;
+      clearTimers();
+      if (deliver) {
+        const r = transcript.result();
+        if (r) h.onFinal(r);
       }
-      h.onInterim?.([...finals.map((f) => f.text), interim].join(" ").trim());
-      if (opts.autoStopMs) {
-        if (silenceTimer) clearTimeout(silenceTimer);
-        silenceTimer = setTimeout(() => rec.stop(), opts.autoStopMs);
-      }
-    };
-    rec.onerror = (e) => {
-      const code = (["not-allowed", "service-not-allowed"].includes(e.error) ? "not-allowed" : e.error) as STTErrorCode;
-      if (code !== "aborted" && code !== "no-speech") h.onError?.(code);
-      if (code === "no-speech" && !finals.length && !interim) h.onError?.("no-speech");
-    };
-    rec.onend = () => {
-      if (silenceTimer) clearTimeout(silenceTimer);
-      deliver();
       h.onEnd?.();
     };
-    try {
-      rec.start();
-    } catch {
-      h.onError?.("aborted");
+
+    const close = () => {
+      if (closing || ended) return;
+      closing = true;
+      clearTimers();
+      try {
+        rec?.stop();
+      } catch {
+        /* not running */
+      }
+      // If the browser never fires `end`, still send.
+      safetyTimer = setTimeout(() => {
+        transcript.commitSession();
+        end(true);
+      }, 1500);
+    };
+
+    const armSilence = () => {
+      if (silenceTimer) clearTimeout(silenceTimer);
+      if (transcript.hasSpeech) silenceTimer = setTimeout(close, o.silenceMs);
+    };
+
+    const activity = () => {
+      h.onActivity?.(performance.now());
+      armSilence();
+    };
+
+    const startRec = () => {
+      if (!open || closing) return;
+      rec = newRecognizer();
+      if (!rec) {
+        h.onError?.("unsupported");
+        return end(false);
+      }
+      rec.onspeechstart = activity;
+      rec.onresult = (e) => {
+        transcript.update(segmentsOf(e));
+        h.onTranscript?.(transcript.text());
+        activity();
+      };
+      rec.onerror = (e) => {
+        const fatal = FATAL[e.error];
+        if (fatal) {
+          h.onError?.(fatal);
+          end(false);
+        }
+        // "no-speech" and "aborted" are normal during pauses: `end` follows and we restart.
+      };
+      rec.onend = () => {
+        transcript.commitSession();
+        if (closing) return end(true);
+        if (!open) return;
+        // The browser stopped by itself during a pause: the turn is still open, keep listening.
+        const now = performance.now();
+        restarts = restarts.filter((t) => now - t < 5000);
+        restarts.push(now);
+        if (restarts.length > 10) {
+          // Restarting in a tight loop (mic busy, service down): give up gracefully.
+          if (transcript.hasSpeech) end(true);
+          else end(false);
+          return;
+        }
+        setTimeout(startRec, 60);
+      };
+      try {
+        rec.start();
+      } catch {
+        setTimeout(startRec, 250);
+      }
+    };
+
+    if (o.maxIdleMs) {
+      idleTimer = setTimeout(() => {
+        if (!transcript.hasSpeech) {
+          closing = true;
+          try {
+            rec?.abort();
+          } catch {
+            /* not running */
+          }
+          end(false);
+        }
+      }, o.maxIdleMs);
     }
+    if (transcript.hasSpeech) {
+      h.onTranscript?.(transcript.text());
+      activity();
+    }
+    startRec();
+
     return {
-      stop: () => {
-        try {
-          rec.stop();
-        } catch {
-          /* already stopped */
-        }
-      },
+      finish: () => (transcript.hasSpeech ? close() : (rec?.abort(), end(false))),
       abort: () => {
-        discarded = true;
         try {
-          rec.abort();
+          rec?.abort();
         } catch {
-          /* already stopped */
+          /* not running */
         }
+        end(false);
+      },
+      get hasSpeech() {
+        return transcript.hasSpeech;
       },
     };
   }
 }
 
-export class ServerSTT implements STTProvider {
+/**
+ * Listens while the partner is speaking. Calls `onBargeIn` with the first words once they are
+ * clearly the learner (not the partner's own voice coming back through the speakers).
+ */
+export function startBargeInDetector(getPartnerText: () => string, onBargeIn: (heard: string) => void): () => void {
+  let stopped = false;
+  let rec: SR | null = null;
+  const run = () => {
+    if (stopped) return;
+    rec = newRecognizer();
+    if (!rec) return;
+    rec.onresult = (e) => {
+      const heard = segmentsOf(e)
+        .map((s) => s.text)
+        .join(" ");
+      if (!stopped && isLearnerSpeech(heard, getPartnerText())) {
+        stopped = true;
+        try {
+          rec?.abort();
+        } catch {
+          /* ignore */
+        }
+        onBargeIn(heard.trim());
+      }
+    };
+    rec.onerror = (e) => {
+      if (FATAL[e.error]) stopped = true;
+    };
+    rec.onend = () => {
+      if (!stopped) setTimeout(run, 100);
+    };
+    try {
+      rec.start();
+    } catch {
+      setTimeout(run, 300);
+    }
+  };
+  run();
+  return () => {
+    stopped = true;
+    try {
+      rec?.abort();
+    } catch {
+      /* ignore */
+    }
+  };
+}
+
+/** Whisper provider: record the whole turn, end it with the same silence rule (energy-based), transcribe once. */
+export class ServerTurn implements TurnProvider {
   id = "server" as const;
 
-  start(h: STTHandlers, opts: { autoStopMs?: number }): STTSession {
+  start(h: TurnHandlers, o: TurnOptions): TurnSession {
     let discarded = false;
-    let stopRequested = false;
+    let spoke = false;
     let recorder: MediaRecorder | null = null;
     let stream: MediaStream | null = null;
     let ctx: AudioContext | null = null;
     let raf = 0;
+    let ended = false;
     const chunks: Blob[] = [];
 
+    const done = () => {
+      if (ended) return;
+      ended = true;
+      h.onEnd?.();
+    };
     const cleanup = () => {
       cancelAnimationFrame(raf);
       stream?.getTracks().forEach((t) => t.stop());
       void ctx?.close().catch(() => {});
+    };
+    const stop = () => {
+      if (recorder?.state === "recording") recorder.stop();
+      else {
+        cleanup();
+        done();
+      }
     };
 
     (async () => {
@@ -190,59 +347,53 @@ export class ServerSTT implements STTProvider {
         stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
       } catch {
         h.onError?.("not-allowed");
-        h.onEnd?.();
-        return;
+        return done();
       }
-      if (stopRequested || discarded) {
+      if (discarded) {
         cleanup();
-        h.onEnd?.();
-        return;
+        return done();
       }
       recorder = new MediaRecorder(stream);
       recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
       recorder.onstop = async () => {
         cleanup();
-        if (discarded || !chunks.length) return h.onEnd?.();
+        if (discarded || !spoke || !chunks.length) return done();
         try {
           const fd = new FormData();
           fd.append("audio", new Blob(chunks, { type: recorder?.mimeType || "audio/webm" }));
           const res = await fetch("/api/stt", { method: "POST", body: fd });
           if (!res.ok) throw new Error(String(res.status));
           const data = (await res.json()) as { text: string; confidence: number | null };
-          if (data.text) h.onFinal({ text: data.text, confidence: data.confidence, alternatives: [] });
-          else h.onError?.("no-speech");
+          const text = [o.seed, data.text].filter(Boolean).join(" ").trim();
+          if (text) h.onFinal({ text, confidence: data.confidence, alternatives: [] });
         } catch {
           h.onError?.("server");
         }
-        h.onEnd?.();
+        done();
       };
       recorder.start(250);
 
-      // Tiny energy-based voice activity detection for hands-free mode.
       ctx = new AudioContext();
       const analyser = ctx.createAnalyser();
       analyser.fftSize = 1024;
       ctx.createMediaStreamSource(stream).connect(analyser);
       const buf = new Uint8Array(analyser.fftSize);
-      let spoke = false;
-      let lastLoud = performance.now();
       const startedAt = performance.now();
+      let lastLoud = startedAt;
       const tick = () => {
         analyser.getByteTimeDomainData(buf);
         let sum = 0;
         for (const v of buf) sum += (v - 128) * (v - 128);
-        const rms = Math.sqrt(sum / buf.length);
         const now = performance.now();
-        if (rms > 6) {
-          if (!spoke) h.onSpeechStart?.();
+        if (Math.sqrt(sum / buf.length) > 6) {
           spoke = true;
           lastLoud = now;
+          h.onActivity?.(now);
         }
-        if (opts.autoStopMs && spoke && now - lastLoud > opts.autoStopMs) return recorder?.state === "recording" && recorder.stop();
-        if (opts.autoStopMs && !spoke && now - startedAt > 8000) {
+        if (spoke && now - lastLoud > o.silenceMs) return stop();
+        if (!spoke && o.maxIdleMs && now - startedAt > o.maxIdleMs) {
           discarded = true;
-          h.onError?.("no-speech");
-          return recorder?.state === "recording" && recorder.stop();
+          return stop();
         }
         raf = requestAnimationFrame(tick);
       };
@@ -250,14 +401,13 @@ export class ServerSTT implements STTProvider {
     })();
 
     return {
-      stop: () => {
-        stopRequested = true;
-        if (recorder?.state === "recording") recorder.stop();
-      },
+      finish: stop,
       abort: () => {
         discarded = true;
-        if (recorder?.state === "recording") recorder.stop();
-        else cleanup();
+        stop();
+      },
+      get hasSpeech() {
+        return spoke;
       },
     };
   }
@@ -285,14 +435,4 @@ export async function openMicMeter(onLevel: (v: number) => void): Promise<() => 
     stream.getTracks().forEach((t) => t.stop());
     void ctx.close().catch(() => {});
   };
-}
-
-/** Rough check whether recognised text is just our own TTS leaking into the mic (barge-in echo). */
-export function looksLikeEcho(heard: string, partnerText: string): boolean {
-  const norm = (s: string) => s.toLowerCase().replace(/[^\p{L}\s]/gu, " ").split(/\s+/).filter(Boolean);
-  const h = norm(heard);
-  if (h.length === 0) return true;
-  const p = new Set(norm(partnerText));
-  const overlap = h.filter((w) => p.has(w)).length / h.length;
-  return overlap >= 0.6;
 }
