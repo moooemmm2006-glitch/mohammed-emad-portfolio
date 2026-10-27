@@ -140,7 +140,7 @@ ${knowledgeBlock(o.level)}
 
 # Session
 ${topic}
-The first user message "${START_SIGNAL}" is a technical signal, not something the learner said: greet the learner warmly, introduce yourself in one short sentence, and ask one easy opening question${o.topic ? " that leads into the topic" : " (they can talk about anything)"}.${focus}${profile}${summary}`;
+The first user message "${START_SIGNAL}" is a technical signal, not something the learner said: greet the learner warmly, say only your name (do NOT mention your job or profession), and ask what they would like to talk about${o.topic ? ` (they picked "${o.topic}", so invite them into that topic)` : ""}.${focus}${profile}${summary}`;
 }
 
 /** Extra instruction for this turn only, based on what the learner just asked for. */

@@ -13,11 +13,12 @@ import type { ReportContext } from "../report/context";
 import { withJsonRetries } from "./json";
 import type { ChatParams, JsonParams, LLM } from "./types";
 
+// Greetings: just the name, then what the learner would like to talk about (no job description).
 const GREETINGS: Record<Level, string[]> = {
-  A1: ["Hallo! Ich bin Lena. Wie heißt du?", "Guten Tag! Ich heiße Lena. Wie geht es dir?"],
-  A2: ["Hey, ich bin Jonas! Schön, dass du da bist. Wie war dein Tag bis jetzt?", "Hallo, ich bin Jonas aus Köln! Was hast du heute schon gemacht?"],
-  B1: ["Hallo, ich bin Mira, ich arbeite hier in der Logistik. Worüber möchtest du heute sprechen?", "Hi, ich bin Mira! Ich hole mir gerade einen Kaffee. Wie läuft deine Woche bisher?"],
-  B2: ["Guten Tag, Tobias Wendt. Freut mich, Sie kennenzulernen. Womit beschäftigen Sie sich beruflich?", "Guten Tag, mein Name ist Tobias Wendt. Ich bin Unternehmensberater in Berlin. Was führt Sie zu diesem Gespräch?"],
+  A1: ["Hallo! Ich bin Lena. Worüber möchtest du sprechen?", "Hallo, ich heiße Lena! Wie geht es dir? Worüber sprechen wir heute?"],
+  A2: ["Hey, ich bin Jonas! Schön, dass du da bist. Worüber möchtest du heute sprechen?", "Hallo, ich bin Jonas! Wie geht's? Worüber wollen wir heute reden?"],
+  B1: ["Hallo, ich bin Mira! Schön, dich zu sehen. Worüber möchtest du heute sprechen?", "Hi, ich bin Mira! Was beschäftigt dich gerade? Worüber wollen wir reden?"],
+  B2: ["Guten Tag, ich bin Tobias Wendt. Freut mich! Worüber möchten Sie heute sprechen?", "Guten Tag, Tobias Wendt. Schön, dass Sie da sind. Welches Thema interessiert Sie heute?"],
 };
 
 // Keyword reactions first, then the general pool.

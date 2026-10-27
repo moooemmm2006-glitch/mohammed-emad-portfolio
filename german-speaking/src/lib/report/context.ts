@@ -1,6 +1,7 @@
 import { GRAMMAR_TAGS, LEVEL_CONFIG, type Level } from "../levels";
 import { countWords } from "../text";
 import type { SessionInfo, StoredReport } from "./schema";
+import type { Correction } from "./corrections";
 import type { WeaknessEntry } from "./weakness";
 
 export interface TranscriptTurn {
@@ -29,6 +30,8 @@ export interface ReportContext {
   transcript: TranscriptTurn[];
   previous: PreviousSessionBrief[]; // newest last, max 5
   tracker: Pick<WeaknessEntry, "tag" | "kind" | "status" | "totalCount" | "firstSeen" | "lastSeen">[];
+  /** Sentence-by-sentence corrections of every learner turn (computed before the report). */
+  corrections?: Correction[];
 }
 
 export function briefFromReport(r: StoredReport): PreviousSessionBrief {
@@ -87,7 +90,10 @@ Principles:
 - correctedSentences: each learner sentence that had a mistake, with a natural corrected version.
 - levelRecommendation: stay / move_up / move_down with reasoning (needs enough evidence; with very little speech, recommend staying).
 - nextFocus: the single most useful grammar tag to practise next session (or null).
-- If the learner said very little, keep lists short and say so honestly.`;
+- If the learner said very little, keep lists short and say so honestly.
+- You receive "corrections": every learner sentence already corrected one by one. Base the scores and the comparison on them.
+- "strengths": ONLY praise things that were actually correct. Quote ONLY sentences whose correction has isCorrect=true. NEVER quote a sentence that has fixes as a positive example. If there is nothing strong, praise effort, courage or fluency instead and leave "example" empty.
+- "mistakes" and "correctedSentences": return empty arrays — the complete lists are built from the corrections.`;
 }
 
 export function reportUserPrompt(ctx: ReportContext): string {
@@ -100,6 +106,7 @@ export function reportUserPrompt(ctx: ReportContext): string {
       text: t.text,
       ...(t.role === "learner" ? { confidence: t.confidence, alternatives: t.alternatives, input: t.input } : {}),
     })),
+    corrections: (ctx.corrections ?? []).map((c) => ({ turn: c.turn, original: c.original, isCorrect: c.isCorrect, corrected: c.corrected, fixes: c.fixes.map((f) => `${f.wrong} → ${f.right} (${f.tag})`) })),
     previousSessions: ctx.previous,
     weaknessTracker: ctx.tracker,
   };
