@@ -109,6 +109,25 @@ If a premium provider is selected but its key is missing, the app silently falls
   lazily after the page is idle. Settings → "تأثيرات 3D": automatic / on / reduced / off;
   `prefers-reduced-motion` always turns 3D off.
 
+## Easy German videos per topic (v8)
+
+Every book topic page has a 4th tab **🎧 Hören** with real videos from the YouTube channel
+**Easy German** (and its original channel "Easy Languages") about the same theme.
+
+- Data: `data/easy-german-videos.json` (57 topics, 70 videos, every ID checked by the owner on YouTube),
+  validated with zod in `src/lib/easyGerman.ts` (`getEasyGermanVideos(topic)`). IDs are never guessed:
+  a topic without a video shows "no video yet" and a YouTube **search** for `Easy German <title_de>`.
+- Only the official player (`youtube-nocookie.com/embed/…`), loaded after a tap (thumbnail first);
+  the credit line and a link to the original are under every video, plus "Open on YouTube" and
+  "Subscribe to Easy German".
+- "Watched ✓" is saved per user (`video_progress`, key `eg:<id>`, also set when a video ends);
+  topic cards show **🎧 X/Y**, and *My progress* shows the Easy German videos watched per level.
+- Talking about it: with the in-site AI switched on, "talk about this video" (the partner gets the
+  video title and the book topic); otherwise the book's scripted topic talk, and the Gemini link.
+- **Admin:** on `/admin`, add a video to any topic by pasting a YouTube link (ID checked, title from
+  YouTube oEmbed when reachable) or remove one. Stored in the table `topic_videos` and merged with the
+  JSON at runtime; the JSON file itself never changes.
+
 ## Talk with Gemini (v10)
 
 Without an Anthropic key the free conversation happens in **Gemini** (gemini.google.com or the Gemini

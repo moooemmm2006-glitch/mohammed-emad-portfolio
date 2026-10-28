@@ -88,6 +88,20 @@ export const geminiSessions = sqliteTable("gemini_sessions", {
   createdAt: integer("created_at").notNull(),
 });
 
+/** Admin changes to a topic's Easy German videos: "add" a new one, or "hide" one from the JSON file. */
+export const topicVideos = sqliteTable(
+  "topic_videos",
+  {
+    topic: integer("topic").notNull(),
+    youtubeId: text("youtube_id").notNull(),
+    action: text("action").notNull(), // add | hide
+    title: text("title").notNull(),
+    channel: text("channel").notNull(),
+    createdAt: integer("created_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.topic, t.youtubeId] })],
+);
+
 /** One shadowing / review run, kept for its report. */
 export const bookPractice = sqliteTable("book_practice", {
   id: text("id").primaryKey(),
@@ -235,6 +249,10 @@ CREATE TABLE IF NOT EXISTS writing_checks (
 CREATE INDEX IF NOT EXISTS writing_checks_user ON writing_checks(user_id, created_at);
 CREATE TABLE IF NOT EXISTS gemini_sessions (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, level TEXT NOT NULL, topic INTEGER, video TEXT, text TEXT NOT NULL, created_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS topic_videos (
+  topic INTEGER NOT NULL, youtube_id TEXT NOT NULL, action TEXT NOT NULL, title TEXT NOT NULL, channel TEXT NOT NULL,
+  created_at INTEGER NOT NULL, PRIMARY KEY (topic, youtube_id)
 );
 CREATE INDEX IF NOT EXISTS gemini_sessions_user ON gemini_sessions(user_id, created_at);
 CREATE TABLE IF NOT EXISTS book_practice (

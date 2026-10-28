@@ -6,7 +6,8 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { GrammarTab } from "@/components/book/GrammarTab";
 import { Shadowing } from "@/components/book/Shadowing";
-import { IconArrow, IconBook, IconMic, IconRepeat } from "@/components/Icons";
+import { IconArrow, IconBook, IconHeadphones, IconMic, IconRepeat } from "@/components/Icons";
+import { EasyGermanTab } from "@/components/videos/EasyGermanTab";
 import { api, useProviders, useSettings } from "@/lib/client/api";
 import type { TKey } from "@/lib/client/i18n";
 import { unlockSpeech } from "@/lib/client/tts";
@@ -20,6 +21,7 @@ const TABS = [
   { id: "shadow", key: "tab_shadow", icon: IconRepeat },
   { id: "talk", key: "tab_talk", icon: IconMic },
   { id: "grammar", key: "tab_grammar", icon: IconBook },
+  { id: "hoeren", key: "tab_hoeren", icon: IconHeadphones },
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
 
@@ -117,7 +119,7 @@ function TopicPage() {
         ctx={{ kind: "topic", title_de: topic.title_de, title_ar: topic.title_ar, vocab: topic.vocab.map((v) => v.de), grammar: topic.grammar.map((g) => g.title_de) }}
       />
 
-      <div role="tablist" aria-label={topic.title_de} className="grid grid-cols-3 gap-1 rounded-2xl bg-surface-2 p-1 sticky top-16 z-10">
+      <div role="tablist" aria-label={topic.title_de} className="grid grid-cols-4 gap-1 rounded-2xl bg-surface-2 p-1 sticky top-16 z-10">
         {TABS.map((x) => (
           <button
             key={x.id}
@@ -173,6 +175,7 @@ function TopicPage() {
             </button>
           </section>
         )}
+        {tab === "hoeren" && <EasyGermanTab level={level} topic={topic} />}
         {tab === "grammar" && <GrammarTab level={level} grammar={topic.grammar} settings={settings} providers={providers} />}
       </div>
     </div>

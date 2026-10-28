@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client/api";
-import type { TKey } from "@/lib/client/i18n";
+import { fill, type TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { LEVEL_CONFIG, type Level } from "@/lib/levels";
 import { levelPath } from "@/lib/paths";
@@ -20,9 +20,9 @@ const SKILLS = [
 /** "تقدّمي": the four skills for every level. */
 export function SkillsProgressCard() {
   const { t } = useUI();
-  const [levels, setLevels] = useState<(SkillProgress & { level: Level })[] | null>(null);
+  const [levels, setLevels] = useState<(SkillProgress & { level: Level; easyGerman?: { watched: number; total: number } })[] | null>(null);
   useEffect(() => {
-    api<{ levels: (SkillProgress & { level: Level })[] }>("/api/progress/skills").then((d) => setLevels(d.levels), () => {});
+    api<{ levels: (SkillProgress & { level: Level; easyGerman?: { watched: number; total: number } })[] }>("/api/progress/skills").then((d) => setLevels(d.levels), () => {});
   }, []);
   if (!levels) return null;
   return (
@@ -44,6 +44,9 @@ export function SkillsProgressCard() {
                   <ProgressBar key={s.id} label={`${s.emoji} ${t(s.key)}`} value={l[s.id]} accent={accent} />
                 ))}
               </div>
+              {l.easyGerman && l.easyGerman.total > 0 && (
+                <p className="text-xs text-muted tabular-nums">🎧 {fill(t("eg_progress"), { n: l.easyGerman.watched, t: l.easyGerman.total })}</p>
+              )}
             </li>
           );
         })}

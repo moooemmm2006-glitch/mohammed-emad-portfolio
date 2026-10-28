@@ -7,7 +7,7 @@ import type { BookTopic, TopicSummary } from "@/lib/book";
 import type { TopicProgress } from "@/lib/bookProgress";
 import type { Level } from "@/lib/levels";
 
-export type TopicCard = TopicSummary & { progress: TopicProgress };
+export type TopicCard = TopicSummary & { progress: TopicProgress; videos?: { watched: number; total: number } };
 
 /** The book's Arabic meanings stay Arabic; in the German/English interface they are labelled. */
 export function ArabicText({ children, className = "", block = false }: { children: ReactNode; className?: string; block?: boolean }) {
@@ -25,6 +25,9 @@ export function ArabicText({ children, className = "", block = false }: { childr
 
 const topicCache = new Map<Level, Promise<{ topics: TopicCard[]; due: number }>>();
 const bookCache = new Map<number, Promise<{ topic: BookTopic; scores: Record<number, number> }>>();
+
+/** Forget the cached topic list (e.g. after a video was marked as watched). */
+export const invalidateLevelTopics = (level: Level) => topicCache.delete(level);
 
 /** The level's topic list (titles, intros, progress), shared by the skill tabs. */
 export function useLevelTopics(level: Level, refreshKey = 0) {
