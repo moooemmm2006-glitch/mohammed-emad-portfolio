@@ -116,6 +116,24 @@ Progress is per user (`book_progress`): best score per sentence; a topic is fini
 sentences were said correctly once. Sentences said wrong come back in "مراجعة النهارده" after 1 day,
 then 3 days, then a week.
 
+## DW videos per level
+
+All IDs and the feed live in one file, `data/videos.ts`.
+
+- **A1, A2, B1 – "Nicos Weg"** (DW's free course): each level page has a "🎬 فيديوهات – Nicos Weg" tab
+  with the level's full movie (A1 `4-eDoThe6qo`, A2 `Lg5P2w_Ro1c`, B1 `LkufozluseI`) and, where the
+  start of the level in the official playlist is verified (`playlistStartIndex`, so far A1 only), the
+  episodes one by one. Only the official videos are embedded with the privacy-enhanced YouTube player
+  (`youtube-nocookie.com`), loaded only after a tap; the credit "Nicos Weg – Deutsche Welle (DW)" and a
+  link to the original are always shown.
+- **B2 – DW "Video-Thema"**: our server reads DW's official podcast feed
+  (`https://rss.dw.com/xml/DKpodcast_videothema_de`, cached 12 h, last good copy if DW is down) and shows
+  the latest 20 episodes; an episode plays DW's own video file in a `<video>` player, with its text,
+  source link and credit. `VIDEO_THEMA_FEED_URL` can point to a local copy of the feed for tests.
+- Per user: last position ("كمّل من مكان ما وقفت", via the YouTube IFrame API), "خلّصت" buttons, progress
+  on the level cards, and "اتكلم عن اللي شفته" — a conversation with the level partner about the video
+  (simple questions at the level without an API key; with a key the partner gets the video in its prompt).
+
 ## Accounts
 
 - **Sign-up:** name, username (unique, lowercase, `a-z 0-9 _`, 3–20 chars), password (≥ 8, bcrypt-hashed,

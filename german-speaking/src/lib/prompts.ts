@@ -4,6 +4,7 @@ import type { GrammarTopic, Intent } from "./intent";
 import { ARABIC_SPEAKER_MISTAKES, LEVEL_KNOWLEDGE } from "./levelKnowledge";
 import { LEVEL_CONFIG, tagLabel, type Level } from "./levels";
 import type { BookTopic } from "./book";
+import { videoPromptBlock, type VideoContext } from "./videoTalk";
 
 export const START_SIGNAL = "[START]";
 
@@ -17,6 +18,8 @@ export interface PartnerPromptOptions {
   weaknesses?: string[];
   /** A topic from the learner's book: the conversation stays inside it. */
   bookTopic?: BookTopic | null;
+  /** A DW video the learner just watched ("اتكلم عن اللي شفته"). */
+  video?: VideoContext | null;
 }
 
 /** The book topic for the system prompt: title, intro, vocabulary, sections, ~30 example sentences, grammar. */
@@ -116,7 +119,7 @@ Open weak points: ${o.weaknesses.map((w) => tagLabel(w, "en")).join(", ")}. Keep
     ? `The learner picked the topic/scenario: "${o.topic}". If it is a role-play (customer, phone call, interview, meeting), play the other person and stay in role — but if the learner steps out of the role to ask a question (grammar, a word, anything), answer it fully first.`
     : "Free conversation: the learner can talk about anything. Follow their lead and bring in your own ideas.";
 
-  const book = o.bookTopic ? bookTopicBlock(o.bookTopic) : "";
+  const book = (o.bookTopic ? bookTopicBlock(o.bookTopic) : "") + (o.video ? videoPromptBlock(o.video) : "");
   const summary = o.summary ? `\n# Earlier in this conversation (summary)\n${o.summary}` : "";
 
   return `You are a German conversation partner in a voice app — think of yourself as a fluent, warm, talkative voice assistant (like Claude, ChatGPT or Gemini in voice mode) who happens to speak ONLY at CEFR level ${o.level}. The learner is an Arabic speaker (mostly from Egypt) who needs to practise SPEAKING German for work. Everything you write is read aloud by a speech engine.
@@ -163,7 +166,7 @@ ${knowledgeBlock(o.level)}
 
 # Session
 ${topic}
-The first user message "${START_SIGNAL}" is a technical signal, not something the learner said: greet the learner warmly, say only your name (do NOT mention your job or profession), and ${o.bookTopic ? `say that today you practise the book topic "${o.bookTopic.title_de}", then ask the first question of its first section` : `ask what they would like to talk about${o.topic ? ` (they picked "${o.topic}", so invite them into that topic)` : ""}`}.${focus}${profile}${summary}${book}`;
+The first user message "${START_SIGNAL}" is a technical signal, not something the learner said: greet the learner warmly, say only your name (do NOT mention your job or profession), and ${o.video ? "say you'd like to hear about the video they just watched, then ask your first question about it" : o.bookTopic ? `say that today you practise the book topic "${o.bookTopic.title_de}", then ask the first question of its first section` : `ask what they would like to talk about${o.topic ? ` (they picked "${o.topic}", so invite them into that topic)` : ""}`}.${focus}${profile}${summary}${book}`;
 }
 
 /** Extra instruction for this turn only, based on what the learner just asked for. */
