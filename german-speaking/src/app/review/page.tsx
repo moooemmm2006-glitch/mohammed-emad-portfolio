@@ -1,5 +1,6 @@
 "use client";
 
+import { levelPath } from "@/lib/paths";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -48,7 +49,7 @@ function ReviewPage() {
 
   return (
     <div className={`level-${level.toLowerCase()} max-w-3xl mx-auto space-y-5`}>
-      <Link href={isLevel(only) ? `/speak/${only}` : "/speak"} className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink min-h-[40px] -my-2 pe-3">
+      <Link href={isLevel(only) ? levelPath(only) : "/"} className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink min-h-[40px] -my-2 pe-3">
         <IconArrow size={16} className="rotate-180 rtl:rotate-0" /> {t("back")}
       </Link>
       <header>

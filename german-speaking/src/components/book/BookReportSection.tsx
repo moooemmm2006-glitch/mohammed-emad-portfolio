@@ -1,5 +1,6 @@
 "use client";
 
+import { topicPath } from "@/lib/paths";
 import Link from "next/link";
 import { fill } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
@@ -13,7 +14,7 @@ export function BookReportSection({ book, level }: { book: BookReport; level: st
       <div>
         <h2 className="text-lg font-bold">
           📖 {t("rep_book_title")} ·{" "}
-          <Link href={`/speak/${level}/topic/${book.topic}`} className="underline">
+          <Link href={topicPath(level, book.topic)} className="underline">
             #{book.topic} {book.title_ar}
           </Link>
         </h2>

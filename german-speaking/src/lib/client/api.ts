@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { DEFAULT_SETTINGS, type Settings } from "../settings";
 import type { Stats } from "../stats";
 
@@ -65,11 +65,16 @@ export interface ServerProviders {
   storage?: "remote" | "file" | "temporary";
 }
 
+/** Filled by the root layout on the server, so pages know the providers without waiting for a request. */
+export const ProvidersContext = createContext<ServerProviders | null>(null);
+
 export function useProviders() {
-  const [p, setP] = useState<ServerProviders | null>(null);
+  const fromServer = useContext(ProvidersContext);
+  const [p, setP] = useState<ServerProviders | null>(fromServer);
   useEffect(() => {
+    if (fromServer) return;
     api<ServerProviders>("/api/config").then(setP, () => setP({ llm: "mock", tts: "webspeech", stt: "webspeech" }));
-  }, []);
+  }, [fromServer]);
   return p;
 }
 

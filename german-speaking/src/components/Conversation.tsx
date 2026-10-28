@@ -1,5 +1,6 @@
 "use client";
 
+import { levelPath, topicPath } from "@/lib/paths";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -19,7 +20,7 @@ import {
 import type { TurnResult } from "@/lib/client/transcript";
 import { loadVoices, Speaker, speakOptionsFor, unlockSpeech, webSpeechMaxSpeed } from "@/lib/client/tts";
 import type { Hint, TurnEvent } from "@/lib/conversation";
-import { LEVEL_CONFIG, tagLabel, type Level } from "@/lib/levels";
+import { LEVEL_CONFIG, type Level } from "@/lib/levels";
 import { SPEEDS, type Settings } from "@/lib/settings";
 import { Avatar } from "./Avatar";
 import { IconArrow, IconEye, IconEyeOff, IconHelp, IconMic, IconRepeat, IconStop, IconX } from "./Icons";
@@ -67,7 +68,7 @@ const nextKey = () => `t${Date.now()}-${keySeq++}`;
 
 export function Conversation(p: Props) {
   const { level, sessionId, settings, providers } = p;
-  const { t, lang } = useUI();
+  const { t, tag: tagName } = useUI();
   const router = useRouter();
   const cfg = LEVEL_CONFIG[level];
 
@@ -361,7 +362,7 @@ export function Conversation(p: Props) {
     stopBarge.current?.();
     const hasUserTurns = turns.some((x) => x.role === "user");
     await fetch(`/api/sessions/${sessionId}/end`, { method: "POST" }).catch(() => {});
-    router.push(hasUserTurns ? `/reports/${sessionId}?generate=1` : `/speak`);
+    router.push(hasUserTurns ? `/reports/${sessionId}?generate=1` : levelPath(level));
   };
 
   const askHint = async () => {
@@ -445,7 +446,7 @@ export function Conversation(p: Props) {
       <header className="sticky top-0 md:top-16 z-20 bg-bg/85 backdrop-blur-md border-b border-line/70">
         <div className="mx-auto max-w-[820px] px-4 h-14 flex items-center gap-3">
           <Link
-            href={p.bookTopic ? `/speak/${level}/topic/${p.bookTopic.number}` : `/speak/${level}`}
+            href={p.bookTopic ? topicPath(level, p.bookTopic.number) : levelPath(level)}
             className="grid place-items-center w-9 h-9 -ms-1 rounded-full hover:bg-surface-2 text-muted"
             aria-label={t("back")}
           >
@@ -494,7 +495,7 @@ export function Conversation(p: Props) {
         {p.resumed && <p className="text-center text-xs text-muted">{t("conv_resumed")}</p>}
         {p.focusTag && settings.focusSteering && (
           <p className="text-center text-xs text-muted">
-            {t("conv_focus")}: <b>{tagLabel(p.focusTag, lang)}</b>
+            {t("conv_focus")}: <b>{tagName(p.focusTag)}</b>
           </p>
         )}
         {turns.map((m) =>
@@ -618,6 +619,12 @@ export function Conversation(p: Props) {
                     />
                   </svg>
                   <div className="orb !w-[7.25rem] !h-[7.25rem] sm:!w-[8.25rem] sm:!h-[8.25rem]" data-state={phase} style={{ ["--lvl" as string]: listening ? 0.35 : 0 }}>
+                    {/* 3D rings: orbit outward while listening, a soft wave while the partner speaks */}
+                    <span className="orb-rings" aria-hidden="true">
+                      <span className="orb-ring" />
+                      <span className="orb-ring" />
+                      <span className="orb-ring" />
+                    </span>
                     <button
                       className="relative z-10 grid place-items-center w-full h-full rounded-full text-white select-none px-3 disabled:cursor-wait"
                       onClick={onMain}

@@ -2,7 +2,8 @@
 
 import type { GrammarTopic, Intent } from "./intent";
 import { ARABIC_SPEAKER_MISTAKES, LEVEL_KNOWLEDGE } from "./levelKnowledge";
-import { LEVEL_CONFIG, tagLabel, type Level } from "./levels";
+import { LEVEL_CONFIG, type Level } from "./levels";
+import { tagLabel } from "./tags";
 import type { BookTopic } from "./book";
 import { videoPromptBlock, type VideoContext } from "./videoTalk";
 

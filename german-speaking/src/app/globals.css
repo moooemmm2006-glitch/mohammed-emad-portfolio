@@ -198,7 +198,14 @@ html[lang="ar"] body {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at 35% 30%, color-mix(in oklab, var(--accent) 55%, white), var(--accent) 60%, color-mix(in oklab, var(--accent) 70%, black));
+  /* glossy sphere: specular highlight + body gradient + inner shadows for depth */
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.9) 0 5%, rgba(255, 255, 255, 0.35) 12%, transparent 26%),
+    radial-gradient(circle at 36% 32%, color-mix(in oklab, var(--accent) 50%, white), var(--accent) 55%, color-mix(in oklab, var(--accent) 55%, black) 100%);
+  box-shadow:
+    inset -12px -16px 26px rgba(0, 0, 0, 0.35),
+    inset 10px 12px 20px rgba(255, 255, 255, 0.28),
+    0 22px 36px -14px color-mix(in oklab, var(--accent) 70%, black);
   transition: transform 0.12s ease-out, opacity 0.3s;
 }
 .orb::after {
@@ -255,6 +262,131 @@ html[lang="ar"] body {
 @keyframes wave {
   0%, 100% { height: 6px; }
   50% { height: 22px; }
+}
+
+/* 3D rings around the orb: expanding orbits while listening, a soft wave while the partner speaks */
+.orb-rings {
+  position: absolute;
+  inset: -6%;
+  pointer-events: none;
+  transform-style: preserve-3d;
+  perspective: 420px;
+}
+.orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid color-mix(in oklab, var(--accent) 70%, white);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+[data-state="listening"] .orb-ring {
+  animation: ring-out 2.1s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+}
+[data-state="listening"] .orb-ring:nth-child(2) { animation-delay: 0.7s; }
+[data-state="listening"] .orb-ring:nth-child(3) { animation-delay: 1.4s; }
+[data-state="speaking"] .orb-ring {
+  border-style: dashed;
+  border-width: 3px;
+  animation: ring-wave 2.4s ease-in-out infinite;
+}
+[data-state="speaking"] .orb-ring:nth-child(2) { animation-delay: 0.4s; animation-direction: reverse; }
+[data-state="speaking"] .orb-ring:nth-child(3) { animation-delay: 0.8s; }
+@keyframes ring-out {
+  0% { transform: rotateX(62deg) scale(0.75); opacity: 0.75; }
+  100% { transform: rotateX(62deg) scale(1.75); opacity: 0; }
+}
+@keyframes ring-wave {
+  0%, 100% { transform: rotateX(58deg) rotateZ(0deg) scale(1.05); opacity: 0.45; }
+  50% { transform: rotateX(58deg) rotateZ(180deg) scale(1.22); opacity: 0.8; }
+}
+:root[data-fx="off"] .orb-ring { animation: none !important; opacity: 0 !important; }
+
+/* ---- v9: level colour, glass header, depth ---- */
+@property --level-c {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #64748b;
+}
+.app-bg {
+  background:
+    radial-gradient(1100px 520px at 50% -8%, color-mix(in oklab, var(--level-c) 22%, transparent), transparent 70%),
+    radial-gradient(700px 400px at 100% 30%, color-mix(in oklab, var(--level-c) 10%, transparent), transparent 70%),
+    var(--bg);
+  transition: --level-c 0.6s ease;
+}
+.glass-header {
+  background: color-mix(in oklab, var(--bg) 72%, transparent);
+  -webkit-backdrop-filter: saturate(1.6) blur(14px);
+  backdrop-filter: saturate(1.6) blur(14px);
+  border-bottom: 1px solid color-mix(in oklab, var(--line) 70%, transparent);
+  box-shadow: 0 8px 24px -18px rgba(0, 0, 0, 0.35);
+}
+.level-pill { transition: color 0.25s ease, transform 0.15s ease; }
+.level-pill:active { transform: scale(0.94); }
+
+/* soft multi-layer shadows */
+.depth {
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.04),
+    0 4px 8px -2px rgba(0, 0, 0, 0.06),
+    0 18px 32px -16px rgba(0, 0, 0, 0.18);
+}
+.dark .depth {
+  box-shadow:
+    0 1px 1px rgba(0, 0, 0, 0.3),
+    0 4px 8px -2px rgba(0, 0, 0, 0.35),
+    0 18px 32px -16px rgba(0, 0, 0, 0.6);
+}
+
+/* 3D tilt cards: the JS sets --rx/--ry/--mx/--my, CSS does the work (transform + opacity only) */
+.tilt {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateZ(0);
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.2, 0.7, 0.3, 1);
+  will-change: transform;
+  position: relative;
+}
+.tilt::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(255, 255, 255, 0.22), transparent 45%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.tilt[data-hover="1"]::after { opacity: 1; }
+.tilt:active { transform: perspective(900px) translateZ(-14px) scale(0.98); }
+:root[data-fx="mild"] .tilt,
+:root[data-fx="off"] .tilt { transform: none; }
+:root[data-fx="mild"] .tilt::after,
+:root[data-fx="off"] .tilt::after { display: none; }
+:root[data-fx="mild"] .tilt:active { transform: scale(0.98); }
+
+/* cards rise from depth, one after another */
+.stagger { perspective: 1000px; }
+.rise-3d {
+  animation: rise-3d 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+  animation-delay: calc(var(--i, 0) * 45ms);
+}
+@keyframes rise-3d {
+  from { opacity: 0; transform: translateZ(-40px) translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+:root[data-fx="mild"] .rise-3d { animation-name: fade-in; animation-duration: 0.3s; }
+:root[data-fx="off"] .rise-3d { animation: none; }
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* the level page is one side of a cube: the stage gives it perspective */
+.cube-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+  overflow-x: clip;
 }
 
 @media (prefers-reduced-motion: reduce) {

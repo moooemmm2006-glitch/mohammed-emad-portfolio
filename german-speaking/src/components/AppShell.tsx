@@ -1,23 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { m } from "framer-motion";
 import { usePathname } from "next/navigation";
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useUI } from "@/lib/client/ui";
 import { PUBLIC_PATHS, useMe } from "@/lib/client/me";
+import { UI_LANGS, type UILang } from "@/lib/client/i18n";
+import { isLevel, LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
+import { LEVEL_COOKIE, levelPath } from "@/lib/paths";
+import { IconMoon, IconSun } from "./Icons";
 import { ProfileMenu } from "./ProfileMenu";
-import type { TKey } from "@/lib/client/i18n";
-import { IconBook, IconChart, IconFile, IconGear, IconHome, IconMenu, IconMic, IconMoon, IconSun, IconX } from "./Icons";
 
-const MAIN: { href: string; key: TKey; icon: (p: { size?: number }) => ReactNode }[] = [
-  { href: "/", key: "nav_home", icon: IconHome },
-  { href: "/speak", key: "nav_speak", icon: IconMic },
-  { href: "/progress", key: "nav_progress", icon: IconChart },
-  { href: "/reports", key: "nav_reports", icon: IconFile },
-  { href: "/settings", key: "nav_settings", icon: IconGear },
-];
-
-export const SOON: { slug: string; key: TKey; de: string }[] = [
+export const SOON: { slug: string; key: "soon_vokabeln" | "soon_grammatik" | "soon_hoeren" | "soon_lesen" | "soon_schreiben" | "soon_pruefungen"; de: string }[] = [
   { slug: "vokabeln", key: "soon_vokabeln", de: "Vokabeln" },
   { slug: "grammatik", key: "soon_grammatik", de: "Grammatik" },
   { slug: "hoeren", key: "soon_hoeren", de: "Hören" },
@@ -26,76 +21,47 @@ export const SOON: { slug: string; key: TKey; de: string }[] = [
   { slug: "pruefungen", key: "soon_pruefungen", de: "Prüfungen" },
 ];
 
-function isActive(path: string, href: string) {
-  return href === "/" ? path === "/" : path.startsWith(href);
+/** The level the current page belongs to (/level/a1/…), if any. */
+export function levelFromPath(path: string): Level | null {
+  const code = path.match(/^\/level\/([a-z0-9]+)/i)?.[1]?.toUpperCase();
+  return isLevel(code) ? code : null;
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
-  const { t, lang, setLang, theme, setTheme } = useUI();
+  const { t } = useUI();
   const path = usePathname();
-  const [menu, setMenu] = useState(false);
   const { me, loading } = useMe();
-  // Login and sign-up pages: header with language/theme only, no navigation.
+  // Login and sign-up: language and theme only.
   const bare = PUBLIC_PATHS.includes(path);
-  // The speaking screen is full-screen: no site nav on mobile, no page padding.
-  const inConversation = /^\/speak\/(A1|A2|B1|B2)\/chat/i.test(path);
+  // The speaking screen is full-screen: no site header on phones, no page padding.
+  const inConversation = /^\/level\/(a1|a2|b1|b2)\/chat/i.test(path);
+  const active = levelFromPath(path);
 
-  useEffect(() => setMenu(false), [path]);
+  // Remember the level for "/" (start page = last level).
+  useEffect(() => {
+    if (active) document.cookie = `${LEVEL_COOKIE}=${active.toLowerCase()}; path=/; max-age=31536000; samesite=lax`;
+  }, [active]);
+
+  // The page background takes the level's colour (animated through the registered --level-c property).
+  const style = { "--level-c": active ? LEVEL_CONFIG[active].accent : "#64748b" } as CSSProperties;
 
   return (
-    <div className="min-h-dvh flex flex-col">
+    <div className="app-bg min-h-dvh flex flex-col" style={style}>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 btn btn-primary">
-        {lang === "ar" ? "انتقل للمحتوى" : "Skip to content"}
+        {t("skip_content")}
       </a>
-      <header className={`sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur ${inConversation ? "hidden md:block" : ""}`}>
-        <div className="mx-auto max-w-6xl px-3 sm:px-4 h-16 flex items-center gap-2 sm:gap-3">
-          <Link href="/" className="flex items-center gap-2 font-bold text-lg min-w-0 shrink">
-            <span className="grid place-items-center w-9 h-9 shrink-0 rounded-xl bg-brand text-brand-ink" aria-hidden="true">
-              <IconMic size={18} />
-            </span>
-            <span className="leading-tight whitespace-nowrap text-base min-[400px]:text-lg">
-              {t("appName")}
-              <span className="hidden min-[400px]:block text-xs font-medium text-muted de">{t("appTagline")}</span>
-            </span>
-          </Link>
-
-          <nav aria-label="Main" className={bare ? "hidden" : "hidden md:flex items-center gap-1 ms-6"}>
-            {MAIN.slice(1).map((n) => (
-              <Link
-                key={n.href}
-                href={n.href}
-                aria-current={isActive(path, n.href) ? "page" : undefined}
-                className="px-3 py-2 rounded-full text-sm font-medium text-muted hover:text-ink hover:bg-surface-2 aria-[current=page]:text-ink aria-[current=page]:bg-surface-2"
-              >
-                {t(n.key)}
-              </Link>
-            ))}
-            <SoonMenu />
-          </nav>
-
+      <header className={`glass-header sticky top-0 z-30 ${inConversation ? "hidden md:block" : ""}`}>
+        <div className="mx-auto max-w-6xl px-3 sm:px-4 h-14 sm:h-16 flex items-center gap-2">
+          {!bare && <LevelNav active={active} />}
           <div className="ms-auto flex items-center gap-1 shrink-0">
-            <button className="btn btn-ghost !px-2.5 sm:!px-3 !min-h-[40px] text-sm" onClick={() => setLang(lang === "ar" ? "en" : "ar")} aria-label={lang === "ar" ? "Switch to English" : "التبديل للعربي"}>
-              <span className="hidden sm:inline">{t("lang_toggle")}</span>
-              <span className="sm:hidden">{lang === "ar" ? "EN" : "ع"}</span>
-            </button>
-            <button
-              className="btn btn-ghost !px-2.5 sm:!px-3 !min-h-[40px]"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              aria-label={t("theme_toggle")}
-            >
-              {theme === "dark" ? <IconSun /> : <IconMoon />}
-            </button>
-            {!bare && (
-              <button className="btn btn-ghost !px-2.5 sm:!px-3 !min-h-[40px] md:hidden" onClick={() => setMenu(true)} aria-label={t("nav_more")} aria-expanded={menu}>
-                <IconMenu />
-              </button>
-            )}
+            <LangSwitcher />
+            <ThemeButton />
             {me ? (
               <ProfileMenu />
             ) : (
               !loading &&
               path !== "/login" && (
-                <Link href="/login" className="btn btn-primary !min-h-[40px] !px-4 text-sm">
+                <Link href="/login" className="btn btn-primary !min-h-[38px] !px-3 text-sm">
                   {t("login_button")}
                 </Link>
               )
@@ -104,99 +70,103 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      {menu && (
-        <div className="fixed inset-0 z-40 md:hidden" role="dialog" aria-modal="true" aria-label={t("nav_more")}>
-          <button className="absolute inset-0 bg-black/40" aria-label="Close" onClick={() => setMenu(false)} />
-          <div className="absolute inset-y-0 end-0 w-72 max-w-[85vw] bg-surface p-5 shadow-2xl overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <span className="font-bold">{t("nav_more")}</span>
-              <button className="btn btn-ghost !px-2 !min-h-[36px]" onClick={() => setMenu(false)} aria-label="Close">
-                <IconX />
-              </button>
-            </div>
-            <ul className="space-y-1">
-              {MAIN.map((n) => (
-                <li key={n.href}>
-                  <Link href={n.href} className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-surface-2" aria-current={isActive(path, n.href) ? "page" : undefined}>
-                    <n.icon size={20} /> {t(n.key)}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-6 mb-2 text-xs font-semibold uppercase tracking-wide text-muted">{t("nav_soon")}</p>
-            <ul className="space-y-1">
-              {SOON.map((s) => (
-                <li key={s.slug}>
-                  <Link href={`/soon/${s.slug}`} className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-surface-2 text-muted">
-                    <span>
-                      {t(s.key)} · <span className="de">{s.de}</span>
-                    </span>
-                    <span className="text-[11px] rounded-full px-2 py-0.5 bg-surface-2">{t("nav_soon")}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      )}
-
-      <main id="main" className={inConversation ? "flex-1 w-full" : "flex-1 mx-auto w-full max-w-6xl px-4 pb-28 md:pb-12 pt-6"}>
+      <main id="main" className={inConversation ? "flex-1 w-full" : "flex-1 mx-auto w-full max-w-6xl px-4 pb-12 pt-5"}>
         {children}
       </main>
-
-      {!inConversation && !bare && (
-        <nav aria-label="Main mobile" className="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-line bg-surface/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
-          <ul className="grid grid-cols-5">
-            {MAIN.map((n) => {
-              const active = isActive(path, n.href);
-              const center = n.href === "/speak";
-              return (
-                <li key={n.href}>
-                  <Link
-                    href={n.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`flex flex-col items-center gap-0.5 py-2 text-[11px] ${active ? "text-ink font-semibold" : "text-muted"}`}
-                  >
-                    <span className={center ? "grid place-items-center w-11 h-11 -mt-5 rounded-full bg-brand text-brand-ink shadow-card" : ""}>
-                      <n.icon size={center ? 22 : 20} />
-                    </span>
-                    {t(n.key)}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </nav>
-      )}
     </div>
   );
 }
 
-function SoonMenu() {
+/** "المستوى" + the four level pills; the highlight slides to the active level. */
+function LevelNav({ active }: { active: Level | null }) {
   const { t } = useUI();
-  const [open, setOpen] = useState(false);
   return (
-    <div className="relative" onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setOpen(false)}>
+    <nav aria-label={t("header_level")} className="flex items-center gap-1.5 sm:gap-3 min-w-0">
+      <span className="font-extrabold text-base sm:text-2xl leading-none whitespace-nowrap">{t("header_level")}</span>
+      <div className="flex items-center gap-0.5 sm:gap-1 rounded-full bg-surface-2/70 p-0.5 sm:p-1 shadow-inner">
+        {LEVELS.map((l) => {
+          const on = l === active;
+          const accent = LEVEL_CONFIG[l].accent;
+          return (
+            <Link
+              key={l}
+              href={levelPath(l)}
+              aria-current={on ? "page" : undefined}
+              className="level-pill relative rounded-full px-2 sm:px-3.5 py-1 sm:py-1.5 text-xs sm:text-base font-extrabold de"
+              style={{ color: on ? "#fff" : accent }}
+            >
+              {on && <m.span layoutId="level-pill" className="absolute inset-0 rounded-full shadow-md" style={{ background: accent }} transition={{ type: "spring", stiffness: 480, damping: 38 }} />}
+              <span className="relative z-10">{l}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
+const LANG_SHORT: Record<UILang, string> = { ar: "ع", de: "DE", en: "EN" };
+const LANG_NAME_KEY = { ar: "lang_name_ar", de: "lang_name_de", en: "lang_name_en" } as const;
+
+/** Three interface languages: العربية · Deutsch · English. */
+function LangSwitcher() {
+  const { t, lang, setLang } = useUI();
+  const [open, setOpen] = useState(false);
+  const wrap = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const down = (e: PointerEvent) => !wrap.current?.contains(e.target as Node) && setOpen(false);
+    const key = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("pointerdown", down);
+    document.addEventListener("keydown", key);
+    return () => {
+      document.removeEventListener("pointerdown", down);
+      document.removeEventListener("keydown", key);
+    };
+  }, [open]);
+  return (
+    <div ref={wrap} className="relative">
       <button
-        className="px-3 py-2 rounded-full text-sm font-medium text-muted hover:text-ink hover:bg-surface-2 inline-flex items-center gap-1"
-        aria-expanded={open}
+        type="button"
+        className="btn btn-ghost !px-2.5 !min-h-[38px] sm:!min-h-[40px] text-sm font-bold"
+        aria-label={t("lang_switch")}
         aria-haspopup="menu"
+        aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
-        <IconBook size={16} /> {t("nav_soon")}
+        {LANG_SHORT[lang]}
       </button>
       {open && (
-        <ul role="menu" className="absolute top-full mt-2 start-0 w-60 card p-2 z-40">
-          {SOON.map((s) => (
-            <li key={s.slug} role="none">
-              <Link role="menuitem" href={`/soon/${s.slug}`} className="flex justify-between px-3 py-2 rounded-lg hover:bg-surface-2 text-sm" onClick={() => setOpen(false)}>
-                <span>{t(s.key)}</span>
-                <span className="de text-muted">{s.de}</span>
-              </Link>
+        <ul role="menu" aria-label={t("lang_switch")} className="absolute top-full mt-2 end-0 z-50 w-40 card p-1.5">
+          {UI_LANGS.map((l) => (
+            <li key={l} role="none">
+              <button
+                role="menuitemradio"
+                aria-checked={l === lang}
+                lang={l}
+                dir={l === "ar" ? "rtl" : "ltr"}
+                className="w-full text-start px-3 py-2 rounded-lg hover:bg-surface-2 aria-checked:font-bold flex items-center justify-between"
+                onClick={() => {
+                  setLang(l);
+                  setOpen(false);
+                }}
+              >
+                {t(LANG_NAME_KEY[l])}
+                {l === lang && <span aria-hidden="true">✓</span>}
+              </button>
             </li>
           ))}
         </ul>
       )}
     </div>
+  );
+}
+
+function ThemeButton() {
+  const { t, theme, setTheme } = useUI();
+  return (
+    <button className="btn btn-ghost !px-2.5 !min-h-[38px] sm:!min-h-[40px]" onClick={() => setTheme(theme === "dark" ? "light" : "dark")} aria-label={t("theme_toggle")}>
+      {theme === "dark" ? <IconSun /> : <IconMoon />}
+    </button>
   );
 }

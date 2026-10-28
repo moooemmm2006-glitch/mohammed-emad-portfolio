@@ -4,7 +4,8 @@ import { usePathname } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import type { PublicUser } from "../auth/users";
 import { ApiError, api } from "./api";
-import { DICT, type TKey } from "./i18n";
+import type { TKey, UILang } from "./i18n";
+import { useUI } from "./ui";
 
 // The logged-in user, shared by the header circle, the admin page and anything else that needs it.
 
@@ -14,6 +15,7 @@ export interface Me {
   streak: number;
   usage: { day: string; replies: number; minutes: number };
   limits: { minutes: number | null; replies: number | null } | null;
+  prefs?: { uiLang: UILang; effects: "auto" | "on" | "mild" | "off" };
 }
 
 interface MeCtx {
@@ -33,10 +35,14 @@ export function MeProvider({ children }: { children: ReactNode }) {
   const isPublic = PUBLIC_PATHS.includes(path);
   const [me, setMe] = useState<Me | null>(null);
   const [loading, setLoading] = useState(true);
+  const { setLang } = useUI();
 
   const reload = useCallback(async () => {
     try {
-      setMe(await api<Me>(`/api/me?tz=${new Date().getTimezoneOffset()}`));
+      const m = await api<Me>(`/api/me?tz=${new Date().getTimezoneOffset()}`);
+      setMe(m);
+      // The language saved with the account wins on a new device.
+      if (m.prefs?.uiLang && m.prefs.uiLang !== document.documentElement.lang) setLang(m.prefs.uiLang, { save: false });
     } catch (err) {
       setMe(null);
       // A signed cookie whose account was disabled or whose password changed: clear it and go to login.
@@ -47,7 +53,7 @@ export function MeProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [setLang]);
 
   useEffect(() => {
     if (isPublic) {
@@ -77,7 +83,8 @@ export function useMe(): MeCtx {
 export function authErrorText(err: unknown, t: (k: TKey) => string): string {
   const code = err instanceof ApiError ? err.code : "server_error";
   const key = `autherr_${code}`;
-  const text = key in DICT.ar ? t(key as TKey) : t("autherr_server_error");
+  const known = t(key as TKey);
+  const text = known !== key ? known : t("autherr_server_error");
   return code === "rate_limited" ? text.replace("{n}", /^\d+$/.test((err as ApiError).message) ? (err as ApiError).message : "15") : text;
 }
 

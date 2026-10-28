@@ -1,14 +1,15 @@
 "use client";
 
+import { levelPath } from "@/lib/paths";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import { Avatar } from "@/components/Avatar";
 import { IconMic, IconRepeat, IconSparkle, IconTrash } from "@/components/Icons";
 import { ApiError, api } from "@/lib/client/api";
-import type { TKey } from "@/lib/client/i18n";
+import { localeOf, type TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
-import { isLevel, tagLabel, type Level } from "@/lib/levels";
+import { isLevel, type Level } from "@/lib/levels";
 import { ScoreKeys, type StoredReport } from "@/lib/report/schema";
 import { BookReportSection } from "@/components/book/BookReportSection";
 
@@ -27,7 +28,7 @@ export default function ReportPageWrapper() {
 }
 
 function ReportPage() {
-  const { t, lang } = useUI();
+  const { t, lang, tag: tagName } = useUI();
   const { id } = useParams<{ id: string }>();
   const search = useSearchParams();
   const router = useRouter();
@@ -48,12 +49,12 @@ function ReportPage() {
         await load();
         router.replace(`/reports/${id}`);
       } catch (e) {
-        setError(e instanceof ApiError && e.code === "too_short" ? (lang === "ar" ? "مفيش كلام كفاية في الجلسة دي لعمل تقرير." : "Not enough speech in this session for a report.") : t("err_api"));
+        setError(e instanceof ApiError && e.code === "too_short" ? t("report_too_short") : t("err_api"));
       } finally {
         setGenerating(false);
       }
     },
-    [id, load, router, t, lang],
+    [id, load, router, t],
   );
 
   useEffect(() => {
@@ -98,7 +99,7 @@ function ReportPage() {
   }
 
   const dir = r.language === "ar" ? "rtl" : "ltr";
-  const locale = lang === "ar" ? "ar-EG" : "en-GB";
+  const locale = localeOf(lang);
   const del = async () => {
     if (!confirm(t("report_delete_confirm"))) return;
     await api(`/api/sessions/${id}`, { method: "DELETE" }).catch(() => {});
@@ -216,7 +217,7 @@ function ReportPage() {
               <p className="flex flex-wrap gap-1.5 mb-4">
                 {mistakeGroups(r.mistakes).map(([tag, n]) => (
                   <span key={tag} className="chip !py-0.5 text-sm">
-                    {tagLabel(tag, r.language)} <b className="tabular-nums">({n})</b>
+                    {tagName(tag)} <b className="tabular-nums">({n})</b>
                   </span>
                 ))}
               </p>
@@ -226,7 +227,7 @@ function ReportPage() {
                   .map((m, i) => (
                     <li key={i} className="rounded-xl border border-line p-4">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <span className="chip !py-0.5 text-xs">{tagLabel(m.tag, r.language)}</span>
+                        <span className="chip !py-0.5 text-xs">{tagName(m.tag)}</span>
                         <SeverityBadge severity={m.severity} />
                       </div>
                       <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1" dir="ltr">
@@ -256,7 +257,7 @@ function ReportPage() {
                 <b className="de" lang="de">
                   {n.word}
                 </b>{" "}
-                <span className="text-muted">({tagLabel(n.tag, r.language)})</span> — {n.issue} {n.tip && <span className="text-muted">💡 {n.tip}</span>}
+                <span className="text-muted">({tagName(n.tag)})</span> — {n.issue} {n.tip && <span className="text-muted">💡 {n.tip}</span>}
               </li>
             ))}
           </ul>
@@ -307,7 +308,7 @@ function ReportPage() {
       <TranscriptView turns={data.turns} report={r} />
 
       <div className="flex flex-wrap gap-3 justify-between">
-        <Link href={`/speak/${level}`} className="btn btn-primary">
+        <Link href={levelPath(level)} className="btn btn-primary">
           <IconMic /> {t("report_practice_again")}
         </Link>
         <button className="btn btn-ghost text-danger" onClick={del}>
@@ -356,8 +357,8 @@ function Section({ title, children, accent }: { title: string; children: React.R
 }
 
 function TagList({ title, items, tags, tone }: { title: string; items: string[]; tags?: string[]; tone: "ok" | "danger" | "gold" | "muted" }) {
-  const { lang } = useUI();
-  const all = items.length ? items : (tags ?? []).map((x) => tagLabel(x, lang));
+  const { tag: tagName } = useUI();
+  const all = items.length ? items : (tags ?? []).map((x) => tagName(x));
   if (all.length === 0) return null;
   const color = { ok: "text-ok", danger: "text-danger", gold: "text-gold", muted: "text-muted" }[tone];
   return (
@@ -430,7 +431,7 @@ function Highlight({ text, parts, className }: { text: string; parts: string[]; 
 }
 
 function CorrectionsList({ report }: { report: StoredReport }) {
-  const { t } = useUI();
+  const { t, tag: tagName } = useUI();
   const list = report.corrections;
   // Reports created before sentence-by-sentence corrections only have the corrected pairs.
   if (!list) {
@@ -489,7 +490,7 @@ function CorrectionsList({ report }: { report: StoredReport }) {
                 <ul className="mt-3 space-y-1.5">
                   {c.fixes.map((f, i) => (
                     <li key={i} className="text-sm flex flex-wrap items-center gap-x-2 gap-y-1">
-                      <span className="chip !py-0 text-xs">{tagLabel(f.tag, report.language)}</span>
+                      <span className="chip !py-0 text-xs">{tagName(f.tag)}</span>
                       <SeverityBadge severity={f.severity} />
                       <span dir="auto">{f.explanation}</span>
                     </li>

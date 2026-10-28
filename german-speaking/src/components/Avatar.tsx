@@ -1,3 +1,6 @@
+"use client";
+
+import { useUI } from "@/lib/client/ui";
 import type { Level } from "@/lib/levels";
 
 // Original illustrated partners (no real people), one consistent flat style. Each one tells its
@@ -8,17 +11,12 @@ import type { Level } from "@/lib/levels";
 //   B2 Tobias – fluent and sophisticated: podium, laptop, chart and debate bubbles
 // `scene` adds the background details (cards and the level page); small chat avatars stay simple.
 
-const ALT: Record<Level, string> = {
-  A1: "لينا، شريكة مستوى المبتدئ، ماسكة كشكول وبتقول Hallo",
-  A2: "يوناس، شاب عربي ألماني لسه مستقر في ألمانيا، معاه شنطة ضهر وتذكرة قطر",
-  B1: "ميرا، شريكة المستوى المتوسط، لابسة سماعة وماسكة فنجان قهوة",
-  B2: "د. توبياس، شريك مستوى فوق المتوسط، واقف ورا منصة قدامه لابتوب",
-};
 
 const SKIN = { A1: "#f1c7a5", A2: "#c9966c", B1: "#b9825f", B2: "#f0cfb3" } as const;
 const INK = "#2a2230";
 
 export function Avatar({ level, size = 64, className = "", scene = false, decorative }: { level: Level; size?: number; className?: string; scene?: boolean; decorative?: boolean }) {
+  const { t } = useUI();
   const skin = SKIN[level];
   const id = `av-${level}-${scene ? "s" : "p"}`;
   return (
@@ -30,7 +28,7 @@ export function Avatar({ level, size = 64, className = "", scene = false, decora
       direction="ltr"
       style={{ direction: "ltr" }}
       role={decorative ? undefined : "img"}
-      aria-label={decorative ? undefined : ALT[level]}
+      aria-label={decorative ? undefined : t(`avatar_${level}`)}
       aria-hidden={decorative ? true : undefined}
     >
       <defs>

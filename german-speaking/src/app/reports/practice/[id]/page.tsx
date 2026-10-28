@@ -1,11 +1,12 @@
 "use client";
 
+import { topicPath } from "@/lib/paths";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IconRepeat } from "@/components/Icons";
 import { api } from "@/lib/client/api";
-import type { TKey } from "@/lib/client/i18n";
+import { localeOf, type TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { CORRECT_AT } from "@/lib/bookCompare";
 import type { PracticeRecord } from "@/lib/bookProgress";
@@ -33,14 +34,14 @@ export default function PracticeReportPage() {
   const wrong = all.filter((r) => r.score < CORRECT_AT);
   const right = all.length - wrong.length;
   const topic = rec.topicInfo;
-  const again = topic ? `/speak/${topic.level}/topic/${topic.number}` : "/speak/review";
+  const again = topic ? topicPath(topic.level, topic.number) : "/review";
 
   return (
     <div className="max-w-3xl mx-auto space-y-5">
       <header className="card p-5 flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-[12rem]">
           <p className="text-sm text-muted">
-            {t(`mode_${rec.mode}` as TKey)} · {new Date(rec.createdAt).toLocaleString(lang === "ar" ? "ar-EG" : "en-GB", { dateStyle: "medium", timeStyle: "short" })}
+            {t(`mode_${rec.mode}` as TKey)} · {new Date(rec.createdAt).toLocaleString(localeOf(lang), { dateStyle: "medium", timeStyle: "short" })}
           </p>
           <h1 className="text-2xl font-extrabold">{t("prep_title")}</h1>
           {topic && (

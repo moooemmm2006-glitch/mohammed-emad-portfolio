@@ -1,5 +1,6 @@
 "use client";
 
+import { localeOf } from "@/lib/client/i18n";
 import Link from "next/link";
 import { useUI } from "@/lib/client/ui";
 
@@ -13,7 +14,7 @@ export function HistoryList({ items }: { items: { id: string; level: string; top
           <Link href={s.hasReport ? `/reports/${s.id}` : `/reports/${s.id}?generate=1`} className="flex items-center gap-3 py-3 hover:bg-surface-2 rounded-lg px-2">
             <span className="shrink-0 rounded-full px-2 py-0.5 text-xs font-bold text-white bg-accent de">{s.level}</span>
             <span className="text-sm min-w-0 flex-1">
-              {new Date(s.startedAt).toLocaleString(lang === "ar" ? "ar-EG" : "en-GB", { dateStyle: "medium", timeStyle: "short" })}
+              {new Date(s.startedAt).toLocaleString(localeOf(lang), { dateStyle: "medium", timeStyle: "short" })}
               <span className="block text-xs text-muted">
                 {s.topic && <span className="de">{s.topic} · </span>}
                 {t("info_turns")}: {s.userTurns}

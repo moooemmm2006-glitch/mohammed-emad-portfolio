@@ -1,5 +1,6 @@
 "use client";
 
+import { chatPath } from "@/lib/paths";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { api } from "@/lib/client/api";
@@ -49,7 +50,7 @@ export function useTalkAboutVideo(level: Level) {
       setStarting(true);
       try {
         const d = await api<{ session: { id: string } }>("/api/sessions", { method: "POST", body: JSON.stringify({ level, video }) });
-        router.push(`/speak/${level}/chat?session=${d.session.id}&new=1`);
+        router.push(chatPath(level, d.session.id, true));
       } catch {
         setStarting(false);
       }

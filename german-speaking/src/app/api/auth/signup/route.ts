@@ -5,6 +5,7 @@ import { clientIp, setSessionCookie } from "@/lib/auth/session";
 import { authErrorResponse } from "@/lib/auth/routes";
 import { authSecret } from "@/lib/auth/token";
 import { signUp, throttled, toPublic } from "@/lib/auth/users";
+import { saveSettings } from "@/lib/db/repo";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -24,6 +25,9 @@ export async function POST(req: Request) {
     authSecret(); // fail before creating an account we couldn't log into
     if (await throttled(`signup:${clientIp(req)}`, 10, 60 * 60 * 1000)) return jsonError(429, "rate_limited", "60");
     const user = await signUp(parsed.data);
+    // A new account starts in the language the visitor already chose.
+    const cookieLang = req.headers.get("cookie")?.match(/(?:^|;\s*)gs_lang=(ar|de|en)/)?.[1] as "ar" | "de" | "en" | undefined;
+    if (cookieLang) await saveSettings({ uiLang: cookieLang }, user.id);
     const res = NextResponse.json({ user: toPublic(user) });
     await setSessionCookie(res, user, parsed.data.remember ?? false);
     return res;

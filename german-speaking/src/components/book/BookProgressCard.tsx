@@ -1,11 +1,12 @@
 "use client";
 
+import { levelPath } from "@/lib/paths";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client/api";
-import { fill, type TKey } from "@/lib/client/i18n";
+import { fill, type TKey, localeOf } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
-import { LEVEL_CONFIG, type Level } from "@/lib/levels";
+import type { Level } from "@/lib/levels";
 import { IconRepeat } from "../Icons";
 
 interface Overview {
@@ -28,7 +29,7 @@ export function BookProgressCard() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="text-lg font-bold">📖 {t("prog_book")} — Sprich Deutsch</h2>
         {o.due > 0 && (
-          <Link href="/speak/review" className="btn btn-primary !min-h-[40px] text-sm">
+          <Link href="/review" className="btn btn-primary !min-h-[40px] text-sm">
             <IconRepeat size={16} /> {t("book_review_title")} ({o.due})
           </Link>
         )}
@@ -36,9 +37,9 @@ export function BookProgressCard() {
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {o.levels.map((l) => (
           <li key={l.level} className={`level-${l.level.toLowerCase()} rounded-2xl bg-surface-2 p-4 space-y-2`}>
-            <Link href={`/speak/${l.level}`} className="flex items-center gap-2 font-bold">
+            <Link href={levelPath(l.level)} className="flex items-center gap-2 font-bold">
               <span className="rounded-full px-2 py-0.5 text-xs text-white bg-accent de">{l.level}</span>
-              {LEVEL_CONFIG[l.level].info.name[lang]}
+              {t(`lvl_${l.level}_name` as TKey)}
             </Link>
             <div className="h-2 rounded-full bg-surface overflow-hidden" aria-hidden="true">
               <div className="h-full bg-accent" style={{ width: `${Math.round((100 * l.correct) / l.sentences)}%` }} />
@@ -59,7 +60,7 @@ export function BookProgressCard() {
                   <span className="flex-1 min-w-0">
                     {t(`mode_${p.mode}` as TKey)}
                     {p.topic ? ` · #${p.topic}` : ""}
-                    <span className="block text-xs text-muted">{new Date(p.createdAt).toLocaleString(lang === "ar" ? "ar-EG" : "en-GB", { dateStyle: "medium", timeStyle: "short" })}</span>
+                    <span className="block text-xs text-muted">{new Date(p.createdAt).toLocaleString(localeOf(lang), { dateStyle: "medium", timeStyle: "short" })}</span>
                   </span>
                   <b className="tabular-nums shrink-0">
                     {p.correct}/{p.total}

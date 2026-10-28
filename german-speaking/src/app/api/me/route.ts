@@ -7,6 +7,7 @@ import { toPublic, updateName } from "@/lib/auth/users";
 import { sessionsWithTurnCounts } from "@/lib/db/repo";
 import { dayKey, practiceStreak } from "@/lib/stats";
 import { getUsage } from "@/lib/usage";
+import { getSettings } from "@/lib/db/repo";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -25,6 +26,7 @@ export async function GET(req: Request) {
     streak: practiceStreak(new Set(spoken.map((x) => dayKey(x.session.startedAt, offset))), dayKey(now, offset)),
     usage: await getUsage(user.id, now),
     limits: user.role === "admin" ? null : { minutes: user.dailyMinutes, replies: user.dailyReplies },
+    prefs: await getSettings(user.id).then((s) => ({ uiLang: s.uiLang, effects: s.effects })),
   });
 }
 

@@ -5,7 +5,8 @@
 import { z } from "zod";
 import type { LLM } from "../llm";
 import type { Level } from "../levels";
-import { GRAMMAR_TAGS, LEVEL_CONFIG } from "../levels";
+import { LEVEL_CONFIG } from "../levels";
+import { GRAMMAR_TAGS } from "../tags";
 import { ruleCorrect } from "./ruleCorrections";
 
 export const FixSchema = z.object({
@@ -86,7 +87,12 @@ export interface CorrectOptions {
   model: string;
   level: Level;
   language: "ar" | "en" | "de";
+  /** Written text (Schreiben): spelling, capitals and punctuation count too. */
+  written?: boolean;
 }
+
+const WRITTEN_NOTE = `
+IMPORTANT: these are WRITTEN texts, not speech. Also correct spelling, capitalisation (nouns!), umlauts and punctuation, and tag them (e.g. "rechtschreibung").`;
 
 /** Correct every learner turn. Never returns fewer entries than turns. */
 export async function correctAllTurns(turns: LearnerTurn[], o: CorrectOptions): Promise<{ corrections: Correction[]; mode: "ai" | "rules" }> {
@@ -104,7 +110,7 @@ export async function correctAllTurns(turns: LearnerTurn[], o: CorrectOptions): 
       try {
         const out = await o.llm.json({
           model: o.model,
-          system: correctionSystemPrompt(o.level, o.language),
+          system: correctionSystemPrompt(o.level, o.language) + (o.written ? WRITTEN_NOTE : ""),
           prompt: correctionUserPrompt(missing),
           schema: CorrectionBatchSchema,
           maxTokens: 6000,

@@ -6,6 +6,8 @@ import { IconDownload, IconPlay, IconTrash, IconUpload } from "@/components/Icon
 import { MicCheck } from "@/components/MicCheck";
 import { useProviders, useSettings } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
+import { useFx, type FxPref } from "@/lib/client/motion";
+import type { UILang } from "@/lib/client/i18n";
 import { defaultVoiceAssignment, loadVoices, Speaker, speakOptionsFor } from "@/lib/client/tts";
 import { LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
 import { SPEEDS, type Settings } from "@/lib/settings";
@@ -18,7 +20,8 @@ const SAMPLE: Record<Level, string> = {
 };
 
 export default function SettingsPage() {
-  const { t } = useUI();
+  const { t, lang, setLang } = useUI();
+  const { pref: fxPref, setPref: setFxPref } = useFx();
   const { settings, update } = useSettings();
   const providers = useProviders();
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
@@ -73,6 +76,33 @@ export default function SettingsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <h1 className="text-3xl font-extrabold">{t("settings_title")}</h1>
+
+      <Card title={t("set_ui_lang")}>
+        <Select
+          label={t("lang_switch")}
+          value={lang}
+          onChange={(x) => setLang(x as UILang)}
+          options={[
+            ["ar", t("lang_name_ar")],
+            ["de", t("lang_name_de")],
+            ["en", t("lang_name_en")],
+          ]}
+        />
+        <div>
+          <Select
+            label={t("set_effects")}
+            value={fxPref}
+            onChange={(x) => setFxPref(x as FxPref)}
+            options={[
+              ["auto", t("fx_auto")],
+              ["on", t("fx_on")],
+              ["mild", t("fx_mild")],
+              ["off", t("fx_off")],
+            ]}
+          />
+          <p className="text-xs text-muted mt-1">{t("fx_hint")}</p>
+        </div>
+      </Card>
 
       <Card title={t("set_voices")} sub={t("set_voices_sub")}>
         <p className="text-xs text-muted -mt-2">{t("set_speed_sub")}</p>

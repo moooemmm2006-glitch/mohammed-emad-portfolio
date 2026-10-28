@@ -2,7 +2,7 @@
 // It finds a handful of very common learner mistakes with patterns, so the report,
 // the weakness tracker and the "since last time" comparison can be tried end-to-end.
 
-import { tagLabel } from "../levels";
+import { tagLabel } from "../tags";
 import { countWords, splitSentences, tokenizeWords } from "../text";
 import type { ReportContext } from "./context";
 import type { LLMReport, WeaknessKind } from "./schema";
