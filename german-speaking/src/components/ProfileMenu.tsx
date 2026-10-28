@@ -8,7 +8,8 @@ import { useUI } from "@/lib/client/ui";
 import { isLevel } from "@/lib/levels";
 import type { TKey } from "@/lib/client/i18n";
 import { FormError, PasswordField, TextField } from "./Fields";
-import { IconCamera, IconChart, IconFile, IconFlame, IconGear, IconKey, IconLogout, IconPen, IconShield, IconTrash } from "./Icons";
+import { IconCamera, IconChart, IconFile, IconFlame, IconGear, IconKey, IconLogout, IconPen, IconShield, IconTrash, IconVideoPlay } from "./Icons";
+import { useSite } from "./site/SiteProvider";
 import { Modal } from "./Modal";
 import { PHOTO_ACCEPT, PhotoCropper, checkPhotoFile } from "./PhotoCropper";
 import { UserAvatar } from "./UserAvatar";
@@ -24,6 +25,7 @@ type Dialog = "name" | "password" | null;
 export function ProfileMenu() {
   const { t } = useUI();
   const { me, logout, setUser } = useMe();
+  const { links, openExplainer, trackClick } = useSite();
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
   const [cropFile, setCropFile] = useState<File | null>(null);
@@ -187,6 +189,33 @@ export function ProfileMenu() {
             {user.role === "admin" && (
               <MenuLink href="/admin" icon={<IconShield size={18} />} onClick={() => setOpen(false)}>
                 {t("me_admin")}
+              </MenuLink>
+            )}
+            <div className="border-t border-line my-1" />
+            {/* The owner's channel, the break corner and the tutorials. */}
+            {links.channelUrl && (
+              <a
+                href={links.channelUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                data-menu-item
+                onClick={() => (trackClick("menu"), setOpen(false))}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-2"
+              >
+                <IconVideoPlay size={18} /> {t("yt_my_channel")} <span className="red-dot ms-auto" aria-hidden="true" />
+              </a>
+            )}
+            <MenuLink href="/pause" icon={<span className="w-[18px] text-center">☕</span>} onClick={() => setOpen(false)}>
+              {t("pause_name")}
+            </MenuLink>
+            {links.explainerId && (
+              <MenuButton icon={<span className="w-[18px] text-center">▶️</span>} onClick={() => (setOpen(false), openExplainer())}>
+                {t("yt_explainer_short")}
+              </MenuButton>
+            )}
+            {links.playlistId && (
+              <MenuLink href="/tutorials" icon={<span className="w-[18px] text-center">🎓</span>} onClick={() => setOpen(false)}>
+                {t("yt_tutorials")}
               </MenuLink>
             )}
             <div className="border-t border-line my-1" />

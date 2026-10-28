@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSettings, saveSettings } from "@/lib/db/repo";
-import { SettingsSchema } from "@/lib/settings";
+import { SettingsSchema, type Settings } from "@/lib/settings";
 import { jsonError, readJson } from "@/lib/api";
 import { currentUser, unauthorized } from "@/lib/auth/session";
 
@@ -19,5 +19,9 @@ export async function PUT(req: Request) {
   const body = await readJson(req);
   const parsed = SettingsSchema.partial().safeParse(body);
   if (!parsed.success) return jsonError(400, "invalid_settings", parsed.error.message);
-  return NextResponse.json(await saveSettings(parsed.data, user.id));
+  // .partial() still fills in the defaults of the fields that were not sent; keep only the sent ones,
+  // so saving one setting never resets the others.
+  const sent = new Set(Object.keys(body as object));
+  const patch = Object.fromEntries(Object.entries(parsed.data).filter(([k]) => sent.has(k))) as Partial<Settings>;
+  return NextResponse.json(await saveSettings(patch, user.id));
 }

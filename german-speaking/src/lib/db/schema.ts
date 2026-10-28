@@ -102,6 +102,27 @@ export const topicVideos = sqliteTable(
   (t) => [primaryKey({ columns: [t.topic, t.youtubeId] })],
 );
 
+/** Site-wide settings the admin edits (channel link, explainer video, playlist, channel photo…). */
+export const siteSettings = sqliteTable("site_settings", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+/** The owner's own vlogs for "☕ استراحة" (newest first). */
+export const vlogs = sqliteTable("vlogs", {
+  youtubeId: text("youtube_id").primaryKey(),
+  title: text("title").notNull(),
+  descriptionAr: text("description_ar").notNull(),
+  addedAt: integer("added_at").notNull(),
+});
+
+/** Clicks on the channel buttons, per place. */
+export const channelClicks = sqliteTable("channel_clicks", {
+  place: text("place").primaryKey(),
+  count: integer("count").notNull(),
+});
+
 /** One shadowing / review run, kept for its report. */
 export const bookPractice = sqliteTable("book_practice", {
   id: text("id").primaryKey(),
@@ -254,6 +275,9 @@ CREATE TABLE IF NOT EXISTS topic_videos (
   topic INTEGER NOT NULL, youtube_id TEXT NOT NULL, action TEXT NOT NULL, title TEXT NOT NULL, channel TEXT NOT NULL,
   created_at INTEGER NOT NULL, PRIMARY KEY (topic, youtube_id)
 );
+CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS vlogs (youtube_id TEXT PRIMARY KEY, title TEXT NOT NULL, description_ar TEXT NOT NULL, added_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS channel_clicks (place TEXT PRIMARY KEY, count INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS gemini_sessions_user ON gemini_sessions(user_id, created_at);
 CREATE TABLE IF NOT EXISTS book_practice (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER, mode TEXT NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL

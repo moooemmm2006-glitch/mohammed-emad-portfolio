@@ -12,6 +12,7 @@ import { IconArrow, IconPlay, IconSparkle } from "../Icons";
 import { useVoice } from "../book/useVoice";
 import { ArabicText, TopicTitle, useBookTopic, useLevelTopics, type TopicCard } from "./shared";
 import { TiltDiv } from "./Tilt";
+import { useSite } from "../site/SiteProvider";
 
 /** 📖 Lesen: each topic's sections as a continuous German text; tap a sentence for its meaning; a quiz per section. */
 export function ReadPanel({ level }: { level: Level }) {
@@ -212,6 +213,7 @@ function Quiz({ topic, section, onDone, onClose }: { topic: BookTopic; section: 
   const [i, setI] = useState(0);
   const [answers, setAnswers] = useState<(number | null)[]>(() => questions.map(() => null));
   const [finished, setFinished] = useState(false);
+  const { offerPause } = useSite();
   const q = questions[i];
   const chosen = answers[i];
 
@@ -219,6 +221,7 @@ function Quiz({ topic, section, onDone, onClose }: { topic: BookTopic; section: 
     setFinished(true);
     await api("/api/skills/score", { method: "POST", body: JSON.stringify({ skill: "read", topic: topic.number, part: section, score: quizScore(questions, answers) }) }).catch(() => {});
     onDone();
+    offerPause(); // the quiz is over: maybe offer a break (max once a day)
   };
 
   if (!questions.length) return null;

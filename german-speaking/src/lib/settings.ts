@@ -27,6 +27,12 @@ export const SettingsSchema = z.object({
   uiLang: z.enum(["ar", "de", "en"]).default("ar"),
   /** 3D effects: auto = on for computers, reduced on low-end phones. */
   effects: z.enum(["auto", "on", "mild", "off"]).default("auto"),
+  /** The "how to use the site" video was shown (it opens by itself only once). */
+  explainerSeen: z.boolean().default(false),
+  /** The "first time here?" strip on the level pages was closed. */
+  introDismissed: z.boolean().default(false),
+  /** Last day (learner's calendar) the "برافو! عايز تاخد استراحة؟" toast was shown. */
+  pauseOfferDay: z.string().max(10).nullable().default(null),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

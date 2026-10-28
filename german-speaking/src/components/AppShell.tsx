@@ -11,6 +11,8 @@ import { isLevel, LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
 import { LEVEL_COOKIE, levelPath } from "@/lib/paths";
 import { IconMoon, IconSun } from "./Icons";
 import { ProfileMenu } from "./ProfileMenu";
+import { SiteFooter } from "./site/CreatorCard";
+import { useSite } from "./site/SiteProvider";
 
 export const SOON: { slug: string; key: "soon_vokabeln" | "soon_grammatik" | "soon_hoeren" | "soon_lesen" | "soon_schreiben" | "soon_pruefungen"; de: string }[] = [
   { slug: "vokabeln", key: "soon_vokabeln", de: "Vokabeln" },
@@ -33,7 +35,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { me, loading } = useMe();
   // Login and sign-up: language and theme only.
   const bare = PUBLIC_PATHS.includes(path);
-  // The speaking screen is full-screen: no site header on phones, no page padding.
   const active = levelFromPath(path);
 
   // Remember the level for "/" (start page = last level).
@@ -54,6 +55,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           {!bare && <LevelNav active={active} />}
           <div className="ms-auto flex items-center gap-1 shrink-0">
             <LangSwitcher />
+            <ExplainerButton />
             <ThemeButton />
             {me ? (
               <ProfileMenu />
@@ -72,7 +74,20 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main id="main" className="flex-1 mx-auto w-full max-w-6xl px-4 pb-12 pt-5">
         {children}
       </main>
+      <SiteFooter loggedIn={!bare && !!me} />
     </div>
+  );
+}
+
+/** ▶️ "شرح الموقع": the one small header button for the explainer video (only when it exists). */
+function ExplainerButton() {
+  const { t } = useUI();
+  const { links, openExplainer } = useSite();
+  if (!links.explainerId) return null;
+  return (
+    <button type="button" className="btn btn-ghost !px-0 w-[38px] sm:w-10 !min-h-[38px] sm:!min-h-[40px] text-base" aria-label={t("yt_explainer_short")} title={t("yt_explainer_short")} onClick={openExplainer}>
+      <span aria-hidden="true">▶️</span>
+    </button>
   );
 }
 

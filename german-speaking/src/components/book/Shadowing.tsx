@@ -11,6 +11,7 @@ import type { Level } from "@/lib/levels";
 import type { Settings } from "@/lib/settings";
 import { IconEye, IconEyeOff, IconMic, IconPlay, IconRepeat, IconStop } from "../Icons";
 import { useVoice } from "./useVoice";
+import { useSite } from "../site/SiteProvider";
 
 export interface PracticeItem {
   /** Global book sentence number; undefined for grammar examples (not saved to progress). */
@@ -49,6 +50,7 @@ interface Result {
 export function Shadowing({ level, groups, settings, providers, scores: initialScores = {}, track, topic, mode }: Props) {
   const { t } = useUI();
   const router = useRouter();
+  const { offerPause } = useSite();
   const voice = useVoice(level, settings, providers);
   const { stop: stopVoice, say, listen } = voice;
   const items = groups.flatMap((g) => g.items);
@@ -128,6 +130,7 @@ export function Shadowing({ level, groups, settings, providers, scores: initialS
         method: "POST",
         body: JSON.stringify({ topic, mode: mode === "shadow" && reverse ? "reverse" : mode, heard: heard.current }),
       });
+      offerPause(); // practice finished: maybe offer a break on the report page (max once a day)
       router.push(`/reports/practice/${r.id}`);
     } catch {
       setSaving(false);

@@ -162,15 +162,19 @@ export function YouTubePlayer({
 }
 
 /** A playlist from a given episode (plain embed). */
-export function YouTubePlaylist({ listId, index, title, poster }: { listId: string; index: number; title: string; poster: string }) {
+export function YouTubePlaylist({ listId, index = 1, title, poster }: { listId: string; index?: number; title: string; poster?: string | null }) {
   const { t } = useUI();
   const [open, setOpen] = useState(false);
   return (
     <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
       {!open ? (
         <button type="button" className="group absolute inset-0 w-full h-full" onClick={() => setOpen(true)} aria-label={`${t("vid_play")}: ${title}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- YouTube's own thumbnail */}
-          <img src={youtubeThumb(poster)} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition" />
+          {poster ? (
+            // eslint-disable-next-line @next/next/no-img-element -- YouTube's own thumbnail
+            <img src={youtubeThumb(poster)} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition" />
+          ) : (
+            <span className="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-950" />
+          )}
           <span className="absolute inset-0 grid place-items-center">
             <span className="grid place-items-center w-16 h-16 rounded-full bg-[#ff0033] text-white shadow-xl">
               <IconPlay size={28} />

@@ -13,6 +13,8 @@ import { useTilt } from "@/components/level/Tilt";
 import { WritePanel } from "@/components/level/WritePanel";
 import { NicosWegSection } from "@/components/videos/NicosWegSection";
 import { VideoThemaSection } from "@/components/videos/VideoThemaSection";
+import { LevelEndCards } from "@/components/site/CreatorCard";
+import { IntroStrip } from "@/components/site/IntroStrip";
 import { api } from "@/lib/client/api";
 import type { TKey } from "@/lib/client/i18n";
 import { useFx } from "@/lib/client/motion";
@@ -75,6 +77,7 @@ function LevelContent({ level }: { level: Level }) {
 
   return (
     <div className={`level-${level.toLowerCase()} max-w-5xl mx-auto space-y-5`}>
+      <IntroStrip />
       <LevelHeader level={level} progress={progress} />
 
       <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-4 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-14 sm:top-16 z-20 backdrop-blur">
@@ -99,6 +102,9 @@ function LevelContent({ level }: { level: Level }) {
           {skill === "write" && <WritePanel level={level} />}
         </m.div>
       </div>
+
+      {/* After all the content (never between lessons): the owner's channel and the break corner. */}
+      <LevelEndCards />
     </div>
   );
 }

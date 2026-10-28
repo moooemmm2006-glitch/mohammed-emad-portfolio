@@ -9,6 +9,8 @@ import { DICT } from "@/lib/messages";
 import { serverConfig } from "@/lib/config";
 import { dbTarget } from "@/lib/db";
 import { ProvidersProvider } from "@/components/ProvidersProvider";
+import { SiteProvider } from "@/components/site/SiteProvider";
+import { siteLinksSafe } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -32,6 +34,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // Which providers exist (never any keys) — known right away, so no banner pops in later.
   const cfg = serverConfig();
   const providers = { llm: cfg.llmProvider, tts: cfg.tts, stt: cfg.stt, storage: dbTarget().kind };
+  // The owner's channel / explainer / playlist links, so the places that need them never show empty.
+  const site = await siteLinksSafe();
   return (
     <html lang={lang} dir={dirOf(lang)} suppressHydrationWarning>
       <head>
@@ -48,9 +52,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <ProvidersProvider value={providers}>
           <UIProvider initialLang={lang} messages={DICT[lang]}>
             <MeProvider>
-              <MotionProvider>
-                <AppShell>{children}</AppShell>
-              </MotionProvider>
+              <SiteProvider links={site}>
+                <MotionProvider>
+                  <AppShell>{children}</AppShell>
+                </MotionProvider>
+              </SiteProvider>
             </MeProvider>
           </UIProvider>
         </ProvidersProvider>
