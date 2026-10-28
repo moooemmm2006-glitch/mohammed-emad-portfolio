@@ -2,17 +2,15 @@
 
 import { levelPath } from "@/lib/paths";
 import Link from "next/link";
-import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useCallback, useEffect, useRef, useState } from "react";
-import { Avatar } from "@/components/Avatar";
-import { IconMic, IconRepeat, IconSparkle, IconTrash } from "@/components/Icons";
-import { ApiError, api } from "@/lib/client/api";
+import { useParams, useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { IconArrow, IconTrash } from "@/components/Icons";
+import { api } from "@/lib/client/api";
 import { localeOf, type TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { isLevel, type Level } from "@/lib/levels";
 import { ScoreKeys, type StoredReport } from "@/lib/report/schema";
 import { BookReportSection } from "@/components/book/BookReportSection";
-import { aiChatEnabled } from "@/lib/features";
 
 interface Payload {
   session: { id: string; level: string; startedAt: number; topic: string | null };
@@ -31,70 +29,26 @@ export default function ReportPageWrapper() {
 function ReportPage() {
   const { t, lang, tag: tagName } = useUI();
   const { id } = useParams<{ id: string }>();
-  const search = useSearchParams();
   const router = useRouter();
   const [data, setData] = useState<Payload | null>(null);
-  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [reportLang, setReportLang] = useState<"ar" | "en" | "de" | null>(null);
-  const autoStarted = useRef(false);
-
-  const load = useCallback(() => api<Payload>(`/api/sessions/${id}`).then(setData, () => setError(t("err_api"))), [id, t]);
-
-  const generate = useCallback(
-    async (language?: "ar" | "en" | "de") => {
-      setGenerating(true);
-      setError(null);
-      try {
-        await api(`/api/sessions/${id}/report`, { method: "POST", body: JSON.stringify(language ? { language } : {}) });
-        await load();
-        router.replace(`/reports/${id}`);
-      } catch (e) {
-        setError(e instanceof ApiError && e.code === "too_short" ? t("report_too_short") : t("err_api"));
-      } finally {
-        setGenerating(false);
-      }
-    },
-    [id, load, router, t],
-  );
 
   useEffect(() => {
-    void load();
-  }, [load]);
-
-  useEffect(() => {
-    if (data && !data.report && search.get("generate") && !autoStarted.current) {
-      autoStarted.current = true;
-      void generate();
-    }
-  }, [data, search, generate]);
+    api<Payload>(`/api/reports/${id}`).then(setData, () => setError(t("err_api")));
+  }, [id, t]);
 
   if (!data) return <p className="py-20 text-center text-muted">{error ?? t("loading")}</p>;
   const level = (isLevel(data.session.level) ? data.session.level : "A1") as Level;
   const r = data.report;
 
-  if (generating || !r) {
+  // Past conversations are read-only: a session without a saved report just says so.
+  if (!r) {
     return (
       <div className={`level-${level.toLowerCase()} max-w-xl mx-auto text-center py-16 space-y-5`}>
-        <div className="orb mx-auto !w-28 !h-28" data-state={generating ? "thinking" : "idle"} />
-        {generating ? (
-          <>
-            <h1 className="text-xl font-bold">{t("report_generating")}</h1>
-            <p className="text-muted">{t("report_generating_sub")}</p>
-          </>
-        ) : (
-          <>
-            <p>{t("report_none")}</p>
-            <button className="btn btn-primary" onClick={() => void generate()}>
-              <IconSparkle /> {t("report_generate")}
-            </button>
-          </>
-        )}
-        {error && (
-          <p role="alert" className="text-danger">
-            {error}
-          </p>
-        )}
+        <p>{t("report_none")}</p>
+        <Link href="/reports" className="btn btn-ghost">
+          <IconArrow size={16} className="rotate-180 rtl:rotate-0" /> {t("reports_title")}
+        </Link>
       </div>
     );
   }
@@ -103,7 +57,7 @@ function ReportPage() {
   const locale = localeOf(lang);
   const del = async () => {
     if (!confirm(t("report_delete_confirm"))) return;
-    await api(`/api/sessions/${id}`, { method: "DELETE" }).catch(() => {});
+    await api(`/api/reports/${id}`, { method: "DELETE" }).catch(() => {});
     router.push("/reports");
   };
 
@@ -111,7 +65,7 @@ function ReportPage() {
     <div className={`level-${level.toLowerCase()} max-w-4xl mx-auto space-y-6`}>
       {/* header */}
       <header className="card p-5 sm:p-6 flex flex-wrap items-center gap-5">
-        <Avatar level={level} size={64} />
+        <span className="grid place-items-center w-16 h-16 rounded-2xl bg-accent text-white text-xl font-extrabold de shrink-0">{level}</span>
         <div className="flex-1 min-w-[12rem]">
           <h1 className="text-2xl font-extrabold">{t("report_title")}</h1>
           <dl className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted">
@@ -125,28 +79,6 @@ function ReportPage() {
         </div>
         <ScoreRing value={r.overall} />
       </header>
-
-      {r.generatedBy === "mock" && <p className="rounded-xl bg-surface-2 px-4 py-2 text-sm text-muted">{t("report_mock_note")}</p>}
-
-      <div className="flex flex-wrap items-center gap-2 text-sm">
-        <span className="text-muted">{t("report_lang")}:</span>
-        {(["ar", "en", "de"] as const).map((l) => (
-          <button
-            key={l}
-            className="chip min-h-[40px]"
-            aria-pressed={(reportLang ?? r.language) === l}
-            onClick={() => {
-              setReportLang(l);
-              if (l !== r.language) void generate(l);
-            }}
-          >
-            {t(`lang_${l}` as TKey)}
-          </button>
-        ))}
-        <button className="chip ms-auto min-h-[40px]" onClick={() => void generate(r.language)}>
-          <IconRepeat size={14} /> {t("report_regenerate")}
-        </button>
-      </div>
 
       <div dir={dir} className="space-y-6">
         {/* since last time */}
@@ -209,7 +141,6 @@ function ReportPage() {
         {r.book && <BookReportSection book={r.book} level={r.session.level} />}
 
         <Section title={`${t("report_mistakes")} (${r.mistakes.length})`}>
-          {r.correctionsMode === "rules" && <DemoCorrectionNote />}
           {r.mistakes.length === 0 ? (
             <p className="text-muted">{t("report_no_mistakes")}</p>
           ) : (
@@ -310,7 +241,7 @@ function ReportPage() {
 
       <div className="flex flex-wrap gap-3 justify-between">
         <Link href={levelPath(level)} className="btn btn-primary">
-          <IconMic /> {t("report_practice_again")}
+          {t("report_practice_again")}
         </Link>
         <button className="btn btn-ghost text-danger" onClick={del}>
           <IconTrash size={18} /> {t("report_delete")}
@@ -405,12 +336,6 @@ function SeverityBadge({ severity }: { severity: "low" | "medium" | "high" }) {
   return <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cls}`}>{t(`report_severity_${severity}` as TKey)}</span>;
 }
 
-function DemoCorrectionNote() {
-  const { t } = useUI();
-  if (!aiChatEnabled()) return null; // no "demo" notices while the AI chat is switched off
-  return <p className="mb-3 rounded-lg bg-gold/10 px-3 py-2 text-xs">⚠ {t("report_demo_corrections")}</p>;
-}
-
 /** Wrap every occurrence of `parts` in `text` with a highlight (case-insensitive). */
 function Highlight({ text, parts, className }: { text: string; parts: string[]; className: string }) {
   const clean = parts.map((p) => p.trim()).filter(Boolean);
@@ -454,7 +379,6 @@ function CorrectionsList({ report }: { report: StoredReport }) {
   if (!list.length) return <p className="text-muted">—</p>;
   return (
     <>
-      {report.correctionsMode === "rules" && <DemoCorrectionNote />}
       <ol className="space-y-3">
         {list.map((c) => (
           <li key={c.turn} className={`rounded-2xl border p-4 ${c.isCorrect ? "border-ok/40 bg-ok/5" : "border-line"}`}>

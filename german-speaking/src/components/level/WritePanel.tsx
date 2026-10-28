@@ -51,7 +51,7 @@ function WriteTopic({ n, onBack, onScored }: { n: number; onBack: () => void; on
   const [run, setRun] = useState(0);
   const providers = useProviders();
   // Free writing needs an AI; without one its tab is simply not shown (no "needs an API key" notice).
-  const modes = providers?.llm === "mock" ? MODES.filter((m) => m.id !== "free") : MODES;
+  const modes = providers?.llm !== "anthropic" ? MODES.filter((m) => m.id !== "free") : MODES;
   if (!data) return <p className="text-muted">{t("loading")}</p>;
   const topic = data.topic;
   return (
@@ -291,7 +291,6 @@ function FreeWriting({ topic, onDone }: { topic: BookTopic; onDone: () => void }
   const [result, setResult] = useState<WritingCheck | null>(null);
   const [error, setError] = useState(false);
   if (!providers) return null;
-  if (providers.llm === "mock") return <p className="card depth p-5">{t("write_free_need_api")}</p>;
 
   const send = async () => {
     setBusy(true);

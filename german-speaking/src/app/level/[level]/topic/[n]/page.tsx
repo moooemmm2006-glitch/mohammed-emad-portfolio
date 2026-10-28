@@ -1,6 +1,6 @@
 "use client";
 
-import { chatPath, levelPath, topicPath } from "@/lib/paths";
+import { levelPath, topicPath } from "@/lib/paths";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -10,20 +10,20 @@ import { IconArrow, IconBook, IconHeadphones, IconMic, IconRepeat } from "@/comp
 import { EasyGermanTab } from "@/components/videos/EasyGermanTab";
 import { api, useProviders, useSettings } from "@/lib/client/api";
 import type { TKey } from "@/lib/client/i18n";
-import { unlockSpeech } from "@/lib/client/tts";
 import { useUI } from "@/lib/client/ui";
 import type { BookTopic } from "@/lib/book";
 import { isLevel } from "@/lib/levels";
 import { GeminiCard } from "@/components/gemini/GeminiCard";
-import { aiChatEnabled } from "@/lib/features";
 
 const TABS = [
   { id: "shadow", key: "tab_shadow", icon: IconRepeat },
-  { id: "talk", key: "tab_talk", icon: IconMic },
+  { id: "gemini", key: "tab_gemini", icon: IconMic },
   { id: "grammar", key: "tab_grammar", icon: IconBook },
   { id: "hoeren", key: "tab_hoeren", icon: IconHeadphones },
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
+// Old links (?tab=talk, the removed in-site conversation) open the Gemini tab.
+const TAB_ALIASES: Record<string, Tab> = { talk: "gemini" };
 
 export default function TopicPageWrapper() {
   return (
@@ -40,12 +40,12 @@ function TopicPage() {
   const search = useSearchParams();
   const level = params.level?.toUpperCase();
   const number = Number(params.n);
-  const tab = (TABS.find((x) => x.id === search.get("tab"))?.id ?? "shadow") as Tab;
+  const asked = search.get("tab") ?? "";
+  const tab = (TAB_ALIASES[asked] ?? TABS.find((x) => x.id === asked)?.id ?? "shadow") as Tab;
   const { settings } = useSettings();
   const providers = useProviders();
   const [data, setData] = useState<{ topic: BookTopic; scores: Record<number, number> } | null>(null);
   const [error, setError] = useState(false);
-  const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     if (!Number.isInteger(number)) return setError(true);
@@ -67,17 +67,6 @@ function TopicPage() {
   if (!data || !settings || !providers) return <p className="py-20 text-center text-muted">{t("loading")}</p>;
   const { topic } = data;
   const setTab = (id: Tab) => router.replace(topicPath(level, number, id), { scroll: false });
-
-  const startTalk = async () => {
-    unlockSpeech(); // the tap is the gesture the browser needs before the partner may speak
-    setStarting(true);
-    try {
-      const d = await api<{ session: { id: string } }>("/api/sessions", { method: "POST", body: JSON.stringify({ level, bookTopic: topic.number }) });
-      router.push(chatPath(level, d.session.id, true));
-    } catch {
-      setStarting(false);
-    }
-  };
 
   return (
     <div className={`level-${level.toLowerCase()} max-w-3xl mx-auto space-y-5`}>
@@ -112,13 +101,6 @@ function TopicPage() {
         </div>
       </header>
 
-      <GeminiCard
-        level={level}
-        variant="compact"
-        topic={topic.number}
-        ctx={{ kind: "topic", title_de: topic.title_de, title_ar: topic.title_ar, vocab: topic.vocab.map((v) => v.de), grammar: topic.grammar.map((g) => g.title_de) }}
-      />
-
       <div role="tablist" aria-label={topic.title_de} className="grid grid-cols-4 gap-1 rounded-2xl bg-surface-2 p-1 sticky top-16 z-10">
         {TABS.map((x) => (
           <button
@@ -152,28 +134,12 @@ function TopicPage() {
             }))}
           />
         )}
-        {tab === "talk" && (
-          <section className="card p-5 space-y-4">
-            <h2 className="text-xl font-bold">{t("talk_title")}</h2>
-            <p className="text-sm leading-relaxed">{!aiChatEnabled() ? t("talk_script") : providers.llm === "mock" ? t("talk_mock") : t("talk_ai")}</p>
-            <div>
-              <p className="text-sm font-semibold mb-2">{t("talk_sections")}</p>
-              <ol className="space-y-1.5">
-                {topic.sections.map((s) => (
-                  <li key={s.number} className="flex items-baseline gap-2 rounded-xl bg-surface-2 px-3 py-2 text-sm">
-                    <b className="tabular-nums text-accent">{s.number}.</b>
-                    <span>{s.title_ar}</span>
-                    <span dir="ltr" lang="de" className="de text-muted ms-auto">
-                      {s.title_de}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </div>
-            <button className="btn btn-primary w-full text-lg !py-4" style={{ background: "var(--accent)", color: "#fff" }} onClick={() => void startTalk()} disabled={starting}>
-              <IconMic /> {t("talk_start")}
-            </button>
-          </section>
+        {tab === "gemini" && (
+          <GeminiCard
+            level={level}
+            topic={topic.number}
+            ctx={{ kind: "topic", title_de: topic.title_de, title_ar: topic.title_ar, vocab: topic.vocab.map((v) => v.de), grammar: topic.grammar.map((g) => g.title_de) }}
+          />
         )}
         {tab === "hoeren" && <EasyGermanTab level={level} topic={topic} />}
         {tab === "grammar" && <GrammarTab level={level} grammar={topic.grammar} settings={settings} providers={providers} />}

@@ -76,18 +76,3 @@ export class TurnTranscript {
     };
   }
 }
-
-/** Is this recognised text the learner talking, or just our own TTS voice leaking into the mic? */
-export function isLearnerSpeech(heard: string, partnerText: string): boolean {
-  const words = (s: string) =>
-    s
-      .toLowerCase()
-      .replace(/[^\p{L}\s]/gu, " ")
-      .split(/\s+/)
-      .filter(Boolean);
-  const h = words(heard);
-  if (h.length < 2) return false;
-  const partner = new Set(words(partnerText));
-  const foreign = h.filter((w) => !partner.has(w));
-  return foreign.length >= 2 && foreign.length / h.length >= 0.5;
-}

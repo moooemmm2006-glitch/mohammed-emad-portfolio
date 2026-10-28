@@ -1,3 +1,5 @@
+import { eq } from "drizzle-orm";
+import { getDb, schema } from "./db";
 import { getWeaknesses, listReports, sessionsWithTurnCounts } from "./db/repo";
 import { LEVELS, type Level } from "./levels";
 import { countWords } from "./text";
@@ -18,6 +20,22 @@ export function practiceStreak(days: Set<string>, today: string): number {
     d.setUTCDate(d.getUTCDate() - 1);
   }
   return n;
+}
+
+/**
+ * Days with any practice: book runs (listen & repeat, review), reading/writing exercises, videos,
+ * Gemini conversations (pasted reports) and past in-site conversations.
+ */
+export async function practiceDays(userId: string, tzOffsetMin: number, spokenAt: number[] = []): Promise<Set<string>> {
+  const db = await getDb();
+  const [practice, skills, videos, gemini] = await Promise.all([
+    db.select({ at: schema.bookPractice.createdAt }).from(schema.bookPractice).where(eq(schema.bookPractice.userId, userId)).all(),
+    db.select({ at: schema.skillScores.updatedAt }).from(schema.skillScores).where(eq(schema.skillScores.userId, userId)).all(),
+    db.select({ at: schema.videoProgress.updatedAt }).from(schema.videoProgress).where(eq(schema.videoProgress.userId, userId)).all(),
+    db.select({ at: schema.geminiSessions.createdAt }).from(schema.geminiSessions).where(eq(schema.geminiSessions.userId, userId)).all(),
+  ]);
+  const all = [...spokenAt, ...[...practice, ...skills, ...videos, ...gemini].map((r) => r.at)];
+  return new Set(all.map((at) => dayKey(at, tzOffsetMin)));
 }
 
 export async function computeStats(userId: string, tzOffsetMin = 0, now = Date.now()) {
@@ -99,7 +117,7 @@ export async function computeStats(userId: string, tzOffsetMin = 0, now = Date.n
       sessions: spoken.length,
       minutes: Math.round(totalSec / 60),
       words: totalWords,
-      streak: practiceStreak(new Set(perDay.keys()), today),
+      streak: practiceStreak(await practiceDays(userId, tzOffsetMin, spoken.map((x) => x.session.startedAt)), today),
       reports: reports.length,
     },
     days,

@@ -13,7 +13,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Sprich Deutsch",
-  description: "Speaking-first German practice with level-locked AI conversation partners (A1–B2).",
+  description: "German practice A1–B2 with your own book: listen & repeat, grammar, videos, reading, writing, and voice conversations with Gemini.",
 };
 
 export const viewport: Viewport = {

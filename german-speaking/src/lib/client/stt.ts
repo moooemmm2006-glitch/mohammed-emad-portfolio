@@ -11,7 +11,7 @@
 // Default provider: Web Speech API (de-DE, Chrome/Edge). Optional: record with MediaRecorder and
 // transcribe on the server (/api/stt → Whisper), with the same silence rule.
 
-import { isLearnerSpeech, TurnTranscript, type Segment, type TurnResult } from "./transcript";
+import { TurnTranscript, type Segment, type TurnResult } from "./transcript";
 
 export type STTErrorCode = "not-allowed" | "network" | "unsupported" | "audio-capture" | "server";
 
@@ -260,54 +260,6 @@ export class WebSpeechTurn implements TurnProvider {
       },
     };
   }
-}
-
-/**
- * Listens while the partner is speaking. Calls `onBargeIn` with the first words once they are
- * clearly the learner (not the partner's own voice coming back through the speakers).
- */
-export function startBargeInDetector(getPartnerText: () => string, onBargeIn: (heard: string) => void): () => void {
-  let stopped = false;
-  let rec: SR | null = null;
-  const run = () => {
-    if (stopped) return;
-    rec = newRecognizer();
-    if (!rec) return;
-    rec.onresult = (e) => {
-      const heard = segmentsOf(e)
-        .map((s) => s.text)
-        .join(" ");
-      if (!stopped && isLearnerSpeech(heard, getPartnerText())) {
-        stopped = true;
-        try {
-          rec?.abort();
-        } catch {
-          /* ignore */
-        }
-        onBargeIn(heard.trim());
-      }
-    };
-    rec.onerror = (e) => {
-      if (FATAL[e.error]) stopped = true;
-    };
-    rec.onend = () => {
-      if (!stopped) setTimeout(run, 100);
-    };
-    try {
-      rec.start();
-    } catch {
-      setTimeout(run, 300);
-    }
-  };
-  run();
-  return () => {
-    stopped = true;
-    try {
-      rec?.abort();
-    } catch {
-      /* ignore */
-    }
-  };
 }
 
 /** Whisper provider: record the whole turn, end it with the same silence rule (energy-based), transcribe once. */

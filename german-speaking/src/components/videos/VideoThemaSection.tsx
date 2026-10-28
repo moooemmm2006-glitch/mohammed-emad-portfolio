@@ -7,10 +7,9 @@ import { fill, localeOf } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import type { Episode, FeedResult } from "@/lib/videoThema";
 import { formatTime } from "./YouTubePlayer";
-import { Credit, TalkCard, Tip } from "./NicosWegSection";
-import { useTalkAboutVideo, useVideoProgress } from "./useVideos";
+import { Credit, Tip } from "./NicosWegSection";
+import { useVideoProgress } from "./useVideos";
 import { GeminiVideoLink } from "../gemini/GeminiCard";
-import { aiChatEnabled } from "@/lib/features";
 
 /** DW "Video-Thema" for B2: the latest episodes from DW's official feed (fetched by our server). */
 export function VideoThemaSection() {
@@ -18,7 +17,6 @@ export function VideoThemaSection() {
   const [feed, setFeed] = useState<FeedResult | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
   const { items, save } = useVideoProgress();
-  const talk = useTalkAboutVideo("B2");
   const playerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,7 +74,6 @@ export function VideoThemaSection() {
             </details>
           )}
           <Tip />
-          {aiChatEnabled() && <TalkCard onStart={() => void talk.start({ kind: "videothema", id: open.id })} disabled={talk.starting} />}
         </div>
       )}
 

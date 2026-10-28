@@ -131,8 +131,3 @@ export async function easyGermanProgress(watchedKeys: Set<string>, topicsByLevel
   }
   return out;
 }
-
-/** Title of one of a topic's videos (for the conversation about it), or null if it isn't one of them. */
-export async function topicVideoTitle(topic: number, youtubeId: string): Promise<string | null> {
-  return (await topicVideos(topic)).find((v) => v.youtubeId === youtubeId)?.title ?? null;
-}

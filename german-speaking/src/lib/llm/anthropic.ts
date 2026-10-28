@@ -4,8 +4,8 @@ import { z } from "zod";
 import { withJsonRetries } from "./json";
 import { LLMRefusalError, type ChatParams, type JsonParams, type LLM } from "./types";
 
-// Haiku is used for the conversation turns: thinking off keeps latency low and keeps
-// max_tokens a real cap on the spoken reply. Other models always think, so they get headroom.
+// Haiku writes the reading texts: thinking off keeps latency low and keeps max_tokens a real cap.
+// Other models always think, so they get headroom.
 function thinkingFor(model: string, maxTokens: number) {
   if (/haiku/i.test(model)) {
     return { thinking: { type: "disabled" as const }, max_tokens: maxTokens };
@@ -40,7 +40,6 @@ export class AnthropicLLM implements LLM {
       },
       { signal: p.signal },
     );
-    if (p.onText) stream.on("text", (delta) => p.onText?.(delta));
     const final = await stream.finalMessage();
     if (final.stop_reason === "refusal") throw new LLMRefusalError();
     return textOf(final);

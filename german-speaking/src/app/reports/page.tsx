@@ -11,8 +11,9 @@ export default function ReportsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <h1 className="text-3xl font-extrabold">{t("reports_title")}</h1>
-      <GeminiReports />
-      <div className="card p-3 sm:p-5">{stats ? <HistoryList items={stats.history} /> : <p className="text-muted">{t("loading")}</p>}</div>
+      {/* Gemini reports first; earlier in-site conversations stay readable below. */}
+      <GeminiReports showEmpty={!!stats && stats.history.length === 0} />
+      {!stats ? <p className="text-muted">{t("loading")}</p> : stats.history.length > 0 && <div className="card p-3 sm:p-5"><HistoryList items={stats.history} /></div>}
     </div>
   );
 }

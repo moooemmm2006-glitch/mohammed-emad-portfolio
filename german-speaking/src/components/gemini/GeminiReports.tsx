@@ -8,7 +8,7 @@ import type { GeminiSession } from "@/lib/gemini";
 import { SparkleIcon } from "./GeminiCard";
 
 /** Under "Reports": the reports the learner pasted from Gemini, text kept as written (line breaks, RTL). */
-export function GeminiReports() {
+export function GeminiReports({ showEmpty = false }: { showEmpty?: boolean }) {
   const { t, lang } = useUI();
   const [items, setItems] = useState<GeminiSession[] | null>(null);
   useEffect(() => {
@@ -20,7 +20,8 @@ export function GeminiReports() {
     await api(`/api/gemini/sessions/${id}`, { method: "DELETE" }).then(() => setItems((xs) => xs?.filter((x) => x.id !== id) ?? null), () => {});
   };
 
-  if (!items?.length) return null;
+  if (!items) return null;
+  if (!items.length) return showEmpty ? <p className="card p-5 text-muted">{t("reports_empty")}</p> : null;
   return (
     <section className="card p-3 sm:p-5 space-y-3" aria-label={t("gem_reports_title")}>
       <h2 className="text-lg font-bold flex items-center gap-2 px-2 sm:px-0">

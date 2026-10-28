@@ -4,7 +4,7 @@ import { getDb, schema } from "./db";
 import { getWeaknesses, saveWeaknesses } from "./db/repo";
 import { serverConfig } from "./config";
 import type { BookTopic } from "./book";
-import { levelRulesBlock } from "./prompts";
+import { levelRulesBlock } from "./levelRules";
 import type { Level } from "./levels";
 import type { LLM } from "./llm";
 import { correctAllTurns, type Correction } from "./report/corrections";
@@ -28,7 +28,7 @@ export async function checkFreeWriting(userId: string, topic: BookTopic, text: s
   const sentences = splitSentences(text.trim()).slice(0, 30);
   const { corrections } = await correctAllTurns(
     sentences.map((s, i) => ({ turn: i + 1, text: s })),
-    { llm, model: serverConfig().reportModel, level: topic.level, language: "ar", written: true },
+    { llm, model: serverConfig().correctionModel, level: topic.level, language: "ar", written: true },
   );
   const byTag = new Map<string, number>();
   for (const c of corrections) for (const f of c.fixes) byTag.set(normalizeTag(f.tag), (byTag.get(normalizeTag(f.tag)) ?? 0) + 1);
@@ -62,6 +62,6 @@ Use many of the given words and the given grammar, stay strictly at the level, n
   const prompt = `Topic: ${topic.title_de} (${topic.title_ar})
 Words: ${topic.vocab.map((v) => v.de).join(", ")}
 Grammar: ${topic.grammar.map((g) => `${g.title_de}: ${g.formula}`).join(" | ")}`;
-  const text = await llm.chat({ model: serverConfig().chatModel, system, messages: [{ role: "user", content: prompt }], maxTokens: 700, purpose: "reading", level });
+  const text = await llm.chat({ model: serverConfig().textModel, system, messages: [{ role: "user", content: prompt }], maxTokens: 700, purpose: "reading", level });
   return text.trim();
 }

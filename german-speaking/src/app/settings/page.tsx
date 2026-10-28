@@ -1,22 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Avatar } from "@/components/Avatar";
 import { IconDownload, IconPlay, IconTrash, IconUpload } from "@/components/Icons";
 import { MicCheck } from "@/components/MicCheck";
 import { useProviders, useSettings } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
 import { useFx, type FxPref } from "@/lib/client/motion";
-import type { UILang } from "@/lib/client/i18n";
+import type { TKey, UILang } from "@/lib/client/i18n";
 import { defaultVoiceAssignment, loadVoices, Speaker, speakOptionsFor } from "@/lib/client/tts";
 import { LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
 import { SPEEDS, type Settings } from "@/lib/settings";
 
 const SAMPLE: Record<Level, string> = {
-  A1: "Hallo! Ich bin Lena. Wie heißt du?",
-  A2: "Hey, ich bin Jonas. Was hast du am Wochenende gemacht?",
-  B1: "Hallo, ich bin Mira. Wie läuft dein Projekt gerade?",
-  B2: "Guten Tag, Tobias Wendt. Wie würden Sie Ihre Position begründen?",
+  A1: "Hallo! Ich heiße Lena. Wie heißt du?",
+  A2: "Am Wochenende habe ich meine Freunde getroffen.",
+  B1: "Obwohl es geregnet hat, sind wir spazieren gegangen.",
+  B2: "Wie würden Sie Ihre Position begründen?",
 };
 
 export default function SettingsPage() {
@@ -113,10 +112,8 @@ export default function SettingsPage() {
             return (
               <li key={level} className={`level-${level.toLowerCase()} rounded-xl border border-line p-4 space-y-3`}>
                 <div className="flex items-center gap-3">
-                  <Avatar level={level} size={40} />
-                  <b className="de">
-                    {level} · {LEVEL_CONFIG[level].persona.name}
-                  </b>
+                  <span className="rounded-full px-2.5 py-0.5 text-sm font-bold text-white bg-accent de">{level}</span>
+                  <b>{t(`lvl_${level}_name` as TKey)}</b>
                   <button className="btn btn-ghost ms-auto !min-h-[36px] !py-1" onClick={() => speaker.current?.speakNow(SAMPLE[level], speakOptionsFor(level, settings))}>
                     <IconPlay size={16} /> {t("set_preview")}
                   </button>
@@ -189,65 +186,6 @@ export default function SettingsPage() {
         </p>
       </Card>
 
-      <Card title={t("set_conversation")}>
-        <div>
-          <Slider
-            label={t("set_silence")}
-            value={settings.silenceMs / 1000}
-            min={1.5}
-            max={6}
-            step={0.5}
-            format={(x) => `${x.toFixed(1)} ${t("seconds")}`}
-            onChange={(x) => save({ silenceMs: Math.round(x * 1000) })}
-          />
-          <p className="text-xs text-muted mt-1">{t("set_silence_sub")}</p>
-        </div>
-        <Toggle label={t("set_autoturn")} checked={settings.autoTurn} onChange={(x) => save({ autoTurn: x })} />
-        <Toggle label={t("set_bargein")} checked={settings.bargeIn} onChange={(x) => save({ bargeIn: x })} />
-        <Toggle label={t("set_showtext")} checked={settings.showPartnerText} onChange={(x) => save({ showPartnerText: x })} />
-        <Toggle label={t("set_focus")} checked={settings.focusSteering} onChange={(x) => save({ focusSteering: x })} />
-        <Select
-          label={t("set_corrections")}
-          value={settings.correctionMode}
-          onChange={(x) => save({ correctionMode: x as Settings["correctionMode"] })}
-          options={[
-            ["recast", t("set_corr_recast")],
-            ["immediate", t("set_corr_immediate")],
-          ]}
-        />
-        <Select
-          label={t("set_checkmode")}
-          value={settings.levelCheckMode}
-          onChange={(x) => save({ levelCheckMode: x as Settings["levelCheckMode"] })}
-          options={[
-            ["strict", t("set_check_strict")],
-            ["fast", t("set_check_fast")],
-          ]}
-        />
-      </Card>
-
-      <Card title={t("set_report")}>
-        <Select
-          label={t("set_reportlang")}
-          value={settings.reportLang}
-          onChange={(x) => save({ reportLang: x as Settings["reportLang"] })}
-          options={[
-            ["ar", t("lang_ar")],
-            ["en", t("lang_en")],
-            ["de", t("lang_de")],
-          ]}
-        />
-        <Select
-          label={t("set_hintlang")}
-          value={settings.hintLang}
-          onChange={(x) => save({ hintLang: x as Settings["hintLang"] })}
-          options={[
-            ["ar", t("lang_ar")],
-            ["en", t("lang_en")],
-          ]}
-        />
-      </Card>
-
       <Card title={t("set_mic")}>
         {micTest ? (
           <MicCheck
@@ -264,6 +202,18 @@ export default function SettingsPage() {
             {t("set_mic")}
           </button>
         )}
+        <div>
+          <Slider
+            label={t("set_silence")}
+            value={settings.silenceMs / 1000}
+            min={1.5}
+            max={6}
+            step={0.5}
+            format={(x) => `${x.toFixed(1)} ${t("seconds")}`}
+            onChange={(x) => save({ silenceMs: Math.round(x * 1000) })}
+          />
+          <p className="text-xs text-muted mt-1">{t("set_silence_sub")}</p>
+        </div>
       </Card>
 
       <Card title={t("set_data")}>
@@ -299,15 +249,6 @@ function Card({ title, sub, children }: { title: string; sub?: string; children:
       </div>
       {children}
     </section>
-  );
-}
-
-function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
-  return (
-    <label className="flex items-center justify-between gap-4 cursor-pointer">
-      <span>{label}</span>
-      <input type="checkbox" role="switch" className="w-5 h-5 accent-[var(--brand)]" checked={checked} onChange={(e) => onChange(e.target.checked)} />
-    </label>
   );
 }
 

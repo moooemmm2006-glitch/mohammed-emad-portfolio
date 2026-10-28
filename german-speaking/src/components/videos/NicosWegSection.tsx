@@ -4,18 +4,15 @@ import { DW_COURSE_URL, NICOS_WEG_CREDIT, nicosWeg, youtubePlaylistUrl, youtubeW
 import { fill } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { percentOf } from "@/lib/videoShared";
-import { IconMic } from "../Icons";
 import { formatTime, YouTubePlayer, YouTubePlaylist } from "./YouTubePlayer";
-import { useTalkAboutVideo, useVideoProgress } from "./useVideos";
+import { useVideoProgress } from "./useVideos";
 import { GeminiVideoLink } from "../gemini/GeminiCard";
-import { aiChatEnabled } from "@/lib/features";
 
 /** DW "Nicos Weg" for A1, A2 and B1: the level's full movie, the episodes playlist (when verified), progress. */
 export function NicosWegSection({ level }: { level: "A1" | "A2" | "B1" }) {
   const { t } = useUI();
   const cfg = nicosWeg[level];
   const { items, loaded, save } = useVideoProgress();
-  const talk = useTalkAboutVideo(level);
   const movieKey = `nicos:${level}:movie`;
   const movie = items[movieKey];
   const pct = percentOf(movie);
@@ -79,7 +76,6 @@ export function NicosWegSection({ level }: { level: "A1" | "A2" | "B1" }) {
         </div>
       )}
 
-      {aiChatEnabled() && <TalkCard onStart={() => void talk.start({ kind: "nicos" })} disabled={talk.starting} />}
     </section>
   );
 }
@@ -99,16 +95,4 @@ export function Credit({ text, href }: { text: string; href: string }) {
 export function Tip() {
   const { t } = useUI();
   return <p className="rounded-xl bg-accent-soft px-3 py-2 text-sm">💡 {t("vid_tip")}</p>;
-}
-
-export function TalkCard({ onStart, disabled }: { onStart: () => void; disabled?: boolean }) {
-  const { t } = useUI();
-  return (
-    <div className="card p-5 flex flex-wrap items-center gap-3">
-      <p className="flex-1 min-w-[12rem] text-sm">{t("vid_talk_sub")}</p>
-      <button className="btn btn-primary" style={{ background: "var(--accent)", color: "#fff" }} onClick={onStart} disabled={disabled}>
-        <IconMic size={18} /> {t("vid_talk")}
-      </button>
-    </div>
-  );
 }

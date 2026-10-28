@@ -36,20 +36,6 @@ export interface LearnerTurn {
   text: string;
 }
 
-const FILLER = /^(m+h*m+|ä+h*m*|ö+h*m*|e+h*m+|h+m+|u+h*m*|aha|ah|oh|na)$/i;
-
-/** "Mhm", "äh", "ähm …" — not a sentence to correct (but still counts for fluency). */
-export function isFillerOnly(text: string): boolean {
-  const words = text.toLowerCase().match(/[\p{L}]+/gu) ?? [];
-  return words.length === 0 || words.every((w) => FILLER.test(w));
-}
-
-export function learnerTurnsToCorrect(transcript: { role: string; text: string }[]): LearnerTurn[] {
-  return transcript
-    .filter((t) => t.role === "learner" && !isFillerOnly(t.text))
-    .map((t, i) => ({ turn: i + 1, text: t.text.trim() }));
-}
-
 const LANG = { ar: "simple Egyptian-friendly Arabic", en: "simple English", de: "simple German" };
 
 export function correctionSystemPrompt(level: Level, language: "ar" | "en" | "de"): string {
@@ -74,7 +60,7 @@ export function correctionUserPrompt(turns: LearnerTurn[]): string {
   return `Learner turns to correct (JSON):\n${JSON.stringify(turns.map((t) => ({ turn: t.turn, text: t.text })))}`;
 }
 
-/** Rule-based correction (demo mode, and fallback if the model keeps skipping a turn). */
+/** Rule-based correction: the fallback if the model keeps skipping a turn. */
 export function ruleCorrection(t: LearnerTurn, language: "ar" | "en" | "de"): Correction {
   const { corrected, fixes } = ruleCorrect(t.text, language);
   return { turn: t.turn, original: t.text, corrected, isCorrect: fixes.length === 0, natural: null, fixes };
@@ -96,8 +82,7 @@ IMPORTANT: these are WRITTEN texts, not speech. Also correct spelling, capitalis
 
 /** Correct every learner turn. Never returns fewer entries than turns. */
 export async function correctAllTurns(turns: LearnerTurn[], o: CorrectOptions): Promise<{ corrections: Correction[]; mode: "ai" | "rules" }> {
-  if (turns.length === 0) return { corrections: [], mode: o.llm.provider === "mock" ? "rules" : "ai" };
-  if (o.llm.provider === "mock") return { corrections: turns.map((t) => ruleCorrection(t, o.language)), mode: "rules" };
+  if (turns.length === 0) return { corrections: [], mode: "ai" };
 
   const byTurn = new Map<number, Correction>();
   const batches: LearnerTurn[][] = [];
@@ -132,20 +117,4 @@ export async function correctAllTurns(turns: LearnerTurn[], o: CorrectOptions): 
   // Anything still missing gets the rule-based check, so no sentence is ever skipped.
   const corrections = turns.map((t) => byTurn.get(t.turn) ?? ruleCorrection(t, o.language));
   return { corrections, mode: "ai" };
-}
-
-/** The complete mistakes list, derived from the corrections (one entry per fix). */
-export function mistakesFromCorrections(corrections: Correction[]) {
-  return corrections.flatMap((c) =>
-    c.fixes.map((f) => ({ said: f.wrong, corrected: f.right, explanation: f.explanation, tag: f.tag, severity: f.severity, sentence: c.original })),
-  );
-}
-
-const norm = (s: string) => s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim();
-
-/** True if `example` quotes (part of) a sentence that had mistakes. */
-export function quotesWrongSentence(example: string, corrections: Correction[]): boolean {
-  const e = norm(example);
-  if (!e) return false;
-  return corrections.some((c) => !c.isCorrect && (norm(c.original).includes(e) || e.includes(norm(c.original)) || c.fixes.some((f) => e.includes(norm(f.wrong)))));
 }

@@ -10,8 +10,7 @@ export const dynamic = "force-dynamic";
 
 type Ctx = { params: Promise<{ id: string }> };
 
-const Limit = z.number().int().min(0).max(1440).nullable().optional();
-const Patch = z.object({ disabled: z.boolean().optional(), dailyMinutes: Limit, dailyReplies: Limit });
+const Patch = z.object({ disabled: z.boolean().optional() });
 
 async function target(ctx: Ctx) {
   const admin = await currentUser();

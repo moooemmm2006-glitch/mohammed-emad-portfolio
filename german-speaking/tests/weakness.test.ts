@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { diffTracker, pickFocus, updateWeaknessTracker, type WeaknessEntry } from "@/lib/report/weakness";
+import { updateWeaknessTracker, type WeaknessEntry } from "@/lib/report/weakness";
 
 const s = (n: number, counts: [string, number][]) => ({
   sessionId: `s${n}`,
@@ -25,7 +25,6 @@ describe("weakness tracker", () => {
     expect(by2.trennbare_verben.status).toBe("new");
     expect(by2.pron_ch_sch.status).toBe("persisting");
     expect(by2.modalverben.totalCount).toBe(5);
-    expect(diffTracker(d1, d2)).toEqual({ improved: ["modalverben"], regressed: [], new: ["trennbare_verben"], unresolved: ["pron_ch_sch"] });
 
     // Day 3: trennbare Verben gone, Modalverben gone
     const d3 = updateWeaknessTracker(d2, s(3, [["pron_ch_sch", 1]]));
@@ -48,7 +47,7 @@ describe("weakness tracker", () => {
     expect(mv.history.at(-1)?.regressed).toBe(true);
     expect(mv.firstSeen).toBe("2026-10-01T10:00:00.000Z");
     expect(mv.lastSeen).toBe("2026-10-05T10:00:00.000Z");
-    expect(diffTracker(d4, d5).regressed).toEqual(["modalverben"]);
+    expect(d5.find((e) => e.tag === "modalverben")?.history.at(-1)?.regressed).toBe(true);
   });
 
   it("keeps resolved entries untouched while absent and ignores zero counts", () => {
@@ -64,10 +63,5 @@ describe("weakness tracker", () => {
     for (let i = 1; i <= 30; i++) t = updateWeaknessTracker(t, { sessionId: `x${i}`, date: `d${i}`, counts: [{ tag: "artikel_genus", kind: "grammar", count: 2 }] });
     expect(t[0].history).toHaveLength(20);
     expect(t[0].totalCount).toBe(60);
-  });
-
-  it("picks an open grammar weakness as the next focus", () => {
-    const t = updateWeaknessTracker(updateWeaknessTracker([], s(1, [["modalverben", 3], ["pron_r", 5]])), s(2, [["modalverben", 3], ["perfekt", 1]]));
-    expect(pickFocus(t)?.tag).toBe("modalverben"); // persisting beats new; pronunciation is never a focus
   });
 });

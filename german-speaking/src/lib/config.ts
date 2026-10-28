@@ -5,7 +5,7 @@ export type SttProvider = "webspeech" | "openai";
 
 export function serverConfig() {
   const env = process.env;
-  const hasAnthropic = Boolean(env.ANTHROPIC_API_KEY) && env.LLM_PROVIDER !== "mock";
+  const hasAnthropic = Boolean(env.ANTHROPIC_API_KEY);
 
   let tts = (env.TTS_PROVIDER ?? "webspeech") as TtsProvider;
   if (tts === "openai" && !env.OPENAI_API_KEY) tts = "webspeech";
@@ -17,12 +17,11 @@ export function serverConfig() {
   if (!["webspeech", "openai"].includes(stt)) stt = "webspeech";
 
   return {
-    llmProvider: hasAnthropic ? ("anthropic" as const) : ("mock" as const),
-    chatModel: env.ANTHROPIC_CHAT_MODEL || "claude-haiku-5-5",
-    checkModel: env.ANTHROPIC_CHECK_MODEL || env.ANTHROPIC_CHAT_MODEL || "claude-haiku-5-5",
-    reportModel: env.ANTHROPIC_REPORT_MODEL || "claude-opus-5-5",
+    llmProvider: hasAnthropic ? ("anthropic" as const) : ("none" as const),
+    // Reading texts (Lesen) and free-writing corrections (Schreiben); conversations happen in Gemini.
+    textModel: env.ANTHROPIC_TEXT_MODEL || "claude-haiku-5-5",
+    correctionModel: env.ANTHROPIC_CORRECTION_MODEL || "claude-opus-5-5",
     tts,
     stt,
-    logViolations: env.LOG_LEVEL_VIOLATIONS === "1" || env.NODE_ENV === "development",
   };
 }

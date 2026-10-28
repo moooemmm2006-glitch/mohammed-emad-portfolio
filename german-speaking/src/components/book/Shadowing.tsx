@@ -45,7 +45,7 @@ interface Result {
   cmp: Comparison;
 }
 
-/** "اسمع وكرر": the partner reads a sentence, the learner repeats it, the app compares word by word. */
+/** "اسمع وكرر": the app reads a sentence, the learner repeats it, the app compares word by word. */
 export function Shadowing({ level, groups, settings, providers, scores: initialScores = {}, track, topic, mode }: Props) {
   const { t } = useUI();
   const router = useRouter();

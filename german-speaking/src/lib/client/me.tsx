@@ -13,8 +13,6 @@ export interface Me {
   user: PublicUser;
   lastLevel: string | null;
   streak: number;
-  usage: { day: string; replies: number; minutes: number };
-  limits: { minutes: number | null; replies: number | null } | null;
   prefs?: { uiLang: UILang; effects: "auto" | "on" | "mild" | "off" };
 }
 

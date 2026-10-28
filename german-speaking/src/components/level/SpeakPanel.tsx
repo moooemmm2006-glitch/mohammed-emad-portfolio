@@ -1,71 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { IconMic, IconRepeat } from "../Icons";
-import { api, useProviders } from "@/lib/client/api";
-import { fill, type TKey } from "@/lib/client/i18n";
-import { unlockSpeech } from "@/lib/client/tts";
+import { IconRepeat } from "../Icons";
+import { fill } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
-import { LEVEL_CONFIG, type Level } from "@/lib/levels";
-import { chatPath, topicPath } from "@/lib/paths";
+import type { Level } from "@/lib/levels";
+import { topicPath } from "@/lib/paths";
 import { ArabicText, TopicSkeleton, TopicTitle, useLevelTopics } from "./shared";
 import { topicCount } from "@/lib/bookLevels";
 import { TiltDiv } from "./Tilt";
 import { GeminiCard } from "../gemini/GeminiCard";
-import { aiChatEnabled } from "@/lib/features";
 
-/** 🗣️ Themen & Sprechen: talk with Gemini (the in-site AI chat only when switched on), today's review and the book topics. */
+/** 🗣️ Themen & Sprechen: talk with Gemini at the level, today's review and the book topics. */
 export function SpeakPanel({ level }: { level: Level }) {
   const { t, lang } = useUI();
-  const router = useRouter();
-  const providers = useProviders();
   const { topics, due, error } = useLevelTopics(level);
-  const [chatTopic, setChatTopic] = useState<string | null>(null);
-  const [starting, setStarting] = useState(false);
-  const cfg = LEVEL_CONFIG[level];
-
-  const startFree = async () => {
-    unlockSpeech(); // this tap is the user gesture browsers need before the partner may speak
-    setStarting(true);
-    try {
-      const d = await api<{ session: { id: string } }>("/api/sessions", { method: "POST", body: JSON.stringify({ level, topic: chatTopic }) });
-      router.push(chatPath(level, d.session.id, true));
-    } catch {
-      setStarting(false);
-    }
-  };
   const done = topics?.filter((x) => x.progress.done).length ?? 0;
 
   return (
     <div className="space-y-6">
       <GeminiCard level={level} />
-
-      {aiChatEnabled() && (
-        <section className="card depth p-5 space-y-3">
-          <div>
-            <h2 className="text-lg font-bold">{t("book_free_title")}</h2>
-            <p className="text-sm text-muted">
-              {t("book_free_sub")} · {t("level_partner")}: <span className="de font-semibold text-ink">{level === "B2" ? "Dr. Tobias Wendt" : cfg.persona.name}</span>
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button className="chip min-h-[38px]" aria-pressed={chatTopic === null} onClick={() => setChatTopic(null)}>
-              {t("conv_topic_free")}
-            </button>
-            {cfg.topics.map((tp) => (
-              <button key={tp.id} className="chip min-h-[38px]" aria-pressed={chatTopic === tp.de} onClick={() => setChatTopic(tp.de)}>
-                {t(`ctopic_${level}_${tp.id}` as TKey)}
-              </button>
-            ))}
-          </div>
-          {providers?.llm === "mock" && <p className="rounded-xl bg-surface-2 px-3 py-2 text-xs text-muted">{t("mock_banner")}</p>}
-          <button className="btn btn-primary w-full sm:w-auto" style={{ background: "var(--accent)", color: "#fff" }} onClick={() => void startFree()} disabled={starting}>
-            <IconMic /> {t("conv_start")}
-          </button>
-        </section>
-      )}
 
       {due > 0 && (
         <section className="card depth p-5 flex flex-wrap items-center gap-3 border-gold/50">

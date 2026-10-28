@@ -7,7 +7,7 @@ import { loadVoices, Speaker, speakOptionsFor } from "@/lib/client/tts";
 import type { Level } from "@/lib/levels";
 import type { Settings } from "@/lib/settings";
 
-// The partner's voice and the microphone for book practice (same providers and settings as the conversation).
+// The level's voice and the microphone for book practice (providers and voices from the settings).
 
 export type VoicePhase = "idle" | "speaking" | "listening";
 
@@ -69,7 +69,7 @@ export function useVoice(level: Level, settings: Settings, providers: ServerProv
         setLive("");
         setPhase("listening");
         let heard = "";
-        // A single sentence: send after a shorter pause than in the conversation.
+        // A single sentence: stop listening after a shorter pause than the setting allows.
         const silenceMs = Math.min(settingsRef.current.silenceMs, 2200);
         turn.current = provider.start(
           {

@@ -1,17 +1,9 @@
-import { afterAll, beforeEach, describe, expect, it } from "vitest";
-import fs from "fs";
-import os from "os";
-import path from "path";
-import { runPartnerTurn } from "@/lib/conversation";
-import { resetDbForTests } from "@/lib/db";
-import { createSession } from "@/lib/db/repo";
+import { describe, expect, it } from "vitest";
 import type { JsonParams, LLM } from "@/lib/llm";
-import { MockLLM } from "@/lib/llm/mock";
-import { correctAllTurns, isFillerOnly, learnerTurnsToCorrect, mistakesFromCorrections, quotesWrongSentence, type Correction } from "@/lib/report/corrections";
-import { generateReport } from "@/lib/report/generate";
+import { correctAllTurns } from "@/lib/report/corrections";
 import { ruleCorrect } from "@/lib/report/ruleCorrections";
 
-describe("rule-based corrections (demo mode)", () => {
+describe("rule-based corrections (fallback when the model skips a sentence)", () => {
   it("fixes repeated words and the dative after 'mit'", () => {
     const r = ruleCorrect("ich habe viele Probleme mit mit meine Lieben");
     expect(r.corrected).toBe("ich habe viele Probleme mit meinen Lieben");
@@ -31,22 +23,6 @@ describe("rule-based corrections (demo mode)", () => {
     expect(ruleCorrect("Ich habe nach Berlin gegangen").corrected).toBe("Ich bin nach Berlin gegangen");
     expect(ruleCorrect("weil ich bin müde").corrected).toBe("weil ich müde bin");
     expect(ruleCorrect("Ich wohne in Kairo.").fixes).toEqual([]);
-  });
-
-  it("ignores pure fillers", () => {
-    expect(isFillerOnly("Mhm")).toBe(true);
-    expect(isFillerOnly("äh ähm")).toBe(true);
-    expect(isFillerOnly("Ja, gut")).toBe(false);
-    const turns = learnerTurnsToCorrect([
-      { role: "learner", text: "Hallo" },
-      { role: "partner", text: "Hi" },
-      { role: "learner", text: "Mhm" },
-      { role: "learner", text: "Ich bin Ali" },
-    ]);
-    expect(turns).toEqual([
-      { turn: 1, text: "Hallo" },
-      { turn: 2, text: "Ich bin Ali" },
-    ]);
   });
 });
 
@@ -86,42 +62,5 @@ describe("AI corrections (mocked model)", () => {
     const { corrections } = await correctAllTurns(turns, { llm, model: "m", level: "B1", language: "ar" });
     expect(corrections).toHaveLength(23);
     expect(llm.prompts.length - 1).toBe(3); // 10 + 10 + 3
-  });
-
-  it("detects praise that quotes a wrong sentence", () => {
-    const c: Correction[] = [{ turn: 1, original: "Sehr Hilfe mir", corrected: "Das hilft mir sehr", isCorrect: false, natural: null, fixes: [{ wrong: "Sehr Hilfe mir", right: "Das hilft mir sehr", explanation: "", tag: "wortschatz", severity: "medium" }] }];
-    expect(quotesWrongSentence("Sehr Hilfe mir", c)).toBe(true);
-    expect(quotesWrongSentence("Ich wohne in Kairo", c)).toBe(false);
-    expect(mistakesFromCorrections(c)).toHaveLength(1);
-  });
-});
-
-describe("report with corrections (demo mode, end to end)", () => {
-  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gs-corr-"));
-  let n = 0;
-  beforeEach(() => {
-    resetDbForTests();
-    process.env.DATABASE_PATH = path.join(dir, `t${n++}.db`);
-  });
-  afterAll(() => {
-    resetDbForTests();
-    fs.rmSync(dir, { recursive: true, force: true });
-  });
-
-  it("lists every sentence with its correction, all mistakes, and never praises a wrong sentence", async () => {
-    const llm = new MockLLM();
-    const s = await createSession("A2", null, null, "u1");
-    const said = ["ich habe viele Probleme mit mit meine Lieben", "Sehr Hilfe mir", "ich möchte mit dir sprechen über meine Liebe", "Mhm", "Ich wohne in Kairo."];
-    for (const t of [undefined, ...said]) await runPartnerTurn({ sessionId: s.id, userText: t, emit: () => {}, llm });
-    const r = await generateReport(s.id, { llm });
-
-    expect(r.correctionsMode).toBe("rules");
-    expect(r.corrections?.map((c) => c.original)).toEqual(said.filter((x) => x !== "Mhm"));
-    expect(r.corrections?.filter((c) => c.isCorrect).map((c) => c.original)).toEqual(["Ich wohne in Kairo."]);
-    expect(r.mistakes.length).toBe(4);
-    expect(new Set(r.mistakes.map((m) => m.tag))).toEqual(new Set(["doppeltes_wort", "dativ_akkusativ", "wortschatz", "modalverben"]));
-    for (const st of r.strengths) expect(quotesWrongSentence(st.example, r.corrections!), st.example).toBe(false);
-    // the categories feed the weakness tracker
-    expect(r.weaknessCounts.map((w) => w.tag)).toEqual(expect.arrayContaining(["dativ_akkusativ", "modalverben"]));
   });
 });
