@@ -32,6 +32,10 @@ export const SettingsSchema = z.object({
   focusSteering: z.boolean().default(true),
   levelCheckMode: z.enum(["strict", "fast"]).default("strict"),
   micTested: z.boolean().default(false),
+  /** Interface language (also kept in a cookie for logged-out visitors). */
+  uiLang: z.enum(["ar", "de", "en"]).default("ar"),
+  /** 3D effects: auto = on for computers, reduced on low-end phones. */
+  effects: z.enum(["auto", "on", "mild", "off"]).default("auto"),
 });
 
 export type Settings = z.infer<typeof SettingsSchema>;

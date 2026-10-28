@@ -22,11 +22,10 @@ export interface VoiceDefaults {
   preferLangs: string[]; // in order of preference
 }
 
+/** A conversation topic chip; its label is the message key ctopic_<level>_<id>. */
 export interface Topic {
   id: string;
   de: string;
-  ar: string;
-  en: string;
   business?: boolean;
 }
 
@@ -45,13 +44,8 @@ export interface LevelForbiddenPattern {
   pattern: RegExp;
 }
 
+/** Names, descriptions and topic labels live in messages/*.json (lvl_A1_name, lvl_A1_desc, ctopic_A1_<id>…). */
 export interface LevelInfo {
-  /** Arabic/English level name shown under the code (A1 → مبتدئ). */
-  name: { ar: string; en: string };
-  note?: { ar: string; en: string };
-  /** What you talk about and practise at this level (shown on the cards instead of the partner's job). */
-  topics: { ar: string; en: string };
-  exampleTopics: { ar: string; en: string }[];
   group: "grundlagen" | "aufbau";
 }
 
@@ -100,16 +94,6 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
   A1: {
     level: "A1",
     info: {
-      name: { ar: "المبتدئ", en: "Beginner" },
-      topics: {
-        ar: "أساسيات الحياة اليومية: التعارف، العيلة، الأكل والشرب، الشراء، المواعيد والأرقام، الاتجاهات.",
-        en: "Everyday basics: introductions, family, food and drink, shopping, times and numbers, directions.",
-      },
-      exampleTopics: [
-        { ar: "التعارف", en: "Introductions" },
-        { ar: "الأكل والشرب", en: "Food & drink" },
-        { ar: "المواعيد والأرقام", en: "Times & numbers" },
-      ],
       group: "grundlagen",
     },
     accent: "#059669",
@@ -177,29 +161,19 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       "Gut. Was trinkst du gern? Kaffee oder Tee?",
     ],
     topics: [
-      { id: "intro", de: "Sich vorstellen", ar: "التعارف", en: "Introducing yourself" },
-      { id: "family", de: "Familie", ar: "العيلة", en: "Family" },
-      { id: "food", de: "Essen und Trinken", ar: "الأكل والشرب", en: "Food and drink" },
-      { id: "cafe", de: "Im Café bestellen", ar: "الطلب في كافيه", en: "Ordering in a café" },
-      { id: "day", de: "Mein Tag", ar: "يومي", en: "My day" },
-      { id: "job", de: "Mein Beruf", ar: "شغلي", en: "My job", business: true },
-      { id: "reception", de: "Am Empfang: Kunden begrüßen", ar: "في الاستقبال: الترحيب بعميل", en: "At reception: greeting a client", business: true },
+      { id: "intro", de: "Sich vorstellen" },
+      { id: "family", de: "Familie" },
+      { id: "food", de: "Essen und Trinken" },
+      { id: "cafe", de: "Im Café bestellen" },
+      { id: "day", de: "Mein Tag" },
+      { id: "job", de: "Mein Beruf", business: true },
+      { id: "reception", de: "Am Empfang: Kunden begrüßen", business: true },
     ],
   },
 
   A2: {
     level: "A2",
     info: {
-      name: { ar: "الأساسي", en: "Elementary" },
-      topics: {
-        ar: "يومك وروتينك، السفر والمواصلات، الشغل والدراسة ببساطة، الدكتور والصحة، تحكي عن حاجة حصلت (Perfekt).",
-        en: "Your day and routine, travel and transport, simple work and study talk, the doctor and health, telling what happened (Perfekt).",
-      },
-      exampleTopics: [
-        { ar: "السفر والمواصلات", en: "Travel & transport" },
-        { ar: "عند الدكتور", en: "At the doctor" },
-        { ar: "إيه اللي حصل امبارح", en: "What happened yesterday" },
-      ],
       group: "grundlagen",
     },
     accent: "#0284c7",
@@ -266,29 +240,19 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       "Alles klar. Wohin möchtest du gern mal reisen?",
     ],
     topics: [
-      { id: "weekend", de: "Das Wochenende", ar: "الويك إند", en: "The weekend" },
-      { id: "shopping", de: "Einkaufen", ar: "التسوق", en: "Shopping" },
-      { id: "travel", de: "Reisen", ar: "السفر", en: "Travel" },
-      { id: "doctor", de: "Beim Arzt", ar: "عند الدكتور", en: "At the doctor" },
-      { id: "directions", de: "Nach dem Weg fragen", ar: "السؤال عن الطريق", en: "Asking for directions" },
-      { id: "phone", de: "Ein Telefonat: Termin vereinbaren", ar: "مكالمة: حجز ميعاد", en: "Phone call: making an appointment", business: true },
-      { id: "customer", de: "Einem Kunden helfen", ar: "مساعدة عميل", en: "Helping a customer", business: true },
+      { id: "weekend", de: "Das Wochenende" },
+      { id: "shopping", de: "Einkaufen" },
+      { id: "travel", de: "Reisen" },
+      { id: "doctor", de: "Beim Arzt" },
+      { id: "directions", de: "Nach dem Weg fragen" },
+      { id: "phone", de: "Ein Telefonat: Termin vereinbaren", business: true },
+      { id: "customer", de: "Einem Kunden helfen", business: true },
     ],
   },
 
   B1: {
     level: "B1",
     info: {
-      name: { ar: "المتوسط", en: "Intermediate" },
-      topics: {
-        ar: "تقول رأيك وتدافع عنه، تحكي تجارب، الشغل والعملاء، مكالمات تليفون، مقابلة شغل، مشاكل وحلول.",
-        en: "Giving and defending your opinion, telling experiences, work and customers, phone calls, job interviews, problems and solutions.",
-      },
-      exampleTopics: [
-        { ar: "مقابلة شغل", en: "Job interview" },
-        { ar: "مكالمة مع عميل", en: "Calling a customer" },
-        { ar: "رأيك في الشغل من البيت", en: "Your view on remote work" },
-      ],
       group: "aufbau",
     },
     accent: "#7c3aed",
@@ -351,30 +315,19 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       "Erzähl mal: Was war diese Woche das Beste bei der Arbeit?",
     ],
     topics: [
-      { id: "smalltalk", de: "Small Talk in der Kaffeeküche", ar: "دردشة في مطبخ الشغل", en: "Small talk in the office kitchen" },
-      { id: "experience", de: "Eine Erfahrung erzählen", ar: "احكي تجربة", en: "Telling an experience" },
-      { id: "client", de: "Mit einem Kunden telefonieren", ar: "مكالمة مع عميل", en: "Phone call with a client", business: true },
-      { id: "complaint", de: "Eine Reklamation bearbeiten", ar: "التعامل مع شكوى", en: "Handling a complaint", business: true },
-      { id: "interview", de: "Vorstellungsgespräch", ar: "مقابلة شغل", en: "Job interview", business: true },
-      { id: "meeting", de: "Im Team-Meeting", ar: "في اجتماع الفريق", en: "In a team meeting", business: true },
-      { id: "plans", de: "Pläne und Wünsche", ar: "خطط وأمنيات", en: "Plans and wishes" },
+      { id: "smalltalk", de: "Small Talk in der Kaffeeküche" },
+      { id: "experience", de: "Eine Erfahrung erzählen" },
+      { id: "client", de: "Mit einem Kunden telefonieren", business: true },
+      { id: "complaint", de: "Eine Reklamation bearbeiten", business: true },
+      { id: "interview", de: "Vorstellungsgespräch", business: true },
+      { id: "meeting", de: "Im Team-Meeting", business: true },
+      { id: "plans", de: "Pläne und Wünsche" },
     ],
   },
 
   B2: {
     level: "B2",
     info: {
-      name: { ar: "فوق المتوسط", en: "Upper intermediate" },
-      note: { ar: "قريب من الطلاقة في المواضيع العامة", en: "Close to fluent on general topics" },
-      topics: {
-        ar: "نقاشات ومواضيع عامة: التكنولوجيا، المجتمع، الثقافة، الاقتصاد، الأخبار، مواضيع مهنية، تتكلم بطلاقة وتجادل.",
-        en: "Discussions and general topics: technology, society, culture, the economy, the news, professional topics — speaking fluently and debating.",
-      },
-      exampleTopics: [
-        { ar: "التكنولوجيا والذكاء الاصطناعي", en: "Tech & AI" },
-        { ar: "المجتمع والثقافة", en: "Society & culture" },
-        { ar: "نقاش مهني", en: "Professional debate" },
-      ],
       group: "aufbau",
     },
     accent: "#e11d48",
@@ -426,50 +379,13 @@ export const LEVEL_CONFIG: Record<Level, LevelConfig> = {
       "Interessant. Welches Argument halten Sie persönlich für das stärkste?",
     ],
     topics: [
-      { id: "debate", de: "Diskussion: Homeoffice ja oder nein?", ar: "نقاش: الشغل من البيت؟", en: "Debate: remote work?" },
-      { id: "negotiation", de: "Preisverhandlung mit einem Kunden", ar: "تفاوض على السعر مع عميل", en: "Price negotiation with a client", business: true },
-      { id: "interview", de: "Vorstellungsgespräch (anspruchsvoll)", ar: "مقابلة شغل (متقدمة)", en: "Job interview (demanding)", business: true },
-      { id: "presentation", de: "Ein Projekt präsentieren", ar: "تقديم مشروع", en: "Presenting a project", business: true },
-      { id: "conflict", de: "Konflikt im Team lösen", ar: "حل مشكلة في الفريق", en: "Resolving a team conflict", business: true },
-      { id: "society", de: "Gesellschaft und Technologie", ar: "المجتمع والتكنولوجيا", en: "Society and technology" },
+      { id: "debate", de: "Diskussion: Homeoffice ja oder nein?" },
+      { id: "negotiation", de: "Preisverhandlung mit einem Kunden", business: true },
+      { id: "interview", de: "Vorstellungsgespräch (anspruchsvoll)", business: true },
+      { id: "presentation", de: "Ein Projekt präsentieren", business: true },
+      { id: "conflict", de: "Konflikt im Team lösen", business: true },
+      { id: "society", de: "Gesellschaft und Technologie" },
     ],
   },
 };
 
-// Grammar/pronunciation tags used by the report and the weakness tracker.
-export const GRAMMAR_TAGS: Record<string, { ar: string; en: string }> = {
-  modalverben: { ar: "أفعال المودال", en: "Modal verbs" },
-  trennbare_verben: { ar: "الأفعال المنفصلة", en: "Separable verbs" },
-  artikel_genus: { ar: "أدوات التعريف (der/die/das)", en: "Articles & gender" },
-  dativ_akkusativ: { ar: "الداتيف والأكوزاتيف", en: "Dative & accusative" },
-  wortstellung: { ar: "ترتيب الكلمات", en: "Word order" },
-  verb_position: { ar: "مكان الفعل", en: "Verb position" },
-  perfekt: { ar: "الماضي التام (Perfekt)", en: "Perfect tense" },
-  praeteritum: { ar: "الماضي البسيط (Präteritum)", en: "Simple past" },
-  praepositionen: { ar: "حروف الجر", en: "Prepositions" },
-  konjunktiv_ii: { ar: "Konjunktiv II", en: "Subjunctive II" },
-  nebensaetze: { ar: "الجمل الفرعية", en: "Subordinate clauses" },
-  adjektivendungen: { ar: "نهايات الصفات", en: "Adjective endings" },
-  konjugation: { ar: "تصريف الأفعال", en: "Verb conjugation" },
-  plural: { ar: "الجمع", en: "Plural forms" },
-  negation: { ar: "النفي", en: "Negation" },
-  pronomen: { ar: "الضمائر", en: "Pronouns" },
-  passiv: { ar: "المبني للمجهول", en: "Passive" },
-  wortschatz: { ar: "المفردات", en: "Vocabulary choice" },
-  register_sie_du: { ar: "Sie و du", en: "Sie vs du" },
-  pron_ch_sch: { ar: "نطق ch و sch", en: "ch vs sch" },
-  pron_umlaute: { ar: "نطق ü و ö و ä", en: "Umlauts ü/ö/ä" },
-  pron_p_b: { ar: "الفرق بين p و b", en: "p vs b" },
-  pron_r: { ar: "نطق r", en: "German r" },
-  pron_vokallaenge: { ar: "طول الحروف المتحركة", en: "Vowel length" },
-  pron_z_w_v: { ar: "نطق z و w و v", en: "z, w, v" },
-  pron_auslautverhaertung: { ar: "تقسية الحرف الأخير", en: "Final devoicing" },
-  doppeltes_wort: { ar: "كلمات مكررة", en: "Repeated words" },
-  fluency_pausen: { ar: "التوقفات والتردد", en: "Pauses & hesitation" },
-};
-
-export function tagLabel(tag: string, lang: "ar" | "en" | "de" = "ar"): string {
-  const t = GRAMMAR_TAGS[tag];
-  if (!t) return tag.replace(/_/g, " ");
-  return lang === "ar" ? t.ar : t.en;
-}

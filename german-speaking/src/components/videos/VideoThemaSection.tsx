@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { DW_COURSE_URL, nicosWeg, VIDEO_THEMA_CREDIT } from "../../../data/videos";
 import { api } from "@/lib/client/api";
-import { fill } from "@/lib/client/i18n";
+import { fill, localeOf } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import type { Episode, FeedResult } from "@/lib/videoThema";
 import { formatTime } from "./YouTubePlayer";
@@ -25,7 +25,7 @@ export function VideoThemaSection() {
 
   const open = feed?.episodes.find((e) => e.id === openId) ?? null;
   const watchedCount = feed?.episodes.filter((e) => items[`vt:${e.id}`]?.watched).length ?? 0;
-  const date = (d: string | null) => (d ? new Date(d).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", { dateStyle: "medium" }) : "");
+  const date = (d: string | null) => (d ? new Date(d).toLocaleDateString(localeOf(lang), { dateStyle: "medium" }) : "");
 
   return (
     <section className="space-y-4" aria-label="Video-Thema B2">

@@ -16,7 +16,8 @@ import {
 import { briefFromReport, reportSystemPrompt, reportUserPrompt, sessionInfoFrom, type ReportContext, type TranscriptTurn } from "./context";
 import { correctAllTurns, learnerTurnsToCorrect, mistakesFromCorrections, quotesWrongSentence } from "./corrections";
 import { LLMReportSchema, normalizeReport, overallScore, type StoredReport } from "./schema";
-import { diffTracker, updateWeaknessTracker } from "./weakness";
+import { diffTracker, updateWeaknessTracker, type SessionCounts } from "./weakness";
+import { writingTimeline } from "../writing";
 import { bookReportForSession } from "./book";
 
 export class ReportError extends Error {
@@ -95,8 +96,13 @@ export async function generateReport(sessionId: string, opts: { language?: "ar" 
 
   // Regenerating a report must not count the same session twice in the tracker:
   // rebuild the tracker from all reports in date order with this one replaced.
+  // Free-writing checks (Schreiben) are part of the same timeline.
   const others = (await listReports(ctx.userId)).filter((r) => r.session.sessionId !== sessionId);
-  const before = rebuildTracker(others.filter((r) => r.session.date < ctx.info.date));
+  const timeline: SessionCounts[] = [
+    ...others.map((r) => ({ sessionId: r.session.sessionId, date: r.session.date, counts: r.weaknessCounts })),
+    ...(await writingTimeline(ctx.userId)),
+  ].sort((a, b) => a.date.localeCompare(b.date));
+  const before = timeline.filter((x) => x.date < ctx.info.date).reduce(updateWeaknessTracker, [] as ReturnType<typeof updateWeaknessTracker>);
   const sessionCounts = { sessionId, date: ctx.info.date, counts: report.weaknessCounts };
   const afterThis = updateWeaknessTracker(before, sessionCounts);
 
@@ -114,11 +120,9 @@ export async function generateReport(sessionId: string, opts: { language?: "ar" 
     correctionsMode,
   };
 
-  const later = others.filter((r) => r.session.date >= ctx.info.date);
+  const later = timeline.filter((x) => x.date >= ctx.info.date);
   let finalTracker = afterThis;
-  for (const r of later) {
-    finalTracker = updateWeaknessTracker(finalTracker, { sessionId: r.session.sessionId, date: r.session.date, counts: r.weaknessCounts });
-  }
+  for (const x of later) finalTracker = updateWeaknessTracker(finalTracker, x);
 
   const s = (await getSession(sessionId))!;
   if (!s.endedAt) await updateSession(sessionId, { endedAt: s.lastActiveAt, status: "ended" });

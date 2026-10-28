@@ -5,9 +5,10 @@ import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/client/api";
 import { authErrorText, useMe } from "@/lib/client/me";
 import { useUI } from "@/lib/client/ui";
-import { LEVEL_CONFIG, isLevel } from "@/lib/levels";
+import { isLevel } from "@/lib/levels";
+import type { TKey } from "@/lib/client/i18n";
 import { FormError, PasswordField, TextField } from "./Fields";
-import { IconCamera, IconFlame, IconKey, IconLogout, IconPen, IconShield, IconTrash } from "./Icons";
+import { IconCamera, IconChart, IconFile, IconFlame, IconGear, IconKey, IconLogout, IconPen, IconShield, IconTrash } from "./Icons";
 import { Modal } from "./Modal";
 import { PHOTO_ACCEPT, PhotoCropper, checkPhotoFile } from "./PhotoCropper";
 import { UserAvatar } from "./UserAvatar";
@@ -21,7 +22,7 @@ type Dialog = "name" | "password" | null;
 
 /** Google-style account circle in the header, with a dropdown card. */
 export function ProfileMenu() {
-  const { t, lang } = useUI();
+  const { t } = useUI();
   const { me, logout, setUser } = useMe();
   const [open, setOpen] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
@@ -127,7 +128,7 @@ export function ProfileMenu() {
           role="dialog"
           aria-label={t("me_label")}
           onKeyDown={onMenuKey}
-          className="fixed sm:absolute inset-x-3 sm:inset-x-auto top-16 sm:top-full sm:mt-2 sm:end-0 z-50 sm:w-80 card p-4 text-center"
+          className="fixed sm:absolute inset-x-3 sm:inset-x-auto top-14 sm:top-full sm:mt-2 sm:end-0 z-50 sm:w-80 card p-4 text-center max-h-[calc(100dvh-4.5rem)] overflow-y-auto"
         >
           <div className="relative w-20 h-20 mx-auto">
             <UserAvatar name={user.name} username={user.username} photo={user.photo} size={80} />
@@ -148,7 +149,7 @@ export function ProfileMenu() {
           </p>
           <p className="mt-2 text-sm text-muted flex items-center justify-center gap-2 flex-wrap">
             <span>
-              {t("me_level")}: {level ? <span className="font-semibold text-ink">{level} · {LEVEL_CONFIG[level].info.name[lang]}</span> : t("me_no_level")}
+              {t("me_level")}: {level ? <span className="font-semibold text-ink">{level} · {t(`lvl_${level}_name` as TKey)}</span> : t("me_no_level")}
             </span>
             {me.streak > 0 && (
               <span className="inline-flex items-center gap-1">
@@ -172,10 +173,21 @@ export function ProfileMenu() {
             <MenuButton icon={<IconKey size={18} />} onClick={() => (setOpen(false), setDialog("password"))}>
               {t("me_password")}
             </MenuButton>
+            <div className="border-t border-line my-1" />
+            {/* The pages that used to be in the header live here now. */}
+            <MenuLink href="/progress" icon={<IconChart size={18} />} onClick={() => setOpen(false)}>
+              {t("nav_progress")}
+            </MenuLink>
+            <MenuLink href="/reports" icon={<IconFile size={18} />} onClick={() => setOpen(false)}>
+              {t("nav_reports")}
+            </MenuLink>
+            <MenuLink href="/settings" icon={<IconGear size={18} />} onClick={() => setOpen(false)}>
+              {t("nav_settings")}
+            </MenuLink>
             {user.role === "admin" && (
-              <Link href="/admin" data-menu-item onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-2">
-                <IconShield size={18} /> {t("me_admin")}
-              </Link>
+              <MenuLink href="/admin" icon={<IconShield size={18} />} onClick={() => setOpen(false)}>
+                {t("me_admin")}
+              </MenuLink>
             )}
             <div className="border-t border-line my-1" />
             <MenuButton icon={<IconLogout size={18} />} onClick={logout}>
@@ -189,6 +201,14 @@ export function ProfileMenu() {
       {dialog === "name" && <EditNameDialog onClose={() => setDialog(null)} onSaved={() => setNote(t("me_name_done"))} />}
       {dialog === "password" && <PasswordDialog onClose={() => setDialog(null)} onSaved={() => setNote(t("me_pw_done"))} />}
     </div>
+  );
+}
+
+function MenuLink({ href, icon, onClick, children }: { href: string; icon: React.ReactNode; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <Link href={href} data-menu-item onClick={onClick} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-2">
+      {icon} {children}
+    </Link>
   );
 }
 

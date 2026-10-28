@@ -53,6 +53,30 @@ export const videoProgress = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.key] })],
 );
 
+/** Best score per user, skill and topic part: read = section quiz (part 1–5), write = exercise (0 translate, 1 complete). */
+export const skillScores = sqliteTable(
+  "skill_scores",
+  {
+    userId: text("user_id").notNull(),
+    skill: text("skill").notNull(), // read | write
+    topic: integer("topic").notNull(),
+    part: integer("part").notNull(),
+    best: integer("best").notNull(),
+    attempts: integer("attempts").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.skill, t.topic, t.part] })],
+);
+
+/** Free writing corrected by the AI; its mistakes count in the weakness tracker like a spoken report. */
+export const writingChecks = sqliteTable("writing_checks", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  topic: integer("topic").notNull(),
+  createdAt: integer("created_at").notNull(),
+  json: text("json").notNull(),
+});
+
 /** One shadowing / review run, kept for its report. */
 export const bookPractice = sqliteTable("book_practice", {
   id: text("id").primaryKey(),
@@ -190,6 +214,14 @@ CREATE TABLE IF NOT EXISTS video_progress (
   user_id TEXT NOT NULL, key TEXT NOT NULL, position INTEGER NOT NULL, duration INTEGER, watched INTEGER NOT NULL,
   updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, key)
 );
+CREATE TABLE IF NOT EXISTS skill_scores (
+  user_id TEXT NOT NULL, skill TEXT NOT NULL, topic INTEGER NOT NULL, part INTEGER NOT NULL, best INTEGER NOT NULL,
+  attempts INTEGER NOT NULL, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, skill, topic, part)
+);
+CREATE TABLE IF NOT EXISTS writing_checks (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS writing_checks_user ON writing_checks(user_id, created_at);
 CREATE TABLE IF NOT EXISTS book_practice (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER, mode TEXT NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL
 );

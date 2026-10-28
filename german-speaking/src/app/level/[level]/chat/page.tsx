@@ -1,5 +1,6 @@
 "use client";
 
+import { levelPath } from "@/lib/paths";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -63,7 +64,7 @@ function ChatPage() {
     return (
       <div className="py-20 text-center space-y-4 px-4">
         {error && <p className="text-danger">{t("err_api")}</p>}
-        <Link href={isLevel(level) ? `/speak/${level}` : "/speak"} className="btn btn-primary">
+        <Link href={isLevel(level) ? levelPath(level) : "/"} className="btn btn-primary">
           {t("back")}
         </Link>
       </div>

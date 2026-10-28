@@ -1,11 +1,18 @@
 import type { Metadata, Viewport } from "next";
+import { cookies } from "next/headers";
 import { AppShell } from "@/components/AppShell";
+import { MotionProvider } from "@/lib/client/motion";
 import { PREPAINT_SCRIPT, UIProvider } from "@/lib/client/ui";
 import { MeProvider } from "@/lib/client/me";
+import { dirOf, isUILang, LANG_COOKIE, type UILang } from "@/lib/client/i18n";
+import { DICT } from "@/lib/messages";
+import { serverConfig } from "@/lib/config";
+import { dbTarget } from "@/lib/db";
+import { ProvidersProvider } from "@/components/ProvidersProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "اتكلم ألماني · Sprich Deutsch",
+  title: "Sprich Deutsch",
   description: "Speaking-first German practice with level-locked AI conversation partners (A1–B2).",
 };
 
@@ -18,9 +25,15 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // The interface language comes from a cookie (set by the switcher, also for logged-out visitors).
+  const fromCookie = (await cookies()).get(LANG_COOKIE)?.value;
+  const lang: UILang = isUILang(fromCookie) ? fromCookie : "ar";
+  // Which providers exist (never any keys) — known right away, so no banner pops in later.
+  const cfg = serverConfig();
+  const providers = { llm: cfg.llmProvider, tts: cfg.tts, stt: cfg.stt, storage: dbTarget().kind };
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang={lang} dir={dirOf(lang)} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: PREPAINT_SCRIPT }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -32,11 +45,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
-        <UIProvider>
-          <MeProvider>
-            <AppShell>{children}</AppShell>
-          </MeProvider>
-        </UIProvider>
+        <ProvidersProvider value={providers}>
+          <UIProvider initialLang={lang} messages={DICT[lang]}>
+            <MeProvider>
+              <MotionProvider>
+                <AppShell>{children}</AppShell>
+              </MotionProvider>
+            </MeProvider>
+          </UIProvider>
+        </ProvidersProvider>
       </body>
     </html>
   );

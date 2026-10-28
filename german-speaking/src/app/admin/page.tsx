@@ -1,5 +1,6 @@
 "use client";
 
+import { localeOf, type UILang } from "@/lib/client/i18n";
 import { useCallback, useEffect, useState } from "react";
 import { UserAvatar } from "@/components/UserAvatar";
 import { ApiError, api } from "@/lib/client/api";
@@ -42,9 +43,9 @@ export default function AdminPage() {
   );
 }
 
-function fmt(ms: number | null, lang: string) {
+function fmt(ms: number | null, lang: UILang) {
   if (!ms) return "—";
-  return new Date(ms).toLocaleString(lang === "ar" ? "ar-EG" : "en-GB", { dateStyle: "medium", timeStyle: ms > Date.now() - 864e5 ? "short" : undefined });
+  return new Date(ms).toLocaleString(localeOf(lang), { dateStyle: "medium", timeStyle: ms > Date.now() - 864e5 ? "short" : undefined });
 }
 
 function StudentCard({ s, self, onChange }: { s: StudentRow; self: boolean; onChange: () => void }) {

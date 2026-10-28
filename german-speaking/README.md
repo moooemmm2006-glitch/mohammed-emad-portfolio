@@ -90,6 +90,24 @@ Every push to the connected branch redeploys automatically.
 If a premium provider is selected but its key is missing, the app silently falls back to the browser
 (Web Speech API). In **Settings** you can also choose per device: automatic / browser / server.
 
+## Layout (v9)
+
+- **Header:** "المستوى / Niveau / Level" with the four level pills (A1 · A2 · B1 · B2), the language switcher
+  (العربية · Deutsch · English), dark mode and the profile circle. Progress, reports, settings and the admin
+  page are in the profile menu. `/` opens the learner's last level.
+- **Level page** `/level/a1` … `/level/b2`: name, description, progress per skill, a 3D badge, and four
+  skills: 🗣️ Themen & Sprechen (free conversation, today's review, book topics) · 🎧 Hören (Nicos Weg /
+  Video-Thema) · 📖 Lesen (the book's sections as texts, tap for the Arabic meaning, a quiz per section,
+  "new text" with an API key) · ✍️ Schreiben (translate into German, complete the sentence; free writing
+  corrected by the AI with a key — its mistakes go into the weakness tracker). Lesen and Schreiben work
+  without an API key.
+- **Languages:** `messages/ar.json`, `de.json`, `en.json` (same keys, checked by a test). The browser gets
+  only the active language; the choice is saved per account and in a cookie.
+- **3D & motion:** level switches turn like a cube (click or swipe), cards tilt, skills flip, the level
+  colour morphs, the speaking orb is a glossy sphere with 3D rings. The badge uses React Three Fiber, loaded
+  lazily after the page is idle. Settings → "تأثيرات 3D": automatic / on / reduced / off;
+  `prefers-reduced-motion` always turns 3D off.
+
 ## The book: "Sprich Deutsch" (A1 → B2)
 
 The learner's own book lives in `data/book/` (`a1.json` … `b2.json`, `index.json`): 100 topics,

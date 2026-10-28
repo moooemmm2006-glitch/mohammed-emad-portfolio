@@ -1,4 +1,5 @@
-import { GRAMMAR_TAGS, LEVEL_CONFIG, type Level } from "../levels";
+import { LEVEL_CONFIG, type Level } from "../levels";
+import { GRAMMAR_TAGS } from "../tags";
 import { countWords } from "../text";
 import type { SessionInfo, StoredReport } from "./schema";
 import type { Correction } from "./corrections";

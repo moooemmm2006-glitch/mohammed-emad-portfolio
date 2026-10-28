@@ -1,5 +1,6 @@
 "use client";
 
+import { chatPath, levelPath, topicPath } from "@/lib/paths";
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
@@ -11,7 +12,7 @@ import type { TKey } from "@/lib/client/i18n";
 import { unlockSpeech } from "@/lib/client/tts";
 import { useUI } from "@/lib/client/ui";
 import type { BookTopic } from "@/lib/book";
-import { isLevel, LEVEL_CONFIG } from "@/lib/levels";
+import { isLevel } from "@/lib/levels";
 
 const TABS = [
   { id: "shadow", key: "tab_shadow", icon: IconRepeat },
@@ -29,7 +30,7 @@ export default function TopicPageWrapper() {
 }
 
 function TopicPage() {
-  const { t, lang } = useUI();
+  const { t } = useUI();
   const router = useRouter();
   const params = useParams<{ level: string; n: string }>();
   const search = useSearchParams();
@@ -53,7 +54,7 @@ function TopicPage() {
   if (!isLevel(level) || error) {
     return (
       <p className="py-20 text-center">
-        <Link href={isLevel(level) ? `/speak/${level}` : "/speak"} className="btn btn-primary">
+        <Link href={isLevel(level) ? levelPath(level) : "/"} className="btn btn-primary">
           {t("back")}
         </Link>
       </p>
@@ -61,14 +62,14 @@ function TopicPage() {
   }
   if (!data || !settings || !providers) return <p className="py-20 text-center text-muted">{t("loading")}</p>;
   const { topic } = data;
-  const setTab = (id: Tab) => router.replace(`/speak/${level}/topic/${number}?tab=${id}`, { scroll: false });
+  const setTab = (id: Tab) => router.replace(topicPath(level, number, id), { scroll: false });
 
   const startTalk = async () => {
     unlockSpeech(); // the tap is the gesture the browser needs before the partner may speak
     setStarting(true);
     try {
       const d = await api<{ session: { id: string } }>("/api/sessions", { method: "POST", body: JSON.stringify({ level, bookTopic: topic.number }) });
-      router.push(`/speak/${level}/chat?session=${d.session.id}&new=1`);
+      router.push(chatPath(level, d.session.id, true));
     } catch {
       setStarting(false);
     }
@@ -76,8 +77,8 @@ function TopicPage() {
 
   return (
     <div className={`level-${level.toLowerCase()} max-w-3xl mx-auto space-y-5`}>
-      <Link href={`/speak/${level}`} className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink min-h-[40px] -my-2 pe-3">
-        <IconArrow size={16} className="rotate-180 rtl:rotate-0" /> {t("book_back_level")} · {LEVEL_CONFIG[level].info.name[lang]}
+      <Link href={levelPath(level)} className="inline-flex items-center gap-1 text-sm text-muted hover:text-ink min-h-[40px] -my-2 pe-3">
+        <IconArrow size={16} className="rotate-180 rtl:rotate-0" /> {t("book_back_level")} · {t(`lvl_${level}_name` as TKey)}
       </Link>
 
       <header className="card overflow-hidden">

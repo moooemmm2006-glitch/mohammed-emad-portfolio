@@ -20,7 +20,7 @@ export default function SoonPage() {
       </h1>
       <p className="mt-2 inline-block rounded-full bg-surface-2 px-3 py-1 text-sm">{t("nav_soon")} · <span className="de">Demnächst</span></p>
       <p className="mt-6 text-muted">{t("soon_body")}</p>
-      <Link href="/speak" className="btn btn-primary mt-8">
+      <Link href="/" className="btn btn-primary mt-8">
         <IconMic /> {t("soon_cta")}
       </Link>
     </div>

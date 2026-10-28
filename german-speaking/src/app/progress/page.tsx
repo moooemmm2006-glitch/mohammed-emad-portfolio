@@ -4,11 +4,11 @@ import Link from "next/link";
 import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { HistoryList } from "@/components/HistoryList";
 import { BookProgressCard } from "@/components/book/BookProgressCard";
+import { SkillsProgressCard } from "@/components/level/SkillsProgressCard";
 import { IconClock, IconFile, IconFlame, IconMic } from "@/components/Icons";
 import { useStats } from "@/lib/client/api";
-import type { TKey } from "@/lib/client/i18n";
+import { localeOf, type TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
-import { tagLabel } from "@/lib/levels";
 import { ScoreKeys } from "@/lib/report/schema";
 import type { WeaknessStatus } from "@/lib/report/weakness";
 
@@ -30,11 +30,11 @@ const STATUS_STYLE: Record<WeaknessStatus, string> = {
 };
 
 export default function ProgressPage() {
-  const { t, lang } = useUI();
+  const { t, lang, tag: tagName } = useUI();
   const { stats } = useStats();
   if (!stats) return <p className="py-20 text-center text-muted">{t("loading")}</p>;
 
-  const short = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString(lang === "ar" ? "ar-EG" : "en-GB", { day: "numeric", month: "short" });
+  const short = (d: string) => new Date(`${d}T12:00:00`).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short" });
   const open = stats.weaknesses.filter((w) => w.status !== "resolved");
   const resolved = stats.weaknesses.filter((w) => w.status === "resolved");
   const scoreName = (k: string) => t(`score_${k}` as TKey);
@@ -50,12 +50,14 @@ export default function ProgressPage() {
         <Tile icon={<IconFlame />} value={stats.totals.streak} label={t("stats_streak")} />
       </section>
 
+      <SkillsProgressCard />
+
       <BookProgressCard />
 
       {stats.scoreTimeline.length === 0 ? (
         <div className="card p-8 text-center text-muted">
           <p>{t("progress_empty")}</p>
-          <Link href="/speak" className="btn btn-primary mt-4">
+          <Link href="/" className="btn btn-primary mt-4">
             <IconMic /> {t("nav_speak")}
           </Link>
         </div>
@@ -75,7 +77,7 @@ export default function ProgressPage() {
               </LineChart>
             </ResponsiveContainer>
             <details className="mt-3 text-sm">
-              <summary className="cursor-pointer text-muted">{lang === "ar" ? "اعرض كجدول" : "Show as table"}</summary>
+              <summary className="cursor-pointer text-muted">{t("table_show")}</summary>
               <div className="overflow-x-auto mt-2" dir="ltr">
                 <table className="w-full text-xs tabular-nums">
                   <thead>
@@ -137,7 +139,7 @@ export default function ProgressPage() {
                       <Bar
                         key={tag}
                         dataKey={tag}
-                        name={tagLabel(tag, lang)}
+                        name={tagName(tag)}
                         stackId="m"
                         fill={SERIES[i]}
                         stroke="var(--surface)"
@@ -163,7 +165,7 @@ export default function ProgressPage() {
             {open.map((w) => (
               <li key={w.tag} className="rounded-xl border border-line p-4">
                 <div className="flex items-center justify-between gap-2">
-                  <b>{tagLabel(w.tag, lang)}</b>
+                  <b>{tagName(w.tag)}</b>
                   <span className={`rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_STYLE[w.status]}`}>{t(`status_${w.status}` as TKey)}</span>
                 </div>
                 <p className="text-xs text-muted mt-1">
@@ -180,7 +182,7 @@ export default function ProgressPage() {
         )}
         {resolved.length > 0 && (
           <p className="mt-4 text-sm">
-            <b className="text-ok">✓ {t("progress_resolved")}:</b> {resolved.map((w) => tagLabel(w.tag, lang)).join(" · ")}
+            <b className="text-ok">✓ {t("progress_resolved")}:</b> {resolved.map((w) => tagName(w.tag)).join(" · ")}
           </p>
         )}
       </section>
