@@ -7,6 +7,8 @@ import { percentOf } from "@/lib/videoShared";
 import { IconMic } from "../Icons";
 import { formatTime, YouTubePlayer, YouTubePlaylist } from "./YouTubePlayer";
 import { useTalkAboutVideo, useVideoProgress } from "./useVideos";
+import { GeminiVideoLink } from "../gemini/GeminiCard";
+import { aiChatEnabled } from "@/lib/features";
 
 /** DW "Nicos Weg" for A1, A2 and B1: the level's full movie, the episodes playlist (when verified), progress. */
 export function NicosWegSection({ level }: { level: "A1" | "A2" | "B1" }) {
@@ -49,6 +51,7 @@ export function NicosWegSection({ level }: { level: "A1" | "A2" | "B1" }) {
         )}
         {movie && !movie.watched && movie.position > 30 && <p className="text-sm text-muted">{fill(t("vid_resume_note"), { t: formatTime(movie.position) })}</p>}
         <Credit text={NICOS_WEG_CREDIT} href={youtubeWatchUrl(cfg.movieId)} />
+        <GeminiVideoLink level={level} title={title} />
         <div className="flex flex-wrap gap-2">
           <button
             className={`btn ${movie?.watched ? "btn-ghost" : "btn-primary"} !min-h-[42px]`}
@@ -72,10 +75,11 @@ export function NicosWegSection({ level }: { level: "A1" | "A2" | "B1" }) {
           <h3 className="font-bold">{t("vid_episodes")}</h3>
           <YouTubePlaylist listId={cfg.playlistId} index={cfg.playlistStartIndex} title={`Nicos Weg ${level} – ${t("vid_episodes")}`} poster={cfg.movieId} />
           <Credit text={NICOS_WEG_CREDIT} href={youtubePlaylistUrl(cfg.playlistId, cfg.playlistStartIndex)} />
+          <GeminiVideoLink level={level} title={`Nicos Weg ${level}`} />
         </div>
       )}
 
-      <TalkCard onStart={() => void talk.start({ kind: "nicos" })} disabled={talk.starting} />
+      {aiChatEnabled() && <TalkCard onStart={() => void talk.start({ kind: "nicos" })} disabled={talk.starting} />}
     </section>
   );
 }

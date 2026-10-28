@@ -13,6 +13,8 @@ import { unlockSpeech } from "@/lib/client/tts";
 import { useUI } from "@/lib/client/ui";
 import type { BookTopic } from "@/lib/book";
 import { isLevel } from "@/lib/levels";
+import { GeminiCard } from "@/components/gemini/GeminiCard";
+import { aiChatEnabled } from "@/lib/features";
 
 const TABS = [
   { id: "shadow", key: "tab_shadow", icon: IconRepeat },
@@ -108,6 +110,13 @@ function TopicPage() {
         </div>
       </header>
 
+      <GeminiCard
+        level={level}
+        variant="compact"
+        topic={topic.number}
+        ctx={{ kind: "topic", title_de: topic.title_de, title_ar: topic.title_ar, vocab: topic.vocab.map((v) => v.de), grammar: topic.grammar.map((g) => g.title_de) }}
+      />
+
       <div role="tablist" aria-label={topic.title_de} className="grid grid-cols-3 gap-1 rounded-2xl bg-surface-2 p-1 sticky top-16 z-10">
         {TABS.map((x) => (
           <button
@@ -144,7 +153,7 @@ function TopicPage() {
         {tab === "talk" && (
           <section className="card p-5 space-y-4">
             <h2 className="text-xl font-bold">{t("talk_title")}</h2>
-            <p className="text-sm leading-relaxed">{providers.llm === "mock" ? t("talk_mock") : t("talk_ai")}</p>
+            <p className="text-sm leading-relaxed">{!aiChatEnabled() ? t("talk_script") : providers.llm === "mock" ? t("talk_mock") : t("talk_ai")}</p>
             <div>
               <p className="text-sm font-semibold mb-2">{t("talk_sections")}</p>
               <ol className="space-y-1.5">

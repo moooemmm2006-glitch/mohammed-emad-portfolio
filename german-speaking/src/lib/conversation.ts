@@ -24,6 +24,7 @@ import {
 } from "./prompts";
 import { splitSentences } from "./text";
 import { getTopicByNumber, type BookTopic } from "./book";
+import { aiChatEnabled } from "./features";
 import { CLOSING, greeting as scriptGreeting, judgeAnswer, nextItem, reaction, scriptFor } from "./bookScript";
 import { parseMeta, type SessionRow } from "./db/repo";
 import { parseVideoContext, videoClosing, videoGreeting, videoReply, type VideoContext } from "./videoTalk";
@@ -102,8 +103,8 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
   const prior = await getTurns(session.id);
   const userText = inp.userText?.trim();
   const bookTopic = session.bookTopic ? await getTopicByNumber(session.bookTopic) : null;
-  // Guided book conversation without an API key: the book's own questions and answers.
-  if (bookTopic && llm.provider === "mock") {
+  // Guided book conversation without an API key (or with the AI chat switched off): the book's own questions and answers.
+  if (bookTopic && (llm.provider === "mock" || !aiChatEnabled())) {
     await runScriptedTurn({ session, topic: bookTopic, prior, userText, inp, started, background });
     return;
   }

@@ -13,8 +13,10 @@ import { chatPath, topicPath } from "@/lib/paths";
 import { ArabicText, TopicSkeleton, TopicTitle, useLevelTopics } from "./shared";
 import { topicCount } from "@/lib/bookLevels";
 import { TiltDiv } from "./Tilt";
+import { GeminiCard } from "../gemini/GeminiCard";
+import { aiChatEnabled } from "@/lib/features";
 
-/** 🗣️ Themen & Sprechen: free conversation, today's review and the level's book topics. */
+/** 🗣️ Themen & Sprechen: talk with Gemini (the in-site AI chat only when switched on), today's review and the book topics. */
 export function SpeakPanel({ level }: { level: Level }) {
   const { t, lang } = useUI();
   const router = useRouter();
@@ -38,28 +40,32 @@ export function SpeakPanel({ level }: { level: Level }) {
 
   return (
     <div className="space-y-6">
-      <section className="card depth p-5 space-y-3">
-        <div>
-          <h2 className="text-lg font-bold">{t("book_free_title")}</h2>
-          <p className="text-sm text-muted">
-            {t("book_free_sub")} · {t("level_partner")}: <span className="de font-semibold text-ink">{level === "B2" ? "Dr. Tobias Wendt" : cfg.persona.name}</span>
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button className="chip min-h-[38px]" aria-pressed={chatTopic === null} onClick={() => setChatTopic(null)}>
-            {t("conv_topic_free")}
-          </button>
-          {cfg.topics.map((tp) => (
-            <button key={tp.id} className="chip min-h-[38px]" aria-pressed={chatTopic === tp.de} onClick={() => setChatTopic(tp.de)}>
-              {t(`ctopic_${level}_${tp.id}` as TKey)}
+      <GeminiCard level={level} />
+
+      {aiChatEnabled() && (
+        <section className="card depth p-5 space-y-3">
+          <div>
+            <h2 className="text-lg font-bold">{t("book_free_title")}</h2>
+            <p className="text-sm text-muted">
+              {t("book_free_sub")} · {t("level_partner")}: <span className="de font-semibold text-ink">{level === "B2" ? "Dr. Tobias Wendt" : cfg.persona.name}</span>
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button className="chip min-h-[38px]" aria-pressed={chatTopic === null} onClick={() => setChatTopic(null)}>
+              {t("conv_topic_free")}
             </button>
-          ))}
-        </div>
-        {providers?.llm === "mock" && <p className="rounded-xl bg-surface-2 px-3 py-2 text-xs text-muted">{t("mock_banner")}</p>}
-        <button className="btn btn-primary w-full sm:w-auto" style={{ background: "var(--accent)", color: "#fff" }} onClick={() => void startFree()} disabled={starting}>
-          <IconMic /> {t("conv_start")}
-        </button>
-      </section>
+            {cfg.topics.map((tp) => (
+              <button key={tp.id} className="chip min-h-[38px]" aria-pressed={chatTopic === tp.de} onClick={() => setChatTopic(tp.de)}>
+                {t(`ctopic_${level}_${tp.id}` as TKey)}
+              </button>
+            ))}
+          </div>
+          {providers?.llm === "mock" && <p className="rounded-xl bg-surface-2 px-3 py-2 text-xs text-muted">{t("mock_banner")}</p>}
+          <button className="btn btn-primary w-full sm:w-auto" style={{ background: "var(--accent)", color: "#fff" }} onClick={() => void startFree()} disabled={starting}>
+            <IconMic /> {t("conv_start")}
+          </button>
+        </section>
+      )}
 
       {due > 0 && (
         <section className="card depth p-5 flex flex-wrap items-center gap-3 border-gold/50">

@@ -12,6 +12,7 @@ import { useUI } from "@/lib/client/ui";
 import { isLevel, type Level } from "@/lib/levels";
 import { ScoreKeys, type StoredReport } from "@/lib/report/schema";
 import { BookReportSection } from "@/components/book/BookReportSection";
+import { aiChatEnabled } from "@/lib/features";
 
 interface Payload {
   session: { id: string; level: string; startedAt: number; topic: string | null };
@@ -406,6 +407,7 @@ function SeverityBadge({ severity }: { severity: "low" | "medium" | "high" }) {
 
 function DemoCorrectionNote() {
   const { t } = useUI();
+  if (!aiChatEnabled()) return null; // no "demo" notices while the AI chat is switched off
   return <p className="mb-3 rounded-lg bg-gold/10 px-3 py-2 text-xs">⚠ {t("report_demo_corrections")}</p>;
 }
 

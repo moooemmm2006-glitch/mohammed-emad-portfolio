@@ -77,6 +77,17 @@ export const writingChecks = sqliteTable("writing_checks", {
   json: text("json").notNull(),
 });
 
+/** A report the learner pasted after talking with Gemini (stored as text, shown under "Reports"). */
+export const geminiSessions = sqliteTable("gemini_sessions", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  level: text("level").notNull(),
+  topic: integer("topic"), // book topic number, if the talk was about one
+  video: text("video"), // video title, if the talk was about one
+  text: text("text").notNull(),
+  createdAt: integer("created_at").notNull(),
+});
+
 /** One shadowing / review run, kept for its report. */
 export const bookPractice = sqliteTable("book_practice", {
   id: text("id").primaryKey(),
@@ -222,6 +233,10 @@ CREATE TABLE IF NOT EXISTS writing_checks (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS writing_checks_user ON writing_checks(user_id, created_at);
+CREATE TABLE IF NOT EXISTS gemini_sessions (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL, level TEXT NOT NULL, topic INTEGER, video TEXT, text TEXT NOT NULL, created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS gemini_sessions_user ON gemini_sessions(user_id, created_at);
 CREATE TABLE IF NOT EXISTS book_practice (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER, mode TEXT NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL
 );

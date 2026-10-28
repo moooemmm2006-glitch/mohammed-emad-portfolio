@@ -21,6 +21,7 @@ import type { TurnResult } from "@/lib/client/transcript";
 import { loadVoices, Speaker, speakOptionsFor, unlockSpeech, webSpeechMaxSpeed } from "@/lib/client/tts";
 import type { Hint, TurnEvent } from "@/lib/conversation";
 import { LEVEL_CONFIG, type Level } from "@/lib/levels";
+import { aiChatEnabled } from "@/lib/features";
 import { SPEEDS, type Settings } from "@/lib/settings";
 import { Avatar } from "./Avatar";
 import { IconArrow, IconEye, IconEyeOff, IconHelp, IconMic, IconRepeat, IconStop, IconX } from "./Icons";
@@ -473,7 +474,7 @@ export function Conversation(p: Props) {
             {t("conv_end")}
           </button>
         </div>
-        {providers.llm === "mock" && !bannerHidden && (
+        {providers.llm === "mock" && aiChatEnabled() && !bannerHidden && (
           <div className="border-t border-line/60 bg-gold/10">
             <div className="mx-auto max-w-[820px] px-4 py-1.5 flex items-center gap-2 text-xs">
               <span className="flex-1">{t("mock_banner")}</span>

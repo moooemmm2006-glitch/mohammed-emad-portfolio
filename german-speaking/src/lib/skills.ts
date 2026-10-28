@@ -2,11 +2,12 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import { TOPIC_RANGE, topicSummaries } from "./book";
 import { topicProgress } from "./bookProgress";
+import { geminiCount, geminiSpeakBonus } from "./gemini";
 import { getVideoProgress, percentOf } from "./videoProgress";
 import { getVideoThema } from "./videoThema";
 import type { Level } from "./levels";
 
-// Progress per skill for a level: Sprechen (book sentences said right), Hören (videos watched),
+// Progress per skill for a level: Sprechen (book sentences said right + Gemini sessions), Hören (videos watched),
 // Lesen (section quizzes passed), Schreiben (writing exercises passed).
 
 export type Skill = "read" | "write";
@@ -51,11 +52,12 @@ const pct = (a: number, b: number) => (b ? Math.min(100, Math.round((100 * a) / 
 export async function levelSkillProgress(userId: string, level: Level): Promise<SkillProgress> {
   const topics = await topicSummaries(level);
   const numbers = topics.map((t) => t.number);
-  const [speak, read, write, videos] = await Promise.all([
+  const [speak, read, write, videos, gemini] = await Promise.all([
     topicProgress(userId, new Map(topics.map((t) => [t.number, t.sentenceCount]))),
     skillScores(userId, "read", numbers),
     skillScores(userId, "write", numbers),
     getVideoProgress(userId),
+    geminiCount(userId, level),
   ]);
   const totalSentences = topics.reduce((n, t) => n + t.sentenceCount, 0);
   const saidRight = [...speak.values()].reduce((n, p) => n + p.correct, 0);
@@ -69,7 +71,8 @@ export async function levelSkillProgress(userId: string, level: Level): Promise<
     listen = percentOf(videos.find((v) => v.key === `nicos:${level}:movie`));
   }
   return {
-    speak: pct(saidRight, totalSentences),
+    // Book sentences said right, plus a little for every Gemini conversation (its pasted report).
+    speak: Math.min(100, pct(saidRight, totalSentences) + geminiSpeakBonus(gemini)),
     listen,
     read: pct(Object.values(read).filter((s) => s >= PASS_AT).length, topics.length * READ_PARTS),
     // Translate (part 0) and complete (part 1) count; free writing (part 2) is extra.

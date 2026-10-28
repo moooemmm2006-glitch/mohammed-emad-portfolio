@@ -9,6 +9,8 @@ import type { Episode, FeedResult } from "@/lib/videoThema";
 import { formatTime } from "./YouTubePlayer";
 import { Credit, TalkCard, Tip } from "./NicosWegSection";
 import { useTalkAboutVideo, useVideoProgress } from "./useVideos";
+import { GeminiVideoLink } from "../gemini/GeminiCard";
+import { aiChatEnabled } from "@/lib/features";
 
 /** DW "Video-Thema" for B2: the latest episodes from DW's official feed (fetched by our server). */
 export function VideoThemaSection() {
@@ -46,6 +48,7 @@ export function VideoThemaSection() {
             onProgress={(position, duration, ended) => void save(`vt:${open.id}`, ended ? { position, duration, watched: true } : { position, duration })}
           />
           <Credit text={VIDEO_THEMA_CREDIT} href={open.link ?? nicosWeg.B2.podcastPage} />
+          <GeminiVideoLink level="B2" title={open.title} />
           <div className="flex flex-wrap gap-2">
             <button
               className={`btn ${items[`vt:${open.id}`]?.watched ? "btn-ghost" : "btn-primary"} !min-h-[42px]`}
@@ -73,7 +76,7 @@ export function VideoThemaSection() {
             </details>
           )}
           <Tip />
-          <TalkCard onStart={() => void talk.start({ kind: "videothema", id: open.id })} disabled={talk.starting} />
+          {aiChatEnabled() && <TalkCard onStart={() => void talk.start({ kind: "videothema", id: open.id })} disabled={talk.starting} />}
         </div>
       )}
 
