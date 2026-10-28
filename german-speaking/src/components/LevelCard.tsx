@@ -4,11 +4,26 @@ import Link from "next/link";
 import { LEVEL_CONFIG, type Level } from "@/lib/levels";
 import { TOPIC_RANGE, topicCount } from "@/lib/bookLevels";
 import { fill } from "@/lib/client/i18n";
+import { percentOf } from "@/lib/videoShared";
+import { useVideoProgress } from "./videos/useVideos";
 import { useUI } from "@/lib/client/ui";
 import { Avatar } from "./Avatar";
 import { IconArrow } from "./Icons";
 
-export function LevelCard({ level, lastSessionAt, lastScore, compact = false }: { level: Level; lastSessionAt?: number | null; lastScore?: number | null; compact?: boolean }) {
+export function LevelCard({
+  level,
+  lastSessionAt,
+  lastScore,
+  compact = false,
+  videoLine,
+}: {
+  level: Level;
+  lastSessionAt?: number | null;
+  lastScore?: number | null;
+  compact?: boolean;
+  /** "Nicos Weg: خلصت X%" / "Video-Thema: شفت N حلقة" */
+  videoLine?: string | null;
+}) {
   const { t, lang } = useUI();
   const cfg = LEVEL_CONFIG[level];
   const name = level === "B2" ? "Dr. Tobias" : cfg.persona.name;
@@ -33,6 +48,7 @@ export function LevelCard({ level, lastSessionAt, lastScore, compact = false }: 
       {!compact && <p className="text-[0.95rem] leading-relaxed">{cfg.info.topics[lang]}</p>}
       <p className="text-sm font-semibold text-accent">
         📖 {fill(t("book_level_topics"), { n: topicCount(level), a: TOPIC_RANGE[level][0], b: TOPIC_RANGE[level][1] })}
+        {videoLine && <span className="block mt-0.5">🎬 {videoLine}</span>}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {cfg.info.exampleTopics.map((x) => (
@@ -63,6 +79,14 @@ export function LevelCard({ level, lastSessionAt, lastScore, compact = false }: 
 /** The four levels as two groups: Grundlagen (A1, A2) and Aufbau (B1, B2). */
 export function LevelGroups({ levels, compact = false }: { levels: Record<Level, { lastSessionAt: number | null; lastScore: number | null }> | undefined; compact?: boolean }) {
   const { t } = useUI();
+  const { items } = useVideoProgress();
+  const videoLine = (l: Level) => {
+    if (l === "B2") {
+      const n = Object.values(items).filter((v) => v.key.startsWith("vt:") && v.watched).length;
+      return fill(t("vid_card_vt"), { n });
+    }
+    return fill(t("vid_card_nicos"), { p: percentOf(items[`nicos:${l}:movie`]) });
+  };
   const groups = [
     { key: "grundlagen", title: t("group_basics"), sub: t("group_basics_sub"), members: ["A1", "A2"] as Level[] },
     { key: "aufbau", title: t("group_build"), sub: t("group_build_sub"), members: ["B1", "B2"] as Level[] },
@@ -77,7 +101,7 @@ export function LevelGroups({ levels, compact = false }: { levels: Record<Level,
           </header>
           <div className="grid gap-4 sm:grid-cols-2">
             {g.members.map((l) => (
-              <LevelCard key={l} level={l} compact={compact} lastSessionAt={levels?.[l].lastSessionAt} lastScore={levels?.[l].lastScore} />
+              <LevelCard key={l} level={l} compact={compact} lastSessionAt={levels?.[l].lastSessionAt} lastScore={levels?.[l].lastScore} videoLine={videoLine(l)} />
             ))}
           </div>
         </section>

@@ -27,6 +27,7 @@ const adminRoute = await import("@/app/api/admin/users/route");
 const meRoute = await import("@/app/api/me/route");
 const bookLevelRoute = await import("@/app/api/book/level/[level]/route");
 const bookAttemptsRoute = await import("@/app/api/book/attempts/route");
+const videoProgressRoute = await import("@/app/api/videos/progress/route");
 
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gs-accounts-"));
 let n = 0;
@@ -200,6 +201,16 @@ describe("data isolation between two learners", () => {
     const omarTopics = (await (await bookLevelRoute.GET(req("/x"), levelCtx)).json()) as { topics: { number: number; progress: { correct: number } }[] };
     expect(omarTopics.topics).toHaveLength(15);
     expect(omarTopics.topics[0].progress.correct).toBe(0);
+
+    // Video progress is per user, and Nicos Weg only belongs to A1–B1.
+    await loginAs(a);
+    expect((await videoProgressRoute.POST(req("/x", { key: "nicos:A1:movie", position: 120, duration: 3600 }))).status).toBe(200);
+    expect((await videoProgressRoute.POST(req("/x", { key: "../../etc", position: 1 }))).status).toBe(400);
+    expect(((await (await videoProgressRoute.GET()).json()) as { items: unknown[] }).items).toHaveLength(1);
+    expect(await code(await sessionsRoute.POST(req("/api/sessions", { level: "B2", video: { kind: "nicos" } })))).toBe("wrong_level");
+    expect(await code(await sessionsRoute.POST(req("/api/sessions", { level: "A1", video: { kind: "videothema", id: "0123456789abcdef" } })))).toBe("wrong_level");
+    await loginAs(b);
+    expect(((await (await videoProgressRoute.GET()).json()) as { items: unknown[] }).items).toHaveLength(0);
 
     // Sara still has hers.
     await loginAs(a);

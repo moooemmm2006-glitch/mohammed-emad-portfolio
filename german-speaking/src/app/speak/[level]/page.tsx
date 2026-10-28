@@ -1,8 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { NicosWegSection } from "@/components/videos/NicosWegSection";
+import { VideoThemaSection } from "@/components/videos/VideoThemaSection";
 import { Avatar } from "@/components/Avatar";
 import { IconArrow, IconMic, IconRepeat } from "@/components/Icons";
 import { api, useProviders } from "@/lib/client/api";
@@ -15,9 +17,18 @@ import { isLevel, LEVEL_CONFIG, type Level } from "@/lib/levels";
 
 type TopicCard = TopicSummary & { progress: TopicProgress };
 
-export default function LevelPage() {
+export default function LevelPageWrapper() {
+  return (
+    <Suspense>
+      <LevelPage />
+    </Suspense>
+  );
+}
+
+function LevelPage() {
   const { t, lang } = useUI();
   const router = useRouter();
+  const tab = useSearchParams().get("tab") === "videos" ? "videos" : "book";
   const params = useParams<{ level: string }>();
   const level = params.level?.toUpperCase();
   const providers = useProviders();
@@ -113,57 +124,75 @@ export default function LevelPage() {
         </section>
       )}
 
-      {/* book topics */}
-      <section className="space-y-3">
-        <div className="flex flex-wrap items-end justify-between gap-2">
-          <div>
-            <h2 className="text-xl font-bold">{t("book_topics_title")}</h2>
-            <p className="text-sm text-muted">{t("book_topics_sub")}</p>
+      {/* book topics | DW videos */}
+      <div role="tablist" aria-label={cfg.info.name[lang]} className="grid grid-cols-2 gap-1 rounded-2xl bg-surface-2 p-1">
+        {(["book", "videos"] as const).map((id) => (
+          <button
+            key={id}
+            role="tab"
+            aria-selected={tab === id}
+            onClick={() => router.replace(`/speak/${level}${id === "videos" ? "?tab=videos" : ""}`, { scroll: false })}
+            className={`rounded-xl px-2 py-2.5 text-sm font-semibold min-h-[44px] ${tab === id ? "bg-surface shadow text-ink" : "text-muted"}`}
+          >
+            {id === "book" ? t("vid_tab_book") : level === "B2" ? t("vid_tab_vt") : t("vid_tab_nicos")}
+          </button>
+        ))}
+      </div>
+
+      {tab === "videos" && (level === "B2" ? <VideoThemaSection /> : <NicosWegSection level={level as "A1" | "A2" | "B1"} />)}
+
+      {tab === "book" && (
+        <section className="space-y-3">
+          <div className="flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <h2 className="text-xl font-bold">{t("book_topics_title")}</h2>
+              <p className="text-sm text-muted">{t("book_topics_sub")}</p>
+            </div>
+            {topics && (
+              <span className="chip text-sm">
+                ✓ {done} / {topics.length}
+              </span>
+            )}
           </div>
-          {topics && (
-            <span className="chip text-sm">
-              ✓ {done} / {topics.length}
-            </span>
-          )}
-        </div>
-        {error && <p className="text-danger">{t("err_api")}</p>}
-        {!topics && !error && <p className="text-muted">{t("loading")}</p>}
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {topics?.map((tp) => {
-            const pct = Math.round((100 * tp.progress.correct) / tp.progress.total);
-            return (
-              <li key={tp.number}>
-                <Link
-                  href={`/speak/${level}/topic/${tp.number}`}
-                  className={`card h-full p-4 flex flex-col gap-2 hover:shadow-lg transition ${tp.progress.done ? "border-ok/60" : ""}`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className={`shrink-0 grid place-items-center w-9 h-9 rounded-full text-sm font-bold tabular-nums ${tp.progress.done ? "bg-ok text-white" : "bg-accent-soft text-accent"}`}>
-                      {tp.progress.done ? "✓" : tp.number}
-                    </span>
-                    <span className="min-w-0">
-                      <span className="block font-bold leading-snug">{tp.title_ar}</span>
-                      <span dir="ltr" lang="de" className="block de text-sm text-muted font-semibold text-start">
-                        {tp.title_de}
+          {error && <p className="text-danger">{t("err_api")}</p>}
+          {!topics && !error && <p className="text-muted">{t("loading")}</p>}
+          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {topics?.map((tp) => {
+              const pct = Math.round((100 * tp.progress.correct) / tp.progress.total);
+              return (
+                <li key={tp.number}>
+                  <Link
+                    href={`/speak/${level}/topic/${tp.number}`}
+                    className={`card h-full p-4 flex flex-col gap-2 hover:shadow-lg transition ${tp.progress.done ? "border-ok/60" : ""}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className={`shrink-0 grid place-items-center w-9 h-9 rounded-full text-sm font-bold tabular-nums ${tp.progress.done ? "bg-ok text-white" : "bg-accent-soft text-accent"}`}>
+                        {tp.progress.done ? "✓" : tp.number}
                       </span>
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted line-clamp-2">{tp.intro_ar}</p>
-                  <div className="mt-auto pt-1">
-                    <div className="h-1.5 rounded-full bg-surface-2 overflow-hidden" aria-hidden="true">
-                      <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
+                      <span className="min-w-0">
+                        <span className="block font-bold leading-snug">{tp.title_ar}</span>
+                        <span dir="ltr" lang="de" className="block de text-sm text-muted font-semibold text-start">
+                          {tp.title_de}
+                        </span>
+                      </span>
                     </div>
-                    <p className="mt-1 text-xs text-muted">
-                      {tp.progress.done ? <b className="text-ok">{t("book_done")} · </b> : null}
-                      {fill(t("book_progress"), { c: tp.progress.correct, t: tp.progress.total })}
-                    </p>
-                  </div>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+                    <p className="text-sm text-muted line-clamp-2">{tp.intro_ar}</p>
+                    <div className="mt-auto pt-1">
+                      <div className="h-1.5 rounded-full bg-surface-2 overflow-hidden" aria-hidden="true">
+                        <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
+                      </div>
+                      <p className="mt-1 text-xs text-muted">
+                        {tp.progress.done ? <b className="text-ok">{t("book_done")} · </b> : null}
+                        {fill(t("book_progress"), { c: tp.progress.correct, t: tp.progress.total })}
+                      </p>
+                    </div>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      )}
     </div>
   );
 }

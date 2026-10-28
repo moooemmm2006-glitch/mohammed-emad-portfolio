@@ -39,6 +39,20 @@ export const bookProgress = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.n] })],
 );
 
+/** Per user and video: last position and whether it was finished. */
+export const videoProgress = sqliteTable(
+  "video_progress",
+  {
+    userId: text("user_id").notNull(),
+    key: text("key").notNull(), // nicos:A1:movie · nicos:A1:playlist · vt:<episode id>
+    position: integer("position").notNull(), // seconds
+    duration: integer("duration"), // seconds, when known
+    watched: integer("watched").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.key] })],
+);
+
 /** One shadowing / review run, kept for its report. */
 export const bookPractice = sqliteTable("book_practice", {
   id: text("id").primaryKey(),
@@ -88,6 +102,8 @@ export const sessions = sqliteTable("sessions", {
   pendingFeedback: text("pending_feedback"),
   /** Book topic number (1–100) for a guided conversation about one topic of the book. */
   bookTopic: integer("book_topic"),
+  /** JSON {kind, level, title?, summary?}: a conversation about a DW video the learner watched. */
+  video: text("video"),
 });
 
 export const turns = sqliteTable("turns", {
@@ -170,6 +186,10 @@ CREATE TABLE IF NOT EXISTS book_progress (
 );
 CREATE INDEX IF NOT EXISTS book_progress_topic ON book_progress(user_id, topic);
 CREATE INDEX IF NOT EXISTS book_progress_due ON book_progress(user_id, due_at);
+CREATE TABLE IF NOT EXISTS video_progress (
+  user_id TEXT NOT NULL, key TEXT NOT NULL, position INTEGER NOT NULL, duration INTEGER, watched INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, key)
+);
 CREATE TABLE IF NOT EXISTS book_practice (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER, mode TEXT NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL
 );
@@ -192,6 +212,7 @@ export const ADDED_COLUMNS: { table: string; column: string; sql: string }[] = [
   { table: "users", column: "daily_replies", sql: "daily_replies INTEGER" },
   { table: "users", column: "last_active_at", sql: "last_active_at INTEGER" },
   { table: "sessions", column: "book_topic", sql: "book_topic INTEGER" },
+  { table: "sessions", column: "video", sql: "video TEXT" },
 ];
 
 /** Runs after ADDED_COLUMNS, so it may use the new columns. */

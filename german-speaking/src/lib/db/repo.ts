@@ -23,6 +23,8 @@ export interface TurnMeta {
   bookQ?: number;
   /** Learner turn in a guided book conversation: closest book sentence and its score. */
   book?: { n: number; score: number };
+  /** Conversation about a video: index of the scripted question asked (no API key). */
+  videoQ?: number;
 }
 
 export async function ensureUser(userId: string) {
@@ -47,7 +49,14 @@ export async function saveSettings(patch: Partial<Settings>, userId: string): Pr
 }
 
 // ---------- sessions ----------
-export async function createSession(level: Level, topic: string | null, focusTag: string | null, userId: string, bookTopic: number | null = null): Promise<SessionRow> {
+export async function createSession(
+  level: Level,
+  topic: string | null,
+  focusTag: string | null,
+  userId: string,
+  bookTopic: number | null = null,
+  video: string | null = null,
+): Promise<SessionRow> {
   await ensureUser(userId);
   const now = Date.now();
   const row: SessionRow = {
@@ -64,6 +73,7 @@ export async function createSession(level: Level, topic: string | null, focusTag
     focusTag,
     pendingFeedback: null,
     bookTopic,
+    video,
   };
   const db = await getDb();
   await db.insert(schema.sessions).values(row).run();
@@ -228,6 +238,7 @@ export async function deleteAll(userId: string) {
     db.delete(schema.settings).where(eq(schema.settings.userId, userId)),
     db.delete(schema.bookProgress).where(eq(schema.bookProgress.userId, userId)),
     db.delete(schema.bookPractice).where(eq(schema.bookPractice.userId, userId)),
+    db.delete(schema.videoProgress).where(eq(schema.videoProgress.userId, userId)),
   ]);
 }
 

@@ -26,6 +26,7 @@ import { splitSentences } from "./text";
 import { getTopicByNumber, type BookTopic } from "./book";
 import { CLOSING, greeting as scriptGreeting, judgeAnswer, nextItem, reaction, scriptFor } from "./bookScript";
 import { parseMeta, type SessionRow } from "./db/repo";
+import { parseVideoContext, videoClosing, videoGreeting, videoReply, type VideoContext } from "./videoTalk";
 
 export type TurnEvent =
   | { type: "status"; value: LockStatus | "listening" }
@@ -106,6 +107,12 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
     await runScriptedTurn({ session, topic: bookTopic, prior, userText, inp, started, background });
     return;
   }
+  const video = parseVideoContext(session.video);
+  // Talking about a watched video without an API key: a few simple questions at the level.
+  if (video && llm.provider === "mock") {
+    await runVideoTurn({ session, level, video, prior, userText, inp, started, background });
+    return;
+  }
   // Save the learner's turn in the background; the reply doesn't need to wait for it.
   const userSaved = userText
     ? addTurn(session.id, "user", userText, {
@@ -134,6 +141,7 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
       summary: session.summary,
       weaknesses: openWeaknesses,
       bookTopic,
+      video,
     }) +
     (session.pendingFeedback ?? "") +
     turnInstruction(level, intent, topic, learnerUsedArabic);
@@ -219,6 +227,43 @@ export async function runPartnerTurn(inp: TurnInput): Promise<void> {
 }
 
 // ---------- "I'm stuck" hint ----------
+/** One turn of the scripted (no API key) conversation about a watched video. */
+async function runVideoTurn(o: {
+  session: SessionRow;
+  level: Level;
+  video: VideoContext;
+  prior: TurnRow[];
+  userText: string | undefined;
+  inp: TurnInput;
+  started: number;
+  background: Promise<unknown>[];
+}) {
+  const { session, level, video, prior, userText, inp, started, background } = o;
+  const lastPartner = [...prior].reverse().find((t) => t.role === "partner");
+  const asked = lastPartner ? parseMeta(lastPartner).videoQ : undefined;
+  inp.emit({ type: "status", value: "generating" });
+  let reply: string;
+  let next: number;
+  if (!userText || asked === undefined) {
+    reply = videoGreeting(level, video);
+    next = 0;
+  } else if (asked < 0) {
+    reply = videoClosing(level);
+    next = -1;
+  } else {
+    const r = videoReply(level, asked);
+    reply = r.text;
+    next = r.next ?? -1;
+  }
+  if (userText) {
+    background.push(addTurn(session.id, "user", userText, { confidence: inp.confidence ?? null, meta: { input: inp.input ?? "voice", alternatives: inp.alternatives?.slice(0, 4) } }));
+  }
+  inp.emit({ type: "sentence", text: reply });
+  inp.emit({ type: "done", text: reply, fallback: "none", ms: Date.now() - started });
+  await Promise.allSettled(background);
+  await addTurn(session.id, "partner", reply, { meta: { videoQ: next, greeting: !userText } });
+}
+
 /** One turn of the scripted (no API key) guided conversation about a book topic. */
 async function runScriptedTurn(o: {
   session: SessionRow;
