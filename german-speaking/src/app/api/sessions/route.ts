@@ -4,6 +4,8 @@ import { createSession, getSettings, getWeaknesses } from "@/lib/db/repo";
 import { LEVELS } from "@/lib/levels";
 import { levelOfTopic } from "@/lib/book";
 import { getVideoThema } from "@/lib/videoThema";
+import { topicVideoTitle } from "@/lib/easyGerman";
+import { YOUTUBE_ID } from "@/lib/easyGermanShared";
 import { pickFocus } from "@/lib/report/weakness";
 import { jsonError, readJson } from "@/lib/api";
 import { currentUser, unauthorized } from "@/lib/auth/session";
@@ -16,7 +18,15 @@ const Body = z.object({
   topic: z.string().max(200).nullable().optional(),
   bookTopic: z.number().int().min(1).max(100).nullable().optional(),
   /** "اتكلم عن اللي شفته": Nicos Weg (A1–B1) or a Video-Thema episode (B2). */
-  video: z.union([z.object({ kind: z.literal("nicos") }), z.object({ kind: z.literal("videothema"), id: z.string().regex(/^[0-9a-f]{16}$/) })]).nullable().optional(),
+  video: z
+    .union([
+      z.object({ kind: z.literal("nicos") }),
+      z.object({ kind: z.literal("videothema"), id: z.string().regex(/^[0-9a-f]{16}$/) }),
+      /** An Easy German video of the session's book topic. */
+      z.object({ kind: z.literal("easygerman"), youtubeId: z.string().regex(YOUTUBE_ID) }),
+    ])
+    .nullable()
+    .optional(),
 });
 
 export async function POST(req: Request) {
@@ -37,6 +47,11 @@ export async function POST(req: Request) {
     // Title and description come from DW's feed on the server, not from the browser.
     const ep = (await getVideoThema()).episodes.find((e) => e.id === v.id);
     video = JSON.stringify({ kind: "videothema", id: v.id, title: ep?.title ?? "Video-Thema", summary: ep?.summary ?? "" });
+  } else if (v?.kind === "easygerman") {
+    // Only a video of this book topic (title from our list, not from the browser).
+    const title = bookTopic ? await topicVideoTitle(bookTopic, v.youtubeId) : null;
+    if (!bookTopic || !title) return jsonError(400, "unknown_video", "Not a video of this topic");
+    video = JSON.stringify({ kind: "easygerman", youtubeId: v.youtubeId, title, topic: bookTopic });
   }
   const focus = (await getSettings(user.id)).focusSteering ? pickFocus(await getWeaknesses(user.id)) : null;
   const s = await createSession(parsed.data.level, parsed.data.topic ?? null, focus?.tag ?? null, user.id, bookTopic, video);

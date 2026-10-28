@@ -6,13 +6,15 @@ import type { Level } from "./levels";
 
 export type VideoContext =
   | { kind: "nicos"; level: "A1" | "A2" | "B1" }
-  | { kind: "videothema"; id: string; title: string; summary: string };
+  | { kind: "videothema"; id: string; title: string; summary: string }
+  /** An Easy German video of a book topic (the session also has the book topic). */
+  | { kind: "easygerman"; youtubeId: string; title: string; topic: number };
 
 export function parseVideoContext(json: string | null): VideoContext | null {
   if (!json) return null;
   try {
     const v = JSON.parse(json) as VideoContext;
-    return v && (v.kind === "nicos" || v.kind === "videothema") ? v : null;
+    return v && (v.kind === "nicos" || v.kind === "videothema" || v.kind === "easygerman") ? v : null;
   } catch {
     return null;
   }
@@ -47,6 +49,10 @@ const REACTIONS: Record<Level, string[]> = {
 export const videoQuestions = (level: Level) => QUESTIONS[level];
 
 export function videoGreeting(level: Level, v: VideoContext): string {
+  if (v.kind === "easygerman") {
+    const q = QUESTIONS[level][0];
+    return level === "B2" ? `Guten Tag! Sie haben das Easy-German-Video „${v.title}“ gesehen. Lassen Sie uns darüber sprechen. ${q}` : `Hallo! Du hast das Easy-German-Video „${v.title}“ gesehen. Lass uns darüber sprechen! ${q}`;
+  }
   if (v.kind === "videothema") return `Guten Tag! Sie haben das Video „${v.title}“ gesehen. Lassen Sie uns darüber sprechen. ${QUESTIONS[level][0]}`;
   return `Hallo! Du hast „Nicos Weg“ gesehen. Lass uns darüber sprechen! ${QUESTIONS[level][0]}`;
 }
@@ -72,6 +78,12 @@ export function videoPromptBlock(v: VideoContext): string {
 # Today: talk about the video the learner watched
 The learner just watched DW's free German course drama "Nicos Weg" (level ${v.level}). It tells the story of Nico, who comes to Germany without speaking German and learns it step by step.
 You do NOT know which scenes they watched, so never invent plot details: ask them to tell you (who Nico is, what happened, what Nico does now, what was difficult, what they would do), react to what they say, and ask follow-up questions at the level. Keep the conversation about the video and similar everyday situations.`;
+  }
+  if (v.kind === "easygerman") {
+    return `
+# Today: talk about the video the learner watched
+The learner just watched the Easy German street-interview video "${v.title}" (YouTube) about the book topic above. In these videos, people in German streets answer questions about the topic in natural, everyday German.
+You do NOT know what exactly the people said, so never invent details: ask the learner what the people talked about, what they understood, which phrases they noticed, how it is in Egypt and what their own answer to the question would be. Use the book topic's words and stay strictly at the level.`;
   }
   return `
 # Today: talk about the video the learner watched

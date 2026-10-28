@@ -1,0 +1,881 @@
+{
+ "source": "Easy German (YouTube). All IDs verified via YouTube oEmbed on 2026-10-28.",
+ "topics": [
+  {
+   "topic": 1,
+   "level": "A1",
+   "title_de": "Begrüßung und Vorstellung",
+   "title_ar": "التحية والتعارف",
+   "videos": [
+    {
+     "youtubeId": "r94aqLUO0wo",
+     "title": "Introduce yourself in Slow German | Super Easy German (1)",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=r94aqLUO0wo"
+    },
+    {
+     "youtubeId": "Yaelm87PTvg",
+     "title": "Introduce yourself in German (for absolute beginners)",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=Yaelm87PTvg"
+    },
+    {
+     "youtubeId": "RlGAbms-rqk",
+     "title": "Getting to know people in the streets | Easy German 4",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=RlGAbms-rqk"
+    }
+   ]
+  },
+  {
+   "topic": 2,
+   "level": "A1",
+   "title_de": "Persönliche Angaben",
+   "title_ar": "بياناتك الشخصية (الاسم، السن، البلد، التليفون)",
+   "videos": [
+    {
+     "youtubeId": "huwi-cjPPXU",
+     "title": "Introduce Yourself in Slow German (for Absolute Beginners)",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=huwi-cjPPXU"
+    }
+   ]
+  },
+  {
+   "topic": 3,
+   "level": "A1",
+   "title_de": "Familie",
+   "title_ar": "العيلة",
+   "videos": [
+    {
+     "youtubeId": "B3LagCVBKKc",
+     "title": "Family life in Germany | Easy German 158",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=B3LagCVBKKc"
+    }
+   ]
+  },
+  {
+   "topic": 5,
+   "level": "A1",
+   "title_de": "Der Morgen",
+   "title_ar": "الصبح وروتين اليوم",
+   "videos": [
+    {
+     "youtubeId": "kwdnxwQCoXM",
+     "title": "What Germans have for Breakfast | Easy German 204",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=kwdnxwQCoXM"
+    }
+   ]
+  },
+  {
+   "topic": 6,
+   "level": "A1",
+   "title_de": "Essen und Trinken",
+   "title_ar": "الأكل والشرب",
+   "videos": [
+    {
+     "youtubeId": "VNPOLfs-iv0",
+     "title": "What Do Germans Eat Everyday? | Easy German 635",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=VNPOLfs-iv0"
+    },
+    {
+     "youtubeId": "1KCX26Wb4nM",
+     "title": "Easy German - Basic Phrases: Essen",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=1KCX26Wb4nM"
+    }
+   ]
+  },
+  {
+   "topic": 7,
+   "level": "A1",
+   "title_de": "Einkaufen – die Grundlagen",
+   "title_ar": "الشراء: الأساسيات",
+   "videos": [
+    {
+     "youtubeId": "X09NKF5Suq0",
+     "title": "Going to the Supermarket in Slow German | Super Easy German 231",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=X09NKF5Suq0"
+    },
+    {
+     "youtubeId": "15Gnw3raoQw",
+     "title": "Grocery shopping | Easy German 6",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=15Gnw3raoQw"
+    }
+   ]
+  },
+  {
+   "topic": 8,
+   "level": "A1",
+   "title_de": "Wohnung und Zimmer",
+   "title_ar": "البيت والأوض",
+   "videos": [
+    {
+     "youtubeId": "jlZjNcgItlY",
+     "title": "Tour Through Our Apartment in Slow German | Super Easy German 243",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=jlZjNcgItlY"
+    }
+   ]
+  },
+  {
+   "topic": 9,
+   "level": "A1",
+   "title_de": "Das Wetter",
+   "title_ar": "الجو",
+   "videos": [
+    {
+     "youtubeId": "K09knvYldj4",
+     "title": "The Weather in Germany | Easy German 177",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=K09knvYldj4"
+    },
+    {
+     "youtubeId": "jMI2Tbm4iJY",
+     "title": "Tips for the winter in Germany | Easy German 113",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=jMI2Tbm4iJY"
+    }
+   ]
+  },
+  {
+   "topic": 10,
+   "level": "A1",
+   "title_de": "Wege in der Stadt",
+   "title_ar": "الطريق والاتجاهات في المدينة",
+   "videos": [
+    {
+     "youtubeId": "z3WdZngBxBk",
+     "title": "Asking people for directions in German | Easy German 2",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=z3WdZngBxBk"
+    }
+   ]
+  },
+  {
+   "topic": 11,
+   "level": "A1",
+   "title_de": "Hobbys und Freizeit",
+   "title_ar": "الهوايات ووقت الفراغ",
+   "videos": [
+    {
+     "youtubeId": "7QcqA2TBl48",
+     "title": "Easy German Basic Phrases - Hobbies",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=7QcqA2TBl48"
+    }
+   ]
+  },
+  {
+   "topic": 13,
+   "level": "A1",
+   "title_de": "Deutsch lernen",
+   "title_ar": "تعلم الألماني والفصل",
+   "videos": [
+    {
+     "youtubeId": "_C1A-x10a80",
+     "title": "Which languages are you learning? | Easy German 73",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=_C1A-x10a80"
+    }
+   ]
+  },
+  {
+   "topic": 14,
+   "level": "A1",
+   "title_de": "Im Café",
+   "title_ar": "في الكافيه",
+   "videos": [
+    {
+     "youtubeId": "1liYgLugZNs",
+     "title": "At a German Bakery | Easy German 194",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=1liYgLugZNs"
+    }
+   ]
+  },
+  {
+   "topic": 15,
+   "level": "A1",
+   "title_de": "Die Woche und Termine",
+   "title_ar": "الأسبوع والمواعيد",
+   "videos": [
+    {
+     "youtubeId": "pax3jiBaO-Q",
+     "title": "What are you doing today? | Easy German 26",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=pax3jiBaO-Q"
+    }
+   ]
+  },
+  {
+   "topic": 16,
+   "level": "A2",
+   "title_de": "Was hast du am Wochenende gemacht?",
+   "title_ar": "عملت إيه في الويك إند؟ (الكلام عن الماضي)",
+   "videos": [
+    {
+     "youtubeId": "u8M5d4XyNYQ",
+     "title": "Our Weekend in Slow German | Super Easy German 262",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=u8M5d4XyNYQ"
+    }
+   ]
+  },
+  {
+   "topic": 17,
+   "level": "A2",
+   "title_de": "Beim Arzt",
+   "title_ar": "عند الدكتور",
+   "videos": [
+    {
+     "youtubeId": "ahYlzOyDNI0",
+     "title": "At the Dentist in Slow German | Super Easy German 242",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=ahYlzOyDNI0"
+    }
+   ]
+  },
+  {
+   "topic": 18,
+   "level": "A2",
+   "title_de": "In der Apotheke",
+   "title_ar": "في الصيدلية",
+   "videos": [
+    {
+     "youtubeId": "CtxKpeYfKvw",
+     "title": "At the Pharmacy in Slow German | Super Easy German 280",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=CtxKpeYfKvw"
+    }
+   ]
+  },
+  {
+   "topic": 19,
+   "level": "A2",
+   "title_de": "Kleidung kaufen",
+   "title_ar": "شراء الهدوم",
+   "videos": [
+    {
+     "youtubeId": "f4V2LnkGkLg",
+     "title": "Pia and Lisa go shopping | Easy German 85",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=f4V2LnkGkLg"
+    }
+   ]
+  },
+  {
+   "topic": 22,
+   "level": "A2",
+   "title_de": "Bus, Bahn und Taxi",
+   "title_ar": "المواصلات",
+   "videos": [
+    {
+     "youtubeId": "StmjIvwtKlg",
+     "title": "At The Train Station in Slow German",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=StmjIvwtKlg"
+    },
+    {
+     "youtubeId": "S3SRcxJB31Q",
+     "title": "Public Transport in Slow German | Super Easy German 239",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=S3SRcxJB31Q"
+    }
+   ]
+  },
+  {
+   "topic": 23,
+   "level": "A2",
+   "title_de": "Reisen und Urlaub",
+   "title_ar": "السفر والأجازات",
+   "videos": [
+    {
+     "youtubeId": "ZqCevnsyMAQ",
+     "title": "Our Vacation in Slow German (Dialogues for Beginners)",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=ZqCevnsyMAQ"
+    }
+   ]
+  },
+  {
+   "topic": 24,
+   "level": "A2",
+   "title_de": "Im Hotel",
+   "title_ar": "في الفندق",
+   "videos": [
+    {
+     "youtubeId": "_dddL1ddmXQ",
+     "title": "At the Hotel in Slow German | Super Easy German 283",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=_dddL1ddmXQ"
+    }
+   ]
+  },
+  {
+   "topic": 25,
+   "level": "A2",
+   "title_de": "Wohnungssuche",
+   "title_ar": "البحث عن شقة والإيجار",
+   "videos": [
+    {
+     "youtubeId": "TttobZ9jya8",
+     "title": "Finding an apartment in Germany | Easy German 103",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=TttobZ9jya8"
+    },
+    {
+     "youtubeId": "kf8dPaCLa3k",
+     "title": "Our Tips for Searching for an Apartment in Germany | Easy German 367",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=kf8dPaCLa3k"
+    }
+   ]
+  },
+  {
+   "topic": 26,
+   "level": "A2",
+   "title_de": "Nachbarn",
+   "title_ar": "الجيران",
+   "videos": [
+    {
+     "youtubeId": "qSGUD9WYRwE",
+     "title": "Walk Through Our Neighborhood in Slow German",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=qSGUD9WYRwE"
+    }
+   ]
+  },
+  {
+   "topic": 27,
+   "level": "A2",
+   "title_de": "Arbeit und Berufe",
+   "title_ar": "الشغل والوظايف",
+   "videos": [
+    {
+     "youtubeId": "iyoptTjDtz0",
+     "title": "Jobs and careers | Easy German 18",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=iyoptTjDtz0"
+    }
+   ]
+  },
+  {
+   "topic": 28,
+   "level": "A2",
+   "title_de": "Telefonieren",
+   "title_ar": "المكالمات التليفونية",
+   "videos": [
+    {
+     "youtubeId": "I6BXe6BWetI",
+     "title": "Cari and Manuel Call All Their Friends | Easy German Podcast 200 (LIVE)",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=I6BXe6BWetI"
+    }
+   ]
+  },
+  {
+   "topic": 29,
+   "level": "A2",
+   "title_de": "Einladungen und Partys",
+   "title_ar": "العزومات والحفلات",
+   "videos": [
+    {
+     "youtubeId": "BoBDKdXfOSc",
+     "title": "Birthday party | Easy German 10",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=BoBDKdXfOSc"
+    }
+   ]
+  },
+  {
+   "topic": 30,
+   "level": "A2",
+   "title_de": "Feste und Feiertage",
+   "title_ar": "الأعياد والمناسبات",
+   "videos": [
+    {
+     "youtubeId": "UGTSsyeCoBg",
+     "title": "How do you celebrate Christmas? | Easy German 67",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=UGTSsyeCoBg"
+    },
+    {
+     "youtubeId": "robbpJT6hr0",
+     "title": "Christmas with Cari's family | Easy German 121",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=robbpJT6hr0"
+    },
+    {
+     "youtubeId": "dxYUYw8GPmk",
+     "title": "German Christmas Markets | Easy German 65",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=dxYUYw8GPmk"
+    }
+   ]
+  },
+  {
+   "topic": 31,
+   "level": "A2",
+   "title_de": "Sport und Fitness",
+   "title_ar": "الرياضة والجيم",
+   "videos": [
+    {
+     "youtubeId": "hxGSArgzNN8",
+     "title": "Sports in Slow German",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=hxGSArgzNN8"
+    }
+   ]
+  },
+  {
+   "topic": 33,
+   "level": "A2",
+   "title_de": "Charakter beschreiben",
+   "title_ar": "وصف الشخصية",
+   "videos": [
+    {
+     "youtubeId": "vkt4gNbE_YE",
+     "title": "What is typical German? (1) | Easy German 20",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=vkt4gNbE_YE"
+    }
+   ]
+  },
+  {
+   "topic": 34,
+   "level": "A2",
+   "title_de": "Bank und Geld",
+   "title_ar": "البنك والفلوس",
+   "videos": [
+    {
+     "youtubeId": "UqteWIVAdT4",
+     "title": "Why Germans Still Use Cash | Easy German 626",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=UqteWIVAdT4"
+    }
+   ]
+  },
+  {
+   "topic": 37,
+   "level": "A2",
+   "title_de": "Pläne mit Freunden",
+   "title_ar": "الخروج والتخطيط مع الصحاب",
+   "videos": [
+    {
+     "youtubeId": "f2kTpwah1X4",
+     "title": "Hamburg, What are you doing Today? | Easy German 563",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=f2kTpwah1X4"
+    }
+   ]
+  },
+  {
+   "topic": 40,
+   "level": "A2",
+   "title_de": "Smalltalk",
+   "title_ar": "الكلام الخفيف (سمول توك)",
+   "videos": [
+    {
+     "youtubeId": "hhuNW1COrSM",
+     "title": "14 Min. Conversation in Slow German | Super Easy German 264",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=hhuNW1COrSM"
+    }
+   ]
+  },
+  {
+   "topic": 41,
+   "level": "B1",
+   "title_de": "Erlebnisse erzählen",
+   "title_ar": "حكي المواقف والتجارب",
+   "videos": [
+    {
+     "youtubeId": "I9kmYRRG6sM",
+     "title": "Germans Answer 7 Personal Questions | Easy German 547",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=I9kmYRRG6sM"
+    }
+   ]
+  },
+  {
+   "topic": 42,
+   "level": "B1",
+   "title_de": "Meinung sagen, zustimmen, widersprechen",
+   "title_ar": "إبداء الرأي والموافقة والاعتراض",
+   "videos": [
+    {
+     "youtubeId": "WSM-fWh6F8k",
+     "title": "Are Germans direct? | Easy German 173",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=WSM-fWh6F8k"
+    }
+   ]
+  },
+  {
+   "topic": 44,
+   "level": "B1",
+   "title_de": "Das Vorstellungsgespräch",
+   "title_ar": "مقابلة الشغل (الإنترفيو)",
+   "videos": [
+    {
+     "youtubeId": "eC4j_v8TBIU",
+     "title": "Job Interviews in Germany /w German LifeStyle GLS | Easy German 238",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=eC4j_v8TBIU"
+    }
+   ]
+  },
+  {
+   "topic": 45,
+   "level": "B1",
+   "title_de": "Kommunikation im Büro",
+   "title_ar": "التواصل في الشغل",
+   "videos": [
+    {
+     "youtubeId": "QdpAJcuYX18",
+     "title": "Arbeit | Easy German 116",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=QdpAJcuYX18"
+    }
+   ]
+  },
+  {
+   "topic": 48,
+   "level": "B1",
+   "title_de": "Auf dem Amt",
+   "title_ar": "في المصالح الحكومية والأوراق",
+   "videos": [
+    {
+     "youtubeId": "IChcogLkMrs",
+     "title": "Jobcenter in Slow German | Super Easy German 305",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=IChcogLkMrs"
+    }
+   ]
+  },
+  {
+   "topic": 50,
+   "level": "B1",
+   "title_de": "Freundschaft",
+   "title_ar": "الصداقة",
+   "videos": [
+    {
+     "youtubeId": "C2mSJfk7ZPM",
+     "title": "How to find friends in Germany | Easy German 343",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=C2mSJfk7ZPM"
+    },
+    {
+     "youtubeId": "BPVFfbX2Ew0",
+     "title": "Friendships in Germany | Easy German 404",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=BPVFfbX2Ew0"
+    }
+   ]
+  },
+  {
+   "topic": 51,
+   "level": "B1",
+   "title_de": "Liebe und Dating",
+   "title_ar": "الحب والتعارف",
+   "videos": [
+    {
+     "youtubeId": "AR-nUwV-JRw",
+     "title": "Flirting in Germany | Easy German 12",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=AR-nUwV-JRw"
+    }
+   ]
+  },
+  {
+   "topic": 52,
+   "level": "B1",
+   "title_de": "Streit und Konflikte",
+   "title_ar": "الخناقات والخلافات",
+   "videos": [
+    {
+     "youtubeId": "uudiZBTvvQ0",
+     "title": "Young Germans vs. Old Germans - What Do They Fight About? | Easy German 619",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=uudiZBTvvQ0"
+    }
+   ]
+  },
+  {
+   "topic": 55,
+   "level": "B1",
+   "title_de": "Schule und Studium",
+   "title_ar": "المدرسة والجامعة",
+   "videos": [
+    {
+     "youtubeId": "zlYKjYEFgU0",
+     "title": "Student life in Germany | Easy German 99",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=zlYKjYEFgU0"
+    }
+   ]
+  },
+  {
+   "topic": 58,
+   "level": "B1",
+   "title_de": "Umwelt im Alltag",
+   "title_ar": "البيئة في حياتنا اليومية",
+   "videos": [
+    {
+     "youtubeId": "2yFEeFqbVwg",
+     "title": "Recycling in Germany | Super Easy German (128)",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=2yFEeFqbVwg"
+    }
+   ]
+  },
+  {
+   "topic": 59,
+   "level": "B1",
+   "title_de": "Kulturunterschiede: Ägypten und Deutschland",
+   "title_ar": "الفرق بين ثقافة مصر وألمانيا",
+   "videos": [
+    {
+     "youtubeId": "lrrBNFqG1oI",
+     "title": "8 Things NOT to Do in Germany | Easy German 349",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=lrrBNFqG1oI"
+    },
+    {
+     "youtubeId": "R-KKZWwSaHU",
+     "title": "What Austrians think about Germans | Easy German 149",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=R-KKZWwSaHU"
+    }
+   ]
+  },
+  {
+   "topic": 60,
+   "level": "B1",
+   "title_de": "Leben im Ausland",
+   "title_ar": "الحياة برا والاندماج",
+   "videos": [
+    {
+     "youtubeId": "oCsZnfIaiwY",
+     "title": "Is It Hard to Make Friends in Germany? | Easy German 566",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=oCsZnfIaiwY"
+    },
+    {
+     "youtubeId": "yanc4sZuaPE",
+     "title": "Integration in Germany (with Abdul and Allaa from German LifeStyle) | Easy German 130",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=yanc4sZuaPE"
+    }
+   ]
+  },
+  {
+   "topic": 62,
+   "level": "B1",
+   "title_de": "Auto und Verkehr",
+   "title_ar": "العربية والمرور",
+   "videos": [
+    {
+     "youtubeId": "Cn0MaMjiRE8",
+     "title": "I Tried Crossing Germany by Bike | Easy German 607",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=Cn0MaMjiRE8"
+    }
+   ]
+  },
+  {
+   "topic": 70,
+   "level": "B1",
+   "title_de": "Filme, Musik und Bücher",
+   "title_ar": "الأفلام والمزيكا والكتب",
+   "videos": [
+    {
+     "youtubeId": "cq6kOTTIzys",
+     "title": "Your favourite German music? | Easy German 259",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=cq6kOTTIzys"
+    }
+   ]
+  },
+  {
+   "topic": 71,
+   "level": "B2",
+   "title_de": "Diskutieren und argumentieren",
+   "title_ar": "النقاش وتقديم الحجج",
+   "videos": [
+    {
+     "youtubeId": "SoZhk9FB0G8",
+     "title": "Germans Share Their Unpopular Opinions | Easy German 654",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=SoZhk9FB0G8"
+    }
+   ]
+  },
+  {
+   "topic": 73,
+   "level": "B2",
+   "title_de": "Was wäre, wenn …? (Konjunktiv II)",
+   "title_ar": "لو كان... (الافتراضات)",
+   "videos": [
+    {
+     "youtubeId": "mA8CGzwYBPc",
+     "title": "What would you do with 20€? | Easy German 71",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=mA8CGzwYBPc"
+    }
+   ]
+  },
+  {
+   "topic": 80,
+   "level": "B2",
+   "title_de": "Technik und künstliche Intelligenz",
+   "title_ar": "التكنولوجيا والذكاء الاصطناعي",
+   "videos": [
+    {
+     "youtubeId": "tnagbAbsmSU",
+     "title": "Will robots replace our jobs? | Easy German 207",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=tnagbAbsmSU"
+    }
+   ]
+  },
+  {
+   "topic": 82,
+   "level": "B2",
+   "title_de": "Psyche und Stress",
+   "title_ar": "الصحة النفسية والضغط",
+   "videos": [
+    {
+     "youtubeId": "d1nIWPQ9yek",
+     "title": "Mental Health in Germany — Q&A with a German Psychiatrist | Easy German Podcast 610",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=d1nIWPQ9yek"
+    }
+   ]
+  },
+  {
+   "topic": 83,
+   "level": "B2",
+   "title_de": "Bildungssystem",
+   "title_ar": "نظام التعليم",
+   "videos": [
+    {
+     "youtubeId": "uQ7hsFGnfrY",
+     "title": "At a German School | Easy German 152",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=uQ7hsFGnfrY"
+    }
+   ]
+  },
+  {
+   "topic": 84,
+   "level": "B2",
+   "title_de": "Migration",
+   "title_ar": "الهجرة",
+   "videos": [
+    {
+     "youtubeId": "OyuXSJ9pG6M",
+     "title": "Is Germany an Attractive Country For Immigration? | Easy German 612",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=OyuXSJ9pG6M"
+    }
+   ]
+  },
+  {
+   "topic": 88,
+   "level": "B2",
+   "title_de": "Rechte im Alltag: Miete und Arbeit",
+   "title_ar": "حقوقك في الإيجار والشغل",
+   "videos": [
+    {
+     "youtubeId": "xx197BBwx6Q",
+     "title": "What Berliners Pay for Rent in 2025 | Easy German 625",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=xx197BBwx6Q"
+    }
+   ]
+  },
+  {
+   "topic": 90,
+   "level": "B2",
+   "title_de": "Redewendungen",
+   "title_ar": "التعبيرات والأمثال الألمانية",
+   "videos": [
+    {
+     "youtubeId": "cOYJ4BniZnY",
+     "title": "Typical German Idioms | Easy German 94",
+     "channel": "Easy Languages (the original Easy German channel)",
+     "url": "https://www.youtube.com/watch?v=cOYJ4BniZnY"
+    }
+   ]
+  },
+  {
+   "topic": 91,
+   "level": "B2",
+   "title_de": "Umgangssprache",
+   "title_ar": "لغة الشارع والكلام العامي",
+   "videos": [
+    {
+     "youtubeId": "3vNefv0dmZQ",
+     "title": "German Slang Only Young People Use | Easy German 453",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=3vNefv0dmZQ"
+    }
+   ]
+  },
+  {
+   "topic": 94,
+   "level": "B2",
+   "title_de": "Lustige Geschichten erzählen",
+   "title_ar": "حكي القصص بخفة دم",
+   "videos": [
+    {
+     "youtubeId": "Fi-8k-3NBfs",
+     "title": "What is German Humor? | Easy German 184",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=Fi-8k-3NBfs"
+    },
+    {
+     "youtubeId": "hW28HSSfEg0",
+     "title": "How Germans react to jokes about Germans | Easy German 203",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=hW28HSSfEg0"
+    }
+   ]
+  },
+  {
+   "topic": 97,
+   "level": "B2",
+   "title_de": "Über Sport und Events diskutieren",
+   "title_ar": "النقاش عن الماتشات والأحداث",
+   "videos": [
+    {
+     "youtubeId": "JWZhB1020gg",
+     "title": "Football in Germany | Easy German Podcast 124 (LIVE)",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=JWZhB1020gg"
+    }
+   ]
+  },
+  {
+   "topic": 99,
+   "level": "B2",
+   "title_de": "Reiseerfahrungen und Empfehlungen",
+   "title_ar": "تجارب السفر والترشيحات",
+   "videos": [
+    {
+     "youtubeId": "3uOro6pCmfs",
+     "title": "Which countries have you been to? | Easy German 333",
+     "channel": "Easy German",
+     "url": "https://www.youtube.com/watch?v=3uOro6pCmfs"
+    }
+   ]
+  }
+ ]
+}

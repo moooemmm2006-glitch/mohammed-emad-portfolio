@@ -1,6 +1,6 @@
 // Video progress helpers shared by the browser and the server (no database code here).
 
-export const VIDEO_KEY = /^(nicos:(A1|A2|B1):(movie|playlist)|vt:[0-9a-f]{16})$/;
+export const VIDEO_KEY = /^(nicos:(A1|A2|B1):(movie|playlist)|vt:[0-9a-f]{16}|eg:[A-Za-z0-9_-]{11})$/;
 
 export interface VideoState {
   key: string;

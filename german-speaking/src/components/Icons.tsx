@@ -170,3 +170,10 @@ export const IconShield = (p: P) => (
     <path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" />
   </I>
 );
+export const IconHeadphones = (p: P) => (
+  <I {...p}>
+    <path d="M4 15v-3a8 8 0 0 1 16 0v3" />
+    <rect x="3" y="14" width="4" height="7" rx="1.5" />
+    <rect x="17" y="14" width="4" height="7" rx="1.5" />
+  </I>
+);

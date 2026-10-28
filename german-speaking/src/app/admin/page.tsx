@@ -6,6 +6,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { ApiError, api } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
 import type { StudentRow } from "@/lib/admin";
+import { TopicVideosAdmin } from "@/components/admin/TopicVideosAdmin";
 
 export default function AdminPage() {
   const { t } = useUI();
@@ -39,6 +40,7 @@ export default function AdminPage() {
           <StudentCard key={s.id} s={s} self={s.id === me} onChange={load} />
         ))}
       </ul>
+      <TopicVideosAdmin />
     </div>
   );
 }

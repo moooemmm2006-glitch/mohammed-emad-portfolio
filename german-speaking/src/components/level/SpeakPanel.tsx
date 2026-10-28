@@ -113,9 +113,16 @@ export function SpeakPanel({ level }: { level: Level }) {
                       <div className="h-1.5 rounded-full bg-surface-2 overflow-hidden" aria-hidden="true">
                         <div className="h-full bg-accent" style={{ width: `${pct}%` }} />
                       </div>
-                      <p className="mt-1 text-xs text-muted">
-                        {tp.progress.done ? <b className="text-ok">{t("book_done")} · </b> : null}
-                        {fill(t("book_progress"), { c: tp.progress.correct, t: tp.progress.total })}
+                      <p className="mt-1 text-xs text-muted flex flex-wrap items-center gap-x-2">
+                        <span>
+                          {tp.progress.done ? <b className="text-ok">{t("book_done")} · </b> : null}
+                          {fill(t("book_progress"), { c: tp.progress.correct, t: tp.progress.total })}
+                        </span>
+                        {tp.videos && tp.videos.total > 0 && (
+                          <span className={`ms-auto tabular-nums ${tp.videos.watched === tp.videos.total ? "text-ok font-semibold" : ""}`} title="Easy German">
+                            🎧 {tp.videos.watched}/{tp.videos.total}
+                          </span>
+                        )}
                       </p>
                     </div>
                   </Link>
