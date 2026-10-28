@@ -12,6 +12,7 @@ import type { Settings } from "@/lib/settings";
 import { IconEye, IconEyeOff, IconMic, IconPlay, IconRepeat, IconStop } from "../Icons";
 import { useVoice } from "./useVoice";
 import { useSite } from "../site/SiteProvider";
+import { useExerciseGuard } from "@/lib/client/focusStore";
 
 export interface PracticeItem {
   /** Global book sentence number; undefined for grammar examples (not saved to progress). */
@@ -52,6 +53,7 @@ export function Shadowing({ level, groups, settings, providers, scores: initialS
   const router = useRouter();
   const { offerPause } = useSite();
   const voice = useVoice(level, settings, providers);
+  useExerciseGuard(voice.phase !== "idle"); // the ⏱️ celebration waits while a sentence is played / heard
   const { stop: stopVoice, say, listen } = voice;
   const items = groups.flatMap((g) => g.items);
   const [current, setCurrent] = useState<string | null>(null);

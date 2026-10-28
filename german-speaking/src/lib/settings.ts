@@ -31,6 +31,11 @@ export const SettingsSchema = z.object({
   explainerSeen: z.boolean().default(false),
   /** The "first time here?" strip on the level pages was closed. */
   introDismissed: z.boolean().default(false),
+  /** ⏱️ Focus timer: last chosen length (minutes), celebration sound, a break afterwards, break length. */
+  focusMinutes: z.number().int().min(5).max(180).default(25),
+  focusSound: z.boolean().default(true),
+  focusBreak: z.boolean().default(true),
+  breakMinutes: z.union([z.literal(3), z.literal(5), z.literal(10)]).default(5),
   /** Last day (learner's calendar) the "برافو! عايز تاخد استراحة؟" toast was shown. */
   pauseOfferDay: z.string().max(10).nullable().default(null),
 });

@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import { IconDownload, IconPlay, IconTrash, IconUpload } from "@/components/Icons";
 import { MicCheck } from "@/components/MicCheck";
 import { useProviders, useSettings } from "@/lib/client/api";
+import { useMe } from "@/lib/client/me";
 import { useUI } from "@/lib/client/ui";
 import { useFx, type FxPref } from "@/lib/client/motion";
-import type { TKey, UILang } from "@/lib/client/i18n";
+import { fill, type TKey, type UILang } from "@/lib/client/i18n";
 import { defaultVoiceAssignment, loadVoices, Speaker, speakOptionsFor } from "@/lib/client/tts";
 import { LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
+import { BREAK_CHOICES, clampMinutes, FOCUS_MAX, FOCUS_MIN, FOCUS_PRESETS } from "@/lib/focusShared";
 import { SPEEDS, type Settings } from "@/lib/settings";
 
 const SAMPLE: Record<Level, string> = {
@@ -22,6 +24,7 @@ export default function SettingsPage() {
   const { t, lang, setLang } = useUI();
   const { pref: fxPref, setPref: setFxPref } = useFx();
   const { settings, update } = useSettings();
+  const { setPrefs } = useMe();
   const providers = useProviders();
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -45,6 +48,10 @@ export default function SettingsPage() {
   };
   const save = async (patch: Partial<Settings>) => {
     await update(patch);
+    // the ⏱️ timer reads these from the session prefs
+    const { focusMinutes, focusSound, focusBreak, breakMinutes } = patch;
+    const focus = Object.fromEntries(Object.entries({ focusMinutes, focusSound, focusBreak, breakMinutes }).filter(([, v]) => v !== undefined));
+    if (Object.keys(focus).length) setPrefs(focus);
     flash(t("set_saved"));
   };
 
@@ -101,6 +108,41 @@ export default function SettingsPage() {
           />
           <p className="text-xs text-muted mt-1">{t("fx_hint")}</p>
         </div>
+      </Card>
+
+      <Card title={t("set_focus")}>
+        <div>
+          <span className="block text-sm font-medium mb-1">{t("set_focus_default")}</span>
+          <div className="flex flex-wrap items-center gap-2">
+            {FOCUS_PRESETS.map((m) => (
+              <button key={m} type="button" aria-pressed={settings.focusMinutes === m} className={`btn !min-h-[38px] !py-1 ${settings.focusMinutes === m ? "btn-primary" : "btn-ghost"}`} onClick={() => save({ focusMinutes: m })}>
+                {fill(t("focus_min"), { n: m })}
+              </button>
+            ))}
+            <input
+              key={settings.focusMinutes}
+              type="number"
+              min={FOCUS_MIN}
+              max={FOCUS_MAX}
+              defaultValue={settings.focusMinutes}
+              aria-label={t("focus_custom_label")}
+              className="w-24 rounded-lg border border-line bg-surface px-3 py-2 tabular-nums"
+              onBlur={(e) => {
+                const m = clampMinutes(Number(e.target.value));
+                if (m !== settings.focusMinutes) void save({ focusMinutes: m });
+              }}
+            />
+          </div>
+        </div>
+        <Toggle label={t("set_focus_sound")} checked={settings.focusSound} onChange={(v) => save({ focusSound: v })} />
+        <Toggle label={t("set_focus_break")} checked={settings.focusBreak} onChange={(v) => save({ focusBreak: v })} />
+        <Select
+          label={t("set_break_len")}
+          value={String(settings.breakMinutes)}
+          onChange={(x) => save({ breakMinutes: Number(x) as Settings["breakMinutes"] })}
+          options={BREAK_CHOICES.map((m) => [String(m), fill(t("focus_min"), { n: m })] as [string, string])}
+        />
+        <p className="text-xs text-muted">{t("set_focus_fx")}</p>
       </Card>
 
       <Card title={t("set_voices")} sub={t("set_voices_sub")}>
@@ -249,6 +291,15 @@ function Card({ title, sub, children }: { title: string; sub?: string; children:
       </div>
       {children}
     </section>
+  );
+}
+
+function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className="flex items-center justify-between gap-3 cursor-pointer">
+      <span className="text-sm font-medium">{label}</span>
+      <input type="checkbox" role="switch" className="w-5 h-5 accent-[var(--brand)]" checked={checked} onChange={(e) => onChange(e.target.checked)} />
+    </label>
   );
 }
 

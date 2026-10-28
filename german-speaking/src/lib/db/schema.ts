@@ -117,6 +117,18 @@ export const vlogs = sqliteTable("vlogs", {
   addedAt: integer("added_at").notNull(),
 });
 
+/** One finished ⏱️ focus session (the "خزنتي" vault). */
+export const focusSessions = sqliteTable("focus_sessions", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  startedAt: integer("started_at").notNull(),
+  endedAt: integer("ended_at").notNull(),
+  minutes: integer("minutes").notNull(),
+  goal: text("goal"),
+  goalDone: integer("goal_done"), // null = not answered, 1 = yes, 0 = not yet
+  level: text("level"), // the level page the learner was on (study time for that level)
+});
+
 /** Clicks on the channel buttons, per place. */
 export const channelClicks = sqliteTable("channel_clicks", {
   place: text("place").primaryKey(),
@@ -277,6 +289,11 @@ CREATE TABLE IF NOT EXISTS topic_videos (
 );
 CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS vlogs (youtube_id TEXT PRIMARY KEY, title TEXT NOT NULL, description_ar TEXT NOT NULL, added_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS focus_sessions (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL, started_at INTEGER NOT NULL, ended_at INTEGER NOT NULL, minutes INTEGER NOT NULL,
+  goal TEXT, goal_done INTEGER, level TEXT
+);
+CREATE INDEX IF NOT EXISTS focus_sessions_user ON focus_sessions(user_id, ended_at);
 CREATE TABLE IF NOT EXISTS channel_clicks (place TEXT PRIMARY KEY, count INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS gemini_sessions_user ON gemini_sessions(user_id, created_at);
 CREATE TABLE IF NOT EXISTS book_practice (

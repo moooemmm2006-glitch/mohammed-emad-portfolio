@@ -10,6 +10,7 @@ import { UI_LANGS, type UILang } from "@/lib/client/i18n";
 import { isLevel, LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
 import { LEVEL_COOKIE, levelPath } from "@/lib/paths";
 import { IconMoon, IconSun } from "./Icons";
+import { FocusButton, FocusController } from "./focus/FocusTimer";
 import { ProfileMenu } from "./ProfileMenu";
 import { SiteFooter } from "./site/CreatorCard";
 import { useSite } from "./site/SiteProvider";
@@ -56,6 +57,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="ms-auto flex items-center gap-1 shrink-0">
             <LangSwitcher />
             <ExplainerButton />
+            {!bare && me && <FocusButton />}
             <ThemeButton />
             {me ? (
               <ProfileMenu />
@@ -75,6 +77,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
       <SiteFooter loggedIn={!bare && !!me} />
+      {!bare && me && <FocusController />}
     </div>
   );
 }

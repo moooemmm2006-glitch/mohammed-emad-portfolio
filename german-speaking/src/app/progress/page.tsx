@@ -5,6 +5,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContai
 import { HistoryList } from "@/components/HistoryList";
 import { BookProgressCard } from "@/components/book/BookProgressCard";
 import { SkillsProgressCard } from "@/components/level/SkillsProgressCard";
+import { VaultCard } from "@/components/focus/VaultCard";
 import { IconClock, IconFile, IconFlame, IconMic } from "@/components/Icons";
 import { useStats } from "@/lib/client/api";
 import { localeOf, type TKey } from "@/lib/client/i18n";
@@ -51,6 +52,8 @@ export default function ProgressPage() {
       </section>
 
       <SkillsProgressCard />
+
+      <VaultCard />
 
       <BookProgressCard />
 
