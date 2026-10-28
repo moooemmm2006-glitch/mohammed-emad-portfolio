@@ -6,8 +6,8 @@ export interface ChatMessage {
   content: string;
 }
 
-export type ChatPurpose = "partner" | "simplify" | "summary" | "reading";
-export type JsonPurpose = "check" | "report" | "hint" | "corrections";
+export type ChatPurpose = "reading";
+export type JsonPurpose = "corrections";
 
 export interface ChatParams {
   model: string;
@@ -16,7 +16,6 @@ export interface ChatParams {
   maxTokens: number;
   purpose: ChatPurpose;
   level?: Level;
-  onText?: (delta: string) => void;
   signal?: AbortSignal;
 }
 
@@ -28,12 +27,10 @@ export interface JsonParams<T> {
   maxTokens: number;
   purpose: JsonPurpose;
   effort?: "low" | "medium" | "high";
-  /** Structured input the mock provider uses to build a believable answer without a model. */
-  mockContext?: unknown;
 }
 
 export interface LLM {
-  provider: "anthropic" | "mock";
+  provider: "anthropic";
   chat(p: ChatParams): Promise<string>;
   json<T>(p: JsonParams<T>): Promise<T>;
 }

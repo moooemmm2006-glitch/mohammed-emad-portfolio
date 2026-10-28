@@ -5,12 +5,7 @@ import path from "path";
 import { nicosWeg, youtubeEmbedUrl, youtubePlaylistEmbedUrl } from "../data/videos";
 import { getVideoThema, parseFeed, resetVideoThemaCache } from "@/lib/videoThema";
 import { getVideoProgress, percentOf, saveVideoProgress } from "@/lib/videoProgress";
-import { runPartnerTurn, type TurnEvent } from "@/lib/conversation";
 import { resetDbForTests } from "@/lib/db";
-import { createSession, getTurns } from "@/lib/db/repo";
-import { MockLLM } from "@/lib/llm/mock";
-import { buildPartnerSystemPrompt } from "@/lib/prompts";
-import { videoQuestions } from "@/lib/videoTalk";
 
 // A feed in the standard podcast RSS format (the live DW feed can't be reached from the test machine).
 const FEED = `<?xml version="1.0" encoding="UTF-8"?>
@@ -106,7 +101,7 @@ describe("Video-Thema feed", () => {
   });
 });
 
-describe("watched progress and talking about the video", () => {
+describe("watched progress", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gs-video-"));
   let n = 0;
   beforeEach(() => {
@@ -133,40 +128,5 @@ describe("watched progress and talking about the video", () => {
     expect((await getVideoProgress("a"))[0].watched).toBe(true);
     await saveVideoProgress("a", "nicos:A1:movie", { watched: false });
     expect((await getVideoProgress("a"))[0].watched).toBe(false);
-  });
-
-  const run = async (sessionId: string, text?: string) => {
-    const ev: TurnEvent[] = [];
-    await runPartnerTurn({ sessionId, userText: text, emit: (e) => ev.push(e), llm: new MockLLM() });
-    const done = ev.find((e) => e.type === "done");
-    return done && done.type === "done" ? done.text : "";
-  };
-
-  it("without an API key the partner asks simple questions about Nicos Weg, once each, then closes", async () => {
-    const s = await createSession("A1", null, null, "u1", null, JSON.stringify({ kind: "nicos", level: "A1" }));
-    const qs = videoQuestions("A1");
-    expect(qs.slice(0, 4)).toEqual(["Wer ist Nico?", "Woher kommt Nico?", "Was ist passiert?", "Was macht Nico jetzt?"]);
-    const hello = await run(s.id);
-    expect(hello).toContain("Nicos Weg");
-    expect(hello).toContain("Wer ist Nico?");
-    const replies: string[] = [];
-    for (let i = 0; i < qs.length; i++) replies.push(await run(s.id, "Nico kommt aus Spanien."));
-    qs.slice(1).forEach((q, i) => expect(replies[i]).toContain(q));
-    expect(replies.at(-1)).toContain("Video");
-    expect(await run(s.id, "Tschüss")).toContain("Video gesprochen");
-    expect((await getTurns(s.id)).filter((t) => t.role === "user")).toHaveLength(qs.length + 1);
-  });
-
-  it("with an API key the partner gets the video, without invented plot details", () => {
-    const nicos = buildPartnerSystemPrompt({ level: "A2", correctionMode: "recast", video: { kind: "nicos", level: "A2" } });
-    expect(nicos).toContain("Nicos Weg");
-    expect(nicos).toContain("never invent plot details");
-    const vt = buildPartnerSystemPrompt({
-      level: "B2",
-      correctionMode: "recast",
-      video: { kind: "videothema", id: "0123456789abcdef", title: "Fahrrad statt Auto?", summary: "Immer mehr Menschen fahren Rad." },
-    });
-    expect(vt).toContain("Fahrrad statt Auto?");
-    expect(vt).toContain("Immer mehr Menschen fahren Rad.");
   });
 });

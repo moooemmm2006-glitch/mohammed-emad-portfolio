@@ -52,8 +52,6 @@ function fmt(ms: number | null, lang: UILang) {
 
 function StudentCard({ s, self, onChange }: { s: StudentRow; self: boolean; onChange: () => void }) {
   const { t, lang } = useUI();
-  const [minutes, setMinutes] = useState(s.dailyMinutes?.toString() ?? "");
-  const [replies, setReplies] = useState(s.dailyReplies?.toString() ?? "");
   const [temp, setTemp] = useState<string | null>(null);
   const [note, setNote] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -71,7 +69,6 @@ function StudentCard({ s, self, onChange }: { s: StudentRow; self: boolean; onCh
     }
   };
   const patch = (body: object) => api(`/api/admin/users/${s.id}`, { method: "PATCH", body: JSON.stringify(body) });
-  const num = (v: string) => (v.trim() === "" ? null : Math.max(0, Math.round(Number(v))) || null);
 
   return (
     <li className={`card p-5 space-y-4 ${s.disabled ? "opacity-70" : ""}`}>
@@ -90,39 +87,14 @@ function StudentCard({ s, self, onChange }: { s: StudentRow; self: boolean; onCh
         {s.disabled && <span className="chip text-xs text-danger">{t("admin_disabled_badge")}</span>}
       </div>
 
-      <dl className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
+      <dl className="grid grid-cols-3 gap-3 text-sm">
         <Stat label={t("admin_joined")} value={fmt(s.createdAt, lang)} />
         <Stat label={t("admin_last")} value={fmt(s.lastActiveAt, lang)} />
         <Stat label={t("admin_sessions")} value={String(s.sessions)} />
-        <Stat label={t("admin_week")} value={String(s.minutesThisWeek)} />
       </dl>
 
       {!self && (
         <>
-          <form
-            className="space-y-2"
-            onSubmit={(e) => {
-              e.preventDefault();
-              void run(() => patch({ dailyMinutes: num(minutes), dailyReplies: num(replies) }), t("admin_saved"));
-            }}
-          >
-            <p className="text-sm font-semibold">{t("admin_limits")}</p>
-            <div className="flex flex-wrap items-end gap-3 text-sm">
-              <label className="grid gap-1">
-                <span className="text-xs text-muted">{t("admin_minutes")}</span>
-                <input type="number" min={0} max={1440} inputMode="numeric" className="field !w-28 !min-h-[40px] !py-1.5" value={minutes} onChange={(e) => setMinutes(e.target.value)} />
-              </label>
-              <label className="grid gap-1">
-                <span className="text-xs text-muted">{t("admin_replies")}</span>
-                <input type="number" min={0} max={1440} inputMode="numeric" className="field !w-28 !min-h-[40px] !py-1.5" value={replies} onChange={(e) => setReplies(e.target.value)} />
-              </label>
-              <button className="btn btn-ghost !min-h-[40px] text-sm" disabled={busy}>
-                {t("admin_save_limits")}
-              </button>
-            </div>
-            <p className="text-xs text-muted">{t("admin_limits_hint")}</p>
-          </form>
-
           <div className="flex flex-wrap gap-2">
             <button
               className="btn btn-ghost !min-h-[38px] text-sm"

@@ -1,4 +1,4 @@
-// Small text helpers shared by the server (level checks, reports) and the client (TTS chunking).
+// Small text helpers shared by the server (AI texts, stats) and the client (TTS chunking).
 
 /** Split German text into sentences, keeping the end punctuation. */
 export function splitSentences(text: string): string[] {
@@ -8,40 +8,9 @@ export function splitSentences(text: string): string[] {
   return parts.map((s) => s.trim()).filter(Boolean);
 }
 
-/**
- * Incremental splitter for streamed text: feed chunks, get back completed sentences.
- * A sentence counts as complete once it ends in . ! ? … and is followed by whitespace.
- */
-export class SentenceBuffer {
-  private buf = "";
-
-  push(chunk: string): string[] {
-    this.buf += chunk;
-    const out: string[] = [];
-    let m: RegExpMatchArray | null;
-    // Require a following space so "z.B." or "3.5" mid-stream don't split early.
-    while ((m = this.buf.match(/^(.*?[.!?…]+["“”»«)]*)\s+/s))) {
-      const sentence = m[1].trim();
-      if (sentence) out.push(sentence);
-      this.buf = this.buf.slice(m[0].length);
-    }
-    return out;
-  }
-
-  flush(): string[] {
-    const rest = this.buf.trim();
-    this.buf = "";
-    return rest ? [rest] : [];
-  }
-}
-
 export function countWords(text: string): number {
   const m = text.trim().match(/[\p{L}\p{N}'-]+/gu);
   return m ? m.length : 0;
-}
-
-export function tokenizeWords(text: string): string[] {
-  return text.match(/[\p{L}\p{N}'-]+/gu) ?? [];
 }
 
 /** Pull the first JSON object/array out of a model response (handles ```json fences and chatter). */
@@ -71,4 +40,21 @@ export function extractJson(raw: string): unknown {
     }
   }
   throw new Error("Unterminated JSON in model output");
+}
+
+const AR = "\\u0600-\\u06FF";
+// Arabic in round brackets "(الفعل بيروح آخر الجملة)" …
+const ARABIC_HINT = new RegExp(`\\s*\\([^()]*[${AR}][^()]*\\)`, "g");
+// … or a run of Arabic words (with Arabic punctuation).
+const ARABIC_RUN = new RegExp(`[${AR}][${AR}\\s،؛؟.,!:«»"\\-–]*`, "g");
+
+/** Remove Arabic (bracketed hints and Arabic sentences) before German text-to-speech. */
+export function stripArabicHints(text: string): string {
+  return text
+    .replace(ARABIC_HINT, "")
+    .replace(ARABIC_RUN, " ")
+    .replace(/\(\s*\)/g, "")
+    .replace(/\s+([.,!?;:])/g, "$1")
+    .replace(/\s+/g, " ")
+    .trim();
 }

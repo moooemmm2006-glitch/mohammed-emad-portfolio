@@ -1,16 +1,12 @@
-import { afterAll, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import fs from "fs";
 import os from "os";
 import path from "path";
 import { GEMINI_URL, geminiPrompt, LEVEL_RULES, VOCAB_IN_PROMPT } from "../data/gemini-prompts";
 import { getTopics } from "@/lib/book";
-import { runPartnerTurn, type TurnEvent } from "@/lib/conversation";
 import { resetDbForTests } from "@/lib/db";
-import { createSession } from "@/lib/db/repo";
-import { aiChatEnabled } from "@/lib/features";
 import { deleteGeminiSession, geminiCount, GEMINI_SPEAK_MAX, listGeminiSessions, saveGeminiSession } from "@/lib/gemini";
 import { LEVELS } from "@/lib/levels";
-import type { LLM } from "@/lib/llm";
 import { levelSkillProgress } from "@/lib/skills";
 import { SESSION_COOKIE, signToken } from "@/lib/auth/token";
 import { getUser, signUp } from "@/lib/auth/users";
@@ -55,26 +51,21 @@ describe("Gemini prompts", () => {
     }
   });
 
+  it("every one of the 100 book topics gets a prompt with its level and topic (German + Arabic)", async () => {
+    for (const level of LEVELS) {
+      for (const topic of await getTopics(level)) {
+        const p = geminiPrompt(level, { kind: "topic", title_de: topic.title_de, title_ar: topic.title_ar, vocab: topic.vocab.map((v) => v.de), grammar: topic.grammar.map((g) => g.title_de) });
+        expect(p).toContain(`auf Niveau ${level}.`);
+        expect(p).toContain(`Unser Thema: "${topic.title_de}" (${topic.title_ar})`);
+        expect(p).toContain(LEVEL_RULES[level]);
+      }
+    }
+  });
+
   it("video prompts name the video", () => {
     const p = geminiPrompt("A2", { kind: "video", title: "Nicos Weg A2 – Film" });
     expect(p).toContain('Unser Thema ist das Video "Nicos Weg A2 – Film". Frag mich, was ich gesehen habe');
     expect(p).toContain("Niveau A2");
-  });
-});
-
-describe("AI chat feature flag", () => {
-  afterEach(() => vi.unstubAllEnvs());
-
-  it("is off by default and on only with true/1", () => {
-    expect(aiChatEnabled(undefined)).toBe(false);
-    expect(aiChatEnabled("")).toBe(false);
-    expect(aiChatEnabled("false")).toBe(false);
-    expect(aiChatEnabled("true")).toBe(true);
-    expect(aiChatEnabled("1")).toBe(true);
-    vi.stubEnv("NEXT_PUBLIC_AI_CHAT_ENABLED", "true");
-    expect(aiChatEnabled()).toBe(true);
-    vi.stubEnv("NEXT_PUBLIC_AI_CHAT_ENABLED", "false");
-    expect(aiChatEnabled()).toBe(false);
   });
 });
 
@@ -86,7 +77,6 @@ describe("Gemini sessions", () => {
     process.env.DATABASE_PATH = path.join(dir, `g${n++}.db`);
     cookie = undefined;
   });
-  afterEach(() => vi.unstubAllEnvs());
   afterAll(() => {
     resetDbForTests();
     fs.rmSync(dir, { recursive: true, force: true });
@@ -136,34 +126,4 @@ describe("Gemini sessions", () => {
     expect((await sessionRoute.DELETE(new Request("http://test"), ctx)).status).toBe(404);
   });
 
-  it("with the flag off, a book-topic talk is the scripted one even with an AI; with the flag on the AI talks", async () => {
-    let calls = 0;
-    const ai: LLM = {
-      provider: "anthropic",
-      chat: async () => {
-        calls++;
-        return "Hallo! Wie geht's?";
-      },
-      json: async <T,>() => {
-        calls++;
-        return {} as T;
-      },
-    };
-    const run = async (sessionId: string) => {
-      const ev: TurnEvent[] = [];
-      await runPartnerTurn({ sessionId, emit: (e) => ev.push(e), llm: ai });
-      const done = ev.find((e) => e.type === "done");
-      return done && done.type === "done" ? done.text : "";
-    };
-    const topic = (await getTopics("A1"))[0];
-
-    const off = await createSession("A1", null, null, "u1", topic.number);
-    expect(await run(off.id)).toContain(topic.title_de); // the book's scripted greeting
-    expect(calls).toBe(0);
-
-    vi.stubEnv("NEXT_PUBLIC_AI_CHAT_ENABLED", "true");
-    const on = await createSession("A1", null, null, "u1", topic.number);
-    await run(on.id);
-    expect(calls).toBeGreaterThan(0);
-  });
 });

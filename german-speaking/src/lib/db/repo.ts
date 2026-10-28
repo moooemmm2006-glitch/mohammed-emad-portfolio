@@ -1,31 +1,13 @@
-import { and, asc, desc, eq, inArray } from "drizzle-orm";
-import { randomUUID } from "crypto";
+import { asc, desc, eq, inArray } from "drizzle-orm";
 import { getDb, schema } from "./index";
 import { parseSettings, type Settings } from "../settings";
 import type { StoredReport } from "../report/schema";
 import type { WeaknessEntry } from "../report/weakness";
-import type { Level } from "../levels";
 
 export const LOCAL_USER = "local";
 
 export type SessionRow = typeof schema.sessions.$inferSelect;
 export type TurnRow = typeof schema.turns.$inferSelect;
-
-export interface TurnMeta {
-  input?: "voice" | "text";
-  alternatives?: string[];
-  fallback?: string;
-  attempts?: number;
-  violations?: unknown;
-  greeting?: boolean;
-  hint?: boolean;
-  /** Guided book conversation: the book sentence number the partner asked about. */
-  bookQ?: number;
-  /** Learner turn in a guided book conversation: closest book sentence and its score. */
-  book?: { n: number; score: number };
-  /** Conversation about a video: index of the scripted question asked (no API key). */
-  videoQ?: number;
-}
 
 export async function ensureUser(userId: string) {
   const db = await getDb();
@@ -49,45 +31,9 @@ export async function saveSettings(patch: Partial<Settings>, userId: string): Pr
 }
 
 // ---------- sessions ----------
-export async function createSession(
-  level: Level,
-  topic: string | null,
-  focusTag: string | null,
-  userId: string,
-  bookTopic: number | null = null,
-  video: string | null = null,
-): Promise<SessionRow> {
-  await ensureUser(userId);
-  const now = Date.now();
-  const row: SessionRow = {
-    id: randomUUID(),
-    userId,
-    level,
-    topic,
-    status: "active",
-    startedAt: now,
-    endedAt: null,
-    lastActiveAt: now,
-    summary: null,
-    summaryUpto: 0,
-    focusTag,
-    pendingFeedback: null,
-    bookTopic,
-    video,
-  };
-  const db = await getDb();
-  await db.insert(schema.sessions).values(row).run();
-  return row;
-}
-
 export async function getSession(id: string): Promise<SessionRow | undefined> {
   const db = await getDb();
   return db.select().from(schema.sessions).where(eq(schema.sessions.id, id)).get();
-}
-
-export async function updateSession(id: string, patch: Partial<SessionRow>) {
-  const db = await getDb();
-  await db.update(schema.sessions).set(patch).where(eq(schema.sessions.id, id)).run();
 }
 
 export async function listSessions(userId: string): Promise<SessionRow[]> {
@@ -106,49 +52,12 @@ export async function deleteSession(id: string) {
 }
 
 // ---------- turns ----------
-export async function addTurn(
-  sessionId: string,
-  role: "user" | "partner",
-  text: string,
-  opts: { confidence?: number | null; meta?: TurnMeta; at?: number } = {},
-): Promise<TurnRow> {
-  const at = opts.at ?? Date.now();
-  const db = await getDb();
-  const row = await db
-    .insert(schema.turns)
-    .values({ sessionId, role, text, createdAt: at, confidence: opts.confidence ?? null, meta: opts.meta ? JSON.stringify(opts.meta) : null })
-    .returning()
-    .get();
-  await updateSession(sessionId, { lastActiveAt: at });
-  return row;
-}
-
 export async function getTurns(sessionId: string): Promise<TurnRow[]> {
   const db = await getDb();
   return db.select().from(schema.turns).where(eq(schema.turns.sessionId, sessionId)).orderBy(asc(schema.turns.id)).all();
 }
 
-export function parseMeta(t: TurnRow): TurnMeta {
-  try {
-    return t.meta ? (JSON.parse(t.meta) as TurnMeta) : {};
-  } catch {
-    return {};
-  }
-}
-
 // ---------- reports ----------
-export async function saveReport(report: StoredReport, userId: string) {
-  const json = JSON.stringify(report);
-  const values = { sessionId: report.session.sessionId, userId, createdAt: Date.now(), language: report.language, overall: report.overall, json };
-  const db = await getDb();
-  await db
-    .insert(schema.reports)
-    .values(values)
-    .onConflictDoUpdate({ target: schema.reports.sessionId, set: { json, overall: values.overall, language: values.language, createdAt: values.createdAt } })
-    .run();
-  await updateSession(report.session.sessionId, { status: "reported" });
-}
-
 export async function getReport(sessionId: string): Promise<StoredReport | null> {
   const db = await getDb();
   const row = await db.select().from(schema.reports).where(eq(schema.reports.sessionId, sessionId)).get();
@@ -197,12 +106,6 @@ export async function saveWeaknesses(entries: WeaknessEntry[], userId: string) {
       }),
     ),
   ]);
-}
-
-// ---------- violation log ----------
-export async function logViolation(sessionId: string, level: string, attempt: number, violations: unknown) {
-  const db = await getDb();
-  await db.insert(schema.violationLog).values({ sessionId, level, attempt, violations: JSON.stringify(violations), createdAt: Date.now() }).run();
 }
 
 // ---------- export / import / delete ----------
@@ -280,14 +183,4 @@ export async function sessionsWithTurnCounts(userId: string) {
     const t = bySession.get(s.id) ?? [];
     return { session: s, userTurns: t.filter((x) => x.role === "user").length, turns: t };
   });
-}
-
-export async function lastSessionForLevel(level: Level, userId: string) {
-  const db = await getDb();
-  return db
-    .select()
-    .from(schema.sessions)
-    .where(and(eq(schema.sessions.userId, userId), eq(schema.sessions.level, level)))
-    .orderBy(desc(schema.sessions.startedAt))
-    .get();
 }

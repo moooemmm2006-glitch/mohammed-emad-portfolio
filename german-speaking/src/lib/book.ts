@@ -73,7 +73,7 @@ export function getTopics(level: Level): Promise<BookTopic[]> {
   return p;
 }
 
-/** One topic by its book number; the level must match (B2 topics belong to the B2 partner, etc.). */
+/** One topic by its book number; the level must match (B2 topics belong to B2, etc.). */
 export async function getTopic(level: Level, number: number): Promise<BookTopic | null> {
   if (levelOfTopic(number) !== level) return null;
   return (await getTopics(level)).find((t) => t.number === number) ?? null;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isLearnerSpeech, joinSegments, TurnTranscript, type Segment } from "@/lib/client/transcript";
+import { joinSegments, TurnTranscript, type Segment } from "@/lib/client/transcript";
 
 const seg = (text: string, isFinal = true, confidence: number | null = 0.9): Segment => ({ text, isFinal, confidence, alternatives: [] });
 
@@ -40,16 +40,5 @@ describe("turn transcript (pauses and recogniser restarts)", () => {
     const t = new TurnTranscript();
     t.update([seg("Hallo", true, 0.8), seg("Lena", true, 0.6)]);
     expect(t.result()?.confidence).toBeCloseTo(0.7);
-  });
-});
-
-describe("barge-in echo filter", () => {
-  const partner = "Ich wohne in Hamburg. Was machst du gern am Abend?";
-  it("ignores the partner's own voice coming back through the speakers", () => {
-    expect(isLearnerSpeech("was machst du gern", partner)).toBe(false);
-    expect(isLearnerSpeech("Hamburg", partner)).toBe(false);
-  });
-  it("accepts the learner starting to talk", () => {
-    expect(isLearnerSpeech("ich spiele Fußball mit Freunden", partner)).toBe(true);
   });
 });

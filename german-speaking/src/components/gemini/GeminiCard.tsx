@@ -31,6 +31,45 @@ export function SparkleIcon({ size = 24, className = "" }: { size?: number; clas
   );
 }
 
+/**
+ * Phone or computer? Gemini Live (voice) is in the Gemini app on the phone; on a laptop browser
+ * Gemini answers in text. null until known (first render on the server).
+ */
+function useIsPhone(): boolean | null {
+  const [phone, setPhone] = useState<boolean | null>(null);
+  useEffect(() => {
+    const ua = navigator.userAgent;
+    // iPadOS reports itself as a Mac, but with touch.
+    const mobile = /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    setPhone(mobile || window.matchMedia("(pointer: coarse) and (max-width: 820px)").matches);
+  }, []);
+  return phone;
+}
+
+/** QR code for gemini.google.com/app, made in the browser (no external QR service). */
+function GeminiQr({ size = 112 }: { size?: number }) {
+  const { t } = useUI();
+  const [src, setSrc] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    void import("qrcode").then((QR) =>
+      QR.toString(GEMINI_URL, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#111827", light: "#ffffff" } }).then(
+        (svg) => alive && setSrc(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`),
+        () => {},
+      ),
+    );
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return (
+    <span className="shrink-0 grid place-items-center rounded-xl bg-white p-1.5 shadow-sm" style={{ width: size, height: size }}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- generated locally as a data URL */}
+      {src ? <img src={src} alt={t("gem_qr_alt")} width={size - 12} height={size - 12} /> : <span className="w-full h-full animate-pulse rounded-lg bg-surface-2" />}
+    </span>
+  );
+}
+
 /** Small status message at the bottom of the screen. */
 function useToast() {
   const [msg, setMsg] = useState<{ text: string; bad?: boolean } | null>(null);
@@ -68,6 +107,7 @@ export function GeminiCard({ level, ctx = { kind: "level" }, topic = null, video
   const [prompt, setPrompt] = useState(original);
   const [showPrompt, setShowPrompt] = useState(false);
   const toast = useToast();
+  const phone = useIsPhone();
   useEffect(() => setPrompt(original), [original]);
 
   const start = () => {
@@ -128,6 +168,14 @@ export function GeminiCard({ level, ctx = { kind: "level" }, topic = null, video
           </Step>
         </ol>
 
+        {phone === false && (
+          <div className="mt-4 flex items-center gap-4 rounded-2xl bg-surface/70 border border-line/70 p-3">
+            <GeminiQr />
+            <p className="text-sm leading-relaxed">{t("gem_desktop_note")}</p>
+          </div>
+        )}
+        {phone && <p className="mt-4 rounded-2xl bg-surface/70 border border-line/70 px-4 py-3 text-sm font-semibold leading-relaxed">📱 {t("gem_mobile_note")}</p>}
+
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <button type="button" className={`btn btn-primary ${full ? "w-full sm:w-auto text-lg !px-6" : ""}`} style={{ background: "var(--accent)", color: "#fff" }} onClick={start}>
             <SparkleIcon size={20} /> {t("gem_start")}
@@ -159,7 +207,9 @@ export function GeminiCard({ level, ctx = { kind: "level" }, topic = null, video
         </details>
       </TiltDiv>
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 px-1">
-        <p className="text-xs text-muted">{t("gem_note")}</p>
+        <p className="text-xs text-muted">
+          {t("gem_note")} {t("gem_mic_help")}
+        </p>
         <GeminiReportLink level={level} topic={topic} video={video} onSaved={(m) => toast.show(m)} />
       </div>
       {toast.node}

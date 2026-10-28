@@ -5,7 +5,7 @@
 // on any failure we silently fall back to the browser voice.
 
 import { LEVEL_CONFIG, LEVELS, type Level } from "../levels";
-import { stripArabicHints } from "../levelLock/heuristics";
+import { stripArabicHints } from "../text";
 import type { Settings } from "../settings";
 
 export interface SpeakOptions {
@@ -50,13 +50,13 @@ export function defaultVoiceAssignment(voices: SpeechSynthesisVoice[]): Record<L
   const used = new Set<string>();
   const out = {} as Record<Level, SpeechSynthesisVoice | null>;
   for (const level of LEVELS) {
-    const { persona, voice } = LEVEL_CONFIG[level];
+    const { voice } = LEVEL_CONFIG[level];
     const score = (v: SpeechSynthesisVoice) => {
       let s = 0;
       const langIdx = voice.preferLangs.findIndex((l) => v.lang.replace("_", "-").toLowerCase() === l.toLowerCase());
       s += langIdx >= 0 ? 10 - langIdx * 2 : 0;
-      if (persona.gender === "female" ? FEMALE.test(v.name) : MALE.test(v.name)) s += 8;
-      if (persona.gender === "female" ? MALE.test(v.name) : FEMALE.test(v.name)) s -= 8;
+      if (voice.gender === "female" ? FEMALE.test(v.name) : MALE.test(v.name)) s += 8;
+      if (voice.gender === "female" ? MALE.test(v.name) : FEMALE.test(v.name)) s -= 8;
       if (/google|natural|online|neural|premium|enhanced/i.test(v.name)) s += 3;
       if (used.has(v.voiceURI)) s -= 20;
       return s;
@@ -80,7 +80,7 @@ export function pickVoice(voices: SpeechSynthesisVoice[], level: Level, voiceURI
   return (voiceURI && voices.find((v) => v.voiceURI === voiceURI)) || defaultVoiceAssignment(voices)[level];
 }
 
-/** The fastest speed multiplier the chosen browser voice can actually play for this partner. */
+/** The fastest speed multiplier the chosen browser voice can actually play for this level. */
 export async function webSpeechMaxSpeed(level: Level, settings: Settings): Promise<number> {
   const voices = await loadVoices();
   const v = settings.voices[level];
@@ -165,7 +165,7 @@ export class WebSpeechTTS implements TTSProvider {
         if (keepAlive) clearInterval(keepAlive);
         this.live.delete(u);
       };
-      // Some browsers occasionally never fire `end`; don't let the conversation hang on it.
+      // Some browsers occasionally never fire `end`; don't let the practice hang on it.
       const guard = setTimeout(() => {
         done();
         resolve();
@@ -237,7 +237,7 @@ export type SpeakerState = "idle" | "speaking";
 
 /**
  * Sentence queue on top of a provider: enqueue sentences as they stream in,
- * stop() empties the queue immediately (barge-in), whenIdle() resolves after the last sentence.
+ * stop() empties the queue immediately, whenIdle() resolves after the last sentence.
  */
 type OptionsSource = SpeakOptions | (() => SpeakOptions);
 
@@ -270,7 +270,7 @@ export class Speaker {
     if (!this.running) void this.run();
   }
 
-  /** Start of a new partner reply: cancel anything stale in the browser's speech queue first. */
+  /** Start of new speech: cancel anything stale in the browser's speech queue first. */
   beginReply() {
     this.stop();
     this.afterCancel = true;

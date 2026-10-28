@@ -11,7 +11,7 @@ export function HistoryList({ items }: { items: { id: string; level: string; top
     <ul className="divide-y divide-line">
       {items.map((s) => (
         <li key={s.id} className={`level-${s.level.toLowerCase()}`}>
-          <Link href={s.hasReport ? `/reports/${s.id}` : `/reports/${s.id}?generate=1`} className="flex items-center gap-3 py-3 hover:bg-surface-2 rounded-lg px-2">
+          <Link href={`/reports/${s.id}`} className="flex items-center gap-3 py-3 hover:bg-surface-2 rounded-lg px-2">
             <span className="shrink-0 rounded-full px-2 py-0.5 text-xs font-bold text-white bg-accent de">{s.level}</span>
             <span className="text-sm min-w-0 flex-1">
               {new Date(s.startedAt).toLocaleString(localeOf(lang), { dateStyle: "medium", timeStyle: "short" })}

@@ -2,7 +2,6 @@ import { count, eq, isNotNull } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import { deleteAll } from "./db/repo";
 import { discardPhoto } from "./photo";
-import { minutesThisWeek } from "./usage";
 
 // Admin overview of all learners and account actions.
 
@@ -15,14 +14,11 @@ export interface StudentRow {
   createdAt: number;
   lastActiveAt: number | null;
   sessions: number;
-  minutesThisWeek: number;
-  dailyMinutes: number | null;
-  dailyReplies: number | null;
 }
 
 export async function listStudents(): Promise<StudentRow[]> {
   const db = await getDb();
-  const [users, sessionCounts, lastSession, minutes] = await Promise.all([
+  const [users, sessionCounts, lastSession] = await Promise.all([
     db.select().from(schema.users).where(isNotNull(schema.users.username)).all(),
     db.select({ userId: schema.sessions.userId, n: count() }).from(schema.sessions).groupBy(schema.sessions.userId).all(),
     db
@@ -30,7 +26,6 @@ export async function listStudents(): Promise<StudentRow[]> {
       .from(schema.sessions)
       .all()
       .then((rows) => rows.reduce((m, r) => m.set(r.userId, Math.max(m.get(r.userId) ?? 0, r.at)), new Map<string, number>())),
-    minutesThisWeek(),
   ]);
   const sessions = new Map(sessionCounts.map((r) => [r.userId, r.n]));
   return users
@@ -43,18 +38,13 @@ export async function listStudents(): Promise<StudentRow[]> {
       createdAt: u.createdAt,
       lastActiveAt: Math.max(u.lastActiveAt ?? 0, lastSession.get(u.id) ?? 0) || null,
       sessions: sessions.get(u.id) ?? 0,
-      minutesThisWeek: minutes.get(u.id) ?? 0,
-      dailyMinutes: u.dailyMinutes,
-      dailyReplies: u.dailyReplies,
     }))
     .sort((a, b) => (b.lastActiveAt ?? b.createdAt) - (a.lastActiveAt ?? a.createdAt));
 }
 
-export async function updateStudent(id: string, patch: { disabled?: boolean; dailyMinutes?: number | null; dailyReplies?: number | null }) {
+export async function updateStudent(id: string, patch: { disabled?: boolean }) {
   const db = await getDb();
   const set: Partial<typeof schema.users.$inferInsert> = {};
-  if (patch.dailyMinutes !== undefined) set.dailyMinutes = patch.dailyMinutes || null;
-  if (patch.dailyReplies !== undefined) set.dailyReplies = patch.dailyReplies || null;
   if (patch.disabled !== undefined) {
     set.disabled = patch.disabled ? 1 : 0;
   }

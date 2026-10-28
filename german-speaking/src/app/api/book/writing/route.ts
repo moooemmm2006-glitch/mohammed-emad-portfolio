@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return jsonError(400, "invalid_body", parsed.error.message);
   const llm = getLLM();
-  if (llm.provider === "mock") return jsonError(501, "need_api", "Needs an API key");
+  if (!llm) return jsonError(501, "need_api", "Needs an API key");
   const topic = await getTopicByNumber(parsed.data.topic);
   if (!topic) return jsonError(404, "not_found", "Unknown topic");
   try {

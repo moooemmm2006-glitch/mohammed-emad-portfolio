@@ -3,13 +3,13 @@ import fs from "fs";
 import os from "os";
 import path from "path";
 import { resetDbForTests } from "@/lib/db";
-import { createSession, getSettings, LOCAL_USER, listSessions, saveSettings } from "@/lib/db/repo";
+import { getSettings, LOCAL_USER, listSessions, saveSettings } from "@/lib/db/repo";
 import { SESSION_COOKIE, signToken, verifyToken } from "@/lib/auth/token";
 import { AuthError, changePassword, getUser, login, LOGIN_MAX_FAILS, signUp, type UserRow } from "@/lib/auth/users";
 import { initialsOf, colorFor } from "@/lib/auth/avatar";
 import { updateStudent } from "@/lib/admin";
-import { getUsage, limitReached, recordUsage } from "@/lib/usage";
 import { sniffImage } from "@/lib/photo";
+import { insertPastSession } from "./helpers";
 
 // Route handlers read the session cookie through next/headers; tests set it here.
 let cookie: string | undefined;
@@ -17,12 +17,9 @@ vi.mock("next/headers", () => ({
   cookies: async () => ({ get: (name: string) => (name === SESSION_COOKIE && cookie ? { name, value: cookie } : undefined) }),
 }));
 
-const sessionRoute = await import("@/app/api/sessions/[id]/route");
-const sessionsRoute = await import("@/app/api/sessions/route");
+const reportRoute = await import("@/app/api/reports/[id]/route");
 const statsRoute = await import("@/app/api/stats/route");
 const settingsRoute = await import("@/app/api/settings/route");
-const turnRoute = await import("@/app/api/sessions/[id]/turn/route");
-const reportRoute = await import("@/app/api/sessions/[id]/report/route");
 const adminRoute = await import("@/app/api/admin/users/route");
 const meRoute = await import("@/app/api/me/route");
 const bookLevelRoute = await import("@/app/api/book/level/[level]/route");
@@ -114,11 +111,11 @@ describe("accounts", () => {
   });
 
   it("gives the first account the data saved before accounts existed", async () => {
-    const old = await createSession("A1", "Familie", null, LOCAL_USER);
-    await saveSettings({ reportLang: "en" }, LOCAL_USER);
+    const old = await insertPastSession(LOCAL_USER, { topic: "Familie" });
+    await saveSettings({ uiLang: "en" }, LOCAL_USER);
     const first = await signUp({ name: "Mohammed", username: "mohammed", password: pw });
-    expect((await listSessions(first.id)).map((s) => s.id)).toEqual([old.id]);
-    expect((await getSettings(first.id)).reportLang).toBe("en");
+    expect((await listSessions(first.id)).map((s) => s.id)).toEqual([old]);
+    expect((await getSettings(first.id)).uiLang).toBe("en");
     expect(await listSessions(LOCAL_USER)).toHaveLength(0);
     const second = await signUp({ name: "Mona", username: "mona", password: pw });
     expect(await listSessions(second.id)).toHaveLength(0);
@@ -159,8 +156,7 @@ describe("data isolation between two learners", () => {
   it("every API route needs a login", async () => {
     expect((await statsRoute.GET(req("/api/stats"))).status).toBe(401);
     expect((await settingsRoute.GET()).status).toBe(401);
-    expect((await sessionsRoute.POST(req("/api/sessions", { level: "A1" }))).status).toBe(401);
-    expect((await sessionRoute.GET(req("/x"), ctx("anything"))).status).toBe(401);
+    expect((await reportRoute.GET(req("/x"), ctx("anything"))).status).toBe(401);
     cookie = "forged.cookie";
     expect((await meRoute.GET(req("/api/me"))).status).toBe(401);
   });
@@ -169,30 +165,23 @@ describe("data isolation between two learners", () => {
     const a = await signUp({ name: "Sara", username: "sara", password: pw });
     const b = await signUp({ name: "Omar", username: "omar", password: pw });
 
+    // A conversation Sara had on the site before v11 (reports stay readable).
+    const sid = await insertPastSession(a.id, { level: "A2" });
     await loginAs(a);
-    const created = (await (await sessionsRoute.POST(req("/api/sessions", { level: "A2" }))).json()) as { session: { id: string } };
-    const sid = created.session.id;
-    const greet = await turnRoute.POST(req(`/x`, {}), ctx(sid));
-    await greet.text();
-    const said = await turnRoute.POST(req(`/x`, { text: "Ich wohne in Kairo und ich arbeite als Ingenieur." }), ctx(sid));
-    await said.text();
-    expect((await reportRoute.POST(req("/x", {}), ctx(sid))).status).toBe(200);
-    await settingsRoute.PUT(new Request("http://test/api/settings", { method: "PUT", body: JSON.stringify({ reportLang: "de" }) }));
+    expect((await reportRoute.GET(req("/x"), ctx(sid))).status).toBe(200);
+    await settingsRoute.PUT(new Request("http://test/api/settings", { method: "PUT", body: JSON.stringify({ uiLang: "de" }) }));
     const statsA = (await (await statsRoute.GET(req("/api/stats?tz=0"))).json()) as { totals: { sessions: number } };
     expect(statsA.totals.sessions).toBe(1);
 
     // Omar sees nothing of Sara's.
     await loginAs(b);
-    expect((await sessionRoute.GET(req("/x"), ctx(sid))).status).toBe(404);
-    expect(await code(await sessionRoute.DELETE(req("/x"), ctx(sid)))).toBe("not_found");
     expect((await reportRoute.GET(req("/x"), ctx(sid))).status).toBe(404);
-    expect((await reportRoute.POST(req("/x", {}), ctx(sid))).status).toBe(404);
-    expect((await turnRoute.POST(req("/x", { text: "Hallo" }), ctx(sid))).status).toBe(404);
+    expect(await code(await reportRoute.DELETE(req("/x"), ctx(sid)))).toBe("not_found");
     const statsB = (await (await statsRoute.GET(req("/api/stats?tz=0"))).json()) as { totals: { sessions: number }; weaknesses: unknown[]; history: unknown[] };
     expect(statsB.totals.sessions).toBe(0);
     expect(statsB.weaknesses).toEqual([]);
     expect(statsB.history).toEqual([]);
-    expect(((await (await settingsRoute.GET()).json()) as { reportLang: string }).reportLang).toBe("ar");
+    expect(((await (await settingsRoute.GET()).json()) as { uiLang: string }).uiLang).toBe("ar");
     // Students can't open the admin page.
     expect((await adminRoute.GET()).status).toBe(403);
 
@@ -207,8 +196,6 @@ describe("data isolation between two learners", () => {
     expect((await videoProgressRoute.POST(req("/x", { key: "nicos:A1:movie", position: 120, duration: 3600 }))).status).toBe(200);
     expect((await videoProgressRoute.POST(req("/x", { key: "../../etc", position: 1 }))).status).toBe(400);
     expect(((await (await videoProgressRoute.GET()).json()) as { items: unknown[] }).items).toHaveLength(1);
-    expect(await code(await sessionsRoute.POST(req("/api/sessions", { level: "B2", video: { kind: "nicos" } })))).toBe("wrong_level");
-    expect(await code(await sessionsRoute.POST(req("/api/sessions", { level: "A1", video: { kind: "videothema", id: "0123456789abcdef" } })))).toBe("wrong_level");
     await loginAs(b);
     expect(((await (await videoProgressRoute.GET()).json()) as { items: unknown[] }).items).toHaveLength(0);
 
@@ -222,49 +209,9 @@ describe("data isolation between two learners", () => {
     expect(((await (await bookLevelRoute.GET(req("/x"), levelCtx)).json()) as typeof saraTopics).topics[0].progress.correct).toBe(0);
 
     await loginAs(a);
-    expect((await sessionRoute.GET(req("/x"), ctx(sid))).status).toBe(200);
+    expect((await reportRoute.GET(req("/x"), ctx(sid))).status).toBe(200);
     const admin = (await (await adminRoute.GET()).json()) as { students: { username: string; sessions: number }[] };
     expect(admin.students.find((s) => s.username === "sara")?.sessions).toBe(1);
     expect(admin.students.find((s) => s.username === "omar")?.sessions).toBe(0);
-  });
-});
-
-describe("daily usage limits", () => {
-  it("stops partner replies at the daily limit with a friendly code", async () => {
-    await signUp({ name: "Admin", username: "admin", password: pw });
-    const s = await signUp({ name: "Omar", username: "omar", password: pw });
-    await updateStudent(s.id, { dailyReplies: 2 });
-    await loginAs(s);
-    const created = (await (await sessionsRoute.POST(req("/api/sessions", { level: "A1" }))).json()) as { session: { id: string } };
-    const id = created.session.id;
-
-    const first = await turnRoute.POST(req("/x", {}), ctx(id));
-    expect(first.status).toBe(200);
-    await first.text();
-    const second = await turnRoute.POST(req("/x", { text: "Ich heiße Omar." }), ctx(id));
-    expect(await second.text()).toContain('"type":"done"');
-    expect((await getUsage(s.id)).replies).toBe(2);
-
-    const third = await turnRoute.POST(req("/x", { text: "Ich komme aus Kairo." }), ctx(id));
-    expect(third.status).toBe(429);
-    expect(await code(third)).toBe("usage_limit");
-
-    // Raising the limit lets the student continue.
-    await updateStudent(s.id, { dailyReplies: 5 });
-    expect((await turnRoute.POST(req("/x", { text: "Ich komme aus Kairo." }), ctx(id))).status).toBe(200);
-  });
-
-  it("counts minutes too, resets each day, and never limits the admin", async () => {
-    const admin = await signUp({ name: "Admin", username: "admin", password: pw });
-    const s = await signUp({ name: "Omar", username: "omar", password: pw });
-    await updateStudent(s.id, { dailyMinutes: 10 });
-    const user = (await getUser(s.id))!;
-    expect(await limitReached(user)).toBeNull();
-    await recordUsage(s.id, { replies: 1, ms: 10 * 60_000 });
-    expect(await limitReached(user)).toEqual({ kind: "minutes", limit: 10 });
-    expect(await limitReached(user, Date.now() + 86_400_000)).toBeNull(); // tomorrow
-    await updateStudent(admin.id, { dailyMinutes: 1 });
-    await recordUsage(admin.id, { ms: 60 * 60_000 });
-    expect(await limitReached((await getUser(admin.id))!)).toBeNull();
   });
 });

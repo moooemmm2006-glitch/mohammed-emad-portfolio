@@ -1,29 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/client/api";
 import { fill } from "@/lib/client/i18n";
-import { unlockSpeech } from "@/lib/client/tts";
 import { useUI } from "@/lib/client/ui";
 import type { BookTopic } from "@/lib/book";
 import { EASY_GERMAN_CHANNEL_URL, easyGermanSearchUrl, egKey, type EasyGermanVideo } from "@/lib/easyGermanShared";
-import { aiChatEnabled } from "@/lib/features";
 import type { Level } from "@/lib/levels";
-import { chatPath } from "@/lib/paths";
 import { GeminiVideoLink } from "../gemini/GeminiCard";
-import { IconHeadphones, IconMic } from "../Icons";
+import { IconHeadphones } from "../Icons";
 import { invalidateLevelTopics } from "../level/shared";
 import { YouTubePlayer } from "./YouTubePlayer";
 import { useVideoProgress } from "./useVideos";
 
-/** 🎧 Hören on a book topic: real Easy German videos (official YouTube player only), watched progress, credit. */
+/** 🎧 Hören on a book topic: real Easy German videos (official YouTube player only), watched progress, credit, Gemini link. */
 export function EasyGermanTab({ level, topic }: { level: Level; topic: BookTopic }) {
   const { t } = useUI();
-  const router = useRouter();
   const [videos, setVideos] = useState<EasyGermanVideo[] | null>(null);
   const [error, setError] = useState(false);
-  const [starting, setStarting] = useState<string | null>(null);
   const { items, save } = useVideoProgress();
 
   useEffect(() => {
@@ -37,20 +31,6 @@ export function EasyGermanTab({ level, topic }: { level: Level; topic: BookTopic
     await save(egKey(id), { watched, ...extra });
     invalidateLevelTopics(level); // the "🎧 X/Y" on the topic card
   };
-
-  // With the AI: talk about this video. Without it (or with the in-site AI switched off): the book's scripted talk.
-  const talk = async (youtubeId?: string) => {
-    unlockSpeech();
-    setStarting(youtubeId ?? "topic");
-    try {
-      const body = { level, bookTopic: topic.number, ...(youtubeId ? { video: { kind: "easygerman", youtubeId } } : {}) };
-      const d = await api<{ session: { id: string } }>("/api/sessions", { method: "POST", body: JSON.stringify(body) });
-      router.push(chatPath(level, d.session.id, true));
-    } catch {
-      setStarting(null);
-    }
-  };
-  const aiTalk = aiChatEnabled();
 
   if (error) return <p className="text-danger">{t("err_api")}</p>;
   if (!videos) return <div className="card p-5 h-64 animate-pulse bg-surface-2/60" aria-hidden="true" />;
@@ -119,11 +99,6 @@ export function EasyGermanTab({ level, topic }: { level: Level; topic: BookTopic
               <a className="btn btn-ghost !min-h-[42px]" href={EASY_GERMAN_CHANNEL_URL} target="_blank" rel="noopener noreferrer">
                 {t("eg_subscribe")} ↗
               </a>
-              {aiTalk && (
-                <button type="button" className="btn btn-ghost !min-h-[42px]" onClick={() => void talk(v.youtubeId)} disabled={starting !== null}>
-                  <IconMic size={18} /> {t("eg_talk_video")}
-                </button>
-              )}
             </div>
             <GeminiVideoLink level={level} title={v.title} />
           </article>
@@ -132,14 +107,6 @@ export function EasyGermanTab({ level, topic }: { level: Level; topic: BookTopic
 
       {videos.length > 0 && <p className="rounded-xl bg-accent-soft px-3 py-2 text-sm">💡 {t("eg_tip")}</p>}
 
-      {!aiTalk && videos.length > 0 && (
-        <div className="card p-5 flex flex-wrap items-center gap-3">
-          <p className="flex-1 min-w-[12rem] text-sm">{t("eg_talk_topic_sub")}</p>
-          <button type="button" className="btn btn-primary" style={{ background: "var(--accent)", color: "#fff" }} onClick={() => void talk()} disabled={starting !== null}>
-            <IconMic size={18} /> {t("talk_start")}
-          </button>
-        </div>
-      )}
     </section>
   );
 }

@@ -5,11 +5,9 @@ import path from "path";
 import file from "../data/easy-german-videos.json";
 import { getTopicByNumber } from "@/lib/book";
 import { resetDbForTests } from "@/lib/db";
-import { getSession } from "@/lib/db/repo";
 import { adminAddVideo, adminRemoveVideo, easyGermanTopicNumbers, getEasyGermanVideos, hiddenVideos, parseEasyGermanFile, topicVideos } from "@/lib/easyGerman";
 import { easyGermanSearchUrl, egKey, parseYouTubeId } from "@/lib/easyGermanShared";
 import { saveVideoProgress } from "@/lib/videoProgress";
-import { parseVideoContext, videoPromptBlock } from "@/lib/videoTalk";
 import { SESSION_COOKIE, signToken } from "@/lib/auth/token";
 import { getUser, signUp, type UserRow } from "@/lib/auth/users";
 
@@ -21,7 +19,6 @@ const topicRoute = await import("@/app/api/videos/topic/[n]/route");
 const adminRoute = await import("@/app/api/admin/topic-videos/route");
 const levelRoute = await import("@/app/api/book/level/[level]/route");
 const progressRoute = await import("@/app/api/progress/skills/route");
-const sessionsRoute = await import("@/app/api/sessions/route");
 
 const EXPECTED = {
   A1: [1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15],
@@ -165,14 +162,4 @@ describe("Easy German videos: admin, API, progress, talk", () => {
     ]);
   });
 
-  it("'talk about this video' only accepts a video of the session's topic, with its title from our list", async () => {
-    await as(student);
-    const post = (body: unknown) => sessionsRoute.POST(send("POST", "/api/sessions", body));
-    expect((await post({ level: "A1", bookTopic: 1, video: { kind: "easygerman", youtubeId: "kwdnxwQCoXM" } })).status).toBe(400); // topic 5's video
-    expect((await post({ level: "A1", video: { kind: "easygerman", youtubeId: "r94aqLUO0wo" } })).status).toBe(400); // no topic
-    const ok = (await (await post({ level: "A1", bookTopic: 1, video: { kind: "easygerman", youtubeId: "r94aqLUO0wo" } })).json()) as { session: { id: string } };
-    const v = parseVideoContext((await getSession(ok.session.id))!.video);
-    expect(v).toEqual({ kind: "easygerman", youtubeId: "r94aqLUO0wo", title: "Introduce yourself in Slow German | Super Easy German (1)", topic: 1 });
-    expect(videoPromptBlock(v!)).toContain("Easy German");
-  });
 });

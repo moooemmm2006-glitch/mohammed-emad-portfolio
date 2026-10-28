@@ -104,57 +104,9 @@ export function normalizeTag(tag: string): string {
   return TAG_RE.test(t) && t ? t : "sonstiges";
 }
 
-const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(Number.isFinite(n) ? n : 0)));
-
-/** Clamp scores, normalise tags, cap list sizes and make sure tracker counts cover every mistake tag. */
-export function normalizeReport(r: LLMReport): LLMReport {
-  const scores = Object.fromEntries(ScoreKeys.map((k) => [k, clamp(r.scores[k])])) as Record<ScoreKey, number>;
-  const mistakes = r.mistakes.slice(0, 300).map((m) => ({ ...m, tag: normalizeTag(m.tag) }));
-  const pronNotes = r.pronunciation.notes.slice(0, 12).map((n) => ({ ...n, tag: normalizeTag(n.tag) }));
-
-  const counts = new Map<string, { tag: string; kind: WeaknessKind; count: number }>();
-  for (const w of r.weaknessCounts) {
-    const tag = normalizeTag(w.tag);
-    const prev = counts.get(tag);
-    counts.set(tag, { tag, kind: w.kind, count: Math.max(prev?.count ?? 0, Math.max(0, Math.round(w.count))) });
-  }
-  const fromMistakes = new Map<string, number>();
-  for (const m of mistakes) fromMistakes.set(m.tag, (fromMistakes.get(m.tag) ?? 0) + 1);
-  for (const [tag, n] of fromMistakes) {
-    const prev = counts.get(tag);
-    if (!prev || prev.count < n) counts.set(tag, { tag, kind: prev?.kind ?? kindForTag(tag), count: n });
-  }
-  // Generic "typical pitfall" tips are advice, not evidence, so they don't enter the tracker.
-  for (const n of pronNotes) {
-    if (n.indicator !== "typical_pitfall" && !counts.has(n.tag)) counts.set(n.tag, { tag: n.tag, kind: "pronunciation", count: 1 });
-  }
-
-  return {
-    ...r,
-    scores,
-    mistakes,
-    pronunciation: { ...r.pronunciation, notes: pronNotes },
-    homework: r.homework.slice(0, 5),
-    vocabulary: { ...r.vocabulary, learnNext: r.vocabulary.learnNext.slice(0, 10) },
-    weaknessCounts: [...counts.values()].filter((c) => c.count > 0),
-    nextFocus: r.nextFocus ? normalizeTag(r.nextFocus) : null,
-  };
-}
-
 export function kindForTag(tag: string): WeaknessKind {
   if (tag.startsWith("pron_")) return "pronunciation";
   if (tag.startsWith("fluency") || tag === "doppeltes_wort") return "fluency";
   if (tag === "wortschatz" || tag.startsWith("vocab")) return "vocabulary";
   return "grammar";
-}
-
-export function overallScore(scores: Record<ScoreKey, number>): number {
-  const w: Record<ScoreKey, number> = { grammar: 1.2, vocabulary: 1, fluency: 1.2, pronunciation: 0.6, complexity: 0.8, confidence: 1 };
-  let sum = 0;
-  let total = 0;
-  for (const k of ScoreKeys) {
-    sum += scores[k] * w[k];
-    total += w[k];
-  }
-  return Math.round(sum / total);
 }

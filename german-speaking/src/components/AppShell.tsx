@@ -34,7 +34,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Login and sign-up: language and theme only.
   const bare = PUBLIC_PATHS.includes(path);
   // The speaking screen is full-screen: no site header on phones, no page padding.
-  const inConversation = /^\/level\/(a1|a2|b1|b2)\/chat/i.test(path);
   const active = levelFromPath(path);
 
   // Remember the level for "/" (start page = last level).
@@ -50,7 +49,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:start-2 focus:z-50 btn btn-primary">
         {t("skip_content")}
       </a>
-      <header className={`glass-header sticky top-0 z-30 ${inConversation ? "hidden md:block" : ""}`}>
+      <header className="glass-header sticky top-0 z-30">
         <div className="mx-auto max-w-6xl px-3 sm:px-4 h-14 sm:h-16 flex items-center gap-2">
           {!bare && <LevelNav active={active} />}
           <div className="ms-auto flex items-center gap-1 shrink-0">
@@ -70,7 +69,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main id="main" className={inConversation ? "flex-1 w-full" : "flex-1 mx-auto w-full max-w-6xl px-4 pb-12 pt-5"}>
+      <main id="main" className="flex-1 mx-auto w-full max-w-6xl px-4 pb-12 pt-5">
         {children}
       </main>
     </div>

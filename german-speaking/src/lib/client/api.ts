@@ -28,38 +28,8 @@ export async function api<T>(url: string, init?: RequestInit): Promise<T> {
   return (await res.json()) as T;
 }
 
-/** POST and read a newline-delimited JSON stream, calling onEvent for each line. */
-export async function streamNdjson<E>(url: string, body: unknown, onEvent: (e: E) => void, signal?: AbortSignal) {
-  let res: Response;
-  try {
-    res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal });
-  } catch (err) {
-    if ((err as Error).name === "AbortError") throw err;
-    throw new ApiError(0, "offline", "Network error");
-  }
-  if (!res.ok || !res.body) {
-    const err = (await res.json().catch(() => null)) as { error?: { code: string; message: string } } | null;
-    throw new ApiError(res.status, err?.error?.code ?? "http_error", err?.error?.message ?? res.statusText);
-  }
-  const reader = res.body.getReader();
-  const dec = new TextDecoder();
-  let buf = "";
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    buf += dec.decode(value, { stream: true });
-    let nl: number;
-    while ((nl = buf.indexOf("\n")) >= 0) {
-      const line = buf.slice(0, nl).trim();
-      buf = buf.slice(nl + 1);
-      if (line) onEvent(JSON.parse(line) as E);
-    }
-  }
-  if (buf.trim()) onEvent(JSON.parse(buf) as E);
-}
-
 export interface ServerProviders {
-  llm: "anthropic" | "mock";
+  llm: "anthropic" | "none";
   tts: "webspeech" | "openai" | "elevenlabs";
   stt: "webspeech" | "openai";
   storage?: "remote" | "file" | "temporary";
@@ -73,7 +43,7 @@ export function useProviders() {
   const [p, setP] = useState<ServerProviders | null>(fromServer);
   useEffect(() => {
     if (fromServer) return;
-    api<ServerProviders>("/api/config").then(setP, () => setP({ llm: "mock", tts: "webspeech", stt: "webspeech" }));
+    api<ServerProviders>("/api/config").then(setP, () => setP({ llm: "none", tts: "webspeech", stt: "webspeech" }));
   }, [fromServer]);
   return p;
 }

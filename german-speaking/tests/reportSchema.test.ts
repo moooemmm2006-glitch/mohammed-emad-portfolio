@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { withJsonRetries } from "@/lib/llm/json";
-import { LLMReportSchema, normalizeReport, normalizeTag, overallScore, type LLMReport } from "@/lib/report/schema";
+import { LLMReportSchema, normalizeTag, type LLMReport } from "@/lib/report/schema";
 import { extractJson } from "@/lib/text";
 
 export function sampleReport(over: Partial<LLMReport> = {}): LLMReport {
@@ -36,39 +36,12 @@ describe("report schema", () => {
     expect(LLMReportSchema.safeParse(badVerdict).success).toBe(false);
   });
 
-  it("normalises scores, tags and fills tracker counts from mistakes", () => {
-    const r = normalizeReport(sampleReport({ scores: { grammar: 140, vocabulary: -5, fluency: 55.6, pronunciation: 65, complexity: 50, confidence: NaN } }));
-    expect(r.scores).toEqual({ grammar: 100, vocabulary: 0, fluency: 56, pronunciation: 65, complexity: 50, confidence: 0 });
-    expect(r.mistakes[0].tag).toBe("modalverben");
-    expect(r.nextFocus).toBe("modalverben");
-    expect(r.weaknessCounts).toEqual(
-      expect.arrayContaining([
-        { tag: "modalverben", kind: "grammar", count: 1 },
-        { tag: "pron_ch_sch", kind: "pronunciation", count: 1 },
-      ]),
-    );
-  });
-
-  it("does not track generic pronunciation pitfalls without evidence", () => {
-    const r = normalizeReport(
-      sampleReport({
-        mistakes: [],
-        pronunciation: { disclaimer: "d", notes: [{ word: "Zeit", tag: "pron_z_w_v", issue: "i", tip: "t", indicator: "typical_pitfall" }] },
-      }),
-    );
-    expect(r.weaknessCounts).toEqual([]);
-  });
-
   it("normalises German tag spellings", () => {
     expect(normalizeTag("Präpositionen")).toBe("praepositionen");
     expect(normalizeTag("Trennbare Verben")).toBe("trennbare_verben");
     expect(normalizeTag("!!!")).toBe("sonstiges");
   });
 
-  it("computes a weighted overall score", () => {
-    expect(overallScore({ grammar: 100, vocabulary: 100, fluency: 100, pronunciation: 100, complexity: 100, confidence: 100 })).toBe(100);
-    expect(overallScore({ grammar: 0, vocabulary: 0, fluency: 0, pronunciation: 0, complexity: 0, confidence: 0 })).toBe(0);
-  });
 });
 
 describe("JSON retry wrapper", () => {

@@ -100,7 +100,7 @@ function ReadTopic({ n, level, scores, onBack, onScored }: { n: number; level: L
         <p className="text-sm text-muted">{t("read_tap_hint")}</p>
       </header>
 
-      {providers.llm !== "mock" && (
+      {providers.llm === "anthropic" && (
         <div className="card depth p-4 space-y-3">
           <button className="btn btn-ghost !min-h-[42px]" onClick={() => void newText()} disabled={aiState === "loading"}>
             <IconSparkle size={16} /> {aiState === "loading" ? t("read_ai_loading") : t("read_ai_text")}

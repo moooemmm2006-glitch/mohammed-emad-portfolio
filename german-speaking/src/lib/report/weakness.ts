@@ -109,31 +109,3 @@ const STATUS_ORDER: Record<WeaknessStatus, number> = { persisting: 0, new: 1, im
 function compareEntries(a: WeaknessEntry, b: WeaknessEntry): number {
   return STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || b.totalCount - a.totalCount || a.tag.localeCompare(b.tag);
 }
-
-/** Changes between two tracker states, used to brief the report model and to show "since last time". */
-export function diffTracker(before: WeaknessEntry[], after: WeaknessEntry[]) {
-  const prev = new Map(before.map((e) => [e.tag, e]));
-  const improved: string[] = [];
-  const regressed: string[] = [];
-  const fresh: string[] = [];
-  const unresolved: string[] = [];
-  for (const e of after) {
-    const p = prev.get(e.tag);
-    if (!p) {
-      if (e.status === "new") fresh.push(e.tag);
-      continue;
-    }
-    const lastItem = e.history[e.history.length - 1];
-    if (lastItem?.regressed) regressed.push(e.tag);
-    else if ((e.status === "improving" || e.status === "resolved") && p.status !== "resolved") improved.push(e.tag);
-    else if (e.status === "persisting") unresolved.push(e.tag);
-  }
-  return { improved, regressed, new: fresh, unresolved };
-}
-
-/** The tag a partner could gently steer towards next session. */
-export function pickFocus(entries: WeaknessEntry[]): WeaknessEntry | null {
-  const open = entries.filter((e) => e.kind === "grammar" && (e.status === "persisting" || e.status === "new"));
-  open.sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || b.lastSeen.localeCompare(a.lastSeen) || b.totalCount - a.totalCount);
-  return open[0] ?? null;
-}
