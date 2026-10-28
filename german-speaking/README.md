@@ -102,6 +102,27 @@ The site only prepares it:
 - Old conversation addresses (`/level/a1/chat…`, `/speak/…/chat`, `…/talk`, `?tab=talk`) redirect
   (301) to the level or topic page. Reports of earlier in-site conversations stay readable (read-only).
 
+## The owner's YouTube channel, explainer video and ☕ break (v14)
+
+Calm placements only — no pop-ups, no autoplay, nothing over a lesson:
+
+- **Creator card** in the footer of every page (avatar "M" or the channel photo, "Mohamed Emad | مُحَمَّد عِمَاد",
+  "▶ اشترك في القناة", "☕ استراحة"), a compact one at the **end** of each level page next to "زهقت؟ خد استراحة ☕",
+  and "قناتي على يوتيوب" (red dot) in the profile menu. Clicks on the channel buttons are counted per place
+  (`channel_clicks`, shown on `/admin`).
+- **Explainer video** ("إزاي تستخدم الموقع؟"): a glassy modal with the lazy `youtube-nocookie` player, opened from
+  the small ▶️ header button, the footer, the profile menu and the dismissible strip at the top of the level
+  pages. It opens by itself once on the first visit (remembered per account, or in a cookie when logged out)
+  — but only once a video is saved.
+- **Tutorials playlist** (optional): profile menu → "شروحات الموقع" → `/tutorials`.
+- **☕ استراحة** (`/pause`): the owner's own vlogs as full players (loaded on tap), newest first; the first one
+  (`qALULLsNpbc`) is added once automatically. After finishing a reading quiz, a writing exercise or a
+  listen-&-repeat run a small toast offers the break — at most once a day.
+- **Admin → "قناتي على يوتيوب":** channel link (prefilled `https://www.youtube.com/@mohammedemad-ilden`),
+  explainer video, playlist, channel photo — validated (channel URL / 11-character ID / `list=`), with a live
+  preview; an empty link hides its places. **"إضافة فلوج"** accepts only videos of the owner's channel
+  (checked with YouTube oEmbed when reachable). Stored in `site_settings` and `vlogs`.
+
 ## The book: "Sprich Deutsch" (A1 → B2)
 
 The learner's own book lives in `data/book/` (`a1.json` … `b2.json`, `index.json`): 100 topics,

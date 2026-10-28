@@ -5,6 +5,7 @@ import { currentUser, forbidden, unauthorized } from "@/lib/auth/session";
 import { levelOfTopic } from "@/lib/bookLevels";
 import { adminAddVideo, adminRemoveVideo, getEasyGermanVideos, hiddenVideos, topicVideos } from "@/lib/easyGerman";
 import { parseYouTubeId, YOUTUBE_ID } from "@/lib/easyGermanShared";
+import { youtubeOEmbed } from "@/lib/site";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -18,19 +19,6 @@ async function guard() {
   if (!user) return unauthorized();
   if (user.role !== "admin") return forbidden();
   return null;
-}
-
-/** Title and channel from YouTube's oEmbed (also proves the video exists); null when YouTube can't be reached. */
-async function oEmbed(id: string): Promise<{ title: string; channel: string } | "missing" | null> {
-  try {
-    const r = await fetch(`https://www.youtube.com/oembed?format=json&url=${encodeURIComponent(`https://www.youtube.com/watch?v=${id}`)}`, { signal: AbortSignal.timeout(4000) });
-    if (r.status === 404 || r.status === 400 || r.status === 401) return "missing";
-    if (!r.ok) return null;
-    const d = (await r.json()) as { title?: string; author_name?: string };
-    return d.title ? { title: d.title, channel: d.author_name || "Easy German" } : null;
-  } catch {
-    return null;
-  }
 }
 
 async function state(topic: number) {
@@ -59,10 +47,10 @@ export async function POST(req: Request) {
     await adminAddVideo(parsed.data.topic, id, "");
     return NextResponse.json(await state(parsed.data.topic));
   }
-  const meta = await oEmbed(id);
+  const meta = await youtubeOEmbed(id);
   if (meta === "missing") return jsonError(400, "video_not_found", "YouTube doesn't know this video");
   const title = parsed.data.title || meta?.title || `YouTube ${id}`;
-  await adminAddVideo(parsed.data.topic, id, title, meta?.channel ?? "Easy German");
+  await adminAddVideo(parsed.data.topic, id, title, meta?.author || "Easy German");
   return NextResponse.json(await state(parsed.data.topic));
 }
 

@@ -177,3 +177,10 @@ export const IconHeadphones = (p: P) => (
     <rect x="17" y="14" width="4" height="7" rx="1.5" />
   </I>
 );
+/** Our own simple "play video" mark (a rounded red box with a white triangle), not YouTube's logo file. */
+export const IconVideoPlay = ({ size = 20, className = "" }: { size?: number; className?: string }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" aria-hidden="true" className={className}>
+    <rect x="1.5" y="4.5" width="21" height="15" rx="4.5" fill="#e11d2e" />
+    <path d="M10 9l5.2 3L10 15z" fill="#fff" />
+  </svg>
+);

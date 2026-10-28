@@ -13,7 +13,7 @@ export interface Me {
   user: PublicUser;
   lastLevel: string | null;
   streak: number;
-  prefs?: { uiLang: UILang; effects: "auto" | "on" | "mild" | "off" };
+  prefs?: { uiLang: UILang; effects: "auto" | "on" | "mild" | "off"; explainerSeen?: boolean; introDismissed?: boolean; pauseOfferDay?: string | null };
 }
 
 interface MeCtx {
@@ -22,6 +22,8 @@ interface MeCtx {
   loading: boolean;
   reload: () => Promise<void>;
   setUser: (patch: Partial<PublicUser>) => void;
+  /** Change account preferences right away (and save them in the settings). */
+  setPrefs: (patch: Partial<NonNullable<Me["prefs"]>>) => void;
   logout: () => Promise<void>;
 }
 
@@ -62,13 +64,18 @@ export function MeProvider({ children }: { children: ReactNode }) {
 
   const setUser = useCallback((patch: Partial<PublicUser>) => setMe((m) => (m ? { ...m, user: { ...m.user, ...patch } } : m)), []);
 
+  const setPrefs = useCallback((patch: Partial<NonNullable<Me["prefs"]>>) => {
+    setMe((m) => (m ? { ...m, prefs: { ...(m.prefs ?? { uiLang: "ar", effects: "auto" }), ...patch } } : m));
+    void api("/api/settings", { method: "PUT", body: JSON.stringify(patch) }).catch(() => {});
+  }, []);
+
   const logout = useCallback(async () => {
     await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
     setMe(null);
     location.href = "/login";
   }, []);
 
-  return <Ctx.Provider value={{ me, loading, reload, setUser, logout }}>{children}</Ctx.Provider>;
+  return <Ctx.Provider value={{ me, loading, reload, setUser, setPrefs, logout }}>{children}</Ctx.Provider>;
 }
 
 export function useMe(): MeCtx {

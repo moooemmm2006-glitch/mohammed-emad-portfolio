@@ -10,6 +10,7 @@ import type { Level } from "@/lib/levels";
 import type { WritingCheck } from "@/lib/writing";
 import { IconArrow } from "../Icons";
 import { TopicPicker } from "./ReadPanel";
+import { useSite } from "../site/SiteProvider";
 import { ArabicText, TopicTitle, useBookTopic, useLevelTopics } from "./shared";
 
 type Mode = "translate" | "complete" | "free";
@@ -276,6 +277,9 @@ function CompleteRun({ topic, onDone }: { topic: BookTopic; onDone: () => void }
 
 function Done({ right, total }: { right: number; total: number }) {
   const { t } = useUI();
+  const { offerPause } = useSite();
+  // The exercise is over: maybe offer a break (max once a day).
+  useEffect(() => offerPause(), [offerPause]);
   return (
     <p className="card depth p-5 text-lg font-bold text-ok" role="status">
       {fill(t("write_done"), { c: right, t: total })}
