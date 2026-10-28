@@ -75,6 +75,7 @@ Every push to the connected branch redeploys automatically.
 | `ANTHROPIC_CHECK_MODEL` | `claude-haiku-5-5` | Level checker, hints, context summaries |
 | `ANTHROPIC_REPORT_MODEL` | `claude-opus-5-5` | Post-conversation report |
 | `LLM_PROVIDER=mock` | – | Force demo mode even with a key |
+| `NEXT_PUBLIC_AI_CHAT_ENABLED` | `false` | `true` brings back the in-site AI conversation (free chat, talk about a video). Read at build time: redeploy after changing it |
 | `TTS_PROVIDER` | `webspeech` | `webspeech` · `openai` · `elevenlabs` |
 | `OPENAI_API_KEY` | – | For OpenAI TTS and Whisper STT |
 | `OPENAI_TTS_VOICE_A1…B2` | nova/echo/shimmer/onyx | One voice per level |
@@ -107,6 +108,26 @@ If a premium provider is selected but its key is missing, the app silently falls
   colour morphs, the speaking orb is a glossy sphere with 3D rings. The badge uses React Three Fiber, loaded
   lazily after the page is idle. Settings → "تأثيرات 3D": automatic / on / reduced / off;
   `prefers-reduced-motion` always turns 3D off.
+
+## Talk with Gemini (v10)
+
+Without an Anthropic key the free conversation happens in **Gemini** (gemini.google.com or the Gemini
+app, voice with **Gemini Live**), which is free for the learner. The site only prepares it:
+
+- **Level card** at the top of *Themen & Sprechen* (A1–B2), a **topic card** on every book topic page,
+  and a small **"talk about this video"** link under every video on *Hören*.
+- **"ابدأ مع Gemini"** copies the instructions and opens `https://gemini.google.com/app` in one tap
+  (the tab opens synchronously so iOS Safari doesn't block it; copy uses a hidden textarea +
+  `execCommand("copy")` first and the Clipboard API as backup). "Copy only" and an editable
+  "See the instructions" are there too.
+- The instructions live in `data/gemini-prompts.ts`: one per level (`LEVEL_RULES`), plus the topic
+  part (title, first 10 words, grammar of the book topic) or the video title.
+- **"Done? Paste Gemini's report here"** saves the report Gemini writes when you say "Bericht"
+  (table `gemini_sessions`); it shows under *Reports* with a Gemini tag and adds 2 points per
+  session (max 20) to the level's *Sprechen* bar.
+- The icon is our own four-point star; no Google/Gemini logos or brand assets.
+- The in-site AI chat stays in the code behind `NEXT_PUBLIC_AI_CHAT_ENABLED` (default `false`).
+  While it's off, the book topic talk is always the scripted one and no demo notices are shown.
 
 ## The book: "Sprich Deutsch" (A1 → B2)
 

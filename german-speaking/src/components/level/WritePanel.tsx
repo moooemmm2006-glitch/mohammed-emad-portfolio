@@ -49,6 +49,9 @@ function WriteTopic({ n, onBack, onScored }: { n: number; onBack: () => void; on
   const data = useBookTopic(n);
   const [mode, setMode] = useState<Mode>("translate");
   const [run, setRun] = useState(0);
+  const providers = useProviders();
+  // Free writing needs an AI; without one its tab is simply not shown (no "needs an API key" notice).
+  const modes = providers?.llm === "mock" ? MODES.filter((m) => m.id !== "free") : MODES;
   if (!data) return <p className="text-muted">{t("loading")}</p>;
   const topic = data.topic;
   return (
@@ -59,8 +62,8 @@ function WriteTopic({ n, onBack, onScored }: { n: number; onBack: () => void; on
       <header>
         <TopicTitle tp={topic} size="lg" />
       </header>
-      <div role="tablist" className="grid grid-cols-3 gap-1 rounded-2xl bg-surface-2 p-1">
-        {MODES.map((m) => (
+      <div role="tablist" className={`grid ${modes.length === 3 ? "grid-cols-3" : "grid-cols-2"} gap-1 rounded-2xl bg-surface-2 p-1`}>
+        {modes.map((m) => (
           <button
             key={m.id}
             role="tab"

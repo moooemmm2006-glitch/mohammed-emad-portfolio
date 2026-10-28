@@ -241,6 +241,7 @@ export async function deleteAll(userId: string) {
     db.delete(schema.videoProgress).where(eq(schema.videoProgress.userId, userId)),
     db.delete(schema.skillScores).where(eq(schema.skillScores.userId, userId)),
     db.delete(schema.writingChecks).where(eq(schema.writingChecks.userId, userId)),
+    db.delete(schema.geminiSessions).where(eq(schema.geminiSessions.userId, userId)),
   ]);
 }
 
