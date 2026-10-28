@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     user: toPublic(user),
     lastLevel: spoken[0]?.session.level ?? null,
     streak: practiceStreak(await practiceDays(user.id, offset, spoken.map((x) => x.session.startedAt)), dayKey(now, offset)),
-    prefs: await getSettings(user.id).then((s) => ({ uiLang: s.uiLang, effects: s.effects, explainerSeen: s.explainerSeen, introDismissed: s.introDismissed, pauseOfferDay: s.pauseOfferDay })),
+    prefs: await getSettings(user.id).then((s) => ({ uiLang: s.uiLang, effects: s.effects, explainerSeen: s.explainerSeen, introDismissed: s.introDismissed, pauseOfferDay: s.pauseOfferDay, focusMinutes: s.focusMinutes, focusSound: s.focusSound, focusBreak: s.focusBreak, breakMinutes: s.breakMinutes })),
   });
 }
 

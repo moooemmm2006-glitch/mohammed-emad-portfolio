@@ -85,9 +85,8 @@ The site only prepares it:
 
 - **Level card** at the top of *Themen & Sprechen* (A1–B2), the tab **🎙️ اتكلم مع Gemini** (2nd tab)
   on every book topic page, and a small **"talk about this video"** link under every video on *Hören*.
-- **Laptop vs. phone:** on a computer the card says that Gemini answers in text there and shows a
-  **QR code** (made in the browser with the `qrcode` package, no external service) that opens
-  `gemini.google.com/app` on the phone; on a phone it says "tap Start, paste, then tap Live 〰️ and talk".
+- **Laptop vs. phone:** on a computer the card says that Gemini answers in text there and to open the
+  Gemini app on the phone for voice; on a phone it says "tap Start, paste, then tap Live 〰️ and talk".
   A help line explains how to allow the microphone.
 - **"ابدأ مع Gemini"** copies the instructions and opens `https://gemini.google.com/app` in one tap
   (the tab opens synchronously so iOS Safari doesn't block it; copy uses a hidden textarea +
@@ -180,6 +179,18 @@ All IDs and the feed live in one file, `data/videos.ts`.
   source link and credit. `VIDEO_THEMA_FEED_URL` can point to a local copy of the feed for tests.
 - Per user: last position ("كمّل من مكان ما وقفت", via the YouTube IFrame API), "خلّصت" buttons, progress
   per level, and the Gemini link under every video.
+
+## Focus timer ⏱️ and "خزنتي" (v15)
+
+- **100% optional:** the ⏱️ button next to dark mode opens "عايز تركّز قد إيه؟" (15 / 25 🍅 / 45 / custom 5–180 min, an optional goal, celebration sound and a break after). It never starts by itself and never covers a lesson.
+- **Quiet while running:** only a thin ring in the level colour fills slowly; tap it for mm:ss, the goal, pause / restart / cancel. The timer is stored as an **end timestamp** in `localStorage` (`gs_focus_timer`), so it survives refresh and navigation, stays exact in background tabs, and syncs between tabs. A hidden tab shows "⏱️ 12:30 – بتذاكر".
+- **Never mid-exercise:** if a quiz, a translation/complete exercise or shadowing is open when time runs out, the celebration waits until it's finished (max 2 minutes).
+- **"خزنة الإنجاز" 🏆:** a CSS-3D vault door opens, gold coins + confetti fly out (`canvas-confetti`, MIT, loaded only then), and a cha-ching is generated with the Web Audio API (no sound files). Then a card: minutes, a motivating line, "did you reach your goal?", today / streak / total, break or continue. Esc or a click outside closes it. Reduced motion / effects off → a simple fade.
+- **Break:** green ring; at the end a soft chime and "الاستراحة خلصت 😊 يلا نكمل؟".
+- **Stats per account:** every finished session is saved (`focus_sessions`; minutes are capped by the real elapsed time). "💰 خزنتي" on تقدّمي shows total, today, 7 days, streak 🔥, a 7-day chart and badges (1 h 🥉, 5 h 🥈, 10 h 🥇, 25 h 🏅, 50 h 🏆, 100 h 💎). Focus minutes also show on the level page as study time.
+- **Settings:** default length, celebration sound, break on/off and 3 / 5 / 10 minutes; confetti and the 3D vault follow the existing effects setting.
+- APIs (login required): `POST /api/focus/sessions`, `PATCH /api/focus/sessions/:id`, `GET /api/focus/stats`.
+- The Gemini card no longer shows a QR code; on a laptop it only explains that voice chat works in the Gemini app on the phone.
 
 ## Accounts
 

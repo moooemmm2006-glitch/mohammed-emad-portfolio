@@ -24,17 +24,18 @@ export function practiceStreak(days: Set<string>, today: string): number {
 
 /**
  * Days with any practice: book runs (listen & repeat, review), reading/writing exercises, videos,
- * Gemini conversations (pasted reports) and past in-site conversations.
+ * Gemini conversations (pasted reports), ⏱️ focus sessions and past in-site conversations.
  */
 export async function practiceDays(userId: string, tzOffsetMin: number, spokenAt: number[] = []): Promise<Set<string>> {
   const db = await getDb();
-  const [practice, skills, videos, gemini] = await Promise.all([
+  const [practice, skills, videos, gemini, focus] = await Promise.all([
     db.select({ at: schema.bookPractice.createdAt }).from(schema.bookPractice).where(eq(schema.bookPractice.userId, userId)).all(),
     db.select({ at: schema.skillScores.updatedAt }).from(schema.skillScores).where(eq(schema.skillScores.userId, userId)).all(),
     db.select({ at: schema.videoProgress.updatedAt }).from(schema.videoProgress).where(eq(schema.videoProgress.userId, userId)).all(),
     db.select({ at: schema.geminiSessions.createdAt }).from(schema.geminiSessions).where(eq(schema.geminiSessions.userId, userId)).all(),
+    db.select({ at: schema.focusSessions.endedAt }).from(schema.focusSessions).where(eq(schema.focusSessions.userId, userId)).all(),
   ]);
-  const all = [...spokenAt, ...[...practice, ...skills, ...videos, ...gemini].map((r) => r.at)];
+  const all = [...spokenAt, ...[...practice, ...skills, ...videos, ...gemini, ...focus].map((r) => r.at)];
   return new Set(all.map((at) => dayKey(at, tzOffsetMin)));
 }
 

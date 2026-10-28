@@ -46,30 +46,6 @@ function useIsPhone(): boolean | null {
   return phone;
 }
 
-/** QR code for gemini.google.com/app, made in the browser (no external QR service). */
-function GeminiQr({ size = 112 }: { size?: number }) {
-  const { t } = useUI();
-  const [src, setSrc] = useState<string | null>(null);
-  useEffect(() => {
-    let alive = true;
-    void import("qrcode").then((QR) =>
-      QR.toString(GEMINI_URL, { type: "svg", margin: 1, errorCorrectionLevel: "M", color: { dark: "#111827", light: "#ffffff" } }).then(
-        (svg) => alive && setSrc(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`),
-        () => {},
-      ),
-    );
-    return () => {
-      alive = false;
-    };
-  }, []);
-  return (
-    <span className="shrink-0 grid place-items-center rounded-xl bg-white p-1.5 shadow-sm" style={{ width: size, height: size }}>
-      {/* eslint-disable-next-line @next/next/no-img-element -- generated locally as a data URL */}
-      {src ? <img src={src} alt={t("gem_qr_alt")} width={size - 12} height={size - 12} /> : <span className="w-full h-full animate-pulse rounded-lg bg-surface-2" />}
-    </span>
-  );
-}
-
 /** Small status message at the bottom of the screen. */
 function useToast() {
   const [msg, setMsg] = useState<{ text: string; bad?: boolean } | null>(null);
@@ -169,10 +145,7 @@ export function GeminiCard({ level, ctx = { kind: "level" }, topic = null, video
         </ol>
 
         {phone === false && (
-          <div className="mt-4 flex items-center gap-4 rounded-2xl bg-surface/70 border border-line/70 p-3">
-            <GeminiQr />
-            <p className="text-sm leading-relaxed">{t("gem_desktop_note")}</p>
-          </div>
+          <p className="mt-4 rounded-2xl bg-surface/70 border border-line/70 px-4 py-3 text-sm leading-relaxed">{t("gem_desktop_note")}</p>
         )}
         {phone && <p className="mt-4 rounded-2xl bg-surface/70 border border-line/70 px-4 py-3 text-sm font-semibold leading-relaxed">📱 {t("gem_mobile_note")}</p>}
 

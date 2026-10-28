@@ -16,7 +16,7 @@ import { VideoThemaSection } from "@/components/videos/VideoThemaSection";
 import { LevelEndCards } from "@/components/site/CreatorCard";
 import { IntroStrip } from "@/components/site/IntroStrip";
 import { api } from "@/lib/client/api";
-import type { TKey } from "@/lib/client/i18n";
+import { fill, type TKey } from "@/lib/client/i18n";
 import { useFx } from "@/lib/client/motion";
 import { useUI } from "@/lib/client/ui";
 import { isLevel, LEVEL_CONFIG, type Level } from "@/lib/levels";
@@ -64,13 +64,13 @@ function LevelContent({ level }: { level: Level }) {
   const router = useRouter();
   const search = useSearchParams();
   const skill = (SKILLS.find((s) => s.id === search.get("skill"))?.id ?? "speak") as SkillId;
-  const [progress, setProgress] = useState<SkillProgress | null>(null);
+  const [progress, setProgress] = useState<(SkillProgress & { focusMinutes?: number }) | null>(null);
   const { fx } = useFx();
   // The skill shown on arrival appears without the flip; later switches flip.
   const firstSkill = useRef(skill);
 
   useEffect(() => {
-    api<SkillProgress>(`/api/level/${level}/progress`).then(setProgress, () => {});
+    api<SkillProgress & { focusMinutes?: number }>(`/api/level/${level}/progress`).then(setProgress, () => {});
   }, [level, skill]);
 
   const setSkill = (id: SkillId) => router.replace(levelPath(level, id === "speak" ? "" : `?skill=${id}`), { scroll: false });
@@ -137,7 +137,7 @@ function SkillTab({ active, onClick, emoji, label, short, de }: { active: boolea
 }
 
 /** Name, description, overall and per-skill progress, the 3D badge; the backdrop moves slower than the page (parallax). */
-function LevelHeader({ level, progress }: { level: Level; progress: SkillProgress | null }) {
+function LevelHeader({ level, progress }: { level: Level; progress: (SkillProgress & { focusMinutes?: number }) | null }) {
   const { t } = useUI();
   const { fx } = useFx();
   const bg = useRef<HTMLDivElement>(null);
@@ -181,6 +181,7 @@ function LevelHeader({ level, progress }: { level: Level; progress: SkillProgres
             <bdi className="tabular-nums text-base" style={{ color: accent }}>
               {overall ?? "–"}%
             </bdi>
+            {!!progress?.focusMinutes && <span className="text-xs text-muted font-medium">{fill(t("level_focus"), { n: progress.focusMinutes })}</span>}
           </p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 max-w-xl">
             {SKILLS.map((s) => (

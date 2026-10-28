@@ -11,6 +11,7 @@ import type { WritingCheck } from "@/lib/writing";
 import { IconArrow } from "../Icons";
 import { TopicPicker } from "./ReadPanel";
 import { useSite } from "../site/SiteProvider";
+import { useExerciseGuard } from "@/lib/client/focusStore";
 import { ArabicText, TopicTitle, useBookTopic, useLevelTopics } from "./shared";
 
 type Mode = "translate" | "complete" | "free";
@@ -94,6 +95,7 @@ function TranslateRun({ topic, onDone }: { topic: BookTopic; onDone: () => void 
   const [result, setResult] = useState<WrittenComparison | null>(null);
   const scores = useRef<number[]>([]);
   const [finished, setFinished] = useState(false);
+  useExerciseGuard(!finished);
   const s = items[i];
 
   const check = () => {
@@ -201,6 +203,7 @@ function CompleteRun({ topic, onDone }: { topic: BookTopic; onDone: () => void }
   const right = useRef(0);
   const total = useRef(0);
   const [finished, setFinished] = useState(false);
+  useExerciseGuard(!finished);
   const ex = items[i];
 
   useEffect(() => setTyped(ex ? ex.answers.map(() => "") : []), [ex]);

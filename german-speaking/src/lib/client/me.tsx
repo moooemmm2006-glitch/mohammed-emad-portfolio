@@ -13,7 +13,7 @@ export interface Me {
   user: PublicUser;
   lastLevel: string | null;
   streak: number;
-  prefs?: { uiLang: UILang; effects: "auto" | "on" | "mild" | "off"; explainerSeen?: boolean; introDismissed?: boolean; pauseOfferDay?: string | null };
+  prefs?: { uiLang: UILang; effects: "auto" | "on" | "mild" | "off"; explainerSeen?: boolean; introDismissed?: boolean; pauseOfferDay?: string | null; focusMinutes?: number; focusSound?: boolean; focusBreak?: boolean; breakMinutes?: 3 | 5 | 10 };
 }
 
 interface MeCtx {

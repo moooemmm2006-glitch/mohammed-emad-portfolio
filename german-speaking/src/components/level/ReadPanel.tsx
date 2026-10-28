@@ -13,6 +13,7 @@ import { useVoice } from "../book/useVoice";
 import { ArabicText, TopicTitle, useBookTopic, useLevelTopics, type TopicCard } from "./shared";
 import { TiltDiv } from "./Tilt";
 import { useSite } from "../site/SiteProvider";
+import { useExerciseGuard } from "@/lib/client/focusStore";
 
 /** 📖 Lesen: each topic's sections as a continuous German text; tap a sentence for its meaning; a quiz per section. */
 export function ReadPanel({ level }: { level: Level }) {
@@ -214,6 +215,7 @@ function Quiz({ topic, section, onDone, onClose }: { topic: BookTopic; section: 
   const [answers, setAnswers] = useState<(number | null)[]>(() => questions.map(() => null));
   const [finished, setFinished] = useState(false);
   const { offerPause } = useSite();
+  useExerciseGuard(!finished);
   const q = questions[i];
   const chosen = answers[i];
 
