@@ -10,6 +10,7 @@ import { TopicVideosAdmin } from "@/components/admin/TopicVideosAdmin";
 import { ChannelAdmin, VlogsAdmin } from "@/components/admin/ChannelAdmin";
 import { PodcastsAdmin } from "@/components/admin/PodcastsAdmin";
 import { FilmsAdmin } from "@/components/admin/FilmsAdmin";
+import { SprachcafeAdmin } from "@/components/admin/SprachcafeAdmin";
 
 export default function AdminPage() {
   const { t } = useUI();
@@ -48,6 +49,7 @@ export default function AdminPage() {
       <TopicVideosAdmin />
       <PodcastsAdmin />
       <FilmsAdmin />
+      <SprachcafeAdmin />
     </div>
   );
 }

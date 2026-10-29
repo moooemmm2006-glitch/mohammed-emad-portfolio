@@ -33,6 +33,10 @@ function open() {
     await client.executeMultiple(schema.READING_DDL);
     await client.executeMultiple(schema.GRAMMAR_DDL);
     await client.executeMultiple(schema.COMMUNITY_DDL);
+    await client.executeMultiple(schema.SPRACHCAFE_DDL);
+    const now = Date.now();
+    await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["farah", "فرح", "Farah", now, now] });
+    await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["omar-helmy", "عمر حلمي", "Omar Helmy", now, now] });
   })();
   // A failed migration must not be cached forever (e.g. a network blip on Turso).
   ready.catch(() => {

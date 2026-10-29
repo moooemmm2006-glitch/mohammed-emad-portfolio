@@ -1,0 +1,33 @@
+import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { currentUser, forbidden, unauthorized } from "@/lib/auth/session";
+import { getDb, schema } from "@/lib/db";
+import { jsonError, readJson } from "@/lib/api";
+export const runtime = "nodejs";
+const Edit = z.object({ displayNameAr: z.string().trim().min(1).max(80).optional(), displayNameEn: z.string().trim().max(80).optional(), photoUrl: z.string().trim().max(500).optional(), biography: z.string().trim().max(1200).optional(), languages: z.array(z.string().trim().min(1).max(60)).max(12).optional(), proficiency: z.string().trim().max(100).optional(), specializations: z.array(z.string().trim().min(1).max(80)).max(20).optional(), levels: z.array(z.enum(["A1", "A2", "B1", "B2"])).max(4).optional(), sessionTypes: z.array(z.string().trim().min(1).max(80)).max(20).optional(), availability: z.array(z.string().trim().min(1).max(160)).max(40).optional(), durationMinutes: z.number().int().min(5).max(240).nullable().optional(), priceMinor: z.number().int().min(0).nullable().optional(), currency: z.string().trim().length(3).nullable().optional(), privateContact: z.string().trim().max(500).optional(), bookingEnabled: z.boolean().optional(), published: z.boolean().optional() });
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const user = await currentUser(); if (!user) return unauthorized(); if (user.role !== "admin") return forbidden();
+  const parsed = Edit.safeParse(await readJson(req)); if (!parsed.success || !Object.keys(parsed.data).length) return jsonError(400, "invalid_teacher", "Check the teacher details.");
+  const { id } = await params, db = await getDb(), old = await db.select().from(schema.cafeTeachers).where(eq(schema.cafeTeachers.id, id)).get();
+  if (!old) return jsonError(404, "not_found", "Teacher not found.");
+  const d = parsed.data, patch: Partial<typeof schema.cafeTeachers.$inferInsert> = { updatedAt: Date.now() };
+  if (d.displayNameAr !== undefined) patch.displayNameAr = d.displayNameAr;
+  if (d.displayNameEn !== undefined) patch.displayNameEn = d.displayNameEn || null;
+  if (d.photoUrl !== undefined) patch.photoUrl = d.photoUrl || null;
+  if (d.biography !== undefined) patch.biography = d.biography;
+  if (d.languages !== undefined) patch.languagesJson = JSON.stringify(d.languages);
+  if (d.proficiency !== undefined) patch.proficiency = d.proficiency || null;
+  if (d.specializations !== undefined) patch.specializationsJson = JSON.stringify(d.specializations);
+  if (d.levels !== undefined) patch.levelsJson = JSON.stringify(d.levels);
+  if (d.sessionTypes !== undefined) patch.sessionTypesJson = JSON.stringify(d.sessionTypes);
+  if (d.availability !== undefined) patch.availabilityJson = JSON.stringify(d.availability);
+  if (d.durationMinutes !== undefined) patch.durationMinutes = d.durationMinutes;
+  if (d.priceMinor !== undefined) patch.priceMinor = d.priceMinor;
+  if (d.currency !== undefined) patch.currency = d.currency;
+  if (d.privateContact !== undefined) patch.privateContact = d.privateContact || null;
+  if (d.bookingEnabled !== undefined) patch.bookingEnabled = Number(d.bookingEnabled);
+  if (d.published !== undefined) patch.published = Number(d.published);
+  await db.update(schema.cafeTeachers).set(patch).where(eq(schema.cafeTeachers.id, id)).run();
+  return NextResponse.json({ ok: true });
+}

@@ -63,7 +63,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
       <header className="glass-header sticky top-0 z-30">
         <div className="mx-auto max-w-6xl px-3 sm:px-4 h-14 sm:h-16 flex items-center gap-2">
-          {!bare && <LevelNav active={active} communityActive={path.startsWith("/community")} />}
+          {!bare && <LevelNav active={active} communityActive={path.startsWith("/community")} cafeActive={path.startsWith("/sprachcafe")} />}
           <div className="ms-auto flex items-center gap-1 shrink-0">
             <LangSwitcher />
             <ExplainerButton />
@@ -105,7 +105,7 @@ function ExplainerButton() {
 }
 
 /** "المستوى" + the four level pills; the highlight slides to the active level. */
-function LevelNav({ active, communityActive }: { active: Level | null; communityActive: boolean }) {
+function LevelNav({ active, communityActive, cafeActive }: { active: Level | null; communityActive: boolean; cafeActive: boolean }) {
   const { t } = useUI();
   return (
     <nav aria-label={t("header_level")} className="flex items-center gap-1.5 sm:gap-3 min-w-0">
@@ -128,8 +128,11 @@ function LevelNav({ active, communityActive }: { active: Level | null; community
           );
         })}
       </div>
-      <Link href="/community" aria-current={communityActive ? "page" : undefined} className={`hidden lg:inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold transition ${communityActive ? "bg-emerald-600 text-white" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
-        <span aria-hidden="true">👥</span><span>{t("community_nav")}</span>
+      <Link href="/community" aria-label={t("community_nav")} aria-current={communityActive ? "page" : undefined} className={`hidden lg:inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-2 text-sm font-bold transition ${communityActive ? "bg-emerald-600 text-white" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
+        <span aria-hidden="true">👥</span><span className="hidden xl:inline">{t("community_nav")}</span>
+      </Link>
+      <Link href="/sprachcafe" aria-label="Sprachcafé" aria-current={cafeActive ? "page" : undefined} className={`hidden lg:inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-2 text-sm font-bold transition ${cafeActive ? "bg-amber-500 text-slate-950" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
+        <span aria-hidden="true">☕</span><span className="hidden xl:inline">Sprachcafé</span>
       </Link>
     </nav>
   );

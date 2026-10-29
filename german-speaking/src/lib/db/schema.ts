@@ -1,4 +1,4 @@
-import { integer, primaryKey, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, primaryKey, real, sqliteTable, text, uniqueIndex, index } from "drizzle-orm/sqlite-core";
 
 // Every row carries user_id. Before accounts existed everything belonged to "local";
 // the first account that signs up takes over that data (see migrate.ts).
@@ -164,6 +164,42 @@ export const studyRoomSessions = sqliteTable("study_room_sessions", {
   id: text("id").primaryKey(), roomId: text("room_id").notNull(), startedAt: integer("started_at").notNull(), endedAt: integer("ended_at"), activeMilliseconds: integer("active_milliseconds").notNull().default(0),
   goal: text("goal").notNull().default(""), participantCount: integer("participant_count").notNull().default(0), completed: integer("completed").notNull().default(0),
 });
+
+export const cafeTeachers = sqliteTable("cafe_teachers", {
+  id: text("id").primaryKey(), displayNameAr: text("display_name_ar").notNull(), displayNameEn: text("display_name_en"),
+  photoUrl: text("photo_url"), biography: text("biography").notNull().default(""), languagesJson: text("languages_json").notNull().default("[]"),
+  proficiency: text("proficiency"), specializationsJson: text("specializations_json").notNull().default("[]"), levelsJson: text("levels_json").notNull().default("[]"),
+  sessionTypesJson: text("session_types_json").notNull().default("[]"), availabilityJson: text("availability_json").notNull().default("[]"),
+  durationMinutes: integer("duration_minutes"), priceMinor: integer("price_minor"), currency: text("currency"), privateContact: text("private_contact"),
+  bookingEnabled: integer("booking_enabled").notNull().default(0), published: integer("published").notNull().default(1),
+  createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
+});
+
+export const cafeSeries = sqliteTable("cafe_series", {
+  id: text("id").primaryKey(), teacherId: text("teacher_id").notNull(), title: text("title").notNull(), description: text("description").notNull().default(""),
+  level: text("level").notNull(), category: text("category").notNull(), weekday: integer("weekday").notNull(), startMinute: integer("start_minute").notNull(),
+  timezone: text("timezone").notNull(), durationMinutes: integer("duration_minutes").notNull(), capacity: integer("capacity").notNull(),
+  priceMinor: integer("price_minor"), currency: text("currency"), bookingDeadlineMinutes: integer("booking_deadline_minutes").notNull().default(60),
+  cancellationDeadlineMinutes: integer("cancellation_deadline_minutes").notNull().default(1440), joinWindowMinutes: integer("join_window_minutes").notNull().default(15),
+  startDate: text("start_date").notNull(), endDate: text("end_date"), published: integer("published").notNull().default(0),
+  meetingUrl: text("meeting_url"), meetingInstructions: text("meeting_instructions").notNull().default(""), status: text("status").notNull().default("active"),
+  createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
+}, (t) => [index("cafe_series_teacher_status").on(t.teacherId, t.status, t.published)]);
+
+export const cafeSessions = sqliteTable("cafe_sessions", {
+  id: text("id").primaryKey(), seriesId: text("series_id"), occurrenceKey: text("occurrence_key"), teacherId: text("teacher_id").notNull(),
+  title: text("title").notNull(), description: text("description").notNull().default(""), level: text("level").notNull(), category: text("category").notNull(),
+  startsAt: integer("starts_at").notNull(), timezone: text("timezone").notNull(), durationMinutes: integer("duration_minutes").notNull(), capacity: integer("capacity").notNull(),
+  priceMinor: integer("price_minor"), currency: text("currency"), bookingDeadlineMinutes: integer("booking_deadline_minutes").notNull().default(60),
+  cancellationDeadlineMinutes: integer("cancellation_deadline_minutes").notNull().default(1440), joinWindowMinutes: integer("join_window_minutes").notNull().default(15),
+  meetingUrl: text("meeting_url"), meetingInstructions: text("meeting_instructions").notNull().default(""), status: text("status").notNull().default("scheduled"),
+  published: integer("published").notNull().default(0), cancellationNote: text("cancellation_note"), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
+}, (t) => [uniqueIndex("cafe_session_occurrence_unique").on(t.seriesId, t.occurrenceKey), index("cafe_sessions_directory").on(t.published, t.status, t.startsAt), index("cafe_sessions_teacher").on(t.teacherId, t.startsAt)]);
+
+export const cafeBookings = sqliteTable("cafe_bookings", {
+  id: text("id").primaryKey(), sessionId: text("session_id").notNull(), userId: text("user_id").notNull(), status: text("status").notNull().default("booked"),
+  paymentStatus: text("payment_status").notNull().default("not_required"), bookedAt: integer("booked_at").notNull(), cancelledAt: integer("cancelled_at"), updatedAt: integer("updated_at").notNull(),
+}, (t) => [uniqueIndex("cafe_booking_user_session_unique").on(t.userId, t.sessionId), index("cafe_booking_session_status").on(t.sessionId, t.status), index("cafe_booking_user_status").on(t.userId, t.status)]);
 
 /** One finished ⏱️ focus session (the "خزنتي" vault). */
 export const focusSessions = sqliteTable("focus_sessions", {
@@ -341,6 +377,18 @@ export const COMMUNITY_DDL = [
   "CREATE INDEX IF NOT EXISTS study_room_messages_rate ON study_room_messages(room_id, user_id, created_at)",
   "CREATE TABLE IF NOT EXISTS study_room_sessions (id TEXT PRIMARY KEY, room_id TEXT NOT NULL, started_at INTEGER NOT NULL, ended_at INTEGER, active_milliseconds INTEGER NOT NULL DEFAULT 0, goal TEXT NOT NULL DEFAULT '', participant_count INTEGER NOT NULL DEFAULT 0, completed INTEGER NOT NULL DEFAULT 0)",
   "CREATE INDEX IF NOT EXISTS study_room_sessions_room ON study_room_sessions(room_id, started_at)",
+].join(";");
+
+export const SPRACHCAFE_DDL = [
+  "CREATE TABLE IF NOT EXISTS cafe_teachers (id TEXT PRIMARY KEY, display_name_ar TEXT NOT NULL, display_name_en TEXT, photo_url TEXT, biography TEXT NOT NULL DEFAULT '', languages_json TEXT NOT NULL DEFAULT '[]', proficiency TEXT, specializations_json TEXT NOT NULL DEFAULT '[]', levels_json TEXT NOT NULL DEFAULT '[]', session_types_json TEXT NOT NULL DEFAULT '[]', availability_json TEXT NOT NULL DEFAULT '[]', duration_minutes INTEGER, price_minor INTEGER, currency TEXT, private_contact TEXT, booking_enabled INTEGER NOT NULL DEFAULT 0, published INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS cafe_series (id TEXT PRIMARY KEY, teacher_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', level TEXT NOT NULL, category TEXT NOT NULL, weekday INTEGER NOT NULL, start_minute INTEGER NOT NULL, timezone TEXT NOT NULL, duration_minutes INTEGER NOT NULL, capacity INTEGER NOT NULL, price_minor INTEGER, currency TEXT, booking_deadline_minutes INTEGER NOT NULL DEFAULT 60, cancellation_deadline_minutes INTEGER NOT NULL DEFAULT 1440, join_window_minutes INTEGER NOT NULL DEFAULT 15, start_date TEXT NOT NULL, end_date TEXT, published INTEGER NOT NULL DEFAULT 0, meeting_url TEXT, meeting_instructions TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'active', created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
+  "CREATE INDEX IF NOT EXISTS cafe_series_teacher_status ON cafe_series(teacher_id, status, published)",
+  "CREATE TABLE IF NOT EXISTS cafe_sessions (id TEXT PRIMARY KEY, series_id TEXT, occurrence_key TEXT, teacher_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', level TEXT NOT NULL, category TEXT NOT NULL, starts_at INTEGER NOT NULL, timezone TEXT NOT NULL, duration_minutes INTEGER NOT NULL, capacity INTEGER NOT NULL, price_minor INTEGER, currency TEXT, booking_deadline_minutes INTEGER NOT NULL DEFAULT 60, cancellation_deadline_minutes INTEGER NOT NULL DEFAULT 1440, join_window_minutes INTEGER NOT NULL DEFAULT 15, meeting_url TEXT, meeting_instructions TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'scheduled', published INTEGER NOT NULL DEFAULT 0, cancellation_note TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, UNIQUE(series_id, occurrence_key))",
+  "CREATE INDEX IF NOT EXISTS cafe_sessions_directory ON cafe_sessions(published, status, starts_at)",
+  "CREATE INDEX IF NOT EXISTS cafe_sessions_teacher ON cafe_sessions(teacher_id, starts_at)",
+  "CREATE TABLE IF NOT EXISTS cafe_bookings (id TEXT PRIMARY KEY, session_id TEXT NOT NULL, user_id TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'booked', payment_status TEXT NOT NULL DEFAULT 'not_required', booked_at INTEGER NOT NULL, cancelled_at INTEGER, updated_at INTEGER NOT NULL, UNIQUE(user_id, session_id))",
+  "CREATE INDEX IF NOT EXISTS cafe_booking_session_status ON cafe_bookings(session_id, status)",
+  "CREATE INDEX IF NOT EXISTS cafe_booking_user_status ON cafe_bookings(user_id, status)",
 ].join(";");
 
 export const READING_DDL = [

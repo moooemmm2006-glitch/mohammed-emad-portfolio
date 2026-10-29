@@ -10,6 +10,7 @@ import type { TKey } from "@/lib/client/i18n";
 import { FormError, PasswordField, TextField } from "./Fields";
 import { IconCamera, IconChart, IconFile, IconFlame, IconGear, IconKey, IconLogout, IconPen, IconShield, IconTrash, IconVideoPlay } from "./Icons";
 import { useSite } from "./site/SiteProvider";
+import { cafeText } from "@/lib/sprachcafe/labels";
 import { Modal } from "./Modal";
 import { PHOTO_ACCEPT, PhotoCropper, checkPhotoFile } from "./PhotoCropper";
 import { UserAvatar } from "./UserAvatar";
@@ -23,7 +24,7 @@ type Dialog = "name" | "password" | null;
 
 /** Google-style account circle in the header, with a dropdown card. */
 export function ProfileMenu() {
-  const { t } = useUI();
+  const { t, lang } = useUI();
   const { me, logout, setUser } = useMe();
   const { links, openExplainer, trackClick } = useSite();
   const [open, setOpen] = useState(false);
@@ -182,6 +183,9 @@ export function ProfileMenu() {
             </MenuLink>
             <MenuLink href="/community" icon={<span className="w-[18px] text-center">👥</span>} onClick={() => setOpen(false)}>
               {t("community_nav")}
+            </MenuLink>
+            <MenuLink href="/sprachcafe" icon={<span className="w-[18px] text-center">☕</span>} onClick={() => setOpen(false)}>
+              {cafeText(lang, "nav")}
             </MenuLink>
             <MenuLink href="/progress" icon={<IconChart size={18} />} onClick={() => setOpen(false)}>
               {t("nav_progress")}
