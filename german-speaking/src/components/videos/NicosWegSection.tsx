@@ -9,7 +9,7 @@ import { useVideoProgress } from "./useVideos";
 import { GeminiVideoLink } from "../gemini/GeminiCard";
 
 /** DW "Nicos Weg" for A1, A2 and B1: the level's full movie, the episodes playlist (when verified), progress. */
-export function NicosWegSection({ level }: { level: "A1" | "A2" | "B1" }) {
+export function NicosWegSection({ level, hideIntro = false }: { level: "A1" | "A2" | "B1"; hideIntro?: boolean }) {
   const { t } = useUI();
   const cfg = nicosWeg[level];
   const { items, loaded, save } = useVideoProgress();
@@ -20,10 +20,12 @@ export function NicosWegSection({ level }: { level: "A1" | "A2" | "B1" }) {
 
   return (
     <section className="space-y-4" aria-label={`Nicos Weg ${level}`}>
-      <div className="card p-5 space-y-2">
-        <h2 className="text-xl font-bold">🎬 {t("vid_nicos_title")}</h2>
-        <p className="leading-relaxed">{t("vid_nicos_intro")}</p>
-      </div>
+      {!hideIntro && (
+        <div className="card p-5 space-y-2">
+          <h2 className="text-xl font-bold">🎬 {t("vid_nicos_title")}</h2>
+          <p className="leading-relaxed">{t("vid_nicos_intro")}</p>
+        </div>
+      )}
 
       <div className="card p-4 sm:p-5 space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-2">

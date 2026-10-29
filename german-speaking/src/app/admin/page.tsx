@@ -8,6 +8,8 @@ import { useUI } from "@/lib/client/ui";
 import type { StudentRow } from "@/lib/admin";
 import { TopicVideosAdmin } from "@/components/admin/TopicVideosAdmin";
 import { ChannelAdmin, VlogsAdmin } from "@/components/admin/ChannelAdmin";
+import { PodcastsAdmin } from "@/components/admin/PodcastsAdmin";
+import { FilmsAdmin } from "@/components/admin/FilmsAdmin";
 
 export default function AdminPage() {
   const { t } = useUI();
@@ -44,6 +46,8 @@ export default function AdminPage() {
       <ChannelAdmin />
       <VlogsAdmin />
       <TopicVideosAdmin />
+      <PodcastsAdmin />
+      <FilmsAdmin />
     </div>
   );
 }

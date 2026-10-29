@@ -12,7 +12,7 @@ import { useVideoProgress } from "./useVideos";
 import { GeminiVideoLink } from "../gemini/GeminiCard";
 
 /** DW "Video-Thema" for B2: the latest episodes from DW's official feed (fetched by our server). */
-export function VideoThemaSection() {
+export function VideoThemaSection({ hideIntro = false }: { hideIntro?: boolean }) {
   const { t, lang } = useUI();
   const [feed, setFeed] = useState<FeedResult | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
@@ -29,11 +29,13 @@ export function VideoThemaSection() {
 
   return (
     <section className="space-y-4" aria-label="Video-Thema B2">
-      <div className="card p-5 space-y-2">
-        <h2 className="text-xl font-bold">🎬 {t("vid_vt_title")}</h2>
-        <p className="leading-relaxed">{t("vid_vt_intro")}</p>
-        {feed && feed.episodes.length > 0 && <p className="text-sm text-muted">{fill(t("vid_vt_watched"), { n: watchedCount, t: feed.episodes.length })}</p>}
-      </div>
+      {!hideIntro && (
+        <div className="card p-5 space-y-2">
+          <h2 className="text-xl font-bold">🎬 {t("vid_vt_title")}</h2>
+          <p className="leading-relaxed">{t("vid_vt_intro")}</p>
+          {feed && feed.episodes.length > 0 && <p className="text-sm text-muted">{fill(t("vid_vt_watched"), { n: watchedCount, t: feed.episodes.length })}</p>}
+        </div>
+      )}
 
       {open && (
         <div ref={playerRef} className="card p-4 sm:p-5 space-y-3 scroll-mt-20">

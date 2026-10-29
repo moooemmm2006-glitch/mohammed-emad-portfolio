@@ -3,9 +3,14 @@ import { getDb, schema } from "./db";
 import { TOPIC_RANGE, topicSummaries } from "./book";
 import { topicProgress } from "./bookProgress";
 import { geminiCount, geminiSpeakBonus } from "./gemini";
-import { getVideoProgress, percentOf } from "./videoProgress";
+import { getVideoProgress } from "./videoProgress";
 import { getVideoThema } from "./videoThema";
-import type { Level } from "./levels";
+import { LEVELS, type Level } from "./levels";
+import { easyGermanProgress } from "./easyGerman";
+import { listPodcasts } from "./podcasts";
+import { listFilms } from "./films";
+import { podcastProgressKey } from "./podcastShared";
+import { filmProgressKey } from "./filmsShared";
 
 // Progress per skill for a level: Sprechen (book sentences said right + Gemini sessions), Hören (videos watched),
 // Lesen (section quizzes passed), Schreiben (writing exercises passed).
@@ -47,29 +52,55 @@ export interface SkillProgress {
   write: number;
 }
 
+export interface ListeningProgress {
+  watched: number;
+  total: number;
+}
+
 const pct = (a: number, b: number) => (b ? Math.min(100, Math.round((100 * a) / b)) : 0);
 
-export async function levelSkillProgress(userId: string, level: Level): Promise<SkillProgress> {
+const topicsForProgress = () => Object.fromEntries(LEVELS.map((l) => {
+  const [from, to] = TOPIC_RANGE[l];
+  return [l, Array.from({ length: to - from + 1 }, (_, i) => from + i)];
+})) as Record<Level, number[]>;
+
+/** Hören completion counts all media available in a level, with legacy A1/A2 behavior preserved. */
+export async function levelListeningProgress(userId: string, level: Level, videoRows?: Awaited<ReturnType<typeof getVideoProgress>>): Promise<ListeningProgress> {
+  const videos = videoRows ?? await getVideoProgress(userId);
+  const watchedKeys = new Set(videos.filter((v) => v.watched).map((v) => v.key));
+  if (level === "A1" || level === "A2") {
+    const movie = videos.find((v) => v.key === `nicos:${level}:movie`);
+    return { watched: movie?.watched ? 1 : 0, total: 1 };
+  }
+
+  const [easyGerman, podcasts] = await Promise.all([easyGermanProgress(watchedKeys, topicsForProgress()), listPodcasts(level)]);
+  let watched = easyGerman[level].watched + podcasts.filter((p) => watchedKeys.has(podcastProgressKey(p))).length;
+  let total = easyGerman[level].total + podcasts.length;
+  if (level === "B1") {
+    total += 1;
+    if (watchedKeys.has("nicos:B1:movie")) watched += 1;
+  } else {
+    const [feed, availableFilms] = await Promise.all([getVideoThema(), listFilms()]);
+    total += feed.episodes.length + availableFilms.length;
+    watched += feed.episodes.filter((episode) => watchedKeys.has(`vt:${episode.id}`)).length;
+    watched += availableFilms.filter((film) => watchedKeys.has(filmProgressKey(film.id))).length;
+  }
+  return { watched, total };
+}
+
+export async function levelSkillProgress(userId: string, level: Level, listening?: ListeningProgress): Promise<SkillProgress> {
   const topics = await topicSummaries(level);
   const numbers = topics.map((t) => t.number);
-  const [speak, read, write, videos, gemini] = await Promise.all([
+  const [speak, read, write, gemini, listeningProgress] = await Promise.all([
     topicProgress(userId, new Map(topics.map((t) => [t.number, t.sentenceCount]))),
     skillScores(userId, "read", numbers),
     skillScores(userId, "write", numbers),
-    getVideoProgress(userId),
     geminiCount(userId, level),
+    listening ?? levelListeningProgress(userId, level),
   ]);
   const totalSentences = topics.reduce((n, t) => n + t.sentenceCount, 0);
   const saidRight = [...speak.values()].reduce((n, p) => n + p.correct, 0);
-  let listen: number;
-  if (level === "B2") {
-    // Video-Thema: share of the latest episodes watched (the feed is cached on the server).
-    const feed = await getVideoThema();
-    const ids = new Set(feed.episodes.map((e) => `vt:${e.id}`));
-    listen = pct(videos.filter((v) => ids.has(v.key) && v.watched).length, ids.size);
-  } else {
-    listen = percentOf(videos.find((v) => v.key === `nicos:${level}:movie`));
-  }
+  const listen = pct(listeningProgress.watched, listeningProgress.total);
   return {
     // Book sentences said right, plus a little for every Gemini conversation (its pasted report).
     speak: Math.min(100, pct(saidRight, totalSentences) + geminiSpeakBonus(gemini)),

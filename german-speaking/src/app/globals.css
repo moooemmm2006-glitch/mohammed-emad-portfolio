@@ -517,3 +517,8 @@ html[lang="ar"] body {
   .vault-door { display: none; }
   .vault-glow, .vault-coin { opacity: 1; }
 }
+/* B1/B2 Hören sections keep their disclosure affordance consistent in RTL and LTR. */
+.listening-section > summary::-webkit-details-marker { display: none; }
+.listening-section-summary { -webkit-tap-highlight-color: transparent; }
+.listening-chevron { transition: transform 180ms ease; }
+.listening-section[open] .listening-chevron { transform: rotate(180deg); }

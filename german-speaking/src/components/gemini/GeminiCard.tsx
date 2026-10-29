@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { GEMINI_URL, geminiPrompt, type GeminiContext } from "../../../data/gemini-prompts";
 import { api } from "@/lib/client/api";
 import { copyAndOpen, copyText } from "@/lib/client/clipboard";
-import { fill } from "@/lib/client/i18n";
+import { fill, type TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import type { Level } from "@/lib/levels";
 import { Modal } from "../Modal";
@@ -200,10 +200,10 @@ function Step({ n, children }: { n: number; children: React.ReactNode }) {
 }
 
 /** "Talk with Gemini about this video": one small link under a video. */
-export function GeminiVideoLink({ level, title }: { level: Level; title: string }) {
+export function GeminiVideoLink({ level, title, film = false, labelKey = "gem_video_link" }: { level: Level; title: string; film?: boolean; labelKey?: TKey }) {
   const { t } = useUI();
   const toast = useToast();
-  const prompt = useMemo(() => geminiPrompt(level, { kind: "video", title }), [level, title]);
+  const prompt = useMemo(() => geminiPrompt(level, { kind: film ? "film" : "video", title }), [level, title, film]);
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
       <button
@@ -213,7 +213,7 @@ export function GeminiVideoLink({ level, title }: { level: Level; title: string 
           void copyAndOpen(prompt, GEMINI_URL).then((ok) => (ok ? toast.show(t("gem_copied")) : toast.show(t("gem_copy_failed_video"), true)))
         }
       >
-        <SparkleIcon size={18} /> {t("gem_video_link")} ↗
+        <SparkleIcon size={18} /> {t(labelKey)} ↗
       </button>
       <GeminiReportLink level={level} video={title} onSaved={(m) => toast.show(m)} />
       {toast.node}

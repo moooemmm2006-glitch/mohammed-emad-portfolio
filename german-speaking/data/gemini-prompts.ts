@@ -16,7 +16,8 @@ export const LEVEL_RULES: Record<GeminiLevel, string> = {
 export type GeminiContext =
   | { kind: "level" }
   | { kind: "topic"; title_de: string; title_ar: string; vocab: string[]; grammar: string[] }
-  | { kind: "video"; title: string };
+  | { kind: "video"; title: string }
+  | { kind: "film"; title: string };
 
 export const VOCAB_IN_PROMPT = 10;
 
@@ -27,6 +28,7 @@ export function topicPart(ctx: GeminiContext): string {
     return `Unser Thema: "${ctx.title_de}" (${ctx.title_ar}). Bleib bei diesem Thema. Nutze diese Wörter: ${words}. Übe mit mir besonders: ${grammar}.\n`;
   }
   if (ctx.kind === "video") return `Unser Thema ist das Video "${ctx.title}". Frag mich, was ich gesehen habe, und sprich mit mir über das Thema.\n`;
+  if (ctx.kind === "film") return `Unser Thema ist der Film "${ctx.title}". Frag mich zuerst, ob ich den Film schon beendet habe. Wenn nicht, verrate keine Spoiler. Sprich mit mir über die Handlung bis zu meiner Stelle, die Figuren und meine Meinung.\n`;
   return "";
 }
 

@@ -28,6 +28,7 @@ export function useVideoProgress() {
     try {
       const saved = await api<VideoState>("/api/videos/progress", { method: "POST", body: JSON.stringify({ key, ...p }) });
       setItems((s) => ({ ...s, [key]: saved }));
+      if (p.watched !== undefined || saved.watched) window.dispatchEvent(new Event("gs:video-progress"));
     } catch {
       /* offline: the next save catches up */
     }

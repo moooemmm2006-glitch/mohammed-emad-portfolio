@@ -11,8 +11,7 @@ import { ProgressBar } from "@/components/level/shared";
 import { SpeakPanel } from "@/components/level/SpeakPanel";
 import { useTilt } from "@/components/level/Tilt";
 import { WritePanel } from "@/components/level/WritePanel";
-import { NicosWegSection } from "@/components/videos/NicosWegSection";
-import { VideoThemaSection } from "@/components/videos/VideoThemaSection";
+import { ListeningForLevel } from "@/components/videos/ListeningHub";
 import { LevelEndCards } from "@/components/site/CreatorCard";
 import { IntroStrip } from "@/components/site/IntroStrip";
 import { api } from "@/lib/client/api";
@@ -70,7 +69,10 @@ function LevelContent({ level }: { level: Level }) {
   const firstSkill = useRef(skill);
 
   useEffect(() => {
-    api<SkillProgress & { focusMinutes?: number }>(`/api/level/${level}/progress`).then(setProgress, () => {});
+    const load = () => api<SkillProgress & { focusMinutes?: number }>(`/api/level/${level}/progress`).then(setProgress, () => {});
+    load();
+    window.addEventListener("gs:video-progress", load);
+    return () => window.removeEventListener("gs:video-progress", load);
   }, [level, skill]);
 
   const setSkill = (id: SkillId) => router.replace(levelPath(level, id === "speak" ? "" : `?skill=${id}`), { scroll: false });
@@ -97,7 +99,7 @@ function LevelContent({ level }: { level: Level }) {
           style={{ transformOrigin: "50% 0%" }}
         >
           {skill === "speak" && <SpeakPanel level={level} />}
-          {skill === "listen" && (level === "B2" ? <VideoThemaSection /> : <NicosWegSection level={level as "A1" | "A2" | "B1"} />)}
+          {skill === "listen" && <ListeningForLevel level={level} />}
           {skill === "read" && <ReadPanel level={level} />}
           {skill === "write" && <WritePanel level={level} />}
         </m.div>

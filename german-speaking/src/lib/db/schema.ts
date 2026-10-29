@@ -117,6 +117,25 @@ export const vlogs = sqliteTable("vlogs", {
   addedAt: integer("added_at").notNull(),
 });
 
+/** Admin-added DKW podcast videos/playlists. Static episodes stay in data/podcasts.ts. */
+export const podcastItems = sqliteTable("podcast_items", {
+  id: text("id").primaryKey(),
+  youtubeId: text("youtube_id"),
+  playlistId: text("playlist_id"),
+  title: text("title").notNull(),
+  channel: text("channel").notNull(),
+  levels: text("levels").notNull(),
+  addedAt: integer("added_at").notNull(),
+});
+
+/** Admin film additions and hide overrides for file-based recommendations. */
+export const filmItems = sqliteTable("film_items", {
+  id: text("id").primaryKey(),
+  action: text("action").notNull(), // add | hide
+  data: text("data").notNull(),
+  createdAt: integer("created_at").notNull(),
+});
+
 /** One finished ⏱️ focus session (the "خزنتي" vault). */
 export const focusSessions = sqliteTable("focus_sessions", {
   id: text("id").primaryKey(),
@@ -289,6 +308,11 @@ CREATE TABLE IF NOT EXISTS topic_videos (
 );
 CREATE TABLE IF NOT EXISTS site_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS vlogs (youtube_id TEXT PRIMARY KEY, title TEXT NOT NULL, description_ar TEXT NOT NULL, added_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS podcast_items (
+  id TEXT PRIMARY KEY, youtube_id TEXT, playlist_id TEXT, title TEXT NOT NULL, channel TEXT NOT NULL,
+  levels TEXT NOT NULL, added_at INTEGER NOT NULL
+);
+CREATE TABLE IF NOT EXISTS film_items (id TEXT PRIMARY KEY, action TEXT NOT NULL, data TEXT NOT NULL, created_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS focus_sessions (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, started_at INTEGER NOT NULL, ended_at INTEGER NOT NULL, minutes INTEGER NOT NULL,
   goal TEXT, goal_done INTEGER, level TEXT
