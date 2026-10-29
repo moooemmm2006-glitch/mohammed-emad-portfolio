@@ -7,6 +7,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { LevelBadge } from "@/components/level/LevelBadge";
 import { LevelStage } from "@/components/level/LevelStage";
 import { ReadPanel } from "@/components/level/ReadPanel";
+import { ReadingCompanion } from "@/components/level/ReadingCompanion";
 import { ProgressBar } from "@/components/level/shared";
 import { SpeakPanel } from "@/components/level/SpeakPanel";
 import { useTilt } from "@/components/level/Tilt";
@@ -72,7 +73,11 @@ function LevelContent({ level }: { level: Level }) {
     const load = () => api<SkillProgress & { focusMinutes?: number }>(`/api/level/${level}/progress`).then(setProgress, () => {});
     load();
     window.addEventListener("gs:video-progress", load);
-    return () => window.removeEventListener("gs:video-progress", load);
+    window.addEventListener("gs:reading-progress", load);
+    return () => {
+      window.removeEventListener("gs:video-progress", load);
+      window.removeEventListener("gs:reading-progress", load);
+    };
   }, [level, skill]);
 
   const setSkill = (id: SkillId) => router.replace(levelPath(level, id === "speak" ? "" : `?skill=${id}`), { scroll: false });
@@ -100,7 +105,7 @@ function LevelContent({ level }: { level: Level }) {
         >
           {skill === "speak" && <SpeakPanel level={level} />}
           {skill === "listen" && <ListeningForLevel level={level} />}
-          {skill === "read" && <ReadPanel level={level} />}
+          {skill === "read" && <><ReadingCompanion level={level} /><ReadPanel level={level} /></>}
           {skill === "write" && <WritePanel level={level} />}
         </m.div>
       </div>

@@ -30,6 +30,7 @@ function open() {
     await client.executeMultiple(schema.DDL);
     await addMissingColumns(client);
     await client.executeMultiple(schema.POST_DDL);
+    await client.executeMultiple(schema.READING_DDL);
   })();
   // A failed migration must not be cached forever (e.g. a network blip on Turso).
   ready.catch(() => {

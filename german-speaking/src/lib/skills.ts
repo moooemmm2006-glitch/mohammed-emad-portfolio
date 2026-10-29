@@ -11,6 +11,7 @@ import { listPodcasts } from "./podcasts";
 import { listFilms } from "./films";
 import { podcastProgressKey } from "./podcastShared";
 import { filmProgressKey } from "./filmsShared";
+import { readingProgressBonus } from "./readingShared";
 
 // Progress per skill for a level: Sprechen (book sentences said right + Gemini sessions), Hören (videos watched),
 // Lesen (section quizzes passed), Schreiben (writing exercises passed).
@@ -91,12 +92,13 @@ export async function levelListeningProgress(userId: string, level: Level, video
 export async function levelSkillProgress(userId: string, level: Level, listening?: ListeningProgress): Promise<SkillProgress> {
   const topics = await topicSummaries(level);
   const numbers = topics.map((t) => t.number);
-  const [speak, read, write, gemini, listeningProgress] = await Promise.all([
+  const [speak, read, write, gemini, listeningProgress, pageBook] = await Promise.all([
     topicProgress(userId, new Map(topics.map((t) => [t.number, t.sentenceCount]))),
     skillScores(userId, "read", numbers),
     skillScores(userId, "write", numbers),
     geminiCount(userId, level),
     listening ?? levelListeningProgress(userId, level),
+    getDb().then((db) => db.select().from(schema.readingBooks).where(and(eq(schema.readingBooks.userId, userId), eq(schema.readingBooks.level, level))).get()),
   ]);
   const totalSentences = topics.reduce((n, t) => n + t.sentenceCount, 0);
   const saidRight = [...speak.values()].reduce((n, p) => n + p.correct, 0);
@@ -105,7 +107,7 @@ export async function levelSkillProgress(userId: string, level: Level, listening
     // Book sentences said right, plus a little for every Gemini conversation (its pasted report).
     speak: Math.min(100, pct(saidRight, totalSentences) + geminiSpeakBonus(gemini)),
     listen,
-    read: pct(Object.values(read).filter((s) => s >= PASS_AT).length, topics.length * READ_PARTS),
+    read: Math.min(100, pct(Object.values(read).filter((s) => s >= PASS_AT).length, topics.length * READ_PARTS) + readingProgressBonus(pageBook?.currentPage ?? 0, pageBook?.totalPages ?? null)),
     // Translate (part 0) and complete (part 1) count; free writing (part 2) is extra.
     write: pct(Object.entries(write).filter(([k, s]) => !k.endsWith(":2") && s >= PASS_AT).length, topics.length * WRITE_PARTS),
   };

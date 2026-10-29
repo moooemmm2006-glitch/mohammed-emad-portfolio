@@ -251,6 +251,62 @@ export const violationLog = sqliteTable("violation_log", {
   createdAt: integer("created_at").notNull(),
 });
 
+export const readingBooks = sqliteTable(
+  "reading_books",
+  {
+    userId: text("user_id").notNull(),
+    level: text("level").notNull(),
+    currentPage: integer("current_page").notNull().default(0),
+    totalPages: integer("total_pages"),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.level] })],
+);
+
+export const readingDays = sqliteTable(
+  "reading_days",
+  {
+    userId: text("user_id").notNull(),
+    level: text("level").notNull(),
+    day: text("day").notNull(),
+    completedAt: integer("completed_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.level, t.day] })],
+);
+
+export const readingStepDays = sqliteTable(
+  "reading_step_days",
+  {
+    userId: text("user_id").notNull(),
+    level: text("level").notNull(),
+    day: text("day").notNull(),
+    steps: text("steps").notNull(),
+    updatedAt: integer("updated_at").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.level, t.day] })],
+);
+
+export const readingNotes = sqliteTable("reading_notes", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  level: text("level").notNull(),
+  word: text("word").notNull(),
+  meaning: text("meaning").notNull().default(""),
+  sentence: text("sentence").notNull().default(""),
+  page: integer("page"),
+  createdAt: integer("created_at").notNull(),
+  updatedAt: integer("updated_at").notNull(),
+});
+
+export const READING_DDL = [
+  "CREATE TABLE IF NOT EXISTS reading_books (user_id TEXT NOT NULL, level TEXT NOT NULL, current_page INTEGER NOT NULL DEFAULT 0, total_pages INTEGER, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, level))",
+  "CREATE TABLE IF NOT EXISTS reading_days (user_id TEXT NOT NULL, level TEXT NOT NULL, day TEXT NOT NULL, completed_at INTEGER NOT NULL, PRIMARY KEY (user_id, level, day))",
+  "CREATE INDEX IF NOT EXISTS reading_days_user_level_day ON reading_days(user_id, level, day)",
+  "CREATE TABLE IF NOT EXISTS reading_step_days (user_id TEXT NOT NULL, level TEXT NOT NULL, day TEXT NOT NULL, steps TEXT NOT NULL, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, level, day))",
+  "CREATE TABLE IF NOT EXISTS reading_notes (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, level TEXT NOT NULL, word TEXT NOT NULL, meaning TEXT NOT NULL DEFAULT '', sentence TEXT NOT NULL DEFAULT '', page INTEGER, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
+  "CREATE INDEX IF NOT EXISTS reading_notes_user_level_created ON reading_notes(user_id, level, created_at)",
+].join(";");
+
 export const DDL = `
 CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT, created_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS settings (user_id TEXT PRIMARY KEY, json TEXT NOT NULL);

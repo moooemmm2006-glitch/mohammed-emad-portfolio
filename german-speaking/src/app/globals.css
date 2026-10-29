@@ -522,3 +522,13 @@ html[lang="ar"] body {
 .listening-section-summary { -webkit-tap-highlight-color: transparent; }
 .listening-chevron { transition: transform 180ms ease; }
 .listening-section[open] .listening-chevron { transform: rotate(180deg); }
+
+/* ---- Level reader: original CSS book object (no publisher cover art) ---- */
+.reading-book-scene { position: relative; width: 176px; height: 238px; perspective: 900px; transform: rotateY(-13deg) rotateX(2deg); transform-style: preserve-3d; }
+.reading-book-spine { position: absolute; inset: 0 auto 0 0; width: 20px; border-radius: 8px 0 0 8px; transform: translateZ(-11px) rotateY(-90deg); transform-origin: right center; filter: brightness(.72); }
+.reading-book-cover { position: relative; height: 100%; border: 1px solid rgba(255,255,255,.45); border-radius: 5px 12px 12px 5px; box-shadow: 12px 14px 22px rgba(0,0,0,.24), inset 5px 0 8px rgba(255,255,255,.15); color: white; padding: 17px 15px; display: flex; flex-direction: column; align-items: center; justify-content: space-between; text-align: center; transform: translateZ(11px); }
+.reading-book-mark { font-size: 42px; filter: drop-shadow(0 5px 4px rgba(0,0,0,.22)); }
+.reading-level-mark { display: grid; place-items: center; width: 66px; height: 66px; border-radius: 50%; background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.65); font-size: 28px; font-weight: 900; }
+.reading-week-dot { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--line); border-radius: 999px; background: var(--surface); }
+.reading-week-dot.is-read { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 17%, transparent); }
+@media (prefers-reduced-motion: reduce) { .reading-book-scene { transform: none; } }
