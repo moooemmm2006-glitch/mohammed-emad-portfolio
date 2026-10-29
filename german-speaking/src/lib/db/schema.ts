@@ -136,6 +136,11 @@ export const filmItems = sqliteTable("film_items", {
   createdAt: integer("created_at").notNull(),
 });
 
+export const grammarProgress = sqliteTable("grammar_progress", {
+  userId: text("user_id").notNull(), level: text("level").notNull(), lessonId: text("lesson_id").notNull(),
+  completed: integer("completed").notNull().default(0), favorite: integer("favorite").notNull().default(0), updatedAt: integer("updated_at").notNull(),
+}, (t) => [primaryKey({ columns: [t.userId, t.level, t.lessonId] })]);
+
 /** One finished ⏱️ focus session (the "خزنتي" vault). */
 export const focusSessions = sqliteTable("focus_sessions", {
   id: text("id").primaryKey(),
@@ -297,6 +302,8 @@ export const readingNotes = sqliteTable("reading_notes", {
   createdAt: integer("created_at").notNull(),
   updatedAt: integer("updated_at").notNull(),
 });
+
+export const GRAMMAR_DDL = "CREATE TABLE IF NOT EXISTS grammar_progress (user_id TEXT NOT NULL, level TEXT NOT NULL, lesson_id TEXT NOT NULL, completed INTEGER NOT NULL DEFAULT 0, favorite INTEGER NOT NULL DEFAULT 0, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, level, lesson_id)); CREATE INDEX IF NOT EXISTS grammar_progress_user_level ON grammar_progress(user_id, level)";
 
 export const READING_DDL = [
   "CREATE TABLE IF NOT EXISTS reading_books (user_id TEXT NOT NULL, level TEXT NOT NULL, current_page INTEGER NOT NULL DEFAULT 0, total_pages INTEGER, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, level))",

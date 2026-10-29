@@ -177,6 +177,9 @@ export function ProfileMenu() {
             </MenuButton>
             <div className="border-t border-line my-1" />
             {/* The pages that used to be in the header live here now. */}
+            <MenuLink href="/grammar" icon={<span className="w-[18px] text-center">📘</span>} onClick={() => setOpen(false)}>
+              {t("nav_grammar")}
+            </MenuLink>
             <MenuLink href="/progress" icon={<IconChart size={18} />} onClick={() => setOpen(false)}>
               {t("nav_progress")}
             </MenuLink>

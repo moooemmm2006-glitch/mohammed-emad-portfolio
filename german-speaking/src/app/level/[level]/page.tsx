@@ -12,6 +12,7 @@ import { ProgressBar } from "@/components/level/shared";
 import { SpeakPanel } from "@/components/level/SpeakPanel";
 import { useTilt } from "@/components/level/Tilt";
 import { WritePanel } from "@/components/level/WritePanel";
+import { GrammarSkillPanel } from "@/components/level/GrammarSkillPanel";
 import { ListeningForLevel } from "@/components/videos/ListeningHub";
 import { LevelEndCards } from "@/components/site/CreatorCard";
 import { IntroStrip } from "@/components/site/IntroStrip";
@@ -28,6 +29,7 @@ const SKILLS = [
   { id: "listen", emoji: "🎧", key: "skill_listen", short: "skill_listen_short", de: "skill_listen_de" },
   { id: "read", emoji: "📖", key: "skill_read", short: "skill_read_short", de: "skill_read_de" },
   { id: "write", emoji: "✍️", key: "skill_write", short: "skill_write_short", de: "skill_write_de" },
+  { id: "grammar", emoji: "📘", key: "skill_grammar", short: "skill_grammar_short", de: "skill_grammar_de" },
 ] as const;
 type SkillId = (typeof SKILLS)[number]["id"];
 
@@ -87,7 +89,7 @@ function LevelContent({ level }: { level: Level }) {
       <IntroStrip />
       <LevelHeader level={level} progress={progress} />
 
-      <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-4 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-14 sm:top-16 z-20 backdrop-blur">
+      <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-5 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-14 sm:top-16 z-20 backdrop-blur">
         {SKILLS.map((s) => (
           <SkillTab key={s.id} active={skill === s.id} onClick={() => setSkill(s.id)} emoji={s.emoji} label={t(s.key as TKey)} short={t(s.short as TKey)} de={t(s.de as TKey)} />
         ))}
@@ -107,6 +109,7 @@ function LevelContent({ level }: { level: Level }) {
           {skill === "listen" && <ListeningForLevel level={level} />}
           {skill === "read" && <><ReadingCompanion level={level} /><ReadPanel level={level} /></>}
           {skill === "write" && <WritePanel level={level} />}
+          {skill === "grammar" && <GrammarSkillPanel level={level} />}
         </m.div>
       </div>
 
@@ -191,7 +194,7 @@ function LevelHeader({ level, progress }: { level: Level; progress: (SkillProgre
             {!!progress?.focusMinutes && <span className="text-xs text-muted font-medium">{fill(t("level_focus"), { n: progress.focusMinutes })}</span>}
           </p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-2 max-w-xl">
-            {SKILLS.map((s) => (
+            {SKILLS.filter((s) => s.id !== "grammar").map((s) => (
               <ProgressBar key={s.id} label={`${s.emoji} ${t(s.short as TKey)}`} value={progress?.[s.id] ?? 0} accent={accent} />
             ))}
           </div>
