@@ -141,6 +141,30 @@ export const grammarProgress = sqliteTable("grammar_progress", {
   completed: integer("completed").notNull().default(0), favorite: integer("favorite").notNull().default(0), updatedAt: integer("updated_at").notNull(),
 }, (t) => [primaryKey({ columns: [t.userId, t.level, t.lessonId] })]);
 
+/** Shared study rooms, opt-in presence, memberships, and persisted chat. */
+export const communityPreferences = sqliteTable("community_preferences", {
+  userId: text("user_id").primaryKey(), shareOnline: integer("share_online").notNull().default(0), lastSeenAt: integer("last_seen_at").notNull(), updatedAt: integer("updated_at").notNull(),
+});
+export const studyRooms = sqliteTable("study_rooms", {
+  id: text("id").primaryKey(), hostUserId: text("host_user_id").notNull(), name: text("name").notNull(), description: text("description").notNull().default(""),
+  visibility: text("visibility").notNull(), capacity: integer("capacity").notNull(), level: text("level").notNull(), mode: text("mode").notNull(), goal: text("goal").notNull().default(""),
+  approvalRequired: integer("approval_required").notNull().default(0), inviteTokenHash: text("invite_token_hash"), status: text("status").notNull().default("active"),
+  timerStatus: text("timer_status").notNull().default("idle"), timerPhase: text("timer_phase").notNull().default("focus"), timerDurationMinutes: integer("timer_duration_minutes").notNull().default(25),
+  breakDurationMinutes: integer("break_duration_minutes").notNull().default(5), timerStartedAt: integer("timer_started_at"), timerEndsAt: integer("timer_ends_at"), timerPausedRemainingMs: integer("timer_paused_remaining_ms"),
+  timerElapsedMs: integer("timer_elapsed_ms").notNull().default(0), timerRunId: text("timer_run_id"), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(), endedAt: integer("ended_at"),
+});
+export const studyRoomMembers = sqliteTable("study_room_members", {
+  roomId: text("room_id").notNull(), userId: text("user_id").notNull(), role: text("role").notNull().default("member"), status: text("status").notNull().default("active"),
+  joinedAt: integer("joined_at").notNull(), lastSeenAt: integer("last_seen_at").notNull(), handRaisedAt: integer("hand_raised_at"),
+}, (t) => [primaryKey({ columns: [t.roomId, t.userId] })]);
+export const studyRoomMessages = sqliteTable("study_room_messages", {
+  id: integer("id").primaryKey({ autoIncrement: true }), roomId: text("room_id").notNull(), userId: text("user_id").notNull(), body: text("body").notNull(), createdAt: integer("created_at").notNull(),
+});
+export const studyRoomSessions = sqliteTable("study_room_sessions", {
+  id: text("id").primaryKey(), roomId: text("room_id").notNull(), startedAt: integer("started_at").notNull(), endedAt: integer("ended_at"), activeMilliseconds: integer("active_milliseconds").notNull().default(0),
+  goal: text("goal").notNull().default(""), participantCount: integer("participant_count").notNull().default(0), completed: integer("completed").notNull().default(0),
+});
+
 /** One finished ⏱️ focus session (the "خزنتي" vault). */
 export const focusSessions = sqliteTable("focus_sessions", {
   id: text("id").primaryKey(),
@@ -304,6 +328,20 @@ export const readingNotes = sqliteTable("reading_notes", {
 });
 
 export const GRAMMAR_DDL = "CREATE TABLE IF NOT EXISTS grammar_progress (user_id TEXT NOT NULL, level TEXT NOT NULL, lesson_id TEXT NOT NULL, completed INTEGER NOT NULL DEFAULT 0, favorite INTEGER NOT NULL DEFAULT 0, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, level, lesson_id)); CREATE INDEX IF NOT EXISTS grammar_progress_user_level ON grammar_progress(user_id, level)";
+
+export const COMMUNITY_DDL = [
+  "CREATE TABLE IF NOT EXISTS community_preferences (user_id TEXT PRIMARY KEY, share_online INTEGER NOT NULL DEFAULT 0, last_seen_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
+  "CREATE TABLE IF NOT EXISTS study_rooms (id TEXT PRIMARY KEY, host_user_id TEXT NOT NULL, name TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', visibility TEXT NOT NULL, capacity INTEGER NOT NULL, level TEXT NOT NULL, mode TEXT NOT NULL, goal TEXT NOT NULL DEFAULT '', approval_required INTEGER NOT NULL DEFAULT 0, invite_token_hash TEXT, status TEXT NOT NULL DEFAULT 'active', timer_status TEXT NOT NULL DEFAULT 'idle', timer_phase TEXT NOT NULL DEFAULT 'focus', timer_duration_minutes INTEGER NOT NULL DEFAULT 25, break_duration_minutes INTEGER NOT NULL DEFAULT 5, timer_started_at INTEGER, timer_ends_at INTEGER, timer_paused_remaining_ms INTEGER, timer_elapsed_ms INTEGER NOT NULL DEFAULT 0, timer_run_id TEXT, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL, ended_at INTEGER)",
+  "CREATE INDEX IF NOT EXISTS study_rooms_directory ON study_rooms(status, visibility, created_at)",
+  "CREATE TABLE IF NOT EXISTS study_room_members (room_id TEXT NOT NULL, user_id TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'member', status TEXT NOT NULL DEFAULT 'active', joined_at INTEGER NOT NULL, last_seen_at INTEGER NOT NULL, hand_raised_at INTEGER, PRIMARY KEY (room_id, user_id))",
+  "CREATE INDEX IF NOT EXISTS study_room_members_presence ON study_room_members(room_id, status, last_seen_at)",
+  "CREATE INDEX IF NOT EXISTS study_room_members_user ON study_room_members(user_id, status, last_seen_at)",
+  "CREATE TABLE IF NOT EXISTS study_room_messages (id INTEGER PRIMARY KEY AUTOINCREMENT, room_id TEXT NOT NULL, user_id TEXT NOT NULL, body TEXT NOT NULL, created_at INTEGER NOT NULL)",
+  "CREATE INDEX IF NOT EXISTS study_room_messages_history ON study_room_messages(room_id, id)",
+  "CREATE INDEX IF NOT EXISTS study_room_messages_rate ON study_room_messages(room_id, user_id, created_at)",
+  "CREATE TABLE IF NOT EXISTS study_room_sessions (id TEXT PRIMARY KEY, room_id TEXT NOT NULL, started_at INTEGER NOT NULL, ended_at INTEGER, active_milliseconds INTEGER NOT NULL DEFAULT 0, goal TEXT NOT NULL DEFAULT '', participant_count INTEGER NOT NULL DEFAULT 0, completed INTEGER NOT NULL DEFAULT 0)",
+  "CREATE INDEX IF NOT EXISTS study_room_sessions_room ON study_room_sessions(room_id, started_at)",
+].join(";");
 
 export const READING_DDL = [
   "CREATE TABLE IF NOT EXISTS reading_books (user_id TEXT NOT NULL, level TEXT NOT NULL, current_page INTEGER NOT NULL DEFAULT 0, total_pages INTEGER, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, level))",

@@ -5,6 +5,7 @@ import { m } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useUI } from "@/lib/client/ui";
+import { api } from "@/lib/client/api";
 import { PUBLIC_PATHS, useMe } from "@/lib/client/me";
 import { UI_LANGS, type UILang } from "@/lib/client/i18n";
 import { isLevel, LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
@@ -34,9 +35,18 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { t } = useUI();
   const path = usePathname();
   const { me, loading } = useMe();
+  const communityUserId = me?.user.id;
   // Login and sign-up: language and theme only.
   const bare = PUBLIC_PATHS.includes(path);
   const active = levelFromPath(path);
+
+  useEffect(() => {
+    if (!communityUserId) return;
+    const beat = () => { void api("/api/community/presence", { method: "POST" }).catch(() => {}); };
+    beat();
+    const timer = window.setInterval(beat, 20_000);
+    return () => window.clearInterval(timer);
+  }, [communityUserId]);
 
   // Remember the level for "/" (start page = last level).
   useEffect(() => {
@@ -53,7 +63,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
       <header className="glass-header sticky top-0 z-30">
         <div className="mx-auto max-w-6xl px-3 sm:px-4 h-14 sm:h-16 flex items-center gap-2">
-          {!bare && <LevelNav active={active} />}
+          {!bare && <LevelNav active={active} communityActive={path.startsWith("/community")} />}
           <div className="ms-auto flex items-center gap-1 shrink-0">
             <LangSwitcher />
             <ExplainerButton />
@@ -95,7 +105,7 @@ function ExplainerButton() {
 }
 
 /** "المستوى" + the four level pills; the highlight slides to the active level. */
-function LevelNav({ active }: { active: Level | null }) {
+function LevelNav({ active, communityActive }: { active: Level | null; communityActive: boolean }) {
   const { t } = useUI();
   return (
     <nav aria-label={t("header_level")} className="flex items-center gap-1.5 sm:gap-3 min-w-0">
@@ -118,6 +128,9 @@ function LevelNav({ active }: { active: Level | null }) {
           );
         })}
       </div>
+      <Link href="/community" aria-current={communityActive ? "page" : undefined} className={`hidden lg:inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-bold transition ${communityActive ? "bg-emerald-600 text-white" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
+        <span aria-hidden="true">👥</span><span>{t("community_nav")}</span>
+      </Link>
     </nav>
   );
 }

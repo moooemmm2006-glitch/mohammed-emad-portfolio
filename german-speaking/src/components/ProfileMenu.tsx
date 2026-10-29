@@ -180,6 +180,9 @@ export function ProfileMenu() {
             <MenuLink href="/grammar" icon={<span className="w-[18px] text-center">📘</span>} onClick={() => setOpen(false)}>
               {t("nav_grammar")}
             </MenuLink>
+            <MenuLink href="/community" icon={<span className="w-[18px] text-center">👥</span>} onClick={() => setOpen(false)}>
+              {t("community_nav")}
+            </MenuLink>
             <MenuLink href="/progress" icon={<IconChart size={18} />} onClick={() => setOpen(false)}>
               {t("nav_progress")}
             </MenuLink>
