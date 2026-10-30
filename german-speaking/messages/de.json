@@ -1014,6 +1014,6 @@
   "badge_msg_low": "Guter Anfang – weiter so",
   "badge_msg_mid": "Du bist auf dem richtigen Weg",
   "badge_msg_half": "Schon die Hälfte geschafft",
-  "badge_msg_high": "Fast geschafft",
+  "badge_msg_high": "{level} fast geschafft",
   "badge_msg_done": "{level} geschafft ✓"
 }

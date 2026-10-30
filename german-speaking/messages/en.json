@@ -1014,6 +1014,6 @@
   "badge_msg_low": "Good start – keep going",
   "badge_msg_mid": "You're on the right track",
   "badge_msg_half": "Halfway there",
-  "badge_msg_high": "Almost there",
+  "badge_msg_high": "Almost done with {level}",
   "badge_msg_done": "{level} completed ✓"
 }
