@@ -840,7 +840,7 @@
   "community_in_room": "في غرفة",
   "community_resource_intro": "ذاكروا نفس القاعدة وافتحوا درس المستوى من هنا.",
   "community_invite_title": "الصق رمز أو رابط الدعوة",
-  "community_media_note": "الدردشة والمؤقّت والحضور شغّالين. الصوت ومشاركة الشاشة غير متاحين في النسخة الحالية.",
+  "community_media_note": "الشات والمؤقّت والصوت 🎙️ (لحد 10 أشخاص، من غير كاميرا) شغّالين. مشاركة الشاشة مش متاحة حاليًا.",
   "community_chat_connection": "الاتصال بالدردشة انقطع مؤقتًا. بنحاول نرجع.",
   "community_room_unavailable": "الغرفة مش متاحة أو محتاجة دعوة صالحة.",
   "community_room_form_intro": "ظبط تفاصيل الغرفة والهدف قبل ما تبدأوا.",
@@ -1009,5 +1009,11 @@
   "about_chip_levels": "4 مستويات: A1 → B2",
   "about_chip_skills": "كلام · استماع · قراءة · كتابة",
   "about_chip_ar": "شرح بالعربي",
-  "about_chip_together": "مذاكرة جماعية بالصوت"
+  "about_chip_together": "مذاكرة جماعية بالصوت",
+  "badge_msg_start": "يلا نبدأ {level} 🚀",
+  "badge_msg_low": "بداية حلوة، كمّل 💪",
+  "badge_msg_mid": "ماشي صح 👏",
+  "badge_msg_half": "عدّيت نص الطريق 🔥",
+  "badge_msg_high": "قرّبت جدًا ⭐",
+  "badge_msg_done": "خلّصت {level} 🏆"
 }
