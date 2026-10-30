@@ -50,7 +50,7 @@ export function LevelBadge({ level }: { level: Level }) {
   }, [fx]);
 
   return (
-    <div role="img" aria-label={fill(t("badge_alt"), { l: level })} className="relative grid place-items-center w-[120px] h-[120px] sm:w-[180px] sm:h-[180px] shrink-0">
+    <div role="img" aria-label={fill(t("badge_alt"), { l: level })} className="relative mx-auto grid place-items-center w-20 h-20 sm:mx-0 sm:w-[180px] sm:h-[180px] shrink-0">
       {use3d ? (
         <div className="absolute inset-0">
           <Badge3DCanvas color={LEVEL_CONFIG[level].accent} label={level} />

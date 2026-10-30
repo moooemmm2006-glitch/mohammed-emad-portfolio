@@ -8,9 +8,7 @@ export default function NotFound() {
   return (
     <div className="py-24 text-center space-y-4">
       <p className="text-5xl font-extrabold">404</p>
-      <p className="de" lang="de">
-        Diese Seite gibt es leider nicht.
-      </p>
+      <p>{t("notfound_message")}</p>
       <Link href="/" className="btn btn-primary">
         {t("notfound_home")}
       </Link>

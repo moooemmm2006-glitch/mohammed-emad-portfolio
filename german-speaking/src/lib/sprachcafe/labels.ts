@@ -1,121 +1,17 @@
-import type { UILang } from "@/lib/client/i18n";
+import type { TKey } from "@/lib/client/i18n";
 
-const words = {
- nav: { ar: "كافيه المحادثة", de: "Sprachcafé", en: "Sprachcafé" },
- title: { ar: "Willkommen im Sprachcafé ☕", de: "Willkommen im Sprachcafé ☕", en: "Welcome to Sprachcafé ☕" },
- intro: { ar: "طوّر لغتك الألمانية من خلال جلسات محادثة مباشرة مع متخصصين في اللغة.", de: "Verbessere dein Deutsch in Live-Gesprächen mit Sprachprofis.", en: "Improve your German in live conversation sessions with language specialists." },
- intro2: { ar: "اختر المدرس المناسب، اكتشف الجلسات القادمة، واحجز مكانك في جلسة تناسب مستواك.", de: "Finde eine passende Lehrkraft, entdecke kommende Termine und sichere dir einen Platz.", en: "Find a teacher, explore upcoming sessions, and reserve a place at your level." },
- explore: { ar: "اكتشف المدرسين", de: "Lehrkräfte entdecken", en: "Explore teachers" },
- browse: { ar: "الجلسات القادمة", de: "Kommende Termine", en: "Browse sessions" },
- my_bookings: { ar: "حجوزاتي", de: "Meine Buchungen", en: "My bookings" },
- teachers: { ar: "المدرسون", de: "Lehrkräfte", en: "Teachers" },
- sessions: { ar: "الجلسات", de: "Gesprächstermine", en: "Sessions" },
- featured: { ar: "جلسة مميزة قادمة", de: "Empfohlener Termin", en: "Featured upcoming session" },
- no_sessions: { ar: "مفيش جلسات منشورة حاليًا. الجلسات الجديدة هتظهر هنا بمجرد ما تتحدد مواعيدها.", de: "Zurzeit gibt es keine veröffentlichten Termine. Neue Termine erscheinen hier, sobald sie feststehen.", en: "There are no published sessions yet. New sessions will appear here when their details are confirmed." },
- no_teachers: { ar: "مفيش مدرسين متاحين للعرض حاليًا.", de: "Zurzeit sind keine Lehrkräfte gelistet.", en: "No teachers are listed right now." },
- empty_action: { ar: "تعرّف على المدرسين الموجودين واعرف عنهم أكتر.", de: "Lerne die verfügbaren Lehrkräfte kennen.", en: "Get to know the listed teachers." },
- all: { ar: "الكل", de: "Alle", en: "All" },
- filter: { ar: "تصفية", de: "Filtern", en: "Filter" },
- level: { ar: "المستوى", de: "Niveau", en: "Level" },
- teacher: { ar: "المدرس", de: "Lehrkraft", en: "Teacher" },
- category: { ar: "نوع الجلسة", de: "Thema", en: "Category" },
- free_only: { ar: "جلسات مجانية فقط", de: "Nur kostenlose Termine", en: "Free sessions only" },
- view_profile: { ar: "عرض الملف", de: "Profil ansehen", en: "View profile" },
- book_session: { ar: "احجز مكان", de: "Platz buchen", en: "Book a session" },
- details: { ar: "تفاصيل الجلسة", de: "Termindetails", en: "Session details" },
- free: { ar: "مجاني", de: "Kostenlos", en: "Free" },
- paid: { ar: "مدفوع", de: "Kostenpflichtig", en: "Paid" },
- booked: { ar: "تم الحجز", de: "Gebucht", en: "Booked" },
- seats: { ar: "أماكن متاحة", de: "Plätze frei", en: "seats available" },
- full: { ar: "اكتمل العدد", de: "Ausgebucht", en: "Full" },
- starts: { ar: "الموعد", de: "Beginn", en: "Starts" },
- duration: { ar: "المدة", de: "Dauer", en: "Duration" },
- minutes: { ar: "دقيقة", de: "Minuten", en: "minutes" },
- timezone: { ar: "التوقيت", de: "Zeitzone", en: "Time zone" },
- about: { ar: "نبذة", de: "Über die Lehrkraft", en: "About" },
- languages: { ar: "اللغات", de: "Sprachen", en: "Languages" },
- proficiency: { ar: "مستوى الألماني", de: "Deutschkenntnisse", en: "German proficiency" },
- specializations: { ar: "مجالات التخصص", de: "Schwerpunkte", en: "Specializations" },
- levels: { ar: "المستويات", de: "Niveaus", en: "Levels" },
- session_types: { ar: "أنواع الجلسات", de: "Gesprächsformate", en: "Session types" },
- availability: { ar: "التوفر", de: "Verfügbarkeit", en: "Availability" },
- not_provided: { ar: "لم تُضف تفاصيل بعد.", de: "Noch keine Angaben vorhanden.", en: "Details have not been added yet." },
- profile_empty: { ar: "الملف ده لسه مفيهوش تفاصيل. هنضيف المعلومات المؤكدة لما تكون جاهزة.", de: "Dieses Profil enthält noch keine weiteren Angaben. Verifizierte Informationen folgen später.", en: "This profile has no additional details yet. Verified information will be added when available." },
- session_empty: { ar: "مفيش جلسات منشورة للمدرس ده حاليًا.", de: "Zurzeit sind keine Termine dieser Lehrkraft veröffentlicht.", en: "This teacher has no published sessions right now." },
- booking_disabled: { ar: "الحجز لسه مش متاح للجلسة دي.", de: "Buchungen sind für diesen Termin noch nicht freigeschaltet.", en: "Booking is not enabled for this session yet." },
- book_success: { ar: "حجزك اتأكد! هتلاقي الجلسة في حجوزاتك.", de: "Deine Buchung ist bestätigt. Du findest den Termin unter Meine Buchungen.", en: "Your reservation is confirmed. Find it in My bookings." },
- cancel_booking: { ar: "إلغاء الحجز", de: "Buchung stornieren", en: "Cancel booking" },
- cancel_confirm: { ar: "متأكد إنك عايز تلغي الحجز؟", de: "Möchtest du diese Buchung wirklich stornieren?", en: "Are you sure you want to cancel this booking?" },
- cancelled: { ar: "ملغي", de: "Storniert", en: "Cancelled" },
- completed: { ar: "انتهت", de: "Abgeschlossen", en: "Completed" },
- upcoming: { ar: "قادمة", de: "Bevorstehend", en: "Upcoming" },
- no_bookings: { ar: "لسه ماحجزتش أي جلسات.", de: "Du hast noch keine Termine gebucht.", en: "You have not booked any sessions yet." },
- join: { ar: "دخول الجلسة", de: "Zum Gespräch", en: "Join session" },
- waiting: { ar: "غرفة الانتظار", de: "Warteraum", en: "Waiting room" },
- join_opens: { ar: "الدخول هيفتح قبل بداية الجلسة بـ{n} دقيقة.", de: "Der Zugang öffnet {n} Minuten vor Beginn.", en: "Join opens {n} minutes before the session." },
- join_window_now: { ar: "تقدر تدخل الجلسة دلوقتي.", de: "Du kannst jetzt teilnehmen.", en: "You can join the session now." },
- not_join_time: { ar: "ميعاد الدخول لسه مجاش.", de: "Der Zugang ist noch nicht geöffnet.", en: "The joining window is not open yet." },
- meeting_missing: { ar: "رابط الاجتماع المباشر لسه ما اتضافش. تواصل مع الإدارة قبل الموعد.", de: "Der Meeting-Link wurde noch nicht hinterlegt. Bitte wende dich vor dem Termin an die Administration.", en: "The meeting link has not been added yet. Please contact the administrator before the session." },
- media_note: { ar: "الصوت والفيديو داخل الموقع مش مفعّلين حاليًا. رابط الاجتماع الخاص، لو تم ضبطه، هيظهر للحاجزين فقط وقت الجلسة.", de: "Audio und Video sind auf der Website noch nicht aktiviert. Ein hinterlegter privater Meeting-Link ist nur für gebuchte Teilnehmende während des Termins sichtbar.", en: "In-site audio and video are not enabled yet. A configured private meeting link is shown only to booked users during the session." },
- loading: { ar: "بنحمّل البيانات…", de: "Daten werden geladen …", en: "Loading…" },
- error: { ar: "حصل خطأ. جرّب تاني بعد شوية.", de: "Ein Fehler ist aufgetreten. Bitte versuche es erneut.", en: "Something went wrong. Please try again." },
- retry: { ar: "إعادة المحاولة", de: "Erneut versuchen", en: "Try again" },
- back: { ar: "رجوع", de: "Zurück", en: "Back" },
- categories: { ar: "محادثة عامة|تدريب الكلام|النطق|المفردات في سياق|القواعد بالمحادثة|محادثة الامتحان|كافيه مفتوح", de: "Deutsch-Konversation|Sprechtraining|Aussprache|Wortschatz im Kontext|Grammatik im Gespräch|Prüfungssprechen|Offenes Sprachcafé", en: "German conversation|Speaking practice|Pronunciation|Vocabulary in context|Grammar through conversation|Exam speaking|Open conversation café" },
- weekdays: { ar: "الأحد|الإثنين|الثلاثاء|الأربعاء|الخميس|الجمعة|السبت", de: "Sonntag|Montag|Dienstag|Mittwoch|Donnerstag|Freitag|Samstag", en: "Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday" },
- admin_title: { ar: "إدارة Sprachcafé", de: "Sprachcafé verwalten", en: "Manage Sprachcafé" },
- admin_intro: { ar: "أضف بيانات المدرسين المؤكدة وانشر الجلسات ومواعيدها. الجلسات غير المنشورة لا تظهر للطلاب.", de: "Pflege bestätigte Lehrkraftdaten und veröffentliche Termine. Nicht veröffentlichte Termine sind für Lernende unsichtbar.", en: "Add verified teacher information and publish sessions. Unpublished sessions are hidden from learners." },
- add_teacher: { ar: "إضافة مدرس", de: "Lehrkraft hinzufügen", en: "Add teacher" },
- edit: { ar: "تعديل", de: "Bearbeiten", en: "Edit" },
- save: { ar: "حفظ", de: "Speichern", en: "Save" },
- add_session: { ar: "جلسة بتاريخ واحد", de: "Einzeltermin", en: "One-time session" },
- add_weekly: { ar: "موعد أسبوعي متكرر", de: "Wöchentliche Reihe", en: "Weekly recurring session" },
- publish: { ar: "منشور", de: "Veröffentlicht", en: "Published" },
- hide: { ar: "إخفاء", de: "Ausblenden", en: "Unpublish" },
- cancel_session: { ar: "إلغاء الجلسة", de: "Termin absagen", en: "Cancel session" },
- title_field: { ar: "عنوان الجلسة", de: "Titel", en: "Session title" },
- description: { ar: "الوصف", de: "Beschreibung", en: "Description" },
- weekday: { ar: "يوم الأسبوع", de: "Wochentag", en: "Weekday" },
- time: { ar: "الوقت", de: "Uhrzeit", en: "Time" },
- start_date: { ar: "تبدأ من", de: "Startdatum", en: "Starts on" },
- from_date: { ar: "من تاريخ", de: "Ab Datum", en: "From date" },
- to_date: { ar: "إلى تاريخ", de: "Bis Datum", en: "To date" },
- end_date: { ar: "لغاية تاريخ (اختياري)", de: "Enddatum (optional)", en: "End date (optional)" },
- capacity: { ar: "عدد المقاعد", de: "Plätze", en: "Capacity" },
- booking_deadline: { ar: "إغلاق الحجز قبل البداية (بالدقائق)", de: "Buchungsschluss vor Beginn (Minuten)", en: "Booking closes before start (minutes)" },
- cancellation_deadline: { ar: "آخر موعد للإلغاء قبل البداية (بالدقائق)", de: "Stornierung möglich bis (Minuten vor Beginn)", en: "Cancellation cutoff before start (minutes)" },
- join_window: { ar: "فتح الدخول قبل البداية (بالدقائق)", de: "Zugang öffnet vor Beginn (Minuten)", en: "Join opens before start (minutes)" },
- price: { ar: "السعر", de: "Preis", en: "Price" },
- currency: { ar: "العملة", de: "Währung", en: "Currency" },
- photo: { ar: "رابط الصورة (اختياري)", de: "Bild-URL (optional)", en: "Photo URL (optional)" },
- bio: { ar: "نبذة قصيرة", de: "Kurzbiografie", en: "Short biography" },
- comma_fields: { ar: "افصل القيم بفاصلة إنجليزية ,", de: "Mehrere Werte durch Kommas trennen.", en: "Separate multiple values with commas." },
- private_contact: { ar: "بيانات تواصل خاصة (للإدارة فقط)", de: "Private Kontaktdaten (nur Administration)", en: "Private contact (admin only)" },
- payment_note: { ar: "الحجز المدفوع غير متاح لحد ما نربط مزود دفع. تقدر تعرض سعر الجلسة، لكن زر الحجز المدفوع هيفضل مقفول.", de: "Kostenpflichtige Buchungen bleiben deaktiviert, bis ein Zahlungsanbieter eingerichtet ist.", en: "Paid bookings remain disabled until a payment provider is configured." },
- paid_unavailable: { ar: "الدفع لسه مش مفعّل", de: "Zahlung noch nicht verfügbar", en: "Payments not configured" },
- recurrence_note: { ar: "المواعيد الأسبوعية تُنشأ تلقائيًا حتى 60 يومًا مقدمًا ومن غير تكرار. مفيش موعد هيتنشر تلقائيًا قبل ما تحدد المدرس والوقت وتنشره.", de: "Wöchentliche Termine werden bis zu 60 Tage im Voraus idempotent erstellt und erst nach Veröffentlichung sichtbar.", en: "Weekly occurrences are generated idempotently up to 60 days ahead and stay hidden until published." },
- weekly: { ar: "أسبوعي", de: "Wöchentlich", en: "Weekly" },
- session_status: { ar: "حالة الجلسة", de: "Terminstatus", en: "Session status" },
- status_scheduled: { ar: "في موعدها", de: "Geplant", en: "Scheduled" },
- status_rescheduled: { ar: "تمت إعادة جدولتها", de: "Verschoben", en: "Rescheduled" },
- created: { ar: "اتحفظت البيانات.", de: "Gespeichert.", en: "Saved." },
- blank_name: { ar: "الاسم مطلوب.", de: "Ein Name ist erforderlich.", en: "A name is required." },
- teacher_name: { ar: "اسم المدرس بالعربي", de: "Name der Lehrkraft", en: "Teacher name" },
- forbidden: { ar: "دخول للمسؤولين فقط.", de: "Nur für Administratoren.", en: "Administrators only." },
- cancellation_note: { ar: "الجلسة دي اتلغت", de: "Dieser Termin wurde abgesagt.", en: "This session was cancelled." },
- session_not_found: { ar: "الجلسة مش موجودة أو مش منشورة.", de: "Der Termin wurde nicht gefunden oder ist nicht veröffentlicht.", en: "Session not found or unpublished." },
- session_ended: { ar: "الجلسة اتلغت أو انتهت.", de: "Der Termin wurde abgesagt oder ist beendet.", en: "This session was cancelled or has ended." },
- booking_detail: { ar: "حالة الحجز", de: "Buchungsstatus", en: "Booking status" },
- location_online: { ar: "أونلاين", de: "Online", en: "Online" },
- search: { ar: "ابحث في الجلسات", de: "Termine suchen", en: "Search sessions" },
- }
-export type CafeWord = keyof typeof words;
-export function cafeText(lang: UILang, key: CafeWord, vars?: Record<string, string | number>) {
-  const text = words[key][lang];
-  return vars ? text.replace(/\{(\w+)\}/g, (_, name: string) => String(vars[name] ?? "")) : text;
+type Translate = (key: TKey) => string;
+
+/** Small key adapters; all user-facing copy lives in messages/*.json. */
+export function cafeText(t: Translate, key: string, vars?: Record<string, string | number>) {
+  const value = t(`cafe_${key}` as TKey);
+  return vars ? value.replace(/\{(\w+)\}/g, (_, name: string) => String(vars[name] ?? "")) : value;
 }
-export function categoryText(lang: UILang, key: string) {
-  const i = ["conversation", "speaking", "pronunciation", "vocabulary", "grammar", "exam", "open"].indexOf(key);
-  return i < 0 ? key : words.categories[lang].split("|")[i];
+
+export function categoryText(t: Translate, key: string) {
+  return t(`cafe_category_${key}` as TKey);
 }
-export function weekdayText(lang: UILang, day: number) { return words.weekdays[lang].split("|")[day] ?? String(day); }
+
+export function weekdayText(t: Translate, day: number) {
+  return t(`cafe_weekday_${day}` as TKey);
+}

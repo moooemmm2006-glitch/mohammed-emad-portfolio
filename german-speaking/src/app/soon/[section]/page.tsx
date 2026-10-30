@@ -16,9 +16,9 @@ export default function SoonPage() {
         <IconBook size={32} />
       </span>
       <h1 className="mt-5 text-3xl font-extrabold">
-        {s ? t(s.key) : t("nav_soon")} {s && <span className="de text-muted text-xl">· {s.de}</span>}
+        {s ? t(s.key) : t("nav_soon")}
       </h1>
-      <p className="mt-2 inline-block rounded-full bg-surface-2 px-3 py-1 text-sm">{t("nav_soon")} · <span className="de">Demnächst</span></p>
+      <p className="mt-2 inline-block rounded-full bg-surface-2 px-3 py-1 text-sm">{t("nav_soon")}</p>
       <p className="mt-6 text-muted">{t("soon_body")}</p>
       <Link href="/" className="btn btn-primary mt-8">
         <IconMic /> {t("soon_cta")}

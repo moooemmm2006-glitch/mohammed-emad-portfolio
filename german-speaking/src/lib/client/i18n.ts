@@ -8,6 +8,19 @@ export type UILang = (typeof UI_LANGS)[number];
 export type TKey = keyof typeof import("../../../messages/ar.json");
 export type Messages = Record<TKey, string>;
 
+const reportedMissing = new Set<string>();
+
+/** Missing UI copy is deliberately visible and reported in development instead of silently falling back to a key or English. */
+export function translateMessage(messages: Messages, key: TKey): string {
+  const value = messages[key];
+  if (typeof value === "string" && value.trim()) return value;
+  if (process.env.NODE_ENV !== "production" && !reportedMissing.has(key)) {
+    reportedMissing.add(key);
+    console.warn(`[i18n] Missing or empty translation for "${key}".`);
+  }
+  return `[${key}]`;
+}
+
 /** Load another language's messages when the learner switches (its own small chunk). */
 export function loadMessages(l: UILang): Promise<Messages> {
   const load = { ar: () => import("../../../messages/ar.json"), de: () => import("../../../messages/de.json"), en: () => import("../../../messages/en.json") }[l];

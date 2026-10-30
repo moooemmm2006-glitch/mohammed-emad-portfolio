@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { dirOf, isUILang, LANG_COOKIE, loadMessages, localeOf, type Messages, type TKey, type UILang } from "./i18n";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { dirOf, isUILang, LANG_COOKIE, loadMessages, localeOf, translateMessage, type Messages, type TKey, type UILang } from "./i18n";
 
 type Theme = "light" | "dark";
 
@@ -34,6 +34,7 @@ export function UIProvider({ children, initialLang = "ar", messages }: { childre
   // Only the active language's messages are in the page; another one is loaded when switching.
   const [{ lang, msgs }, setState] = useState<{ lang: UILang; msgs: Messages }>({ lang: initialLang, msgs: messages });
   const [theme, setThemeState] = useState<Theme>("light");
+  const languageRequest = useRef(0);
 
   useEffect(() => {
     setThemeState(document.documentElement.classList.contains("dark") ? "dark" : "light");
@@ -41,7 +42,9 @@ export function UIProvider({ children, initialLang = "ar", messages }: { childre
 
   const setLang = useCallback((l: UILang, opts: { save?: boolean } = {}) => {
     if (!isUILang(l)) return;
+    const request = ++languageRequest.current;
     void loadMessages(l).then((m) => {
+      if (request !== languageRequest.current) return;
       setState({ lang: l, msgs: m });
       write("gs.lang", l);
       document.cookie = `${LANG_COOKIE}=${l}; path=/; max-age=31536000; samesite=lax`;
@@ -65,8 +68,8 @@ export function UIProvider({ children, initialLang = "ar", messages }: { childre
       locale: localeOf(lang),
       setLang,
       setTheme,
-      t: (k) => msgs[k] ?? k,
-      tag: (name) => (msgs as Record<string, string>)[`tag_${name}`] ?? name.replace(/_/g, " "),
+      t: (k) => translateMessage(msgs, k),
+      tag: (name) => translateMessage(msgs, `tag_${name}` as TKey),
     }),
     [lang, msgs, theme, setLang, setTheme],
   );

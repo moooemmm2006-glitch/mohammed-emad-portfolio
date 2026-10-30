@@ -85,11 +85,11 @@ function LevelContent({ level }: { level: Level }) {
   const setSkill = (id: SkillId) => router.replace(levelPath(level, id === "speak" ? "" : `?skill=${id}`), { scroll: false });
 
   return (
-    <div className={`level-${level.toLowerCase()} max-w-5xl mx-auto space-y-5`}>
+    <div className={`level-${level.toLowerCase()} min-w-0 max-w-5xl mx-auto space-y-5`}>
       <IntroStrip />
       <LevelHeader level={level} progress={progress} />
 
-      <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-5 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-14 sm:top-16 z-20 backdrop-blur">
+      <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-5 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-[5.5rem] sm:top-16 z-20 backdrop-blur">
         {SKILLS.map((s) => (
           <SkillTab key={s.id} active={skill === s.id} onClick={() => setSkill(s.id)} emoji={s.emoji} label={t(s.key as TKey)} short={t(s.short as TKey)} de={t(s.de as TKey)} />
         ))}
@@ -176,7 +176,7 @@ function LevelHeader({ level, progress }: { level: Level; progress: (SkillProgre
         className="absolute -inset-x-10 -top-24 h-[150%] will-change-transform"
         style={{ background: `radial-gradient(60% 70% at 85% 15%, color-mix(in oklab, ${accent} 35%, transparent), transparent 70%), radial-gradient(50% 60% at 10% 90%, color-mix(in oklab, ${accent} 18%, transparent), transparent 70%)` }}
       />
-      <div className="relative bg-surface/70 backdrop-blur-sm p-4 sm:p-6 flex items-center gap-3 sm:gap-6">
+      <div className="relative min-w-0 bg-surface/70 backdrop-blur-sm p-4 sm:p-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-6">
         <LevelBadge level={level} />
         <div className="min-w-0 flex-1 space-y-2">
           <h1 className="text-2xl sm:text-4xl font-extrabold leading-tight">
@@ -193,7 +193,7 @@ function LevelHeader({ level, progress }: { level: Level; progress: (SkillProgre
             </bdi>
             {!!progress?.focusMinutes && <span className="text-xs text-muted font-medium">{fill(t("level_focus"), { n: progress.focusMinutes })}</span>}
           </p>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-2 max-w-xl">
+      <div className="grid grid-cols-1 min-[380px]:grid-cols-2 gap-x-4 gap-y-2 max-w-xl">
             {SKILLS.filter((s) => s.id !== "grammar").map((s) => (
               <ProgressBar key={s.id} label={`${s.emoji} ${t(s.short as TKey)}`} value={progress?.[s.id] ?? 0} accent={accent} />
             ))}

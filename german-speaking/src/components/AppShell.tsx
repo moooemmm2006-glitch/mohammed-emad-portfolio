@@ -16,13 +16,13 @@ import { ProfileMenu } from "./ProfileMenu";
 import { SiteFooter } from "./site/CreatorCard";
 import { useSite } from "./site/SiteProvider";
 
-export const SOON: { slug: string; key: "soon_vokabeln" | "soon_grammatik" | "soon_hoeren" | "soon_lesen" | "soon_schreiben" | "soon_pruefungen"; de: string }[] = [
-  { slug: "vokabeln", key: "soon_vokabeln", de: "Vokabeln" },
-  { slug: "grammatik", key: "soon_grammatik", de: "Grammatik" },
-  { slug: "hoeren", key: "soon_hoeren", de: "Hören" },
-  { slug: "lesen", key: "soon_lesen", de: "Lesen" },
-  { slug: "schreiben", key: "soon_schreiben", de: "Schreiben" },
-  { slug: "pruefungen", key: "soon_pruefungen", de: "Prüfungen" },
+export const SOON: { slug: string; key: "soon_vokabeln" | "soon_grammatik" | "soon_hoeren" | "soon_lesen" | "soon_schreiben" | "soon_pruefungen" }[] = [
+  { slug: "vokabeln", key: "soon_vokabeln" },
+  { slug: "grammatik", key: "soon_grammatik" },
+  { slug: "hoeren", key: "soon_hoeren" },
+  { slug: "lesen", key: "soon_lesen" },
+  { slug: "schreiben", key: "soon_schreiben" },
+  { slug: "pruefungen", key: "soon_pruefungen" },
 ];
 
 /** The level the current page belongs to (/level/a1/…), if any. */
@@ -38,6 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const communityUserId = me?.user.id;
   // Login and sign-up: language and theme only.
   const bare = PUBLIC_PATHS.includes(path);
+  const mobileNav = !bare && !!me && !path.startsWith("/community/rooms/");
   const active = levelFromPath(path);
 
   useEffect(() => {
@@ -62,8 +63,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         {t("skip_content")}
       </a>
       <header className="glass-header sticky top-0 z-30">
-        <div className="mx-auto max-w-6xl px-3 sm:px-4 h-14 sm:h-16 flex items-center gap-2">
-          {!bare && <LevelNav active={active} communityActive={path.startsWith("/community")} cafeActive={path.startsWith("/sprachcafe")} />}
+        <div className="mx-auto max-w-7xl px-3 sm:px-4 py-2 sm:py-0 sm:h-16 flex flex-wrap items-center gap-x-2 gap-y-1">
+          {!bare && <div className="w-full min-w-0 sm:w-auto"><LevelNav active={active} communityActive={path.startsWith("/community")} cafeActive={path.startsWith("/sprachcafe")} /></div>}
           <div className="ms-auto flex items-center gap-1 shrink-0">
             <LangSwitcher />
             <ExplainerButton />
@@ -83,10 +84,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </header>
 
-      <main id="main" className="flex-1 mx-auto w-full max-w-6xl px-4 pb-12 pt-5">
+      <main id="main" className={`flex-1 mx-auto w-full max-w-7xl px-4 ${mobileNav ? "pb-24 md:pb-12" : "pb-12"} pt-5`}>
         {children}
       </main>
       <SiteFooter loggedIn={!bare && !!me} />
+      {mobileNav && <MobilePrimaryNav path={path} active={active} />}
       {!bare && me && <FocusController />}
     </div>
   );
@@ -108,8 +110,8 @@ function ExplainerButton() {
 function LevelNav({ active, communityActive, cafeActive }: { active: Level | null; communityActive: boolean; cafeActive: boolean }) {
   const { t } = useUI();
   return (
-    <nav aria-label={t("header_level")} className="flex items-center gap-1.5 sm:gap-3 min-w-0">
-      <span className="font-extrabold text-base sm:text-2xl leading-none whitespace-nowrap">{t("header_level")}</span>
+    <nav aria-label={t("header_level")} className="flex items-center gap-1.5 sm:gap-3 min-w-0 overflow-x-auto">
+      <span className="font-extrabold text-sm sm:text-2xl leading-none whitespace-nowrap">{t("header_level")}</span>
       <div className="flex items-center gap-0.5 sm:gap-1 rounded-full bg-surface-2/70 p-0.5 sm:p-1 shadow-inner">
         {LEVELS.map((l) => {
           const on = l === active;
@@ -128,12 +130,33 @@ function LevelNav({ active, communityActive, cafeActive }: { active: Level | nul
           );
         })}
       </div>
-      <Link href="/community" aria-label={t("community_nav")} aria-current={communityActive ? "page" : undefined} className={`hidden lg:inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-2 text-sm font-bold transition ${communityActive ? "bg-emerald-600 text-white" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
-        <span aria-hidden="true">👥</span><span className="hidden xl:inline">{t("community_nav")}</span>
+      <Link href="/community" aria-label={t("community_nav")} aria-current={communityActive ? "page" : undefined} className={`hidden md:inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-2 text-sm font-bold transition ${communityActive ? "bg-emerald-600 text-white" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
+        <span aria-hidden="true">👥</span><span>{t("community_nav")}</span>
       </Link>
-      <Link href="/sprachcafe" aria-label="Sprachcafé" aria-current={cafeActive ? "page" : undefined} className={`hidden lg:inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-2 text-sm font-bold transition ${cafeActive ? "bg-amber-500 text-slate-950" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
-        <span aria-hidden="true">☕</span><span className="hidden xl:inline">Sprachcafé</span>
+      <Link href="/sprachcafe" aria-label={t("cafe_nav")} aria-current={cafeActive ? "page" : undefined} className={`hidden md:inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-2 text-sm font-bold transition ${cafeActive ? "bg-amber-500 text-slate-950" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
+        <span aria-hidden="true">☕</span><span>{t("cafe_nav")}</span>
       </Link>
+    </nav>
+  );
+}
+
+function MobilePrimaryNav({ path, active }: { path: string; active: Level | null }) {
+  const { t, lang } = useUI();
+  const items = [
+    { href: active ? levelPath(active) : "/", label: t("nav_levels"), icon: "📚", selected: Boolean(active) || path === "/" },
+    { href: "/community", label: t("community_nav"), icon: "👥", selected: path.startsWith("/community") },
+    { href: "/sprachcafe", label: t("cafe_nav"), icon: "☕", selected: path.startsWith("/sprachcafe") },
+    { href: "/grammar", label: t("nav_grammar"), icon: "📘", selected: path.startsWith("/grammar") },
+  ];
+  return (
+    <nav aria-label={t("mobile_nav_label")} dir={lang === "ar" ? "rtl" : "ltr"} className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 backdrop-blur md:hidden" style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}>
+      <ul className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1.5">
+        {items.map((item) => <li key={item.href}>
+          <Link href={item.href} aria-current={item.selected ? "page" : undefined} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[11px] font-semibold leading-tight transition ${item.selected ? "bg-surface-2 text-ink" : "text-muted hover:text-ink"}`}>
+            <span aria-hidden="true" className="text-base">{item.icon}</span><span className="max-w-full truncate">{item.label}</span>
+          </Link>
+        </li>)}
+      </ul>
     </nav>
   );
 }
