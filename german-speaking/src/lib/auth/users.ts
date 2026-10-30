@@ -58,8 +58,24 @@ async function accountCount(): Promise<number> {
 }
 
 /**
- * Create an account. The first account becomes the admin and takes over everything
- * that was stored before accounts existed (the old single "local" learner).
+ * Who becomes admin at sign-up. Admin rights live only in `users.role` on the server; this is
+ * the one place that sets it. With `ADMIN_USERNAMES` (comma-separated) only those usernames
+ * become admin. Without it, the first account becomes admin only outside production (local
+ * development and tests): in production an empty database (a new or temporary one) must not
+ * hand the dashboard to whoever signs up first.
+ */
+export function adminAtSignUp(username: string, firstAccount: boolean, env: Record<string, string | undefined> = process.env): boolean {
+  const list = (env.ADMIN_USERNAMES ?? "")
+    .split(",")
+    .map((u) => normalizeUsername(u))
+    .filter(Boolean);
+  if (list.length) return list.includes(normalizeUsername(username));
+  return firstAccount && env.NODE_ENV !== "production";
+}
+
+/**
+ * Create an account. The first account takes over everything that was stored before
+ * accounts existed (the old single "local" learner).
  */
 export async function signUp(input: { name: string; username: string; password: string; confirm?: string }): Promise<UserRow> {
   const err = checkName(input.name) ?? checkUsername(input.username) ?? checkPassword(input.password, input.confirm);
@@ -75,7 +91,7 @@ export async function signUp(input: { name: string; username: string; password: 
     createdAt: now,
     username,
     passwordHash: await hashPassword(input.password),
-    role: first ? "admin" : "student",
+    role: adminAtSignUp(username, first) ? "admin" : "student",
     disabled: 0,
     tokenVersion: 0,
     photo: null,

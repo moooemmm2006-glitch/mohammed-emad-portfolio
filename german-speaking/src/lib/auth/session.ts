@@ -63,3 +63,14 @@ export function clearSessionCookie(res: NextResponse) {
 export function clientIp(req: Request): string {
   return req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || req.headers.get("x-real-ip") || "unknown";
 }
+
+/**
+ * For admin pages (server components): the admin, or a decision. The role comes from the
+ * database on every request, never from the browser.
+ */
+export async function requireAdminPage(): Promise<{ user: UserRow } | { denied: "login" | "forbidden" }> {
+  const user = await currentUser();
+  if (!user) return { denied: "login" };
+  if (user.role !== "admin") return { denied: "forbidden" };
+  return { user };
+}
