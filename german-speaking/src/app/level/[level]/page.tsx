@@ -177,7 +177,7 @@ function LevelHeader({ level, progress }: { level: Level; progress: (SkillProgre
         style={{ background: `radial-gradient(60% 70% at 85% 15%, color-mix(in oklab, ${accent} 35%, transparent), transparent 70%), radial-gradient(50% 60% at 10% 90%, color-mix(in oklab, ${accent} 18%, transparent), transparent 70%)` }}
       />
       <div className="relative min-w-0 bg-surface/70 backdrop-blur-sm p-4 sm:p-6 flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:gap-6">
-        <LevelBadge level={level} />
+        <LevelBadge level={level} progress={overall} />
         <div className="min-w-0 flex-1 space-y-2">
           <h1 className="text-2xl sm:text-4xl font-extrabold leading-tight">
             <span className="de" style={{ color: accent }}>

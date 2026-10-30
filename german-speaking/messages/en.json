@@ -840,7 +840,7 @@
   "community_in_room": "In room",
   "community_resource_intro": "Study the same grammar point and open level lessons here.",
   "community_invite_title": "Paste an invitation code or link",
-  "community_media_note": "Chat, timer, and presence are available. Voice and screen sharing are disabled in this version.",
+  "community_media_note": "Chat, timer and voice 🎙️ (up to 10 people, no camera) are available. Screen sharing isn't available yet.",
   "community_chat_connection": "Chat connection was interrupted. Reconnecting…",
   "community_room_unavailable": "The room is unavailable or requires a valid invitation.",
   "community_room_form_intro": "Set up the room and shared goal before you begin.",
@@ -1009,5 +1009,11 @@
   "about_chip_levels": "4 levels: A1 → B2",
   "about_chip_skills": "Speaking · Listening · Reading · Writing",
   "about_chip_ar": "Explained in Arabic",
-  "about_chip_together": "Study together with voice"
+  "about_chip_together": "Study together with voice",
+  "badge_msg_start": "Let's start {level} 🚀",
+  "badge_msg_low": "Great start – keep going 💪",
+  "badge_msg_mid": "You're on the right track 👏",
+  "badge_msg_half": "Halfway there 🔥",
+  "badge_msg_high": "Almost there ⭐",
+  "badge_msg_done": "{level} completed 🏆"
 }

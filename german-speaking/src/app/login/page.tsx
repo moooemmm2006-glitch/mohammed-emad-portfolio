@@ -72,7 +72,7 @@ function LoginPage() {
       </button>
       <p className="text-sm text-center text-muted">
         {t("auth_no_account")}{" "}
-        <Link href={`/signup${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`} className="font-semibold text-ink underline">
+        <Link href={`/signup${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`} className="inline-block py-2 px-1 font-semibold text-ink underline">
           {t("auth_go_signup")}
         </Link>
       </p>

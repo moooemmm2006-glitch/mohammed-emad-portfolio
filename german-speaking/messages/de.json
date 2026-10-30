@@ -840,7 +840,7 @@
   "community_in_room": "Im Raum",
   "community_resource_intro": "Lernt gemeinsam Grammatik und öffnet die Lektionen des Niveaus.",
   "community_invite_title": "Einladungscode oder Link einfügen",
-  "community_media_note": "Chat, Timer und Präsenz sind verfügbar. Sprache und Bildschirmfreigabe sind in dieser Version deaktiviert.",
+  "community_media_note": "Chat, Timer und Sprachkanal 🎙️ (bis zu 10 Personen, ohne Kamera) sind verfügbar. Bildschirmfreigabe gibt es noch nicht.",
   "community_chat_connection": "Chatverbindung unterbrochen. Verbindung wird erneut versucht.",
   "community_room_unavailable": "Der Raum ist nicht verfügbar oder erfordert eine gültige Einladung.",
   "community_room_form_intro": "Lege Raum und gemeinsames Ziel fest.",
@@ -1009,5 +1009,11 @@
   "about_chip_levels": "4 Niveaus: A1 → B2",
   "about_chip_skills": "Sprechen · Hören · Lesen · Schreiben",
   "about_chip_ar": "Erklärt auf Arabisch",
-  "about_chip_together": "Gemeinsam lernen mit Sprachkanal"
+  "about_chip_together": "Gemeinsam lernen mit Sprachkanal",
+  "badge_msg_start": "Los geht's mit {level} 🚀",
+  "badge_msg_low": "Guter Anfang – weiter so 💪",
+  "badge_msg_mid": "Du bist auf dem richtigen Weg 👏",
+  "badge_msg_half": "Schon die Hälfte geschafft 🔥",
+  "badge_msg_high": "Fast geschafft ⭐",
+  "badge_msg_done": "{level} geschafft 🏆"
 }

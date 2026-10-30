@@ -121,7 +121,7 @@ function LevelNav({ active, communityActive, cafeActive }: { active: Level | nul
               key={l}
               href={levelPath(l)}
               aria-current={on ? "page" : undefined}
-              className="level-pill relative rounded-full px-2 sm:px-3.5 py-1 sm:py-1.5 text-xs sm:text-base font-extrabold de"
+              className="level-pill relative inline-grid place-items-center min-h-9 min-w-9 sm:min-h-0 sm:min-w-0 rounded-full px-2 sm:px-3.5 py-1 sm:py-1.5 text-sm sm:text-base font-extrabold de"
               style={{ color: on ? "#fff" : accent }}
             >
               {on && <m.span layoutId="level-pill" className="absolute inset-0 rounded-full shadow-md" style={{ background: accent }} transition={{ type: "spring", stiffness: 480, damping: 38 }} />}
