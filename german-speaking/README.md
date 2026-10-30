@@ -53,6 +53,7 @@ Every push to the connected branch redeploys automatically.
 | `DATABASE_PATH` | `./data/german-speaking.db` | Local SQLite file |
 | `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | – | Hosted libSQL database (used instead of the file when set) |
 | `AUTH_SECRET` | dev secret locally | Signs session cookies (required on Vercel, ≥ 16 chars) |
+| `ADMIN_USERNAMES` | – | Comma-separated usernames that become admin when they sign up (needed for the first admin of a new production database) |
 | `BLOB_READ_WRITE_TOKEN` | – | Vercel Blob for profile photos (falls back to the database) |
 
 If a premium voice provider is selected but its key is missing, the app silently falls back to the
@@ -202,8 +203,15 @@ All IDs and the feed live in one file, `data/videos.ts`.
   Changing a password, a reset by the admin or disabling an account logs out every device at once.
 - **Every API route checks the session**, and all data (progress, reports, Gemini reports, weaknesses,
   settings) belongs to one user. Other people's reports answer 404.
-- **Admin:** the first account. `/admin` lists students (joined, last activity, past sessions), sets a
-  new temporary password, disables/enables or deletes accounts, and manages the Easy German videos per topic.
+- **Admin:** the role is stored in `users.role` in the database and re-read on every request; the
+  browser never decides it. An account becomes admin at sign-up only if its username is listed in
+  `ADMIN_USERNAMES`; without that variable, only the first account of a **local/development** database
+  becomes admin. In production an empty database never makes anyone admin automatically. Accounts that are
+  already admin stay admin. `/admin` is checked on the server (logged out → login, learners → "admins only",
+  the dashboard code is only downloaded after the server confirms an admin), and every `/api/admin/*` route checks the role again
+  (401 logged out, 403 learners; `tests/adminSecurity.test.ts` scans all of them). It lists students
+  (joined, last activity, past sessions), sets a new temporary password, disables/enables or deletes
+  accounts, and manages the site links, vlogs, videos, films, podcasts and Sprachcafé.
 - Built so email or Google login can be added later (nullable columns next to `username`).
 
 ## Reports and progress
