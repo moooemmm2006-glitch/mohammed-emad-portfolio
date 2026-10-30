@@ -87,7 +87,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <main id="main" className={`flex-1 mx-auto w-full max-w-7xl px-4 ${mobileNav ? "pb-24 md:pb-12" : "pb-12"} pt-5`}>
         {children}
       </main>
-      <SiteFooter loggedIn={!bare && !!me} />
+      <SiteFooter loggedIn={!bare && !!me} minimal={/^\/level\/[a-z0-9]+\/?$/i.test(path)} />
       {mobileNav && <MobilePrimaryNav path={path} active={active} />}
       {!bare && me && <FocusController />}
     </div>

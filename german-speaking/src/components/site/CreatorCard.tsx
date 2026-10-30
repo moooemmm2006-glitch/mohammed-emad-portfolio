@@ -10,7 +10,7 @@ import { useSite } from "./SiteProvider";
 // The site owner and his YouTube channel. Calm placements only: the footer of every page and the end
 // of the level pages — never between lessons, no pop-ups, nothing that plays by itself.
 
-function ChannelAvatar({ photo, size }: { photo: string | null; size: number }) {
+export function ChannelAvatar({ photo, size }: { photo: string | null; size: number }) {
   return photo ? (
     // eslint-disable-next-line @next/next/no-img-element -- a small data URL from the admin page
     <img src={photo} alt="" width={size} height={size} className="rounded-full object-cover shrink-0 ring-2 ring-white/70 shadow" style={{ width: size, height: size }} />
@@ -67,27 +67,13 @@ export function CreatorCard({ variant = "footer", showPause = true }: { variant?
   );
 }
 
-/** End of a level page: the compact creator card and "زهقت؟ خد استراحة ☕". */
-export function LevelEndCards() {
-  const { t } = useUI();
-  const { links } = useSite();
-  return (
-    <section aria-label={t("yt_compact_title")} className="mt-10 grid gap-3 sm:grid-cols-[1fr_auto]">
-      {links.channelUrl ? <CreatorCard variant="compact" showPause={false} /> : <span />}
-      <Link href="/pause" className="card depth rounded-3xl p-4 flex items-center gap-3 font-bold hover:shadow-lg transition">
-        {t("pause_card")}
-      </Link>
-    </section>
-  );
-}
-
 /** Slim footer on every page: creator card, follow / explainer links, credits. */
-export function SiteFooter({ loggedIn }: { loggedIn: boolean }) {
+export function SiteFooter({ loggedIn, minimal = false }: { loggedIn: boolean; minimal?: boolean }) {
   const { t } = useUI();
   const { links, openExplainer, trackClick } = useSite();
   return (
     <footer className="mx-auto w-full max-w-6xl px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2 space-y-3">
-      <CreatorCard showPause={loggedIn} />
+      {!minimal && <CreatorCard showPause={loggedIn} />}
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-muted">
         {links.channelUrl && (
           <a href={links.channelUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-ink min-h-[36px]" onClick={() => trackClick("footer")}>

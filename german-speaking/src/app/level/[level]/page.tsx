@@ -14,7 +14,7 @@ import { useTilt } from "@/components/level/Tilt";
 import { WritePanel } from "@/components/level/WritePanel";
 import { GrammarSkillPanel } from "@/components/level/GrammarSkillPanel";
 import { ListeningForLevel } from "@/components/videos/ListeningHub";
-import { LevelEndCards } from "@/components/site/CreatorCard";
+import { LevelExplore } from "@/components/level/LevelExplore";
 import { IntroStrip } from "@/components/site/IntroStrip";
 import { api } from "@/lib/client/api";
 import { fill, type TKey } from "@/lib/client/i18n";
@@ -113,8 +113,8 @@ function LevelContent({ level }: { level: Level }) {
         </m.div>
       </div>
 
-      {/* After all the content (never between lessons): the owner's channel and the break corner. */}
-      <LevelEndCards />
+      {/* After all the content (never between lessons): more activities, trusted sources, about. */}
+      <LevelExplore level={level} />
     </div>
   );
 }

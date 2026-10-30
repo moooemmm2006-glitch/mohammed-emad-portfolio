@@ -53,6 +53,7 @@ Every push to the connected branch redeploys automatically.
 | `DATABASE_PATH` | `./data/german-speaking.db` | Local SQLite file |
 | `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN` | – | Hosted libSQL database (used instead of the file when set) |
 | `AUTH_SECRET` | dev secret locally | Signs session cookies (required on Vercel, ≥ 16 chars) |
+| `TURN_URLS`, `TURN_USERNAME`, `TURN_CREDENTIAL` | – | Optional TURN relay for community voice on strict networks |
 | `ADMIN_USERNAMES` | – | Comma-separated usernames that become admin when they sign up (needed for the first admin of a new production database) |
 | `BLOB_READ_WRITE_TOKEN` | – | Vercel Blob for profile photos (falls back to the database) |
 
@@ -192,6 +193,27 @@ All IDs and the feed live in one file, `data/videos.ts`.
 - **Settings:** default length, celebration sound, break on/off and 3 / 5 / 10 minutes; confetti and the 3D vault follow the existing effects setting.
 - APIs (login required): `POST /api/focus/sessions`, `PATCH /api/focus/sessions/:id`, `GET /api/focus/stats`.
 - The Gemini card no longer shows a QR code; on a laptop it only explains that voice chat works in the Gemini app on the phone.
+
+## Community: study rooms with voice
+
+- **Groups:** a public or private room (2–40 people). A private room has an invite link (`/community/invite/…`);
+  friends without an account sign up and land back in the room. Optional join approval, raise hand, shared
+  timer, host controls (remove, transfer, end).
+- **Chat:** text messages for everyone in the room; the room refreshes every 3 s while visible.
+- **Voice 🎙️ (audio only, never the camera):** up to **10 people** talk together, browser to browser (WebRTC
+  mesh). The server only keeps who is in the call and passes the connection offers/answers along
+  (`/api/community/rooms/:id/voice`); the sound itself never goes through the server. Mute, speaking ring,
+  🎙️/🔇 in the member list; leaving the room, being removed or the room ending also ends the voice call.
+  Headphones avoid echo.
+- **Optional TURN relay:** most networks connect with the built-in STUN servers. If someone on a strict
+  network (some mobile carriers, company Wi-Fi) can't hear the others, add a TURN relay:
+  `TURN_URLS` (comma-separated `turn:`/`turns:` URLs), `TURN_USERNAME`, `TURN_CREDENTIAL`.
+
+## End of the level pages
+
+After the topics, every level page ends with one band in the level colour: more activities (grammar,
+community, Sprachcafé, review, progress, break), trusted official sources (DW, Goethe-Institut model exams,
+ÖSD model exams, Österreich Institut) and "who's behind Sprich Deutsch" with the channel.
 
 ## Accounts
 

@@ -160,6 +160,16 @@ export const studyRoomMembers = sqliteTable("study_room_members", {
 export const studyRoomMessages = sqliteTable("study_room_messages", {
   id: integer("id").primaryKey({ autoIncrement: true }), roomId: text("room_id").notNull(), userId: text("user_id").notNull(), body: text("body").notNull(), createdAt: integer("created_at").notNull(),
 });
+/** Who is in a room's voice call right now (audio only). `sid` is new on every join. */
+export const studyRoomVoice = sqliteTable("study_room_voice", {
+  roomId: text("room_id").notNull(), userId: text("user_id").notNull(), sid: text("sid").notNull(), muted: integer("muted").notNull().default(0),
+  joinedAt: integer("joined_at").notNull(), lastSeenAt: integer("last_seen_at").notNull(),
+}, (t) => [primaryKey({ columns: [t.roomId, t.userId] })]);
+/** WebRTC offers/answers between two voice participants; deleted after a minute. */
+export const studyRoomSignals = sqliteTable("study_room_signals", {
+  id: integer("id").primaryKey({ autoIncrement: true }), roomId: text("room_id").notNull(), fromSid: text("from_sid").notNull(), toSid: text("to_sid").notNull(),
+  kind: text("kind").notNull(), payload: text("payload").notNull(), createdAt: integer("created_at").notNull(),
+});
 export const studyRoomSessions = sqliteTable("study_room_sessions", {
   id: text("id").primaryKey(), roomId: text("room_id").notNull(), startedAt: integer("started_at").notNull(), endedAt: integer("ended_at"), activeMilliseconds: integer("active_milliseconds").notNull().default(0),
   goal: text("goal").notNull().default(""), participantCount: integer("participant_count").notNull().default(0), completed: integer("completed").notNull().default(0),
@@ -377,6 +387,9 @@ export const COMMUNITY_DDL = [
   "CREATE INDEX IF NOT EXISTS study_room_messages_rate ON study_room_messages(room_id, user_id, created_at)",
   "CREATE TABLE IF NOT EXISTS study_room_sessions (id TEXT PRIMARY KEY, room_id TEXT NOT NULL, started_at INTEGER NOT NULL, ended_at INTEGER, active_milliseconds INTEGER NOT NULL DEFAULT 0, goal TEXT NOT NULL DEFAULT '', participant_count INTEGER NOT NULL DEFAULT 0, completed INTEGER NOT NULL DEFAULT 0)",
   "CREATE INDEX IF NOT EXISTS study_room_sessions_room ON study_room_sessions(room_id, started_at)",
+  "CREATE TABLE IF NOT EXISTS study_room_voice (room_id TEXT NOT NULL, user_id TEXT NOT NULL, sid TEXT NOT NULL, muted INTEGER NOT NULL DEFAULT 0, joined_at INTEGER NOT NULL, last_seen_at INTEGER NOT NULL, PRIMARY KEY (room_id, user_id))",
+  "CREATE TABLE IF NOT EXISTS study_room_signals (id INTEGER PRIMARY KEY AUTOINCREMENT, room_id TEXT NOT NULL, from_sid TEXT NOT NULL, to_sid TEXT NOT NULL, kind TEXT NOT NULL, payload TEXT NOT NULL, created_at INTEGER NOT NULL)",
+  "CREATE INDEX IF NOT EXISTS study_room_signals_inbox ON study_room_signals(room_id, to_sid, id)",
 ].join(";");
 
 export const SPRACHCAFE_DDL = [
