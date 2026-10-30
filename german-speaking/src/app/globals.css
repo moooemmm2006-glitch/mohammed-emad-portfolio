@@ -532,3 +532,20 @@ html[lang="ar"] body {
 .reading-week-dot { display: inline-block; width: 13px; height: 13px; border: 2px solid var(--line); border-radius: 999px; background: var(--surface); }
 .reading-week-dot.is-read { background: var(--ok); border-color: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 17%, transparent); }
 @media (prefers-reduced-motion: reduce) { .reading-book-scene { transform: none; } }
+
+/* End of a level page: one band in the level colour that ties activities, sources and "about" together. */
+.level-explore {
+  background:
+    radial-gradient(120% 60% at 100% 0%, color-mix(in oklab, var(--explore-c) 14%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in oklab, var(--explore-c) 7%, var(--surface)) 0%, color-mix(in oklab, var(--surface) 70%, transparent) 100%);
+  border: 1px solid color-mix(in oklab, var(--explore-c) 22%, var(--line));
+}
+.level-explore::before {
+  content: "";
+  position: absolute;
+  inset-inline: 2rem;
+  top: -1px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--explore-c), transparent);
+}

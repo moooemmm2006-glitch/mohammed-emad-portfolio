@@ -5,6 +5,7 @@ import { currentUser, unauthorized } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
 import { jsonError, readJson } from "@/lib/api";
 import { roomMemberCount } from "@/lib/community/service";
+import { leaveVoice } from "@/lib/community/voice";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 const Body=z.discriminatedUnion("action",[
  z.object({action:z.literal("raise")}),z.object({action:z.literal("lower"),userId:z.string().optional()}),
@@ -29,7 +30,7 @@ export async function POST(req:Request,{params}:{params:Promise<{id:string}>}){
   if(targetMember?.status!=="pending")return jsonError(404,"request_not_found","Join request not found.");await db.update(schema.studyRoomMembers).set({status:"rejected"}).where(and(eq(schema.studyRoomMembers.roomId,id),eq(schema.studyRoomMembers.userId,target))).run();return NextResponse.json({ok:true});
  }
  if(action==="remove"){
-  if(targetMember?.status!=="active")return jsonError(404,"participant_not_found","Participant not found.");await db.update(schema.studyRoomMembers).set({status:"left",handRaisedAt:null}).where(and(eq(schema.studyRoomMembers.roomId,id),eq(schema.studyRoomMembers.userId,target))).run();return NextResponse.json({ok:true});
+  if(targetMember?.status!=="active")return jsonError(404,"participant_not_found","Participant not found.");await db.update(schema.studyRoomMembers).set({status:"left",handRaisedAt:null}).where(and(eq(schema.studyRoomMembers.roomId,id),eq(schema.studyRoomMembers.userId,target))).run();await leaveVoice(id,target);return NextResponse.json({ok:true});
  }
  if(targetMember?.status!=="active")return jsonError(404,"participant_not_found","Participant not found.");
  await db.transaction(async tx=>{await tx.update(schema.studyRoomMembers).set({role:"member"}).where(and(eq(schema.studyRoomMembers.roomId,id),eq(schema.studyRoomMembers.userId,user.id))).run();await tx.update(schema.studyRoomMembers).set({role:"host"}).where(and(eq(schema.studyRoomMembers.roomId,id),eq(schema.studyRoomMembers.userId,target))).run();await tx.update(schema.studyRooms).set({hostUserId:target,updatedAt:now}).where(eq(schema.studyRooms.id,id)).run();});return NextResponse.json({ok:true});

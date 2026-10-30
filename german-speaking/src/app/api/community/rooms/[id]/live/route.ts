@@ -4,6 +4,7 @@ import { currentUser, unauthorized } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
 import { jsonError } from "@/lib/api";
 import { liveRoomMembers, publicRoom } from "@/lib/community/service";
+import { voicePeers } from "@/lib/community/voice";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 export async function GET(req:Request,{params}:{params:Promise<{id:string}>}){
  const user=await currentUser();if(!user)return unauthorized();const {id}=await params;const db=await getDb();const room=await db.select().from(schema.studyRooms).where(eq(schema.studyRooms.id,id)).get();if(!room)return jsonError(404,"not_found","Room not found.");
@@ -25,5 +26,5 @@ export async function GET(req:Request,{params}:{params:Promise<{id:string}>}){
   const userIds=[...new Set(messageRows.map(m=>m.userId))],messageUsers=userIds.length?await db.select({id:schema.users.id,name:schema.users.name,username:schema.users.username,photo:schema.users.photo}).from(schema.users).where(inArray(schema.users.id,userIds)).all():[];const names=new Map(messageUsers.map(x=>[x.id,x]));
   messages=messageRows.map(m=>({id:m.id,body:m.body,createdAt:m.createdAt,user:{id:m.userId,name:names.get(m.userId)?.name||names.get(m.userId)?.username||"Student",photo:names.get(m.userId)?.photo??null}}));next=messages.at(-1)?.id??after;
  }
- return NextResponse.json({access:membership?.status==="active"?"member":"not_member",isHost:user.id===room.hostUserId,room:{...publicRoom(room,host,members.length),timerStatus:room.timerStatus==="running"&&remaining===0?"completed":room.timerStatus,timerPhase:room.timerPhase,timerEndsAt:room.timerEndsAt,timerStartedAt:room.timerStartedAt,timerPausedRemainingMs:room.timerPausedRemainingMs,timerElapsedMs:room.timerElapsedMs,timerDurationMinutes:room.timerDurationMinutes,breakDurationMinutes:room.breakDurationMinutes,timerRunId:room.timerRunId},members,requests:requests.map(r=>({user:userMap.get(r.userId),joinedAt:r.joinedAt})).filter(x=>x.user),session:session??null,messages,next,now});
+ return NextResponse.json({access:membership?.status==="active"?"member":"not_member",isHost:user.id===room.hostUserId,room:{...publicRoom(room,host,members.length),timerStatus:room.timerStatus==="running"&&remaining===0?"completed":room.timerStatus,timerPhase:room.timerPhase,timerEndsAt:room.timerEndsAt,timerStartedAt:room.timerStartedAt,timerPausedRemainingMs:room.timerPausedRemainingMs,timerElapsedMs:room.timerElapsedMs,timerDurationMinutes:room.timerDurationMinutes,breakDurationMinutes:room.breakDurationMinutes,timerRunId:room.timerRunId},members,requests:requests.map(r=>({user:userMap.get(r.userId),joinedAt:r.joinedAt})).filter(x=>x.user),session:session??null,messages,next,now,voice:membership?.status==="active"&&room.status==="active"?(await voicePeers(id,now)).map(v=>({userId:v.userId,muted:v.muted})):[]});
 }

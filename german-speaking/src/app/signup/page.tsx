@@ -140,7 +140,7 @@ function SignupPage() {
       </button>
       <p className="text-sm text-center text-muted">
         {t("auth_have_account")}{" "}
-        <Link href="/login" className="font-semibold text-ink underline">
+        <Link href={`/login${next !== "/" ? `?next=${encodeURIComponent(next)}` : ""}`} className="font-semibold text-ink underline">
           {t("auth_go_login")}
         </Link>
       </p>
