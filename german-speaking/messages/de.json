@@ -1010,10 +1010,10 @@
   "about_chip_skills": "Sprechen · Hören · Lesen · Schreiben",
   "about_chip_ar": "Erklärt auf Arabisch",
   "about_chip_together": "Gemeinsam lernen mit Sprachkanal",
-  "badge_msg_start": "Los geht's mit {level} 🚀",
-  "badge_msg_low": "Guter Anfang – weiter so 💪",
-  "badge_msg_mid": "Du bist auf dem richtigen Weg 👏",
-  "badge_msg_half": "Schon die Hälfte geschafft 🔥",
-  "badge_msg_high": "Fast geschafft ⭐",
-  "badge_msg_done": "{level} geschafft 🏆"
+  "badge_msg_start": "Los geht's mit {level}",
+  "badge_msg_low": "Guter Anfang – weiter so",
+  "badge_msg_mid": "Du bist auf dem richtigen Weg",
+  "badge_msg_half": "Schon die Hälfte geschafft",
+  "badge_msg_high": "{level} fast geschafft",
+  "badge_msg_done": "{level} geschafft ✓"
 }

@@ -1010,10 +1010,10 @@
   "about_chip_skills": "كلام · استماع · قراءة · كتابة",
   "about_chip_ar": "شرح بالعربي",
   "about_chip_together": "مذاكرة جماعية بالصوت",
-  "badge_msg_start": "يلا نبدأ {level} 🚀",
-  "badge_msg_low": "بداية حلوة، كمّل 💪",
-  "badge_msg_mid": "ماشي صح 👏",
-  "badge_msg_half": "عدّيت نص الطريق 🔥",
-  "badge_msg_high": "قرّبت جدًا ⭐",
-  "badge_msg_done": "خلّصت {level} 🏆"
+  "badge_msg_start": "يلا نبدأ {level}",
+  "badge_msg_low": "بداية حلوة، كمّل",
+  "badge_msg_mid": "ماشي صح، كمّل",
+  "badge_msg_half": "عدّيت نص الطريق",
+  "badge_msg_high": "قرّبت تخلّص {level}",
+  "badge_msg_done": "خلّصت {level} ✓"
 }

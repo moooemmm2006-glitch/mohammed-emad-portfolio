@@ -550,12 +550,6 @@ html[lang="ar"] body {
   background: linear-gradient(90deg, transparent, var(--explore-c), transparent);
 }
 
-/* Level emblem: the ring fills smoothly, a slow shine passes over the disc; still when motion is off. */
-.level-emblem-ring { transition: stroke-dashoffset 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
-.level-emblem-svg { filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.18)); transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
-.level-emblem:hover .level-emblem-svg { transform: scale(1.04) rotate(-2deg); }
-.level-emblem-shine { animation: emblem-shine 7s ease-in-out 1.6s infinite; }
-@keyframes emblem-shine { 0%, 70% { transform: rotate(20deg) translateX(0); } 100% { transform: rotate(20deg) translateX(330px); } }
-.level-emblem[data-fx="off"] .level-emblem-shine, .level-emblem[data-fx="off"] .level-emblem-ring { animation: none; transition: none; }
-.level-emblem[data-fx="off"]:hover .level-emblem-svg { transform: none; }
-@media (prefers-reduced-motion: reduce) { .level-emblem-shine { animation: none; } .level-emblem-ring { transition: none; } }
+/* Level mark: a calm tile; the progress line grows once. */
+.level-mark-bar { transition: width 1s cubic-bezier(0.22, 1, 0.36, 1); }
+@media (prefers-reduced-motion: reduce) { .level-mark-bar { transition: none; } }
