@@ -1,27 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { api, ApiError, useProviders } from "@/lib/client/api";
-import { fill, type TKey } from "@/lib/client/i18n";
+import { fill, localeOf } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
-import { blankOk, compareWritten, makeGap, pickWritingSentences, type GapExercise, type WrittenComparison } from "@/lib/bookWrite";
-import type { BookSentence, BookTopic } from "@/lib/book";
+import type { BookTopic } from "@/lib/book";
 import type { Level } from "@/lib/levels";
 import type { WritingCheck } from "@/lib/writing";
+import type { JournalEntry } from "@/lib/journal";
 import { IconArrow } from "../Icons";
 import { TopicPicker } from "./ReadPanel";
 import { useSite } from "../site/SiteProvider";
-import { useExerciseGuard } from "@/lib/client/focusStore";
-import { ArabicText, TopicTitle, useBookTopic, useLevelTopics } from "./shared";
+import { TopicTitle, useBookTopic, useLevelTopics } from "./shared";
 
-type Mode = "translate" | "complete" | "free";
-const MODES: { id: Mode; key: TKey }[] = [
-  { id: "translate", key: "write_translate" },
-  { id: "complete", key: "write_complete" },
-  { id: "free", key: "write_free" },
-];
+// ✍️ Schreiben: after studying a topic, write about it in your own words — what you learned, the
+// words and sentences, the video, the talk with Gemini, the grammar. No questions, no translation.
 
-/** ✍️ Schreiben: translate into German, complete the sentence (no API key), free writing (with a key). */
+const JOURNAL_PART = 3;
+const draftKey = (topic: number) => `gs_journal_draft_${topic}`;
+/** Words in the text (same rule as the server). */
+const countWords = (text: string) => (text.match(/[\p{L}][\p{L}\p{M}'’-]*/gu) ?? []).length;
+
 export function WritePanel({ level }: { level: Level }) {
   const { t } = useUI();
   const { topics } = useLevelTopics(level);
@@ -32,30 +31,82 @@ export function WritePanel({ level }: { level: Level }) {
   }, [level]);
   useEffect(reload, [reload]);
 
-  if (open) return <WriteTopic n={open} onBack={() => setOpen(null)} onScored={reload} />;
+  if (open) return <TopicJournal n={open} onBack={() => setOpen(null)} onSaved={reload} />;
   return (
     <TopicPicker
       topics={topics}
       title={t("write_pick")}
       badge={(tp) => {
-        const best = Math.max(scores[`${tp.number}:0`] ?? -1, scores[`${tp.number}:1`] ?? -1);
-        return best >= 0 ? `${best}%` : null;
+        const s = scores[`${tp.number}:${JOURNAL_PART}`];
+        return s == null ? null : s >= 100 ? "✓" : `${s}%`;
       }}
       onPick={setOpen}
     />
   );
 }
 
-function WriteTopic({ n, onBack, onScored }: { n: number; onBack: () => void; onScored: () => void }) {
-  const { t } = useUI();
-  const data = useBookTopic(n);
-  const [mode, setMode] = useState<Mode>("translate");
-  const [run, setRun] = useState(0);
+function TopicJournal({ n, onBack, onSaved }: { n: number; onBack: () => void; onSaved: () => void }) {
+  const { t, lang } = useUI();
+  const { offerPause } = useSite();
   const providers = useProviders();
-  // Free writing needs an AI; without one its tab is simply not shown (no "needs an API key" notice).
-  const modes = providers?.llm !== "anthropic" ? MODES.filter((m) => m.id !== "free") : MODES;
+  const data = useBookTopic(n);
+  const [text, setText] = useState("");
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [goal, setGoal] = useState(40);
+  const [busy, setBusy] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    try {
+      setText(localStorage.getItem(draftKey(n)) ?? "");
+    } catch {
+      /* storage blocked: start empty */
+    }
+    api<{ entries: JournalEntry[]; goal: number }>(`/api/book/journal?topic=${n}`).then(
+      (r) => (setEntries(r.entries), setGoal(r.goal)),
+      () => {},
+    );
+  }, [n]);
+
+  const change = (v: string) => {
+    setText(v);
+    setSaved(false);
+    try {
+      if (v.trim()) localStorage.setItem(draftKey(n), v);
+      else localStorage.removeItem(draftKey(n));
+    } catch {
+      /* the draft just isn't kept */
+    }
+  };
+
+  const save = async () => {
+    setBusy(true);
+    setError(false);
+    try {
+      const r = await api<{ entry: JournalEntry; score: number }>("/api/book/journal", { method: "POST", body: JSON.stringify({ topic: n, text }) });
+      setEntries((xs) => [r.entry, ...xs]);
+      setSaved(true);
+      try {
+        localStorage.removeItem(draftKey(n));
+      } catch {
+        /* nothing to clean */
+      }
+      onSaved();
+      if (r.score >= 100) offerPause();
+    } catch {
+      setError(true);
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (!data) return <p className="text-muted">{t("loading")}</p>;
   const topic = data.topic;
+  const words = countWords(text);
+  const reached = words >= goal;
+  const last = entries[0];
+
   return (
     <div className="space-y-5">
       <button className="chip min-h-[40px]" onClick={onBack}>
@@ -64,247 +115,95 @@ function WriteTopic({ n, onBack, onScored }: { n: number; onBack: () => void; on
       <header>
         <TopicTitle tp={topic} size="lg" />
       </header>
-      <div role="tablist" className={`grid ${modes.length === 3 ? "grid-cols-3" : "grid-cols-2"} gap-1 rounded-2xl bg-surface-2 p-1`}>
-        {modes.map((m) => (
-          <button
-            key={m.id}
-            role="tab"
-            aria-selected={mode === m.id}
-            onClick={() => (setMode(m.id), setRun((r) => r + 1))}
-            className={`rounded-xl px-2 py-2.5 text-sm font-semibold min-h-[44px] ${mode === m.id ? "bg-surface shadow text-ink" : "text-muted"}`}
-          >
-            {t(m.key)}
-          </button>
-        ))}
-      </div>
-      {mode === "translate" && <TranslateRun key={`t${run}`} topic={topic} onDone={onScored} />}
-      {mode === "complete" && <CompleteRun key={`c${run}`} topic={topic} onDone={onScored} />}
-      {mode === "free" && <FreeWriting topic={topic} onDone={onScored} />}
-    </div>
-  );
-}
 
-const saveScore = (topic: number, part: number, score: number) =>
-  api("/api/skills/score", { method: "POST", body: JSON.stringify({ skill: "write", topic, part, score }) }).catch(() => {});
+      <section className="card depth p-4 sm:p-6 space-y-4" aria-labelledby="journal-title">
+        <div>
+          <h2 id="journal-title" className="text-xl sm:text-2xl font-extrabold">
+            {t("journal_title")}
+          </h2>
+          <p className="text-muted mt-1 leading-relaxed">{t("journal_sub")}</p>
+        </div>
 
-function TranslateRun({ topic, onDone }: { topic: BookTopic; onDone: () => void }) {
-  const { t } = useUI();
-  const items = useMemo(() => pickWritingSentences(topic, Math.floor(Math.random() * 1e6), 6), [topic]);
-  const [i, setI] = useState(0);
-  const [typed, setTyped] = useState("");
-  const [result, setResult] = useState<WrittenComparison | null>(null);
-  const scores = useRef<number[]>([]);
-  const [finished, setFinished] = useState(false);
-  useExerciseGuard(!finished);
-  const s = items[i];
-
-  const check = () => {
-    const r = compareWritten(s.de, typed);
-    setResult(r);
-    scores.current[i] = r.score;
-  };
-  const next = () => {
-    if (i + 1 < items.length) {
-      setI(i + 1);
-      setTyped("");
-      setResult(null);
-    } else {
-      setFinished(true);
-      const avg = scores.current.reduce((a, b) => a + b, 0) / items.length;
-      void saveScore(topic.number, 0, avg).then(onDone);
-    }
-  };
-  if (!s) return null;
-  if (finished) return <Done right={scores.current.filter((x) => x >= 85).length} total={items.length} />;
-  return (
-    <div className="card depth p-4 sm:p-5 space-y-3 rise-3d" key={s.n}>
-      <p className="text-sm text-muted">
-        {i + 1}/{items.length} · {t("write_translate_hint")}
-      </p>
-      <ArabicText block className="text-xl font-bold">
-        {s.ar}
-      </ArabicText>
-      <textarea
-        className="field min-h-[88px] de"
-        dir="ltr"
-        lang="de"
-        value={typed}
-        onChange={(e) => setTyped(e.target.value)}
-        placeholder={t("write_placeholder")}
-        autoCapitalize="sentences"
-        spellCheck={false}
-        disabled={!!result}
-      />
-      {result && <WrittenResult r={result} book={s} />}
-      <div className="flex gap-2">
-        {!result ? (
-          <button className="btn btn-primary !min-h-[42px]" onClick={check} disabled={!typed.trim()}>
-            {t("write_check")}
-          </button>
+        {saved && last ? (
+          <div className="rounded-2xl border border-ok/40 bg-ok/10 p-4 space-y-2" role="status">
+            <p className="font-bold text-ok">{last.words >= goal ? t("journal_goal_done") : t("journal_saved")}</p>
+            <p dir="ltr" lang="de" className="de whitespace-pre-wrap leading-relaxed">
+              {last.text}
+            </p>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button type="button" className="btn btn-ghost !min-h-[40px]" onClick={() => setSaved(false)}>
+                {t("journal_write_more")}
+              </button>
+            </div>
+            {providers?.llm === "anthropic" && <OptionalCheck topic={topic} text={last.text} />}
+          </div>
         ) : (
-          <button className="btn btn-primary !min-h-[42px]" onClick={next}>
-            {t("write_next")}
-          </button>
+          <>
+            <textarea
+              className="field min-h-[220px] sm:min-h-[260px] de text-[17px] leading-relaxed"
+              dir="ltr"
+              lang="de"
+              value={text}
+              onChange={(e) => change(e.target.value)}
+              placeholder={t("journal_ph")}
+              maxLength={5000}
+              autoCapitalize="sentences"
+              aria-labelledby="journal-title"
+            />
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="min-w-[10rem] flex-1 max-w-xs">
+                <div className="flex justify-between text-sm">
+                  <span className={reached ? "text-ok font-bold" : "text-muted"}>{fill(t("journal_words"), { n: words })}</span>
+                  <span className="text-muted">{fill(t("journal_goal"), { n: goal })}</span>
+                </div>
+                <div className="h-1.5 mt-1 rounded-full bg-surface-2 overflow-hidden" aria-hidden="true">
+                  <div className="h-full rounded-full bg-[var(--level-c,var(--brand))] transition-[width]" style={{ width: `${Math.min(100, (100 * words) / goal)}%` }} />
+                </div>
+              </div>
+              <button type="button" className="btn btn-primary !min-h-[44px]" onClick={() => void save()} disabled={busy || !text.trim()}>
+                {busy ? t("loading") : t("journal_save")}
+              </button>
+            </div>
+            <p className="text-xs text-muted">{t("journal_draft")}</p>
+            {error && <p className="text-danger text-sm">{t("journal_failed")}</p>}
+          </>
         )}
-      </div>
-    </div>
-  );
-}
+      </section>
 
-function WrittenResult({ r, book }: { r: WrittenComparison; book: BookSentence }) {
-  const { t } = useUI();
-  const cls = { ok: "text-ok", missing: "text-danger underline decoration-2 underline-offset-4", wrong: "text-gold underline decoration-wavy underline-offset-4", extra: "text-muted line-through" };
-  return (
-    <div className="rounded-2xl bg-surface-2 p-3 space-y-2" role="status">
-      <p className={`font-bold ${r.score >= 85 ? "text-ok" : r.score >= 50 ? "text-gold" : "text-danger"}`}>
-        {t("write_score_label")}: {r.score}%
-      </p>
-      <p dir="ltr" lang="de" className="de text-lg text-start">
-        {r.words.map((w, k) => (
-          <span key={k}>
-            {k > 0 && " "}
-            <span className={cls[w.state]} title={w.typed ? `${w.typed} → ${w.text}` : undefined}>
-              {w.text}
-            </span>
-            {w.typed && <span className="text-xs text-muted"> ({w.typed})</span>}
-          </span>
-        ))}
-      </p>
-      <p className="text-sm">
-        <span className="text-muted">{t("write_book")} </span>
-        <span dir="ltr" lang="de" className="de font-semibold">
-          {book.de}
-        </span>
-      </p>
-      <p className="text-xs text-muted flex flex-wrap gap-x-3">
-        <span className="text-danger">▁ {t("write_missing")}</span>
-        <span className="text-gold">〜 {t("write_wrong")}</span>
-        <span className="line-through">{t("write_extra")}</span>
-      </p>
-      {r.umlautHint && <p className="text-sm">💡 {t("write_umlaut_hint")}</p>}
-      {r.caseHint && <p className="text-sm">💡 {t("write_case_hint")}</p>}
-    </div>
-  );
-}
-
-function CompleteRun({ topic, onDone }: { topic: BookTopic; onDone: () => void }) {
-  const { t } = useUI();
-  const items = useMemo(
-    () =>
-      pickWritingSentences(topic, Math.floor(Math.random() * 1e6), 14)
-        .map((s) => makeGap(s, topic))
-        .filter((x): x is GapExercise => !!x)
-        .slice(0, 6),
-    [topic],
-  );
-  const [i, setI] = useState(0);
-  const [typed, setTyped] = useState<string[]>([]);
-  const [checked, setChecked] = useState(false);
-  const right = useRef(0);
-  const total = useRef(0);
-  const [finished, setFinished] = useState(false);
-  useExerciseGuard(!finished);
-  const ex = items[i];
-
-  useEffect(() => setTyped(ex ? ex.answers.map(() => "") : []), [ex]);
-  if (!ex) return null;
-  if (finished) return <Done right={right.current} total={total.current} />;
-
-  const check = () => {
-    setChecked(true);
-    ex.answers.forEach((a, k) => {
-      total.current++;
-      if (blankOk(a, typed[k] ?? "")) right.current++;
-    });
-  };
-  const next = () => {
-    if (i + 1 < items.length) {
-      setI(i + 1);
-      setChecked(false);
-    } else {
-      setFinished(true);
-      void saveScore(topic.number, 1, (100 * right.current) / Math.max(1, total.current)).then(onDone);
-    }
-  };
-  let blank = -1;
-  return (
-    <div className="card depth p-4 sm:p-5 space-y-3 rise-3d" key={ex.n}>
-      <p className="text-sm text-muted">
-        {i + 1}/{items.length} · {t("write_complete_hint")}
-      </p>
-      <ArabicText block className="text-muted">
-        {ex.ar}
-      </ArabicText>
-      <p dir="ltr" lang="de" className="de text-lg leading-loose text-start">
-        {ex.parts.map((p, k) => {
-          if (p !== null) return <span key={k}>{p} </span>;
-          const b = ++blank;
-          const ok = checked && blankOk(ex.answers[b], typed[b] ?? "");
-          return (
-            <span key={k} className="inline-flex flex-col align-middle me-1">
-              <input
-                className={`field !min-h-[38px] !py-1 !px-2 !w-36 de ${checked ? (ok ? "!border-ok" : "!border-danger") : ""}`}
-                dir="ltr"
-                lang="de"
-                value={typed[b] ?? ""}
-                onChange={(e) => setTyped((xs) => xs.map((x, j) => (j === b ? e.target.value : x)))}
-                disabled={checked}
-                aria-label={`${t("write_complete_hint")} ${b + 1}`}
-                spellCheck={false}
-              />
-              {checked && !ok && <span className="text-xs text-ok font-semibold">{ex.answers[b]}</span>}
-            </span>
-          );
-        })}
-      </p>
-      {checked && (
-        <p className="text-sm">
-          <span className="text-muted">{t("write_book")} </span>
-          <span dir="ltr" lang="de" className="de font-semibold">
-            {ex.full}
-          </span>
-        </p>
-      )}
-      {!checked ? (
-        <button className="btn btn-primary !min-h-[42px]" onClick={check} disabled={typed.every((x) => !x.trim())}>
-          {t("write_check")}
-        </button>
-      ) : (
-        <button className="btn btn-primary !min-h-[42px]" onClick={next}>
-          {t("write_next")}
-        </button>
+      {entries.length > (saved ? 1 : 0) && (
+        <section className="space-y-3" aria-labelledby="journal-history">
+          <h3 id="journal-history" className="font-bold">
+            {t("journal_history")}
+          </h3>
+          <ul className="space-y-3">
+            {entries.slice(saved ? 1 : 0).map((e) => (
+              <li key={e.id} className="card p-4">
+                <p className="text-xs text-muted mb-2">
+                  {new Date(e.createdAt).toLocaleDateString(localeOf(lang), { day: "numeric", month: "short", year: "numeric" })} · {fill(t("journal_words"), { n: e.words })}
+                </p>
+                <p dir="ltr" lang="de" className="de whitespace-pre-wrap leading-relaxed">
+                  {e.text}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </div>
   );
 }
 
-function Done({ right, total }: { right: number; total: number }) {
+/** Only when an AI is set up: corrections of what was written, on request. */
+function OptionalCheck({ topic, text }: { topic: BookTopic; text: string }) {
   const { t } = useUI();
-  const { offerPause } = useSite();
-  // The exercise is over: maybe offer a break (max once a day).
-  useEffect(() => offerPause(), [offerPause]);
-  return (
-    <p className="card depth p-5 text-lg font-bold text-ok" role="status">
-      {fill(t("write_done"), { c: right, t: total })}
-    </p>
-  );
-}
-
-function FreeWriting({ topic, onDone }: { topic: BookTopic; onDone: () => void }) {
-  const { t } = useUI();
-  const providers = useProviders();
-  const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<WritingCheck | null>(null);
   const [error, setError] = useState(false);
-  if (!providers) return null;
-
-  const send = async () => {
+  const run = async () => {
     setBusy(true);
     setError(false);
     try {
-      setResult(await api<WritingCheck>("/api/book/writing", { method: "POST", body: JSON.stringify({ topic: topic.number, text }) }));
-      onDone();
+      setResult(await api<WritingCheck>("/api/book/writing", { method: "POST", body: JSON.stringify({ topic: topic.number, text: text.slice(0, 3000) }) }));
     } catch (e) {
       setError(!(e instanceof ApiError && e.code === "need_api"));
     } finally {
@@ -312,47 +211,46 @@ function FreeWriting({ topic, onDone }: { topic: BookTopic; onDone: () => void }
     }
   };
   const fixes = result?.corrections.filter((c) => !c.isCorrect) ?? [];
+  if (!result)
+    return (
+      <div className="pt-1">
+        <button type="button" className="btn btn-ghost !min-h-[40px]" onClick={() => void run()} disabled={busy}>
+          {busy ? t("loading") : t("journal_check")}
+        </button>
+        {error && <p className="text-danger text-sm mt-1">{t("write_free_failed")}</p>}
+      </div>
+    );
   return (
-    <div className="card depth p-4 sm:p-5 space-y-3">
-      <p className="text-sm">{t("write_free_hint")}</p>
-      <textarea className="field min-h-[160px] de" dir="ltr" lang="de" value={text} onChange={(e) => setText(e.target.value)} placeholder={t("write_placeholder")} maxLength={3000} />
-      <button className="btn btn-primary !min-h-[42px]" onClick={() => void send()} disabled={busy || !text.trim()}>
-        {busy ? t("loading") : t("write_free_send")}
-      </button>
-      {error && <p className="text-danger text-sm">{t("write_free_failed")}</p>}
-      {result && (
-        <div className="space-y-3" role="status">
-          <h3 className="font-bold">{t("write_free_result")}</h3>
-          {fixes.length === 0 && <p className="text-ok font-semibold">{t("write_free_none")}</p>}
-          {fixes.map((c) => (
-            <div key={c.turn} className="rounded-2xl border border-line p-3 space-y-1.5">
-              <p className="text-sm">
-                <span className="text-muted">{t("write_free_original")}: </span>
-                <span dir="ltr" lang="de" className="de text-danger">
-                  {c.original}
-                </span>
-              </p>
-              <p>
-                <span className="text-sm text-muted">{t("write_free_corrected")}: </span>
-                <span dir="ltr" lang="de" className="de font-bold text-ok">
-                  {c.corrected}
-                </span>
-              </p>
-              <ul className="text-sm space-y-1">
-                {c.fixes.map((f, k) => (
-                  <li key={k}>
-                    <span dir="ltr" className="de">
-                      {f.wrong} → <b>{f.right}</b>
-                    </span>{" "}
-                    — <span lang="ar" dir="rtl">{f.explanation}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
-          {fixes.length > 0 && <p className="text-xs text-muted">{t("write_free_saved")}</p>}
+    <div className="space-y-3 pt-2" role="status">
+      <h4 className="font-bold">{t("write_free_result")}</h4>
+      {fixes.length === 0 && <p className="text-ok font-semibold">{t("write_free_none")}</p>}
+      {fixes.map((c) => (
+        <div key={c.turn} className="rounded-2xl border border-line bg-surface p-3 space-y-1.5">
+          <p className="text-sm">
+            <span className="text-muted">{t("write_free_original")}: </span>
+            <span dir="ltr" lang="de" className="de text-danger">
+              {c.original}
+            </span>
+          </p>
+          <p>
+            <span className="text-sm text-muted">{t("write_free_corrected")}: </span>
+            <span dir="ltr" lang="de" className="de font-bold text-ok">
+              {c.corrected}
+            </span>
+          </p>
+          <ul className="text-sm space-y-1">
+            {c.fixes.map((f, k) => (
+              <li key={k}>
+                <span dir="ltr" className="de">
+                  {f.wrong} → <b>{f.right}</b>
+                </span>{" "}
+                — <span lang="ar" dir="rtl">{f.explanation}</span>
+              </li>
+            ))}
+          </ul>
         </div>
-      )}
+      ))}
+      {fixes.length > 0 && <p className="text-xs text-muted">{t("write_free_saved")}</p>}
     </div>
   );
 }

@@ -18,7 +18,9 @@ import { readingProgressBonus } from "./readingShared";
 
 export type Skill = "read" | "write";
 export const READ_PARTS = 5; // one quiz per section
-export const WRITE_PARTS = 2; // translate (0) and complete (1)
+export const WRITE_PARTS = 2; // older exercises: translate (0) and complete (1)
+/** ✍️ Writing about the topic in your own words (reaching the level's word goal = 100). */
+export const WRITE_JOURNAL_PART = 3;
 export const PASS_AT = 80;
 
 export async function saveSkillScore(userId: string, skill: Skill, topic: number, part: number, score: number, now = Date.now()) {
@@ -89,6 +91,12 @@ export async function levelListeningProgress(userId: string, level: Level, video
   return { watched, total };
 }
 
+/** 0 … 1 for one topic's writing. */
+export function writeCredit(scores: Record<string, number>, topic: number): number {
+  if ((scores[`${topic}:${WRITE_JOURNAL_PART}`] ?? 0) >= PASS_AT) return 1;
+  return [0, 1].filter((p) => (scores[`${topic}:${p}`] ?? 0) >= PASS_AT).length / WRITE_PARTS;
+}
+
 export async function levelSkillProgress(userId: string, level: Level, listening?: ListeningProgress): Promise<SkillProgress> {
   const topics = await topicSummaries(level);
   const numbers = topics.map((t) => t.number);
@@ -108,8 +116,9 @@ export async function levelSkillProgress(userId: string, level: Level, listening
     speak: Math.min(100, pct(saidRight, totalSentences) + geminiSpeakBonus(gemini)),
     listen,
     read: Math.min(100, pct(Object.values(read).filter((s) => s >= PASS_AT).length, topics.length * READ_PARTS) + readingProgressBonus(pageBook?.currentPage ?? 0, pageBook?.totalPages ?? null)),
-    // Translate (part 0) and complete (part 1) count; free writing (part 2) is extra.
-    write: pct(Object.entries(write).filter(([k, s]) => !k.endsWith(":2") && s >= PASS_AT).length, topics.length * WRITE_PARTS),
+    // A topic is written when its "write about it" reached the goal; the older translate (0) and
+    // complete (1) exercises still count half each, so earlier progress isn't lost. AI checks (2) are extra.
+    write: pct(numbers.reduce((n, t) => n + writeCredit(write, t), 0), topics.length),
   };
 }
 
