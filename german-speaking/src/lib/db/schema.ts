@@ -68,6 +68,17 @@ export const skillScores = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.skill, t.topic, t.part] })],
 );
 
+/** ✍️ "اكتب عن الموضوع": what the learner wrote about a topic they studied, in their own words. */
+export const writingEntries = sqliteTable("writing_entries", {
+  id: text("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  topic: integer("topic").notNull(),
+  level: text("level").notNull(),
+  text: text("text").notNull(),
+  words: integer("words").notNull(),
+  createdAt: integer("created_at").notNull(),
+});
+
 /** Free writing corrected by the AI; its mistakes count in the weakness tracker like a spoken report. */
 export const writingChecks = sqliteTable("writing_checks", {
   id: text("id").primaryKey(),
@@ -461,6 +472,10 @@ CREATE TABLE IF NOT EXISTS writing_checks (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER NOT NULL, created_at INTEGER NOT NULL, json TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS writing_checks_user ON writing_checks(user_id, created_at);
+CREATE TABLE IF NOT EXISTS writing_entries (
+  id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER NOT NULL, level TEXT NOT NULL, text TEXT NOT NULL, words INTEGER NOT NULL, created_at INTEGER NOT NULL
+);
+CREATE INDEX IF NOT EXISTS writing_entries_user_topic ON writing_entries(user_id, topic, created_at);
 CREATE TABLE IF NOT EXISTS gemini_sessions (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, level TEXT NOT NULL, topic INTEGER, video TEXT, text TEXT NOT NULL, created_at INTEGER NOT NULL
 );
