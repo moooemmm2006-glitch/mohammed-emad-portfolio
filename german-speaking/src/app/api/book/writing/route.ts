@@ -6,6 +6,7 @@ import { getTopicByNumber } from "@/lib/book";
 import { getLLM } from "@/lib/llm";
 import { saveSkillScore } from "@/lib/skills";
 import { checkFreeWriting } from "@/lib/writing";
+import { lockedResponse, topicLock } from "@/lib/plan";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -23,6 +24,8 @@ export async function POST(req: Request) {
   if (!llm) return jsonError(501, "need_api", "Needs an API key");
   const topic = await getTopicByNumber(parsed.data.topic);
   if (!topic) return jsonError(404, "not_found", "Unknown topic");
+  const lock = await topicLock(user.id, topic.number);
+  if (lock?.locked) return lockedResponse(lock);
   try {
     const check = await checkFreeWriting(user.id, topic, parsed.data.text, llm);
     const right = check.corrections.filter((c) => c.isCorrect).length;

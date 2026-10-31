@@ -5,6 +5,7 @@ import { currentUser, unauthorized } from "@/lib/auth/session";
 import { getTopicByNumber } from "@/lib/book";
 import { getLLM } from "@/lib/llm";
 import { newReadingText } from "@/lib/writing";
+import { lockedResponse, topicLock } from "@/lib/plan";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,6 +23,8 @@ export async function POST(req: Request) {
   if (!llm) return jsonError(501, "need_api", "Needs an API key");
   const topic = await getTopicByNumber(parsed.data.topic);
   if (!topic) return jsonError(404, "not_found", "Unknown topic");
+  const lock = await topicLock(user.id, topic.number);
+  if (lock?.locked) return lockedResponse(lock);
   try {
     return NextResponse.json({ text: await newReadingText(topic, llm) });
   } catch (err) {

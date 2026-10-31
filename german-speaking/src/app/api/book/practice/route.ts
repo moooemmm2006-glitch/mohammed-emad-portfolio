@@ -5,6 +5,7 @@ import { currentUser, unauthorized } from "@/lib/auth/session";
 import { getTopicByNumber, relatedGrammar, sentencesByNumber } from "@/lib/book";
 import { compareSentence } from "@/lib/bookCompare";
 import { savePractice } from "@/lib/bookProgress";
+import { firstLocked, lockedResponse } from "@/lib/plan";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -22,6 +23,8 @@ export async function POST(req: Request) {
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return jsonError(400, "invalid_body", parsed.error.message);
   const found = await sentencesByNumber(parsed.data.heard.map((h) => h.n));
+  const lock = await firstLocked(user.id, [...(parsed.data.topic ? [parsed.data.topic] : []), ...[...found.values()].map((s) => s.topic)]);
+  if (lock) return lockedResponse(lock);
   const results = [];
   for (const h of parsed.data.heard) {
     const s = found.get(h.n);

@@ -4,6 +4,7 @@ import { jsonError, readJson } from "@/lib/api";
 import { currentUser, unauthorized } from "@/lib/auth/session";
 import { GEMINI_TEXT_MAX, listGeminiSessions, saveGeminiSession } from "@/lib/gemini";
 import { LEVELS } from "@/lib/levels";
+import { lockedResponse, topicLock } from "@/lib/plan";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,5 +27,9 @@ export async function POST(req: Request) {
   if (!user) return unauthorized();
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return jsonError(400, "invalid_body", parsed.error.message);
+  if (parsed.data.topic) {
+    const lock = await topicLock(user.id, parsed.data.topic);
+    if (lock?.locked) return lockedResponse(lock);
+  }
   return NextResponse.json({ session: await saveGeminiSession(user.id, parsed.data) });
 }
