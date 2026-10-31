@@ -3,6 +3,7 @@ import { z } from "zod";
 import { jsonError, readJson } from "@/lib/api";
 import { currentUser, unauthorized } from "@/lib/auth/session";
 import { scoreAndRecord } from "@/lib/bookApi";
+import { lockedBySentences, lockedResponse } from "@/lib/plan";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -15,5 +16,7 @@ export async function POST(req: Request) {
   if (!user) return unauthorized();
   const parsed = Body.safeParse(await readJson(req));
   if (!parsed.success) return jsonError(400, "invalid_body", parsed.error.message);
+  const lock = await lockedBySentences(user.id, parsed.data.heard.map((h) => h.n));
+  if (lock) return lockedResponse(lock);
   return NextResponse.json({ results: await scoreAndRecord(user.id, parsed.data.heard) });
 }

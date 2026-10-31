@@ -3,6 +3,7 @@ import { jsonError } from "@/lib/api";
 import { currentUser, unauthorized } from "@/lib/auth/session";
 import { getTopicByNumber } from "@/lib/book";
 import { sentenceScores } from "@/lib/bookProgress";
+import { lockedResponse, topicLock } from "@/lib/plan";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -14,5 +15,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ number:
   const n = Number((await params).number);
   const topic = Number.isInteger(n) ? await getTopicByNumber(n) : null;
   if (!topic) return jsonError(404, "not_found", "Unknown topic");
+  const lock = await topicLock(user.id, topic.number);
+  if (lock?.locked) return lockedResponse(lock);
   return NextResponse.json({ topic, scores: await sentenceScores(user.id, topic.number) });
 }

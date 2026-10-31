@@ -14,6 +14,8 @@ import { ArabicText, TopicTitle, useBookTopic, useLevelTopics, type TopicCard } 
 import { TiltDiv } from "./Tilt";
 import { useSite } from "../site/SiteProvider";
 import { useExerciseGuard } from "@/lib/client/focusStore";
+import { LockedTopic } from "../plan/LockedTopic";
+import { useTopicLocks } from "../plan/LevelPlan";
 
 /** 📖 Lesen: each topic's sections as a continuous German text; tap a sentence for its meaning; a quiz per section. */
 export function ReadPanel({ level }: { level: Level }) {
@@ -26,7 +28,9 @@ export function ReadPanel({ level }: { level: Level }) {
     api<{ scores: Record<string, number> }>(`/api/skills/scores?skill=read&level=${level}`).then((d) => setScores(d.scores), () => {});
   }, [level]);
   useEffect(reload, [reload]);
+  const locks = useTopicLocks(level);
 
+  if (open && locks.isLocked(open)) return <LockedTopic level={level} openTopic={locks.openTopic} />;
   if (open) return <ReadTopic n={open} level={level} scores={scores} onBack={() => setOpen(null)} onScored={reload} />;
   return (
     <TopicPicker
@@ -37,11 +41,25 @@ export function ReadPanel({ level }: { level: Level }) {
         return passed ? `${passed}/5` : null;
       }}
       onPick={setOpen}
+      locked={locks.isLocked}
     />
   );
 }
 
-export function TopicPicker({ topics, title, badge, onPick }: { topics: TopicCard[] | null; title: string; badge: (tp: TopicCard) => string | null; onPick: (n: number) => void }) {
+export function TopicPicker({
+  topics,
+  title,
+  badge,
+  onPick,
+  locked = () => false,
+}: {
+  topics: TopicCard[] | null;
+  title: string;
+  badge: (tp: TopicCard) => string | null;
+  onPick: (n: number) => void;
+  /** Topics that open later in the learner's plan (shown with a lock, not clickable). */
+  locked?: (n: number) => boolean;
+}) {
   const { t } = useUI();
   return (
     <section className="space-y-3">
@@ -53,8 +71,13 @@ export function TopicPicker({ topics, title, badge, onPick }: { topics: TopicCar
           return (
             <li key={tp.number} className="rise-3d" style={{ ["--i" as string]: Math.min(i, 14) }}>
               <TiltDiv className="card depth h-full">
-                <button className="w-full h-full text-start p-4 flex items-start gap-3" onClick={() => onPick(tp.number)}>
-                  <span className="shrink-0 grid place-items-center w-9 h-9 rounded-full text-sm font-bold tabular-nums bg-accent-soft text-accent">{tp.number}</span>
+                <button
+                  className={`w-full h-full text-start p-4 flex items-start gap-3 ${locked(tp.number) ? "opacity-55 cursor-not-allowed" : ""}`}
+                  aria-disabled={locked(tp.number)}
+                  title={locked(tp.number) ? t("plan_locked_hint") : undefined}
+                  onClick={() => !locked(tp.number) && onPick(tp.number)}
+                >
+                  <span className="shrink-0 grid place-items-center w-9 h-9 rounded-full text-sm font-bold tabular-nums bg-accent-soft text-accent">{locked(tp.number) ? "🔒" : tp.number}</span>
                   <span className="min-w-0 flex-1">
                     <TopicTitle tp={tp} />
                   </span>

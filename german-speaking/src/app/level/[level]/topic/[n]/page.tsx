@@ -2,13 +2,14 @@
 
 import { levelPath, topicPath } from "@/lib/paths";
 import Link from "next/link";
+import { LockedTopic } from "@/components/plan/LockedTopic";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { GrammarTab } from "@/components/book/GrammarTab";
 import { Shadowing } from "@/components/book/Shadowing";
 import { IconArrow, IconBook, IconHeadphones, IconMic, IconRepeat } from "@/components/Icons";
 import { EasyGermanTab } from "@/components/videos/EasyGermanTab";
-import { api, useProviders, useSettings } from "@/lib/client/api";
+import { api, ApiError, useProviders, useSettings } from "@/lib/client/api";
 import type { TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import type { BookTopic } from "@/lib/book";
@@ -46,14 +47,18 @@ function TopicPage() {
   const providers = useProviders();
   const [data, setData] = useState<{ topic: BookTopic; scores: Record<number, number> } | null>(null);
   const [error, setError] = useState(false);
+  const [locked, setLocked] = useState<number | null | undefined>(undefined);
 
   useEffect(() => {
     if (!Number.isInteger(number)) return setError(true);
     api<{ topic: BookTopic; scores: Record<number, number> }>(`/api/book/topic/${number}`).then(
       (d) => (d.topic.level === level ? setData(d) : setError(true)),
-      () => setError(true),
+      // 🔒 Opens later in the learner's plan: show where to continue instead of an error.
+      (e) => (e instanceof ApiError && e.code === "topic_locked" ? setLocked(Number(e.message) || null) : setError(true)),
     );
   }, [number, level]);
+
+  if (isLevel(level) && locked !== undefined) return <LockedTopic level={level} openTopic={locked} />;
 
   if (!isLevel(level) || error) {
     return (

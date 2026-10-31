@@ -15,6 +15,8 @@ import { IconArrow } from "../Icons";
 import { TopicPicker } from "./ReadPanel";
 import { useSite } from "../site/SiteProvider";
 import { TopicTitle, useBookTopic, useLevelTopics } from "./shared";
+import { LockedTopic } from "../plan/LockedTopic";
+import { useTopicLocks } from "../plan/LevelPlan";
 
 // ✍️ Schreiben: after studying a topic, write about it in your own words — what you learned, the
 // words and sentences, the video, the talk with Gemini, the grammar. No questions, no translation.
@@ -35,7 +37,9 @@ export function WritePanel({ level }: { level: Level }) {
     api<{ scores: Record<string, number> }>(`/api/skills/scores?skill=write&level=${level}`).then((d) => setScores(d.scores), () => {});
   }, [level]);
   useEffect(reload, [reload]);
+  const locks = useTopicLocks(level);
 
+  if (open && locks.isLocked(open)) return <LockedTopic level={level} openTopic={locks.openTopic} />;
   if (open) return <TopicJournal n={open} onBack={() => setOpen(null)} onSaved={reload} />;
   return (
     <TopicPicker
@@ -46,6 +50,7 @@ export function WritePanel({ level }: { level: Level }) {
         return s == null ? null : s >= 100 ? "✓" : `${s}%`;
       }}
       onPick={setOpen}
+      locked={locks.isLocked}
     />
   );
 }

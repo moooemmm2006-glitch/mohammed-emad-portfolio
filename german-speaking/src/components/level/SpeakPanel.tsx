@@ -5,17 +5,19 @@ import { IconRepeat } from "../Icons";
 import { fill } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import type { Level } from "@/lib/levels";
-import { topicPath } from "@/lib/paths";
+import { levelPath, topicPath } from "@/lib/paths";
 import { ArabicText, TopicSkeleton, TopicTitle, useLevelTopics } from "./shared";
 import { topicCount } from "@/lib/bookLevels";
 import { TiltDiv } from "./Tilt";
 import { GeminiCard } from "../gemini/GeminiCard";
+import { useTopicLocks } from "../plan/LevelPlan";
 
 /** 🗣️ Themen & Sprechen: talk with Gemini at the level, today's review and the book topics. */
 export function SpeakPanel({ level }: { level: Level }) {
   const { t, lang } = useUI();
   const { topics, due, error } = useLevelTopics(level);
   const done = topics?.filter((x) => x.progress.done).length ?? 0;
+  const locks = useTopicLocks(level);
 
   return (
     <div className="space-y-6">
@@ -52,11 +54,16 @@ export function SpeakPanel({ level }: { level: Level }) {
             const pct = Math.round((100 * tp.progress.correct) / tp.progress.total);
             return (
               <li key={tp.number} className="rise-3d [content-visibility:auto] [contain-intrinsic-size:auto_178px]" style={{ ["--i" as string]: Math.min(i, 14) }}>
-                <TiltDiv className={`card depth h-full ${tp.progress.done ? "border-ok/60" : ""}`}>
-                  <Link href={topicPath(level, tp.number)} className="h-full p-4 flex flex-col gap-2">
+                <TiltDiv className={`card depth h-full ${tp.progress.done ? "border-ok/60" : ""} ${locks.isLocked(tp.number) ? "opacity-55" : ""}`}>
+                  <Link
+                    href={locks.isLocked(tp.number) ? levelPath(level, "/plan") : topicPath(level, tp.number)}
+                    title={locks.isLocked(tp.number) ? t("plan_locked_hint") : undefined}
+                    aria-disabled={locks.isLocked(tp.number)}
+                    className="h-full p-4 flex flex-col gap-2"
+                  >
                     <div className="flex items-start gap-3">
                       <span className={`shrink-0 grid place-items-center w-9 h-9 rounded-full text-sm font-bold tabular-nums ${tp.progress.done ? "bg-ok text-white" : "bg-accent-soft text-accent"}`}>
-                        {tp.progress.done ? "✓" : tp.number}
+                        {tp.progress.done ? "✓" : locks.isLocked(tp.number) ? "🔒" : tp.number}
                       </span>
                       <span className="min-w-0">
                         <TopicTitle tp={tp} />

@@ -126,3 +126,78 @@ describe("plan API", () => {
     expect((await post({ action: "start", level: "A1", day: "1.11.2026" })).status).toBe(400);
   });
 });
+
+describe("plan in order (lock)", () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "gs-lock-"));
+  let n = 0;
+  let sara: UserRow;
+  const as = async (u: UserRow) => {
+    cookie = await signToken({ u: u.id, v: (await getUser(u.id))!.tokenVersion, e: Date.now() + 60_000 });
+  };
+  const json = (body: unknown) => new Request("http://test/x", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const code = async (r: Response) => ((await r.clone().json()) as { error?: { code: string; message: string } }).error;
+  beforeEach(async () => {
+    resetDbForTests();
+    process.env.DATABASE_PATH = path.join(dir, `l${n++}.db`);
+    sara = await signUp({ name: "Sara", username: "sara", password: "geheim123" });
+    await as(sara);
+  });
+  afterAll(() => {
+    resetDbForTests();
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  it("before agreeing every topic is open; after agreeing only up to the first unfinished one, on every route", async () => {
+    const topic = await import("@/app/api/book/topic/[number]/route");
+    const journal = await import("@/app/api/book/journal/route");
+    const writing = await import("@/app/api/book/writing/route");
+    const videos = await import("@/app/api/videos/topic/[n]/route");
+    const attempts = await import("@/app/api/book/attempts/route");
+    const practice = await import("@/app/api/book/practice/route");
+    const gemini = await import("@/app/api/gemini/sessions/route");
+    const { getTopicByNumber, getSentences } = await import("@/lib/book");
+    const t2 = await getTopicByNumber(2);
+    const s2 = getSentences(t2!)[0];
+    const getTopic = (k: number) => topic.GET(new Request("http://test/x"), { params: Promise.resolve({ number: String(k) }) });
+
+    // just browsing: open
+    expect((await getTopic(5)).status).toBe(200);
+    // a plan without agreeing (older plans): still open
+    await route.POST(json({ action: "start", level: "A1", day: "2026-11-01" }));
+    expect((await getTopic(5)).status).toBe(200);
+
+    // agree → in order
+    expect((await route.POST(json({ action: "start", level: "A1", day: "2026-11-01", agree: true }))).status).toBe(200);
+    expect(((await (await route.GET(new Request("http://test/x?level=A1"))).json()) as { agreed: boolean }).agreed).toBe(true);
+    expect((await getTopic(1)).status).toBe(200);
+    const locked = await getTopic(2);
+    expect(locked.status).toBe(403);
+    expect(await code(locked)).toMatchObject({ code: "topic_locked", message: "1" });
+    expect((await journal.GET(new Request("http://test/x?topic=2"))).status).toBe(403);
+    expect((await journal.POST(json({ topic: 2, text: "Hallo" }))).status).toBe(403);
+    expect((await writing.POST(json({ topic: 2, text: "Hallo" }))).status).toBeOneOf([403, 501]); // 501 = no AI configured, checked first
+    expect((await videos.GET(new Request("http://test/x"), { params: Promise.resolve({ n: "2" }) })).status).toBe(403);
+    expect((await attempts.POST(json({ heard: [{ n: s2.n, said: s2.de }] }))).status).toBe(403);
+    expect((await practice.POST(json({ topic: 2, mode: "shadow", heard: [{ n: s2.n, said: s2.de }] }))).status).toBe(403);
+    expect((await gemini.POST(json({ level: "A1", topic: 2, text: "Bericht" }))).status).toBe(403);
+    expect((await route.POST(json({ action: "step", topic: 2, step: "study", done: true }))).status).toBe(403);
+    // other levels are not affected
+    expect((await getTopic(20)).status).toBe(200);
+
+    // finish topic 1 → topic 2 opens, topic 3 stays locked
+    for (const step of PLAN_STEP_IDS) expect((await route.POST(json({ action: "step", topic: 1, step, done: true }))).status).toBe(200);
+    expect((await getTopic(2)).status).toBe(200);
+    expect(await code(await getTopic(3))).toMatchObject({ code: "topic_locked", message: "2" });
+    // finished topics stay open
+    expect((await getTopic(1)).status).toBe(200);
+  });
+
+  it("an agreed plan can't be removed, only moved", async () => {
+    await route.POST(json({ action: "start", level: "B1", day: "2026-11-01", agree: true }));
+    const r = await route.POST(json({ action: "start", level: "B1", day: null }));
+    expect(r.status).toBe(409);
+    expect((await route.POST(json({ action: "start", level: "B1", day: "2026-11-10" }))).status).toBe(200);
+    const p = (await (await route.GET(new Request("http://test/x?level=B1"))).json()) as { start: string; agreed: boolean };
+    expect(p).toMatchObject({ start: "2026-11-10", agreed: true });
+  });
+});

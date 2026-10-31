@@ -6,6 +6,7 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 import { LevelBadge } from "@/components/level/LevelBadge";
 import { PlanCard } from "@/components/plan/PlanCard";
+import { CareerTicker } from "@/components/plan/CareerTicker";
 import { LevelStage } from "@/components/level/LevelStage";
 import { ReadPanel } from "@/components/level/ReadPanel";
 import { ReadingCompanion } from "@/components/level/ReadingCompanion";
@@ -90,6 +91,7 @@ function LevelContent({ level }: { level: Level }) {
       <IntroStrip />
       <LevelHeader level={level} progress={progress} />
       <PlanCard level={level} />
+      <CareerTicker />
 
       <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-5 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-[5.5rem] sm:top-16 z-20 backdrop-blur">
         {SKILLS.map((s) => (

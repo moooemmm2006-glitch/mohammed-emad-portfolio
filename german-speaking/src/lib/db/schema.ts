@@ -74,6 +74,8 @@ export const planStarts = sqliteTable("plan_starts", {
   level: text("level").notNull(),
   startDay: text("start_day").notNull(), // YYYY-MM-DD
   updatedAt: integer("updated_at").notNull(),
+  /** When the learner accepted to go in order: from then on a topic opens only after the one before it is done. */
+  agreedAt: integer("agreed_at"),
 }, (t) => [primaryKey({ columns: [t.userId, t.level] })]);
 /** 🗺️ Level plan: one step of one topic, ticked by the learner (with an optional note, e.g. Gemini mistakes). */
 export const planSteps = sqliteTable("plan_steps", {
@@ -533,6 +535,7 @@ CREATE TABLE IF NOT EXISTS violation_log (
 /** Columns added to tables that already exist in older databases (ALTER TABLE ADD COLUMN when missing). */
 export const ADDED_COLUMNS: { table: string; column: string; sql: string }[] = [
   { table: "users", column: "username", sql: "username TEXT" },
+  { table: "plan_starts", column: "agreed_at", sql: "agreed_at INTEGER" },
   { table: "users", column: "password_hash", sql: "password_hash TEXT" },
   { table: "users", column: "role", sql: "role TEXT NOT NULL DEFAULT 'student'" },
   { table: "users", column: "disabled", sql: "disabled INTEGER NOT NULL DEFAULT 0" },
