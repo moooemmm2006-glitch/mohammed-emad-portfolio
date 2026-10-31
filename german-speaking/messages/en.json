@@ -1011,5 +1011,12 @@
   "journal_draft": "Your text is kept as a draft on this device until you tap “Save”.",
   "journal_failed": "Couldn't save right now. Please try again.",
   "journal_history": "Your texts on this topic",
-  "journal_check": "Correct it (optional)"
+  "journal_check": "Correct it (optional)",
+  "journal_gemini": "Get a Gemini report on my text",
+  "journal_gemini_hint": "Gemini writes you a full report at your level: a score out of 10, what you got right, every mistake with its correction and explanation, the corrected text, and what to study next.",
+  "journal_gemini_copy": "Copy only",
+  "journal_gemini_copied": "Copied ✓ Paste it into Gemini and send – your report will follow.",
+  "journal_gemini_failed": "Copying didn't work. Try “Copy only” again.",
+  "footer_made_by": "Website created by",
+  "footer_made_by_tag": "Websites & Automation"
 }

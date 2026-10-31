@@ -1,7 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { GEMINI_URL, writingReportPrompt } from "../../../data/gemini-prompts";
 import { api, ApiError, useProviders } from "@/lib/client/api";
+import { copyAndOpen, copyText } from "@/lib/client/clipboard";
 import { fill, localeOf } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import type { BookTopic } from "@/lib/book";
@@ -130,6 +132,7 @@ function TopicJournal({ n, onBack, onSaved }: { n: number; onBack: () => void; o
             <p dir="ltr" lang="de" className="de whitespace-pre-wrap leading-relaxed">
               {last.text}
             </p>
+            <GeminiReport topic={topic} text={last.text} primary />
             <div className="flex flex-wrap gap-2 pt-1">
               <button type="button" className="btn btn-ghost !min-h-[40px]" onClick={() => setSaved(false)}>
                 {t("journal_write_more")}
@@ -184,10 +187,39 @@ function TopicJournal({ n, onBack, onSaved }: { n: number; onBack: () => void; o
                 <p dir="ltr" lang="de" className="de whitespace-pre-wrap leading-relaxed">
                   {e.text}
                 </p>
+                <GeminiReport topic={topic} text={e.text} />
               </li>
             ))}
           </ul>
         </section>
+      )}
+    </div>
+  );
+}
+
+/** 📝 Send the text to Gemini with a prompt that asks for a full report: right, wrong and why, the corrected text, what to study. */
+function GeminiReport({ topic, text, primary = false }: { topic: BookTopic; text: string; primary?: boolean }) {
+  const { t } = useUI();
+  const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
+  const prompt = () =>
+    writingReportPrompt(topic.level as Level, { title_de: topic.title_de, title_ar: topic.title_ar, vocab: topic.vocab.map((v) => v.de), grammar: topic.grammar.map((g) => g.title_de) }, text);
+  const send = () => void copyAndOpen(prompt(), GEMINI_URL).then((ok) => setState(ok ? "copied" : "failed"));
+  const copyOnly = async () => setState((await copyText(prompt())) ? "copied" : "failed");
+  return (
+    <div className={primary ? "rounded-2xl bg-surface p-3 sm:p-4 space-y-2 border border-line" : "mt-3 space-y-1.5"}>
+      {primary && <p className="text-sm leading-relaxed">{t("journal_gemini_hint")}</p>}
+      <div className="flex flex-wrap items-center gap-2">
+        <button type="button" className={`btn ${primary ? "btn-primary" : "btn-ghost"} !min-h-[40px]`} onClick={send}>
+          📝 {t("journal_gemini")}
+        </button>
+        <button type="button" className="text-sm text-muted underline underline-offset-4 min-h-[40px] px-1" onClick={() => void copyOnly()}>
+          {t("journal_gemini_copy")}
+        </button>
+      </div>
+      {state !== "idle" && (
+        <p role="status" className={`text-sm ${state === "copied" ? "text-ok" : "text-danger"}`}>
+          {state === "copied" ? t("journal_gemini_copied") : t("journal_gemini_failed")}
+        </p>
       )}
     </div>
   );

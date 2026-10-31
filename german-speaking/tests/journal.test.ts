@@ -99,3 +99,16 @@ describe("writing about a topic", () => {
     });
   });
 });
+
+describe("Gemini report on my writing", () => {
+  it("sends the level, the topic, its words and grammar, my text, and asks for the full report", async () => {
+    const { writingReportPrompt } = await import("../data/gemini-prompts");
+    const p = writingReportPrompt("A2", { title_de: "Beim Arzt", title_ar: "عند الدكتور", vocab: ["der Arzt", "das Rezept"], grammar: ["Modalverben"] }, "  Ich habe Kopfschmerzen. Ich muss zum Arzt gehen.  ");
+    expect(p).toContain("Niveau A2");
+    expect(p).toContain('"Beim Arzt" (عند الدكتور)');
+    expect(p).toContain("der Arzt, das Rezept");
+    expect(p).toContain("Modalverben");
+    expect(p).toContain('"""\nIch habe Kopfschmerzen. Ich muss zum Arzt gehen.\n"""');
+    for (const part of ["درجة من 10", "اللي عملته صح", "الأخطاء", "النص كله بعد التصحيح", "أذاكر إيه"]) expect(p).toContain(part);
+  });
+});

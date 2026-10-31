@@ -46,3 +46,30 @@ ${topicPart(ctx)}
 Fang jetzt an: Begrüße mich kurz und frag mich, worüber ich sprechen möchte.
 `;
 }
+
+/**
+ * ✍️ "تقرير عن كتابتي": the learner's own text about a topic, sent to Gemini for a full written report
+ * (what is right, what is wrong and why, the corrected text, and what to study next).
+ */
+export function writingReportPrompt(level: GeminiLevel, topic: { title_de: string; title_ar: string; vocab: string[]; grammar: string[] }, text: string): string {
+  return `Du bist mein Deutschlehrer. Ich bin Arabisch-Muttersprachler aus Ägypten und lerne Deutsch auf Niveau ${level}.
+Ich habe gerade das Thema "${topic.title_de}" (${topic.title_ar}) gelernt und danach in meinen eigenen Worten darüber geschrieben.
+Wörter aus dem Thema: ${topic.vocab.slice(0, 15).join(", ")}
+Grammatik im Thema: ${topic.grammar.join(", ")}
+Niveau-Regeln: ${LEVEL_RULES[level]}
+
+Schreib mir einen vollständigen Bericht über meinen Text, auf Ägyptisch-Arabisch (deutsche Beispiele auf Deutsch), mit diesen Teilen:
+1. التقييم العام: درجة من 10 بالنسبة لمستوى ${level}، وجملتين عن مستوى الكتابة.
+2. اللي عملته صح: النقط القوية (كلمات وقواعد استخدمتها صح).
+3. الأخطاء: جدول فيه: الجملة اللي كتبتها ← الصح ← الشرح بالعربي ← نوع الغلطة (قواعد / كلمات / إملاء / ترتيب الكلمات / حروف كبيرة).
+4. النص كله بعد التصحيح، على مستوى ${level} من غير ما تغيّر معناه.
+5. كلمات وتعبيرات من الموضوع كان ممكن أستخدمها.
+6. أذاكر إيه: من 3 لـ 5 نقط قواعد محددة طلعت من أخطائي، ولكل نقطة مثال وتمرين صغير.
+Bleib streng auf Niveau ${level}. Wenn der Text sehr kurz ist, sag mir freundlich, wie ich mehr schreiben kann.
+
+Mein Text:
+"""
+${text.trim()}
+"""
+`;
+}
