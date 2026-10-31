@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { GEMINI_URL, writingReportPrompt } from "../../../data/gemini-prompts";
 import { api, ApiError, useProviders } from "@/lib/client/api";
 import { copyAndOpen, copyText } from "@/lib/client/clipboard";
@@ -27,7 +28,9 @@ export function WritePanel({ level }: { level: Level }) {
   const { t } = useUI();
   const { topics } = useLevelTopics(level);
   const [scores, setScores] = useState<Record<string, number>>({});
-  const [open, setOpen] = useState<number | null>(null);
+  // ?topic=n (from the level plan) opens that topic's writing directly.
+  const asked = Number(useSearchParams().get("topic"));
+  const [open, setOpen] = useState<number | null>(Number.isInteger(asked) && asked > 0 ? asked : null);
   const reload = useCallback(() => {
     api<{ scores: Record<string, number> }>(`/api/skills/scores?skill=write&level=${level}`).then((d) => setScores(d.scores), () => {});
   }, [level]);

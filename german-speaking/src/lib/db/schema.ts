@@ -68,6 +68,23 @@ export const skillScores = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.skill, t.topic, t.part] })],
 );
 
+/** 🗺️ Level plan: when the learner started a level's plan. */
+export const planStarts = sqliteTable("plan_starts", {
+  userId: text("user_id").notNull(),
+  level: text("level").notNull(),
+  startDay: text("start_day").notNull(), // YYYY-MM-DD
+  updatedAt: integer("updated_at").notNull(),
+}, (t) => [primaryKey({ columns: [t.userId, t.level] })]);
+/** 🗺️ Level plan: one step of one topic, ticked by the learner (with an optional note, e.g. Gemini mistakes). */
+export const planSteps = sqliteTable("plan_steps", {
+  userId: text("user_id").notNull(),
+  topic: integer("topic").notNull(),
+  step: text("step").notNull(),
+  done: integer("done").notNull().default(0),
+  note: text("note"),
+  updatedAt: integer("updated_at").notNull(),
+}, (t) => [primaryKey({ columns: [t.userId, t.topic, t.step] })]);
+
 /** ✍️ "اكتب عن الموضوع": what the learner wrote about a topic they studied, in their own words. */
 export const writingEntries = sqliteTable("writing_entries", {
   id: text("id").primaryKey(),
@@ -476,6 +493,12 @@ CREATE TABLE IF NOT EXISTS writing_entries (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, topic INTEGER NOT NULL, level TEXT NOT NULL, text TEXT NOT NULL, words INTEGER NOT NULL, created_at INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS writing_entries_user_topic ON writing_entries(user_id, topic, created_at);
+CREATE TABLE IF NOT EXISTS plan_starts (
+  user_id TEXT NOT NULL, level TEXT NOT NULL, start_day TEXT NOT NULL, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, level)
+);
+CREATE TABLE IF NOT EXISTS plan_steps (
+  user_id TEXT NOT NULL, topic INTEGER NOT NULL, step TEXT NOT NULL, done INTEGER NOT NULL DEFAULT 0, note TEXT, updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, topic, step)
+);
 CREATE TABLE IF NOT EXISTS gemini_sessions (
   id TEXT PRIMARY KEY, user_id TEXT NOT NULL, level TEXT NOT NULL, topic INTEGER, video TEXT, text TEXT NOT NULL, created_at INTEGER NOT NULL
 );
