@@ -35,7 +35,7 @@
   "level": "A1",
   "number": 2,
   "title_de": "Persönliche Angaben",
-  "title_ar": "بياناتك الشخصية (الاسم، السن، البلد، التليفون)",
+  "title_ar": "بياناتك الشخصية: السن والعنوان والتليفون",
   "sections": [
    {
     "title_de": "Alter und Geburtstag",
@@ -195,7 +195,7 @@
   "level": "A1",
   "number": 7,
   "title_de": "Einkaufen – die Grundlagen",
-  "title_ar": "الشراء: الأساسيات",
+  "title_ar": "الشراء من المحلات: الأساسيات",
   "sections": [
    {
     "title_de": "Wo finde ich …?",
@@ -387,7 +387,7 @@
   "level": "A1",
   "number": 13,
   "title_de": "Deutsch lernen",
-  "title_ar": "تعلم الألماني والفصل",
+  "title_ar": "تعلّم الألماني في الفصل",
   "sections": [
    {
     "title_de": "Ich lerne Deutsch",
@@ -483,11 +483,11 @@
   "level": "A2",
   "number": 16,
   "title_de": "Was hast du am Wochenende gemacht?",
-  "title_ar": "عملت إيه في الويك إند؟ (الكلام عن الماضي)",
+  "title_ar": "عملت إيه آخر الأسبوع؟ (الكلام عن اللي فات)",
   "sections": [
    {
     "title_de": "Wie war dein Wochenende?",
-    "title_ar": "الويك إند كان عامل إزاي؟"
+    "title_ar": "آخر الأسبوع كان عامل إزاي؟"
    },
    {
     "title_de": "Unterwegs: Ausflüge und Aktivitäten",
@@ -963,7 +963,7 @@
   "level": "A2",
   "number": 31,
   "title_de": "Sport und Fitness",
-  "title_ar": "الرياضة والجيم",
+  "title_ar": "الرياضة والتمرين",
   "sections": [
    {
     "title_de": "Welchen Sport machst du?",
@@ -1219,7 +1219,7 @@
   "level": "A2",
   "number": 39,
   "title_de": "Vergleichen",
-  "title_ar": "المقارنة بين الحاجات",
+  "title_ar": "المقارنة والاختيار",
   "sections": [
    {
     "title_de": "Menschen vergleichen",
@@ -1251,7 +1251,7 @@
   "level": "A2",
   "number": 40,
   "title_de": "Smalltalk",
-  "title_ar": "الكلام الخفيف (سمول توك)",
+  "title_ar": "الدردشة الخفيفة مع الناس",
   "sections": [
    {
     "title_de": "Über das Wetter",
@@ -1379,7 +1379,7 @@
   "level": "B1",
   "number": 44,
   "title_de": "Das Vorstellungsgespräch",
-  "title_ar": "مقابلة الشغل (الإنترفيو)",
+  "title_ar": "مقابلة الشغل",
   "sections": [
    {
     "title_de": "Ankommen und Smalltalk",
@@ -1475,7 +1475,7 @@
   "level": "B1",
   "number": 47,
   "title_de": "Sich beschweren",
-  "title_ar": "الشكوى",
+  "title_ar": "الشكوى في الحياة اليومية",
   "sections": [
    {
     "title_de": "Im Restaurant und im Café",
@@ -1795,7 +1795,7 @@
   "level": "B1",
   "number": 57,
   "title_de": "Social Media",
-  "title_ar": "السوشيال ميديا",
+  "title_ar": "مواقع التواصل الاجتماعي",
   "sections": [
    {
     "title_de": "Apps und Profile",
@@ -2307,7 +2307,7 @@
   "level": "B2",
   "number": 73,
   "title_de": "Was wäre, wenn …? (Konjunktiv II)",
-  "title_ar": "لو كان... (الافتراضات)",
+  "title_ar": "لو كان... (الأمنيات والافتراضات)",
   "sections": [
    {
     "title_de": "Wünsche und Träume",
@@ -2371,7 +2371,7 @@
   "level": "B2",
   "number": 75,
   "title_de": "Verhandeln: Gehalt und Preise",
-  "title_ar": "التفاوض على المرتب والأسعار",
+  "title_ar": "الفصال والتفاوض على المرتب والأسعار",
   "sections": [
    {
     "title_de": "Auf dem Flohmarkt",
@@ -2691,7 +2691,7 @@
   "level": "B2",
   "number": 85,
   "title_de": "Rollen in Familie und Gesellschaft",
-  "title_ar": "أدوار الراجل والست والأسرة",
+  "title_ar": "أدوار الراجل والست في البيت والشغل",
   "sections": [
    {
     "title_de": "Aufgabenteilung im Haushalt",
@@ -3075,7 +3075,7 @@
   "level": "B2",
   "number": 97,
   "title_de": "Über Sport und Events diskutieren",
-  "title_ar": "النقاش عن الماتشات والأحداث",
+  "title_ar": "النقاش عن المباريات والأحداث الرياضية",
   "sections": [
    {
     "title_de": "Spiele zusammen schauen",
