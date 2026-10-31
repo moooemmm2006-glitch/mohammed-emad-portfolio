@@ -241,6 +241,12 @@ export const cafeBookings = sqliteTable("cafe_bookings", {
   paymentStatus: text("payment_status").notNull().default("not_required"), bookedAt: integer("booked_at").notNull(), cancelledAt: integer("cancelled_at"), updatedAt: integer("updated_at").notNull(),
 }, (t) => [uniqueIndex("cafe_booking_user_session_unique").on(t.userId, t.sessionId), index("cafe_booking_session_status").on(t.sessionId, t.status), index("cafe_booking_user_status").on(t.userId, t.status)]);
 
+/** ⭐ A learner's review of a Sprachcafé session they attended (one per learner and session). */
+export const cafeReviews = sqliteTable("cafe_reviews", {
+  id: text("id").primaryKey(), sessionId: text("session_id").notNull(), teacherId: text("teacher_id").notNull(), userId: text("user_id").notNull(),
+  rating: integer("rating").notNull(), comment: text("comment").notNull().default(""), createdAt: integer("created_at").notNull(),
+}, (t) => [uniqueIndex("cafe_review_user_session_unique").on(t.userId, t.sessionId), index("cafe_reviews_teacher").on(t.teacherId, t.createdAt)]);
+
 /** One finished ⏱️ focus session (the "خزنتي" vault). */
 export const focusSessions = sqliteTable("focus_sessions", {
   id: text("id").primaryKey(),
@@ -423,6 +429,9 @@ export const COMMUNITY_DDL = [
 ].join(";");
 
 export const SPRACHCAFE_DDL = [
+  "CREATE TABLE IF NOT EXISTS cafe_reviews (id TEXT PRIMARY KEY, session_id TEXT NOT NULL, teacher_id TEXT NOT NULL, user_id TEXT NOT NULL, rating INTEGER NOT NULL, comment TEXT NOT NULL DEFAULT '', created_at INTEGER NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS cafe_review_user_session_unique ON cafe_reviews(user_id, session_id)",
+  "CREATE INDEX IF NOT EXISTS cafe_reviews_teacher ON cafe_reviews(teacher_id, created_at)",
   "CREATE TABLE IF NOT EXISTS cafe_teachers (id TEXT PRIMARY KEY, display_name_ar TEXT NOT NULL, display_name_en TEXT, photo_url TEXT, biography TEXT NOT NULL DEFAULT '', languages_json TEXT NOT NULL DEFAULT '[]', proficiency TEXT, specializations_json TEXT NOT NULL DEFAULT '[]', levels_json TEXT NOT NULL DEFAULT '[]', session_types_json TEXT NOT NULL DEFAULT '[]', availability_json TEXT NOT NULL DEFAULT '[]', duration_minutes INTEGER, price_minor INTEGER, currency TEXT, private_contact TEXT, booking_enabled INTEGER NOT NULL DEFAULT 0, published INTEGER NOT NULL DEFAULT 1, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
   "CREATE TABLE IF NOT EXISTS cafe_series (id TEXT PRIMARY KEY, teacher_id TEXT NOT NULL, title TEXT NOT NULL, description TEXT NOT NULL DEFAULT '', level TEXT NOT NULL, category TEXT NOT NULL, weekday INTEGER NOT NULL, start_minute INTEGER NOT NULL, timezone TEXT NOT NULL, duration_minutes INTEGER NOT NULL, capacity INTEGER NOT NULL, price_minor INTEGER, currency TEXT, booking_deadline_minutes INTEGER NOT NULL DEFAULT 60, cancellation_deadline_minutes INTEGER NOT NULL DEFAULT 1440, join_window_minutes INTEGER NOT NULL DEFAULT 15, start_date TEXT NOT NULL, end_date TEXT, published INTEGER NOT NULL DEFAULT 0, meeting_url TEXT, meeting_instructions TEXT NOT NULL DEFAULT '', status TEXT NOT NULL DEFAULT 'active', created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
   "CREATE INDEX IF NOT EXISTS cafe_series_teacher_status ON cafe_series(teacher_id, status, published)",

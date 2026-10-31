@@ -1097,5 +1097,19 @@
   "comic_study": "Keep going to {level} and beyond – study and work in Germany come closer 🎓",
   "career_title": "🌍 Where German takes you",
   "career_sub": "Well-known companies in Egypt that hire German speakers – often from B1/B2.",
-  "career_note": "For motivation only – not job ads."
+  "career_note": "For motivation only – not job ads.",
+  "cafe_reviews_title": "⭐ Reviews from attendees",
+  "cafe_reviews_count": "{n} reviews",
+  "cafe_reviews_empty": "No reviews yet.",
+  "cafe_reviews_none_short": "No reviews yet",
+  "cafe_reviews_aria": "Rated {a} out of 5, {n} reviews",
+  "cafe_review_title": "Rate this session",
+  "cafe_review_ph": "Your honest opinion (optional) …",
+  "cafe_review_send": "Send review",
+  "cafe_review_thanks": "Thanks for your review ⭐",
+  "cafe_review_done": "✓ Reviewed",
+  "cafe_review_already": "You already reviewed this session.",
+  "cafe_review_failed": "Couldn't send the review.",
+  "cafe_review_delete": "Delete review",
+  "cafe_review_delete_confirm": "Delete this review?"
 }

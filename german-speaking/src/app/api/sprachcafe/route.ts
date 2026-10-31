@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { currentUser, unauthorized } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
 import { bookingCounts, materializeRecurringSessions, publicSession, publicTeacher } from "@/lib/sprachcafe/service";
+import { teacherRatings } from "@/lib/sprachcafe/reviews";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
@@ -24,7 +25,8 @@ export async function GET(req: Request) {
     return publicSession(row, { id: teacher.id, name: teacher.displayNameAr, photoUrl: teacher.photoUrl, bookingEnabled: Boolean(teacher.bookingEnabled) }, counts.get(row.id) ?? 0);
   });
   const sessionCounts = new Map<string, number>(); for (const session of sessions) sessionCounts.set(session.teacher.id, (sessionCounts.get(session.teacher.id) ?? 0) + 1);
-  const teachers = teacherRows.map((teacher) => publicTeacher(teacher, sessionCounts.get(teacher.id) ?? 0));
+  const ratings = await teacherRatings(teacherRows.map((t) => t.id));
+  const teachers = teacherRows.map((teacher) => ({ ...publicTeacher(teacher, sessionCounts.get(teacher.id) ?? 0), rating: ratings.get(teacher.id) ?? { average: null, count: 0 } }));
   const featured = sessions[0] ?? null;
   return NextResponse.json({ teachers, sessions, featured, now, paymentsEnabled: false, liveMediaEnabled: false });
 }

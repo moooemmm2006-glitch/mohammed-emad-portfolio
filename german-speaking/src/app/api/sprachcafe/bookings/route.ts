@@ -5,6 +5,7 @@ import { z } from "zod";
 import { currentUser, unauthorized } from "@/lib/auth/session";
 import { getDb, schema } from "@/lib/db";
 import { jsonError, readJson } from "@/lib/api";
+import { reviewedSessions } from "@/lib/sprachcafe/reviews";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
@@ -17,13 +18,16 @@ export async function GET() {
   const teacherIds = [...new Set(sessions.map((s) => s.teacherId))];
   const teachers = teacherIds.length ? await db.select().from(schema.cafeTeachers).where(inArray(schema.cafeTeachers.id, teacherIds)).all() : [];
   const sessionMap = new Map(sessions.map((s) => [s.id, s])), teacherMap = new Map(teachers.map((t) => [t.id, t]));
+  const reviewed = await reviewedSessions(user.id);
   return NextResponse.json({ bookings: bookings.flatMap((booking) => {
     const session = sessionMap.get(booking.sessionId), teacher = session && teacherMap.get(session.teacherId); if (!session || !teacher) return [];
     const joinOpen = session.startsAt - session.joinWindowMinutes * 60_000 <= now && now <= session.startsAt + session.durationMinutes * 60_000;
     const canCancel = booking.status === "booked" && (session.status === "cancelled" || now < session.startsAt - session.cancellationDeadlineMinutes * 60_000);
     return [{ id: booking.id, status: booking.status, paymentStatus: booking.paymentStatus, bookedAt: booking.bookedAt,
       session: { id: session.id, title: session.title, description: session.description, teacher: { id: teacher.id, name: teacher.displayNameAr, photoUrl: teacher.photoUrl }, level: session.level, category: session.category, startsAt: session.startsAt, timezone: session.timezone, durationMinutes: session.durationMinutes, capacity: session.capacity, priceMinor: session.priceMinor, isFree: session.priceMinor === null || session.priceMinor === 0, status: session.status, cancellationNote: session.cancellationNote },
-      canCancel, canJoin: booking.status === "booked" && ["scheduled", "rescheduled"].includes(session.status) && joinOpen, meetingInstructions: joinOpen && booking.status === "booked" ? session.meetingInstructions : "" }];
+      canCancel, canJoin: booking.status === "booked" && ["scheduled", "rescheduled"].includes(session.status) && joinOpen,
+      // ⭐ attended (booked, not cancelled), the session is over, not reviewed yet
+      canReview: booking.status === "booked" && session.status !== "cancelled" && now >= session.startsAt + session.durationMinutes * 60_000 && !reviewed.has(session.id), reviewed: reviewed.has(session.id), meetingInstructions: joinOpen && booking.status === "booked" ? session.meetingInstructions : "" }];
   }) });
 }
 
