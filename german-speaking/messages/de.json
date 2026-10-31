@@ -1097,5 +1097,19 @@
   "comic_study": "Weiter so bis {level} und darüber hinaus – Studium und Arbeit in Deutschland rücken näher 🎓",
   "career_title": "🌍 Wohin dich Deutsch bringt",
   "career_sub": "Bekannte Firmen in Ägypten, die Deutschsprechende einstellen – oft ab B1/B2.",
-  "career_note": "Nur zur Motivation, keine Stellenanzeigen."
+  "career_note": "Nur zur Motivation, keine Stellenanzeigen.",
+  "cafe_reviews_title": "⭐ Bewertungen von Teilnehmenden",
+  "cafe_reviews_count": "{n} Bewertungen",
+  "cafe_reviews_empty": "Noch keine Bewertungen.",
+  "cafe_reviews_none_short": "Noch keine Bewertungen",
+  "cafe_reviews_aria": "Bewertung {a} von 5, {n} Bewertungen",
+  "cafe_review_title": "Bewerte diese Sitzung",
+  "cafe_review_ph": "Deine ehrliche Meinung (optional) …",
+  "cafe_review_send": "Bewertung senden",
+  "cafe_review_thanks": "Danke für deine Bewertung ⭐",
+  "cafe_review_done": "✓ Bewertet",
+  "cafe_review_already": "Du hast diese Sitzung schon bewertet.",
+  "cafe_review_failed": "Senden fehlgeschlagen.",
+  "cafe_review_delete": "Bewertung löschen",
+  "cafe_review_delete_confirm": "Diese Bewertung löschen?"
 }
