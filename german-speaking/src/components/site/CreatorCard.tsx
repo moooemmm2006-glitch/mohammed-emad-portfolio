@@ -7,6 +7,9 @@ import { IconVideoPlay } from "../Icons";
 import { TiltDiv } from "../level/Tilt";
 import { useSite } from "./SiteProvider";
 
+/** The owner's web design & automation studio, which built this site. */
+const MADE_BY_URL = "https://mohammed-emad-portfolio.vercel.app/";
+
 // The site owner and his YouTube channel. Calm placements only: the footer of every page and the end
 // of the level pages — never between lessons, no pop-ups, nothing that plays by itself.
 
@@ -87,6 +90,14 @@ export function SiteFooter({ loggedIn, minimal = false }: { loggedIn: boolean; m
         )}
         <span className="text-xs">{t("footer_credits")}</span>
       </div>
+      {/* Who built the site: the owner's web studio */}
+      <p className="pt-2 border-t border-line/60 text-center text-xs text-muted">
+        {t("footer_made_by")}{" "}
+        <a href={MADE_BY_URL} target="_blank" rel="noopener" className="font-bold text-ink hover:underline underline-offset-4 de" dir="ltr">
+          ME Web
+        </a>{" "}
+        · {t("footer_made_by_tag")}
+      </p>
     </footer>
   );
 }

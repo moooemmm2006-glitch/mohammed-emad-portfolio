@@ -1011,5 +1011,12 @@
   "journal_draft": "Dein Text wird als Entwurf auf dem Gerät gespeichert, bis du auf „Speichern“ tippst.",
   "journal_failed": "Speichern hat nicht geklappt. Versuch es noch mal.",
   "journal_history": "Deine Texte zu diesem Thema",
-  "journal_check": "Korrigieren (optional)"
+  "journal_check": "Korrigieren (optional)",
+  "journal_gemini": "Bericht von Gemini zu meinem Text",
+  "journal_gemini_hint": "Gemini schreibt dir einen vollständigen Bericht auf deinem Niveau: Note von 10, was richtig war, jeden Fehler mit Korrektur und Erklärung, den korrigierten Text und was du als Nächstes lernen solltest.",
+  "journal_gemini_copy": "Nur kopieren",
+  "journal_gemini_copied": "Kopiert ✓ Füge es in Gemini ein und sende es ab – dann kommt dein Bericht.",
+  "journal_gemini_failed": "Kopieren hat nicht geklappt. Versuch „Nur kopieren“ noch mal.",
+  "footer_made_by": "Website erstellt von",
+  "footer_made_by_tag": "Websites & Automatisierung"
 }
