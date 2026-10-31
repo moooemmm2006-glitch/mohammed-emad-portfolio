@@ -31,7 +31,7 @@
    "topic": 2,
    "level": "A1",
    "title_de": "Persönliche Angaben",
-   "title_ar": "بياناتك الشخصية (الاسم، السن، البلد، التليفون)",
+   "title_ar": "بياناتك الشخصية: السن والعنوان والتليفون",
    "videos": [
     {
      "youtubeId": "huwi-cjPPXU",
@@ -93,7 +93,7 @@
    "topic": 7,
    "level": "A1",
    "title_de": "Einkaufen – die Grundlagen",
-   "title_ar": "الشراء: الأساسيات",
+   "title_ar": "الشراء من المحلات: الأساسيات",
    "videos": [
     {
      "youtubeId": "X09NKF5Suq0",
@@ -175,7 +175,7 @@
    "topic": 13,
    "level": "A1",
    "title_de": "Deutsch lernen",
-   "title_ar": "تعلم الألماني والفصل",
+   "title_ar": "تعلّم الألماني في الفصل",
    "videos": [
     {
      "youtubeId": "_C1A-x10a80",
@@ -217,7 +217,7 @@
    "topic": 16,
    "level": "A2",
    "title_de": "Was hast du am Wochenende gemacht?",
-   "title_ar": "عملت إيه في الويك إند؟ (الكلام عن الماضي)",
+   "title_ar": "عملت إيه آخر الأسبوع؟ (الكلام عن اللي فات)",
    "videos": [
     {
      "youtubeId": "u8M5d4XyNYQ",
@@ -423,7 +423,7 @@
    "topic": 31,
    "level": "A2",
    "title_de": "Sport und Fitness",
-   "title_ar": "الرياضة والجيم",
+   "title_ar": "الرياضة والتمرين",
    "videos": [
     {
      "youtubeId": "hxGSArgzNN8",
@@ -479,7 +479,7 @@
    "topic": 40,
    "level": "A2",
    "title_de": "Smalltalk",
-   "title_ar": "الكلام الخفيف (سمول توك)",
+   "title_ar": "الدردشة الخفيفة مع الناس",
    "videos": [
     {
      "youtubeId": "hhuNW1COrSM",
@@ -521,7 +521,7 @@
    "topic": 44,
    "level": "B1",
    "title_de": "Das Vorstellungsgespräch",
-   "title_ar": "مقابلة الشغل (الإنترفيو)",
+   "title_ar": "مقابلة الشغل",
    "videos": [
     {
      "youtubeId": "eC4j_v8TBIU",
@@ -721,7 +721,7 @@
    "topic": 73,
    "level": "B2",
    "title_de": "Was wäre, wenn …? (Konjunktiv II)",
-   "title_ar": "لو كان... (الافتراضات)",
+   "title_ar": "لو كان... (الأمنيات والافتراضات)",
    "videos": [
     {
      "youtubeId": "mA8CGzwYBPc",
@@ -853,7 +853,7 @@
    "topic": 97,
    "level": "B2",
    "title_de": "Über Sport und Events diskutieren",
-   "title_ar": "النقاش عن الماتشات والأحداث",
+   "title_ar": "النقاش عن المباريات والأحداث الرياضية",
    "videos": [
     {
      "youtubeId": "JWZhB1020gg",
