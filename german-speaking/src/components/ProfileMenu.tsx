@@ -186,6 +186,9 @@ export function ProfileMenu() {
             <MenuLink href="/sprachcafe" icon={<IconSprachcafe size={18} />} onClick={() => setOpen(false)}>
               {t("cafe_nav")}
             </MenuLink>
+            <MenuLink href="/opinions" icon={<span className="w-[18px] text-center">💬</span>} onClick={() => setOpen(false)}>
+              {t("lrev_nav")}
+            </MenuLink>
             <MenuLink href="/progress" icon={<IconChart size={18} />} onClick={() => setOpen(false)}>
               {t("nav_progress")}
             </MenuLink>

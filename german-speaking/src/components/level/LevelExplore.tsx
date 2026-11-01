@@ -16,6 +16,7 @@ const ACTIVITIES = [
   { href: (l: Level) => `/grammar/${l}`, emoji: "📘", title: "nav_grammar", sub: "explore_grammar_sub" },
   { href: () => "/community", emoji: "👥", title: "community_nav", sub: "explore_community_sub" },
   { href: () => "/sprachcafe", emoji: <IconSprachcafe size={22} />, title: "cafe_nav", sub: "explore_cafe_sub" },
+  { href: (l: Level) => `/opinions?level=${l}`, emoji: "💬", title: "lrev_nav", sub: "lrev_explore_sub" },
   { href: () => "/review", emoji: "🔁", title: "book_review_title", sub: "explore_review_sub" },
   { href: () => "/progress", emoji: "📈", title: "nav_progress", sub: "explore_progress_sub" },
   { href: () => "/pause", emoji: "🎬", title: "pause_name", sub: "explore_pause_sub" },

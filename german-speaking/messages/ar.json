@@ -1140,5 +1140,11 @@
   "lrev_adm_approve": "وافق واعرض",
   "lrev_adm_hide": "اخفي",
   "lrev_adm_delete": "امسح",
-  "lrev_adm_delete_confirm": "تمسح الرأي ده نهائيًا؟"
+  "lrev_adm_delete_confirm": "تمسح الرأي ده نهائيًا؟",
+  "lrev_nav": "آراء الطلاب",
+  "lrev_explore_sub": "شوف الناس قالت إيه عن المستوى، وقول رأيك",
+  "lrev_page_title": "آراء الطلاب",
+  "lrev_page_sub": "آراء حقيقية من طلاب بيذاكروا على الموقع، في كل مستوى. اختار المستوى.",
+  "lrev_load_failed": "ماقدرناش نحمّل الآراء دلوقتي.",
+  "lrev_retry": "حاول تاني"
 }

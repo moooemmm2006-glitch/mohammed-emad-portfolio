@@ -20,11 +20,38 @@ export function LevelReviews({ level }: { level: Level }) {
   const { t, lang } = useUI();
   const accent = LEVEL_CONFIG[level].accent;
   const [data, setData] = useState<Data | null>(null);
+  const [failed, setFailed] = useState(false);
   const [writing, setWriting] = useState(false);
   const reel = useRef<HTMLUListElement>(null);
-  const load = useCallback(() => api<Data>(`/api/level-reviews?level=${level}`).then(setData, () => {}), [level]);
-  useEffect(() => void load(), [load]);
-  if (!data) return null;
+  const load = useCallback(() => {
+    setFailed(false);
+    return api<Data>(`/api/level-reviews?level=${level}`).then(setData, () => setFailed(true));
+  }, [level]);
+  useEffect(() => {
+    setData(null);
+    void load();
+  }, [load]);
+
+  // Never disappear: while loading (or if loading failed) the section still shows its title.
+  if (!data) {
+    return (
+      <section id="reviews" className="card p-4 sm:p-6 space-y-3 scroll-mt-28" aria-labelledby="level-reviews-title" data-testid="level-reviews">
+        <h2 id="level-reviews-title" className="text-xl sm:text-2xl font-extrabold">
+          {fill(t("lrev_title"), { level })}
+        </h2>
+        {failed ? (
+          <p className="flex flex-wrap items-center gap-3 text-sm text-muted">
+            {t("lrev_load_failed")}
+            <button type="button" className="btn btn-ghost !min-h-[38px]" onClick={() => void load()}>
+              {t("lrev_retry")}
+            </button>
+          </p>
+        ) : (
+          <div className="h-24 rounded-2xl bg-surface-2 animate-pulse" aria-hidden="true" />
+        )}
+      </section>
+    );
+  }
 
   const scroll = (dir: 1 | -1) => {
     const el = reel.current;
@@ -34,7 +61,7 @@ export function LevelReviews({ level }: { level: Level }) {
   };
 
   return (
-    <section className="card p-4 sm:p-6 space-y-5 overflow-hidden" aria-labelledby="level-reviews-title" data-testid="level-reviews">
+    <section id="reviews" className="card p-4 sm:p-6 space-y-5 overflow-hidden scroll-mt-28" aria-labelledby="level-reviews-title" data-testid="level-reviews">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-bold tracking-widest uppercase de" style={{ color: accent }} lang="de">
