@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { youtubeEmbedUrl, youtubePlaylistEmbedUrl, youtubeThumb } from "../../../data/videos";
+import { posterFor, youtubeEmbedUrl, youtubePlaylistEmbedUrl, youtubeThumb } from "../../../data/videos";
 import { useUI } from "@/lib/client/ui";
 import { IconPlay } from "../Icons";
 
@@ -133,8 +133,8 @@ export function YouTubePlayer({
     <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
       {!open ? (
         <button type="button" className="group absolute inset-0 w-full h-full" onClick={() => setOpen(true)} aria-label={`${t("vid_play")}: ${title}`}>
-          {/* eslint-disable-next-line @next/next/no-img-element -- YouTube's own thumbnail */}
-          <img src={youtubeThumb(videoId)} alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 transition" />
+          {/* eslint-disable-next-line @next/next/no-img-element -- the video's thumbnail (ours when we have a sharp one) */}
+          <img src={posterFor(videoId)} alt="" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover opacity-95 group-hover:opacity-100 transition" />
           <span className="absolute inset-0 grid place-items-center">
             <span className="grid place-items-center w-16 h-16 rounded-full bg-[#ff0033] text-white shadow-xl group-hover:scale-105 transition">
               <IconPlay size={28} />

@@ -46,3 +46,6 @@ export const youtubeEmbedUrl = (id: string, start = 0) =>
 export const youtubePlaylistEmbedUrl = (list: string, index: number) =>
   `https://www.youtube-nocookie.com/embed/videoseries?list=${list}&index=${index}&rel=0&playsinline=1`;
 export const youtubeThumb = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+/** Sharp, original thumbnails we host ourselves (YouTube's hqdefault is small and blurry). */
+export const LOCAL_POSTERS: Record<string, string> = { qALULLsNpbc: "/media/vlogs/qALULLsNpbc.webp" };
+export const posterFor = (id: string) => LOCAL_POSTERS[id] ?? youtubeThumb(id);

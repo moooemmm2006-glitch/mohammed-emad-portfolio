@@ -11,6 +11,8 @@ import { useUI } from "@/lib/client/ui";
 import { LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
 import { levelPath } from "@/lib/paths";
 import type { SkillProgress } from "@/lib/skills";
+import type { Vlog } from "@/lib/siteShared";
+import { posterFor } from "../../../data/videos";
 
 // 🏠 Home: a calm, professional start page. Welcome + "continue", the intro video with its
 // description, the four levels with the learner's progress, and everything the site offers.
@@ -23,6 +25,11 @@ export function HomePage({ lastLevel }: { lastLevel: Level | null }) {
   const [progress, setProgress] = useState<Partial<Record<Level, number>>>({});
   useEffect(() => {
     for (const l of LEVELS) api<SkillProgress>(`/api/level/${l}/progress`).then((p) => setProgress((x) => ({ ...x, [l]: overall(p) })), () => {});
+  }, []);
+  // The newest vlog, as a calm "take a break" card.
+  const [vlog, setVlog] = useState<Vlog | null>(null);
+  useEffect(() => {
+    api<{ vlogs: Vlog[] }>("/api/vlogs").then((r) => setVlog(r.vlogs[0] ?? null), () => {});
   }, []);
   const current: Level = lastLevel ?? "A1";
   const first = me?.user.name?.trim().split(/\s+/)[0];
@@ -154,6 +161,42 @@ export function HomePage({ lastLevel }: { lastLevel: Level | null }) {
           ))}
         </ul>
       </section>
+
+      {/* ── From the vlogs: a calm break ── */}
+      {vlog && (
+        <section aria-labelledby="vlog-title" className="space-y-4" data-testid="home-vlog">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted de" lang="de">
+                Pause
+              </p>
+              <h2 id="vlog-title" className="text-2xl sm:text-3xl font-extrabold">
+                {t("home_vlog_title")}
+              </h2>
+              <p className="text-muted mt-1">{t("home_vlog_sub")}</p>
+            </div>
+            <Link href="/pause" className="text-sm font-bold underline-offset-4 hover:underline">
+              {t("home_vlog_all")} ←
+            </Link>
+          </div>
+          <Link href="/pause" className="group card overflow-hidden grid md:grid-cols-[1.4fr_1fr] items-center transition hover:-translate-y-0.5">
+            <span className="relative block aspect-video overflow-hidden bg-black">
+              {/* eslint-disable-next-line @next/next/no-img-element -- the vlog's own thumbnail */}
+              <img src={posterFor(vlog.youtubeId)} alt="" loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover transition duration-500 group-hover:scale-[1.03]" />
+              <span className="absolute inset-0 grid place-items-center" aria-hidden="true">
+                <span className="grid place-items-center w-16 h-16 rounded-full bg-[#ff0033] text-white text-2xl shadow-xl">▶</span>
+              </span>
+            </span>
+            <span className="p-5 sm:p-7 flex flex-col justify-center gap-2">
+              <span className="text-xl sm:text-2xl font-extrabold de text-end" lang="de">
+                {vlog.title.replace(/🇩🇪/g, "").trim()}
+              </span>
+              {vlog.description_ar && <span className="text-muted leading-relaxed">{vlog.description_ar}</span>}
+              <span className="mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-surface-2 px-4 py-2 text-sm font-bold">☕ {t("home_vlog_cta")}</span>
+            </span>
+          </Link>
+        </section>
+      )}
 
       {/* ── Closing call to action ── */}
       <section className="rounded-[2rem] p-6 sm:p-10 text-center text-white" style={{ background: "linear-gradient(135deg, #1f3a5f, #0f766e)" }}>

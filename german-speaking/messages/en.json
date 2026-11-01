@@ -1215,5 +1215,9 @@
   "cafe_step3": "Join on Google Meet and talk",
   "cafe_upcoming_title": "Upcoming sessions",
   "cafe_upcoming_sub": "Pick a session and book your seat.",
-  "cafe_more_filters": "More filters"
+  "cafe_more_filters": "More filters",
+  "home_vlog_title": "Take a break – watch the vlog",
+  "home_vlog_sub": "From my experiences at the Goethe-Institut.",
+  "home_vlog_all": "All vlogs",
+  "home_vlog_cta": "Watch the vlog"
 }
