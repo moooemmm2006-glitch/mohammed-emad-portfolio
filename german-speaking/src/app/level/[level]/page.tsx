@@ -18,7 +18,7 @@ import { GrammarSkillPanel } from "@/components/level/GrammarSkillPanel";
 import { ListeningForLevel } from "@/components/videos/ListeningHub";
 import { LevelExplore } from "@/components/level/LevelExplore";
 import { LevelReviews } from "@/components/level/LevelReviews";
-import { ReviewsRail } from "@/components/reviews/ReviewsRail";
+import { ReviewsButton } from "@/components/reviews/ReviewsButton";
 import { IntroStrip } from "@/components/site/IntroStrip";
 import { api } from "@/lib/client/api";
 import { fill, type TKey } from "@/lib/client/i18n";
@@ -89,9 +89,9 @@ function LevelContent({ level }: { level: Level }) {
   const setSkill = (id: SkillId) => router.replace(levelPath(level, id === "speak" ? "" : `?skill=${id}`), { scroll: false });
 
   return (
-    // Wide screens: the content and, beside it (under the profile circle), the reviews panel.
-    <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_230px] xl:gap-6 xl:items-start">
-    <div className={`level-${level.toLowerCase()} min-w-0 max-w-5xl xl:max-w-none mx-auto xl:mx-0 xl:w-full space-y-5`}>
+    <div className={`level-${level.toLowerCase()} min-w-0 max-w-5xl mx-auto space-y-5`}>
+      {/* Wide screens: a small "Reviews" button under the profile circle. */}
+      <ReviewsButton floating />
       <IntroStrip />
       <LevelHeader level={level} progress={progress} />
       <PlanCard level={level} />
@@ -124,17 +124,13 @@ function LevelContent({ level }: { level: Level }) {
       {/* What learners say about this level (approved by the admin) — after the lessons. */}
       <LevelReviews level={level} />
 
-      {/* Phones and tablets: the small reviews widget near the end (wide screens have it beside the content). */}
-      <div className="xl:hidden max-w-md">
-        <ReviewsRail inline />
+      {/* Smaller screens: the same small "Reviews" button near the end of the page. */}
+      <div className="min-[1360px]:hidden">
+        <ReviewsButton />
       </div>
 
       {/* After all the content (never between lessons): more activities, trusted sources, about. */}
       <LevelExplore level={level} />
-    </div>
-    <div className="hidden xl:block self-stretch">
-      <ReviewsRail />
-    </div>
     </div>
   );
 }
