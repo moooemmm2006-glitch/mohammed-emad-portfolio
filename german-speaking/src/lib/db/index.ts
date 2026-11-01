@@ -36,8 +36,11 @@ function open() {
     await client.executeMultiple(schema.SPRACHCAFE_DDL);
     await client.executeMultiple(schema.LEVEL_REVIEWS_DDL);
     const now = Date.now();
-    await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["farah", "فرح", "Farah", now, now] });
-    await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["omar-helmy", "عمر حلمي", "Omar Helmy", now, now] });
+    await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["farah", "Frau Farah", "Frau Farah", now, now] });
+    await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["omar-helmy", "Herr Omar", "Herr Omar", now, now] });
+    // The two first teachers are shown with their German titles; rename the old seed once (only if unchanged).
+    await client.execute({ sql: "UPDATE cafe_teachers SET display_name_ar = ?, display_name_en = ? WHERE id = ? AND display_name_ar = ?", args: ["Frau Farah", "Frau Farah", "farah", "فرح"] });
+    await client.execute({ sql: "UPDATE cafe_teachers SET display_name_ar = ?, display_name_en = ? WHERE id = ? AND display_name_ar = ?", args: ["Herr Omar", "Herr Omar", "omar-helmy", "عمر حلمي"] });
   })();
   // A failed migration must not be cached forever (e.g. a network blip on Turso).
   ready.catch(() => {

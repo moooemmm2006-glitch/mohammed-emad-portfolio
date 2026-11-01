@@ -1175,7 +1175,7 @@
   "vid_guide_title": "So lernst du mit dem Video",
   "vid_guide_sub": "Ein kurzes Video von mir – Schritt für Schritt",
   "intro_title": "Lerne die Seite kennen",
-  "intro_sub": "Ich bin Mohammed – ich lerne seit zwei Jahren Deutsch und lerne immer noch 😄 Hier teile ich meine Reise mit dir und alles, was mir geholfen hat.",
+  "intro_sub": "📍 Ich bin Mohammed – ich lerne seit zwei Jahren Deutsch und lerne immer noch. Hier teile ich meine Reise mit dir und alles, was mir geholfen hat.",
   "intro_label": "Video ansehen (1 Min.)",
   "intro_play_aria": "Vorstellungsvideo abspielen",
   "intro_consent": "Das Video wird mit Zustimmung der Gäste gezeigt.",
@@ -1208,5 +1208,12 @@
   "home_f_cafe": "Sprachcafé",
   "home_f_cafe_sub": "Gesprächsrunden mit Lehrkräften auf Google Meet.",
   "home_cta_title": "Fang heute an",
-  "home_cta_sub": "Jeden Tag ein kleiner Schritt – und bald sprichst du."
+  "home_cta_sub": "Jeden Tag ein kleiner Schritt – und bald sprichst du.",
+  "cafe_how_title": "So buchst du",
+  "cafe_step1": "Wähle eine Sitzung für dein Niveau",
+  "cafe_step2": "Platz mit einem Klick buchen",
+  "cafe_step3": "Über Google Meet teilnehmen und sprechen",
+  "cafe_upcoming_title": "Nächste Sitzungen",
+  "cafe_upcoming_sub": "Wähle eine Sitzung und buche deinen Platz.",
+  "cafe_more_filters": "Weitere Filter"
 }
