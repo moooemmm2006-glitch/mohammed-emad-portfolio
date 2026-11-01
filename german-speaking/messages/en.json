@@ -1152,5 +1152,11 @@
   "lrev_site_empty": "No opinions yet. Try the site and tell us what you think.",
   "lrev_site_form_title": "Your opinion of the site",
   "lrev_student_site": "Learner on the site",
-  "lrev_tab_site": "General"
+  "lrev_tab_site": "General",
+  "rv_page_title": "Reviews",
+  "rv_page_sub": "Real opinions from people learning German with Sprich Deutsch – each from a real account, checked before it shows.",
+  "rv_none_yet": "No reviews yet – they'll show here as soon as learners write.",
+  "rv_cta_signup": "Create an account and start",
+  "rv_see_all": "All reviews →",
+  "rv_honest_note": "First names only. No paid or invented reviews."
 }

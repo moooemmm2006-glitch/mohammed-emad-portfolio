@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { useUI } from "@/lib/client/ui";
 import { api } from "@/lib/client/api";
-import { PUBLIC_PATHS, useMe } from "@/lib/client/me";
+import { OPEN_PATHS, PUBLIC_PATHS, useMe } from "@/lib/client/me";
 import { UI_LANGS, type UILang } from "@/lib/client/i18n";
 import { isLevel, LEVEL_CONFIG, LEVELS, type Level } from "@/lib/levels";
 import { LEVEL_COOKIE, levelPath } from "@/lib/paths";
@@ -38,7 +38,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { me, loading } = useMe();
   const communityUserId = me?.user.id;
   // Login and sign-up: language and theme only.
-  const bare = PUBLIC_PATHS.includes(path);
+  const bare = PUBLIC_PATHS.includes(path) || (OPEN_PATHS.includes(path) && !me);
   const mobileNav = !bare && !!me && !path.startsWith("/community/rooms/");
   const active = levelFromPath(path);
 

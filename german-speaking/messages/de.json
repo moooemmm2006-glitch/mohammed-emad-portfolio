@@ -1152,5 +1152,11 @@
   "lrev_site_empty": "Noch keine Meinungen. Probier die Seite aus und sag, was du denkst.",
   "lrev_site_form_title": "Deine Meinung zur Seite",
   "lrev_student_site": "Lernt auf der Seite",
-  "lrev_tab_site": "Allgemein"
+  "lrev_tab_site": "Allgemein",
+  "rv_page_title": "Bewertungen",
+  "rv_page_sub": "Echte Meinungen von Menschen, die mit Sprich Deutsch lernen – jede von einem echten Konto, vor der Veröffentlichung geprüft.",
+  "rv_none_yet": "Noch keine Bewertungen – sie erscheinen hier, sobald Lernende schreiben.",
+  "rv_cta_signup": "Konto erstellen und loslegen",
+  "rv_see_all": "Alle Bewertungen →",
+  "rv_honest_note": "Nur mit Vornamen. Keine bezahlten oder erfundenen Bewertungen."
 }

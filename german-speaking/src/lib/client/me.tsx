@@ -29,6 +29,8 @@ interface MeCtx {
 
 const Ctx = createContext<MeCtx | null>(null);
 export const PUBLIC_PATHS = ["/login", "/signup"];
+/** Pages anyone can open, logged in or not (the public reviews page). */
+export const OPEN_PATHS = ["/reviews"];
 
 export function MeProvider({ children }: { children: ReactNode }) {
   const path = usePathname();
@@ -46,7 +48,7 @@ export function MeProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       setMe(null);
       // A signed cookie whose account was disabled or whose password changed: clear it and go to login.
-      if (err instanceof ApiError && err.status === 401 && !PUBLIC_PATHS.includes(location.pathname)) {
+      if (err instanceof ApiError && err.status === 401 && !PUBLIC_PATHS.includes(location.pathname) && !OPEN_PATHS.includes(location.pathname)) {
         await fetch("/api/auth/logout", { method: "POST" }).catch(() => {});
         location.href = `/login?next=${encodeURIComponent(location.pathname + location.search)}`;
       }
