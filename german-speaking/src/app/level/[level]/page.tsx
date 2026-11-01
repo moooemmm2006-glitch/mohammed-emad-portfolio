@@ -91,8 +91,12 @@ function LevelContent({ level }: { level: Level }) {
     <div className={`level-${level.toLowerCase()} min-w-0 max-w-5xl mx-auto space-y-5`}>
       <IntroStrip />
       <LevelHeader level={level} progress={progress} />
+      {/* 💬 What learners say about the site — right at the front, for everyone who comes in. */}
+      <LevelReviews level="SITE" />
       <PlanCard level={level} />
       <CareerTicker />
+      {/* What learners say about this level (approved by the admin). */}
+      <LevelReviews level={level} />
 
       <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-5 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-[5.5rem] sm:top-16 z-20 backdrop-blur">
         {SKILLS.map((s) => (
@@ -117,9 +121,6 @@ function LevelContent({ level }: { level: Level }) {
           {skill === "grammar" && <GrammarSkillPanel level={level} />}
         </m.div>
       </div>
-
-      {/* What learners say about this level (approved by the admin). */}
-      <LevelReviews level={level} />
 
       {/* After all the content (never between lessons): more activities, trusted sources, about. */}
       <LevelExplore level={level} />

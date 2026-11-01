@@ -48,7 +48,7 @@ export function LevelReviewsAdmin() {
             <li key={r.id} className="card p-4 space-y-2">
               <div className="flex items-center justify-between gap-2">
                 <p className="font-bold">
-                  {r.name} <span className="ms-1 rounded-full bg-surface-2 px-2 py-0.5 text-xs">{r.level}</span>
+                  {r.name} <span className="ms-1 rounded-full bg-surface-2 px-2 py-0.5 text-xs">{r.level === "SITE" ? t("lrev_tab_site") : r.level}</span>
                 </p>
                 <Stars value={r.rating} />
               </div>

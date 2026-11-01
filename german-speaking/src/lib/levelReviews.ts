@@ -9,6 +9,9 @@ import { levelSkillProgress } from "@/lib/skills";
 // approves it (editing sends it back to review). Shown with the first name only.
 
 export const LEVEL_REVIEW_MIN_PROGRESS = 25; // % of the level (average of the four skills)
+/** "SITE" = an opinion of the whole website (any learner can write one), shown on the front page. */
+export const SITE_REVIEW = "SITE" as const;
+export type ReviewTarget = Level | typeof SITE_REVIEW;
 export const LEVEL_REVIEW_MIN = 10;
 export const LEVEL_REVIEW_MAX = 400;
 export type LevelReviewStatus = "pending" | "approved" | "rejected";
@@ -29,7 +32,7 @@ async function withNames<T extends { userId: string }>(rows: T[]) {
 }
 
 /** Approved opinions of a level, newest first, plus the average. */
-export async function approvedLevelReviews(level: Level, limit = 40) {
+export async function approvedLevelReviews(level: ReviewTarget, limit = 40) {
   const db = await getDb();
   const rows = await db.select().from(schema.levelReviews).where(and(eq(schema.levelReviews.level, level), eq(schema.levelReviews.status, "approved"))).orderBy(desc(schema.levelReviews.updatedAt)).all();
   const average = rows.length ? Math.round((10 * rows.reduce((n, r) => n + r.rating, 0)) / rows.length) / 10 : null;
@@ -37,13 +40,13 @@ export async function approvedLevelReviews(level: Level, limit = 40) {
   return { average, count: rows.length, reviews: named.map((r) => ({ id: r.id, rating: r.rating, comment: r.comment, name: r.name, level: r.level, at: r.updatedAt })) };
 }
 
-export async function myLevelReview(userId: string, level: Level) {
+export async function myLevelReview(userId: string, level: ReviewTarget) {
   const db = await getDb();
   return (await db.select().from(schema.levelReviews).where(and(eq(schema.levelReviews.userId, userId), eq(schema.levelReviews.level, level))).get()) ?? null;
 }
 
 /** Write or rewrite my opinion; it goes (back) to the admin's review. */
-export async function saveLevelReview(userId: string, level: Level, rating: number, comment: string, now = Date.now()) {
+export async function saveLevelReview(userId: string, level: ReviewTarget, rating: number, comment: string, now = Date.now()) {
   const db = await getDb();
   const existing = await myLevelReview(userId, level);
   const values = { rating: Math.max(1, Math.min(5, Math.round(rating))), comment: comment.trim().slice(0, LEVEL_REVIEW_MAX), status: "pending" as const, updatedAt: now };
@@ -56,7 +59,7 @@ export async function saveLevelReview(userId: string, level: Level, rating: numb
   return id;
 }
 
-export async function deleteMyLevelReview(userId: string, level: Level) {
+export async function deleteMyLevelReview(userId: string, level: ReviewTarget) {
   const db = await getDb();
   const res = await db.delete(schema.levelReviews).where(and(eq(schema.levelReviews.userId, userId), eq(schema.levelReviews.level, level))).run();
   return res.rowsAffected > 0;

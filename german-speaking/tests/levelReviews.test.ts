@@ -88,4 +88,20 @@ describe("level opinions", () => {
     cookie = sara;
     expect((await list()).mine).toBeNull();
   });
+
+  it("an opinion of the whole site needs no progress and still waits for the admin", async () => {
+    cookie = sara;
+    progress.value = 0;
+    expect((await list("SITE")).canWrite).toBe(true);
+    expect((await route.POST(json("POST", { level: "site", rating: 5, comment: "أحسن موقع اتعلمت منه ألماني" }))).status).toBe(201);
+    expect((await list("SITE")).count).toBe(0);
+    cookie = admin;
+    const pending = (await (await adminRoute.GET(new Request("http://test/x?status=pending"))).json()) as { reviews: { id: string; level: string }[] };
+    const mine = pending.reviews.find((r) => r.level === "SITE")!;
+    await adminRoute.PATCH(json("PATCH", { id: mine.id, status: "approved" }));
+    cookie = sara;
+    expect((await list("SITE")).count).toBe(1);
+    expect((await list("A1")).count).toBe(0); // separate from the levels
+    expect((await route.GET(new Request("http://test/x?level=C2"))).status).toBe(400);
+  });
 });

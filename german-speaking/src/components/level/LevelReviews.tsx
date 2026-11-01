@@ -7,8 +7,12 @@ import { fill, localeOf } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { LEVEL_CONFIG, type Level } from "@/lib/levels";
 
-// 💬 "آراء الطلاب": a swipeable reel of what learners say about this level (approved by the admin),
-// and — for learners who worked on the level — a short form to add their own.
+export type ReviewTarget = Level | "SITE";
+const SITE_ACCENT = "#7c3aed";
+
+// 💬 "آراء الطلاب": a swipeable reel of what learners say about a level — or about the whole site
+// (level "SITE", shown at the top of the front page) — approved by the admin, and a short form to add
+// your own (for a level: once you worked on it; for the site: any learner).
 
 type Review = { id: string; rating: number; comment: string; name: string; level: string; at: number };
 type Data = { average: number | null; count: number; reviews: Review[]; mine: { rating: number; comment: string; status: "pending" | "approved" | "rejected" } | null; progress: number; minProgress: number; canWrite: boolean };
@@ -16,9 +20,11 @@ type Data = { average: number | null; count: number; reviews: Review[]; mine: { 
 const MIN = 10;
 const MAX = 400;
 
-export function LevelReviews({ level }: { level: Level }) {
+export function LevelReviews({ level }: { level: ReviewTarget }) {
   const { t, lang } = useUI();
-  const accent = LEVEL_CONFIG[level].accent;
+  const site = level === "SITE";
+  const accent = site ? SITE_ACCENT : LEVEL_CONFIG[level].accent;
+  const title = site ? t("lrev_site_title") : fill(t("lrev_title"), { level });
   const [data, setData] = useState<Data | null>(null);
   const [failed, setFailed] = useState(false);
   const [writing, setWriting] = useState(false);
@@ -35,9 +41,9 @@ export function LevelReviews({ level }: { level: Level }) {
   // Never disappear: while loading (or if loading failed) the section still shows its title.
   if (!data) {
     return (
-      <section id="reviews" className="card p-4 sm:p-6 space-y-3 scroll-mt-28" aria-labelledby="level-reviews-title" data-testid="level-reviews">
-        <h2 id="level-reviews-title" className="text-xl sm:text-2xl font-extrabold">
-          {fill(t("lrev_title"), { level })}
+      <section id={site ? "site-reviews" : "reviews"} className="card p-4 sm:p-6 space-y-3 scroll-mt-28" aria-labelledby={`reviews-title-${level}`} data-testid={site ? "site-reviews" : "level-reviews"}>
+        <h2 id={`reviews-title-${level}`} className="text-xl sm:text-2xl font-extrabold">
+          {title}
         </h2>
         {failed ? (
           <p className="flex flex-wrap items-center gap-3 text-sm text-muted">
@@ -61,14 +67,20 @@ export function LevelReviews({ level }: { level: Level }) {
   };
 
   return (
-    <section id="reviews" className="card p-4 sm:p-6 space-y-5 overflow-hidden scroll-mt-28" aria-labelledby="level-reviews-title" data-testid="level-reviews">
+    <section
+      id={site ? "site-reviews" : "reviews"}
+      className={`card p-4 sm:p-6 space-y-5 overflow-hidden scroll-mt-28 ${site ? "border-2" : ""}`}
+      style={site ? { borderColor: `color-mix(in oklab, ${accent} 35%, transparent)`, background: `linear-gradient(135deg, color-mix(in oklab, ${accent} 7%, var(--surface)), var(--surface) 60%)` } : undefined}
+      aria-labelledby={`reviews-title-${level}`}
+      data-testid={site ? "site-reviews" : "level-reviews"}
+    >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="text-xs font-bold tracking-widest uppercase de" style={{ color: accent }} lang="de">
             Stimmen
           </p>
-          <h2 id="level-reviews-title" className="text-xl sm:text-2xl font-extrabold mt-1">
-            {fill(t("lrev_title"), { level })}
+          <h2 id={`reviews-title-${level}`} className="text-xl sm:text-2xl font-extrabold mt-1">
+            {title}
           </h2>
           {data.count > 0 && data.average != null ? (
             <p className="mt-1 flex items-center gap-2 text-sm">
@@ -77,7 +89,7 @@ export function LevelReviews({ level }: { level: Level }) {
               <span className="text-muted">{fill(t("lrev_count"), { n: data.count })}</span>
             </p>
           ) : (
-            <p className="text-sm text-muted mt-1">{t("lrev_empty")}</p>
+            <p className="text-sm text-muted mt-1">{site ? t("lrev_site_empty") : t("lrev_empty")}</p>
           )}
         </div>
         <div className="flex items-center gap-2">
@@ -100,7 +112,7 @@ export function LevelReviews({ level }: { level: Level }) {
       </div>
 
       {data.reviews.length > 0 && (
-        <ul ref={reel} className="level-reviews-reel -mx-4 sm:-mx-6 px-4 sm:px-6 flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory pb-2" aria-label={fill(t("lrev_title"), { level })}>
+        <ul ref={reel} className="level-reviews-reel -mx-4 sm:-mx-6 px-4 sm:px-6 flex gap-3 sm:gap-4 overflow-x-auto snap-x snap-mandatory pb-2" aria-label={title}>
           {data.reviews.map((r) => (
             <li key={r.id} className="snap-start shrink-0 w-[85%] min-[480px]:w-[300px] sm:w-[340px] rounded-2xl border border-line bg-surface-2/50 p-4 sm:p-5 flex flex-col gap-3">
               <div className="flex items-center justify-between gap-2">
@@ -119,7 +131,7 @@ export function LevelReviews({ level }: { level: Level }) {
                 <span className="min-w-0">
                   <span className="block font-bold truncate">{r.name}</span>
                   <span className="block text-xs text-muted">
-                    {fill(t("lrev_student_of"), { level: r.level })} · {new Date(r.at).toLocaleDateString(localeOf(lang), { month: "short", year: "numeric" })}
+                    {r.level === "SITE" ? t("lrev_student_site") : fill(t("lrev_student_of"), { level: r.level })} · {new Date(r.at).toLocaleDateString(localeOf(lang), { month: "short", year: "numeric" })}
                   </span>
                 </span>
               </div>
@@ -151,7 +163,7 @@ export function LevelReviews({ level }: { level: Level }) {
   );
 }
 
-function LevelReviewForm({ level, initial, onDone, onCancel }: { level: Level; initial: Data["mine"]; onDone: () => void; onCancel: () => void }) {
+function LevelReviewForm({ level, initial, onDone, onCancel }: { level: ReviewTarget; initial: Data["mine"]; onDone: () => void; onCancel: () => void }) {
   const { t } = useUI();
   const [rating, setRating] = useState(initial?.rating ?? 0);
   const [comment, setComment] = useState(initial?.comment ?? "");
@@ -172,7 +184,7 @@ function LevelReviewForm({ level, initial, onDone, onCancel }: { level: Level; i
   };
   return (
     <div className="rounded-2xl border border-line p-4 space-y-3" data-testid="level-review-form">
-      <p className="font-bold">{fill(t("lrev_form_title"), { level })}</p>
+      <p className="font-bold">{level === "SITE" ? t("lrev_site_form_title") : fill(t("lrev_form_title"), { level })}</p>
       <div className="flex gap-1" role="radiogroup" aria-label={t("lrev_stars")}>
         {[1, 2, 3, 4, 5].map((n) => (
           <button key={n} type="button" role="radio" aria-checked={rating === n} aria-label={`${n}/5`} className={`grid place-items-center w-11 h-11 rounded-xl text-2xl transition ${n <= rating ? "text-amber-500" : "text-line hover:text-amber-300"}`} onClick={() => setRating(n)}>
