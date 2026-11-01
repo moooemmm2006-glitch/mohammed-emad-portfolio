@@ -1159,5 +1159,17 @@
   "rv_cta_signup": "Create an account and start",
   "rv_see_all": "All reviews →",
   "rv_honest_note": "First names only. No paid or invented reviews.",
-  "rv_all_n": "All ({n})"
+  "rv_all_n": "All ({n})",
+  "community_studying_now": "{n} studying now",
+  "community_invite_short": "Invite",
+  "community_search": "Search rooms…",
+  "community_all_levels": "All",
+  "community_no_match": "No rooms match.",
+  "community_open_rooms": "Open rooms",
+  "community_room_gone": "This room isn't available anymore.",
+  "community_back": "Back",
+  "community_pick_room": "Pick a room from the list to see it and join – or start your own.",
+  "community_room_empty": "Nobody inside yet – be the first.",
+  "community_more_people": "and {n} more",
+  "community_people_inside": "{n} inside"
 }
