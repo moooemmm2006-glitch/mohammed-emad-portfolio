@@ -1159,5 +1159,17 @@
   "rv_cta_signup": "Konto erstellen und loslegen",
   "rv_see_all": "Alle Bewertungen →",
   "rv_honest_note": "Nur mit Vornamen. Keine bezahlten oder erfundenen Bewertungen.",
-  "rv_all_n": "Alle ({n})"
+  "rv_all_n": "Alle ({n})",
+  "community_studying_now": "{n} lernen gerade",
+  "community_invite_short": "Einladung",
+  "community_search": "Raum suchen…",
+  "community_all_levels": "Alle",
+  "community_no_match": "Keine passenden Räume.",
+  "community_open_rooms": "Offene Räume",
+  "community_room_gone": "Dieser Raum ist nicht mehr verfügbar.",
+  "community_back": "Zurück",
+  "community_pick_room": "Wähle links einen Raum – oder starte deinen eigenen.",
+  "community_room_empty": "Noch niemand da – fang an!",
+  "community_more_people": "und {n} weitere",
+  "community_people_inside": "{n} im Raum"
 }

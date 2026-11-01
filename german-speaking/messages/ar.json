@@ -1159,5 +1159,17 @@
   "rv_cta_signup": "اعمل حساب وابدأ",
   "rv_see_all": "كل الريفيوز ←",
   "rv_honest_note": "الريفيوز بتظهر بالاسم الأول بس. مفيش ريفيوز مدفوعة أو متألفة.",
-  "rv_all_n": "كل الريفيوز ({n})"
+  "rv_all_n": "كل الريفيوز ({n})",
+  "community_studying_now": "{n} بيذاكروا دلوقتي",
+  "community_invite_short": "رابط دعوة",
+  "community_search": "دوّر على غرفة…",
+  "community_all_levels": "الكل",
+  "community_no_match": "مفيش غرف بالبحث ده. جرّب مستوى تاني.",
+  "community_open_rooms": "غرف مفتوحة",
+  "community_room_gone": "الغرفة دي مش متاحة دلوقتي.",
+  "community_back": "رجوع",
+  "community_pick_room": "اختار غرفة من القايمة عشان تشوف تفاصيلها وتنضم، أو ابدأ غرفتك.",
+  "community_room_empty": "لسه محدش جوه. ادخل وابدأ.",
+  "community_more_people": "و{n} كمان",
+  "community_people_inside": "{n} جوه الغرفة"
 }

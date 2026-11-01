@@ -1,38 +1,82 @@
 "use client";
-import Link from "next/link";
 import Image from "next/image";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api } from "@/lib/client/api";
 import { useUI } from "@/lib/client/ui";
-import type { TKey } from "@/lib/client/i18n";
+import { fill, type TKey } from "@/lib/client/i18n";
 import type { Level } from "@/lib/levels";
 type RoomCardData={id:string;name:string;description:string;visibility:"public"|"private";capacity:number;level:string;mode:string;goal:string;approvalRequired:boolean;status:string;timerStatus:string;timerPhase:string;host:{name:string;photo:string|null};participants:number;createdAt:number};
 type Dashboard={preferences:{shareOnline:boolean};stats:{online:number;studying:number;rooms:number;publicAvailable:number};rooms:RoomCardData[];myRooms:RoomCardData[];onlinePeople:{id:string;name:string;photo:string|null;room:{id:string;name:string;level:string}|null}[]};
 type FormData={name:string;description:string;visibility:"public"|"private";capacity:number;level:"general"|Level;mode:"silent"|"focus"|"practice"|"grammar"|"free";goal:string;durationMinutes:number;breakMinutes:number;approvalRequired:boolean};
 const empty:FormData={name:"",description:"",visibility:"public",capacity:12,level:"general",mode:"focus",goal:"",durationMinutes:25,breakMinutes:5,approvalRequired:false};
-export function CommunityHome(){
- const {t}=useUI(),router=useRouter();const [data,setData]=useState<Dashboard|null>(null),[error,setError]=useState(false),[createOpen,setCreateOpen]=useState(false),[inviteOpen,setInviteOpen]=useState(false),[inviteText,setInviteText]=useState(""),[form,setForm]=useState(empty),[busy,setBusy]=useState(false),[notice,setNotice]=useState("");
+// 👥 Community: a two-pane, chat-app-like layout. Start: the rooms list (my rooms on top, then open
+// rooms, with search and a level filter); the main pane shows the selected room (?room=id) with one big
+// "Join" button. Phones show one pane at a time (list → room, with a back arrow). Data and actions are
+// the same as before: GET /api/community, create, join, invite link, "show me as available".
+export function CommunityHome(){return <Suspense><CommunityHomeInner/></Suspense>}
+function CommunityHomeInner(){
+ const {t}=useUI(),router=useRouter(),params=useSearchParams();const [data,setData]=useState<Dashboard|null>(null),[error,setError]=useState(false),[createOpen,setCreateOpen]=useState(false),[inviteOpen,setInviteOpen]=useState(false),[inviteText,setInviteText]=useState(""),[form,setForm]=useState(empty),[busy,setBusy]=useState(false),[notice,setNotice]=useState("");
  const load=useCallback(async()=>{try{setData(await api<Dashboard>("/api/community"));setError(false)}catch{setError(true)}},[]);
  useEffect(()=>{void load();const timer=window.setInterval(()=>void load(),15000);return()=>window.clearInterval(timer)},[load]);
  const create=async(e:FormEvent)=>{e.preventDefault();setBusy(true);setNotice("");try{const r=await api<{id:string;inviteToken:string|null}>("/api/community/rooms",{method:"POST",body:JSON.stringify(form)});setCreateOpen(false);router.push(`/community/rooms/${r.id}${r.inviteToken?`?invite=${r.inviteToken}`:""}`)}catch{setNotice(t("community_create_failed"))}finally{setBusy(false)}};
  const join=async(room:RoomCardData)=>{setBusy(true);setNotice("");try{await api(`/api/community/rooms/${room.id}/join`,{method:"POST",body:JSON.stringify({})});router.push(`/community/rooms/${room.id}`)}catch{setNotice(room.participants>=room.capacity?t("community_room_full"):t("community_load_failed"))}finally{setBusy(false)}};
  const setShare=async(shareOnline:boolean)=>{setData(d=>d?{...d,preferences:{shareOnline}}:d);try{await api("/api/community/preferences",{method:"PUT",body:JSON.stringify({shareOnline})})}catch{void load()}};
  const followInvite=(e:FormEvent)=>{e.preventDefault();const match=inviteText.trim().match(/(?:community\/invite\/)?([A-Za-z0-9_-]{40,60})\/?$/);if(!match){setNotice(t("community_invite_invalid"));return}router.push(`/community/invite/${encodeURIComponent(match[1])}`)};
- return <main className="mx-auto max-w-7xl px-4 py-6 sm:py-9 space-y-6">
-  <header className="card relative overflow-hidden p-6 sm:p-9 bg-gradient-to-br from-surface via-surface to-emerald-500/10"><div aria-hidden="true" className="absolute -top-20 -end-16 w-64 h-64 rounded-full bg-emerald-500/10 blur-3xl"/><div className="relative flex flex-wrap items-end justify-between gap-5"><div><span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 px-3 py-1 text-xs font-bold"><i className="w-2 h-2 rounded-full bg-emerald-500"/>{t("community_nav")}</span><h1 className="text-3xl sm:text-4xl font-extrabold mt-4">{t("community_title")}</h1><p className="text-muted mt-2 max-w-2xl leading-7">{t("community_intro")}</p></div><div className="flex flex-wrap gap-2"><button className="btn btn-primary" onClick={()=>setCreateOpen(true)}>＋ {t("community_create_room")}</button><button className="btn btn-ghost" onClick={()=>{setInviteText("");setInviteOpen(true)}}>🔗 {t("community_join_invite")}</button></div></div></header>
-  {notice&&<p role="status" className="card px-4 py-3 text-sm">{notice}</p>}
-  {error&&<div role="alert" className="card p-5 flex items-center justify-between gap-3"><span>{t("community_load_failed")}</span><button className="btn btn-ghost" onClick={()=>void load()}>{t("community_retry")}</button></div>}
-  {!data?<div className="grid grid-cols-2 lg:grid-cols-4 gap-3">{Array.from({length:4},(_,i)=><div key={i} className="card h-24 animate-pulse bg-surface-2"/> )}</div>:<>
-   <section className="grid grid-cols-2 lg:grid-cols-4 gap-3" aria-label={t("community_stats")}>
-    {([["👥","community_online",data.stats.online],["📚","community_studying",data.stats.studying],["🏠","community_active_rooms",data.stats.rooms],["🟢","community_available_rooms",data.stats.publicAvailable]] as const).map(([icon,key,value])=><article className="card p-4 sm:p-5" key={key}><span className="text-xl" aria-hidden="true">{icon}</span><p className="text-2xl font-extrabold mt-2 tabular-nums">{value}</p><p className="text-xs sm:text-sm text-muted mt-1">{t(key as TKey)}</p></article>)}
+ const selectedId=params.get("room");
+ const [query,setQuery]=useState(""),[levelFilter,setLevelFilter]=useState<"all"|Level>("all");
+ const allRooms=useMemo(()=>{if(!data)return [] as RoomCardData[];const seen=new Map<string,RoomCardData>();for(const r of [...data.myRooms,...data.rooms])if(!seen.has(r.id))seen.set(r.id,r);return [...seen.values()]},[data]);
+ const matches=useCallback((r:RoomCardData)=>(levelFilter==="all"||r.level===levelFilter)&&(!query.trim()||`${r.name} ${r.description} ${r.host.name}`.toLowerCase().includes(query.trim().toLowerCase())),[levelFilter,query]);
+ const myIds=useMemo(()=>new Set(data?.myRooms.map(r=>r.id)??[]),[data]);
+ const mine=(data?.myRooms??[]).filter(matches),open=(data?.rooms??[]).filter(r=>!myIds.has(r.id)).filter(matches);
+ const selected=allRooms.find(r=>r.id===selectedId)??null;
+ // Phones: opening a room is a new screen (the back button returns to the list); wide screens just swap the pane.
+ const select=(id:string|null)=>{const url=id?`/community?room=${encodeURIComponent(id)}`:"/community";if(window.matchMedia("(min-width: 768px)").matches)router.replace(url,{scroll:false});else router.push(url,{scroll:true})};
+ const openCreate=()=>{setNotice("");setCreateOpen(true)},openInvite=()=>{setNotice("");setInviteText("");setInviteOpen(true)};
+ return <main className="mx-auto max-w-7xl px-0 sm:px-4 pt-0 sm:pt-4 pb-4">
+  {error&&<div role="alert" className="card mx-3 sm:mx-0 mb-3 p-4 flex items-center justify-between gap-3"><span>{t("community_load_failed")}</span><button className="btn btn-ghost" onClick={()=>void load()}>{t("community_retry")}</button></div>}
+  {notice&&<p role="status" className="card mx-3 sm:mx-0 mb-3 px-4 py-3 text-sm">{notice}</p>}
+  <div className="md:rounded-[1.25rem] md:border md:border-line md:bg-surface md:shadow-[var(--shadow)] md:overflow-hidden md:grid md:grid-cols-[320px_minmax(0,1fr)] lg:grid-cols-[360px_minmax(0,1fr)] md:h-[calc(100dvh-8.5rem)] md:min-h-[540px]">
+   {/* ── Rooms list ── */}
+   <aside className={`${selectedId?"hidden md:flex":"flex"} flex-col min-h-0 md:border-e border-line`} aria-label={t("community_nav")}>
+    <div className="px-3 sm:px-4 pt-3 pb-2 space-y-3 border-b border-line">
+     <div className="flex items-center justify-between gap-2">
+      <div className="min-w-0"><h1 className="text-xl font-extrabold">{t("community_nav")}</h1>{data&&data.stats.studying>0&&<p className="text-xs text-muted mt-0.5 flex items-center gap-1.5"><i className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"/>{fill(t("community_studying_now"),{n:data.stats.studying})}</p>}</div>
+      <div className="hidden md:flex items-center gap-1.5">
+       <button type="button" className="btn btn-primary !min-h-[38px] !px-3 text-sm" onClick={openCreate}>＋ {t("community_create_room")}</button>
+       <button type="button" className="btn btn-ghost !min-h-[38px] !px-3 text-sm" onClick={openInvite} aria-label={t("community_join_invite")} title={t("community_join_invite")}>🔗</button>
+      </div>
+      <button type="button" className="md:hidden btn btn-ghost !min-h-[40px] !px-3 text-sm" onClick={openInvite}>🔗 {t("community_invite_short")}</button>
+     </div>
+     <input type="search" className="field !py-2" placeholder={t("community_search")} aria-label={t("community_search")} value={query} onChange={e=>setQuery(e.target.value)}/>
+     <div className="flex gap-1.5 overflow-x-auto pb-0.5" role="group" aria-label={t("community_level")}>
+      {(["all","A1","A2","B1","B2"] as const).map(l=><button key={l} type="button" aria-pressed={levelFilter===l} onClick={()=>setLevelFilter(l)} className={`shrink-0 rounded-full px-3 min-h-[34px] text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 ${levelFilter===l?"bg-emerald-600 text-white":"bg-surface-2 text-muted hover:text-ink"}`}>{l==="all"?t("community_all_levels"):l}</button>)}
+     </div>
+     {data&&<label className="flex items-center justify-between gap-3 text-xs text-muted cursor-pointer" title={t("community_share_status_help")}>
+      <span>{t("community_share_status")}</span>
+      <span className="relative inline-flex shrink-0"><input type="checkbox" role="switch" className="peer sr-only" checked={data.preferences.shareOnline} onChange={e=>void setShare(e.target.checked)}/><span aria-hidden="true" className="w-9 h-5 rounded-full bg-surface-2 border border-line transition peer-checked:bg-emerald-600 peer-focus-visible:ring-2 peer-focus-visible:ring-emerald-500"/><span aria-hidden="true" className="absolute top-0.5 start-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform peer-checked:translate-x-4 rtl:peer-checked:-translate-x-4"/></span>
+     </label>}
+    </div>
+    <div className="flex-1 min-h-0 overflow-y-auto px-2 py-2 pb-24 md:pb-2" data-testid="rooms-list">
+     {!data?<ul className="space-y-1" aria-hidden="true">{Array.from({length:6},(_,i)=><li key={i} className="flex items-center gap-3 px-2 py-2.5"><span className="w-10 h-10 rounded-full bg-surface-2 animate-pulse"/><span className="flex-1 space-y-2"><span className="block h-3 w-2/3 rounded bg-surface-2 animate-pulse"/><span className="block h-2.5 w-1/3 rounded bg-surface-2 animate-pulse"/></span></li>)}</ul>
+     :allRooms.length===0?<div className="text-center px-4 py-10"><p className="text-3xl" aria-hidden="true">🫧</p><p className="mt-2 text-sm text-muted">{t("community_no_rooms")}</p><button type="button" className="btn btn-primary mt-4" onClick={openCreate}>{t("community_create_room")}</button></div>
+     :mine.length+open.length===0?<p className="text-center text-sm text-muted px-4 py-10">{t("community_no_match")}</p>
+     :<>
+      {mine.length>0&&<RoomGroup title={t("community_my_rooms")} rooms={mine} selectedId={selectedId} onSelect={select} t={t}/>}
+      {open.length>0&&<RoomGroup title={t("community_open_rooms")} rooms={open} selectedId={selectedId} onSelect={select} t={t}/>}
+     </>}
+    </div>
+   </aside>
+   {/* ── Selected room ── */}
+   <section className={`${selectedId?"flex":"hidden md:flex"} flex-col min-h-0`} aria-live="polite">
+    {selected&&data?<RoomDetails room={selected} own={myIds.has(selected.id)} people={data.onlinePeople.filter(p=>p.room?.id===selected.id)} busy={busy} onBack={()=>select(null)} onJoin={()=>void join(selected)} t={t}/>
+    :selectedId&&!data?<div className="p-6 space-y-3" aria-hidden="true"><div className="h-6 w-1/2 rounded bg-surface-2 animate-pulse"/><div className="h-4 w-1/3 rounded bg-surface-2 animate-pulse"/><div className="h-24 rounded-2xl bg-surface-2 animate-pulse"/></div>
+    :selectedId&&data?<div className="flex-1 grid place-items-center p-8 text-center"><div><p className="text-muted">{t("community_room_gone")}</p><button type="button" className="btn btn-ghost mt-4" onClick={()=>select(null)}>{t("community_back")}</button></div></div>
+    :<div className="flex-1 grid place-items-center p-8 text-center"><div className="max-w-sm"><p className="text-4xl" aria-hidden="true">👥</p><h2 className="mt-3 text-xl font-bold">{t("community_title")}</h2><p className="mt-2 text-sm text-muted leading-relaxed">{t("community_pick_room")}</p><button type="button" className="btn btn-primary mt-5" onClick={openCreate}>＋ {t("community_create_room")}</button></div></div>}
    </section>
-   <section className="card px-4 py-3 flex flex-wrap items-center justify-between gap-3"><div><p className="font-semibold">{t("community_share_status")}</p><p className="text-xs text-muted mt-1">{t("community_share_status_help")}</p></div><label className="inline-flex items-center gap-2 cursor-pointer"><input type="checkbox" className="accent-emerald-600 w-5 h-5" checked={data.preferences.shareOnline} onChange={e=>void setShare(e.target.checked)}/><span className="text-sm">{data.preferences.shareOnline?t("community_status_visible"):t("community_status_hidden")}</span></label></section>
-   {data.myRooms.length>0&&<section><SectionTitle title={t("community_my_rooms")} count={data.myRooms.length}/><div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3 mt-3">{data.myRooms.map(room=><RoomCard key={room.id} room={room} own onJoin={()=>void join(room)} t={t}/>)}</div></section>}
-   <section><SectionTitle title={t("community_public_rooms")} count={data.rooms.length}/>{data.rooms.length?<div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3 mt-3">{data.rooms.map(room=><RoomCard key={room.id} room={room} own={data.myRooms.some(r=>r.id===room.id)} onJoin={()=>void join(room)} t={t}/>)}</div>:<div className="card p-8 text-center text-muted mt-3"><p className="text-3xl">🫧</p><p className="mt-2">{t("community_no_rooms")}</p><button className="btn btn-primary mt-4" onClick={()=>setCreateOpen(true)}>{t("community_create_room")}</button></div>}</section>
-   <section><SectionTitle title={t("community_people_studying")} count={data.onlinePeople.length}/>{data.onlinePeople.length?<div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-3">{data.onlinePeople.map(person=><article className="card p-4 flex items-center gap-3" key={person.id}><Avatar name={person.name} photo={person.photo}/><div className="min-w-0 flex-1"><p className="font-semibold truncate">{person.name}</p><p className="text-xs text-muted mt-0.5">{person.room?`${t("community_in_room")} ${person.room.name}`:t("community_status_visible")}</p></div>{person.room&&<Link className="btn btn-ghost !px-2 text-xs" href={`/community/rooms/${person.room.id}`}>{t("community_open")}</Link>}</article>)}</div>:<p className="card p-5 text-sm text-muted mt-3">{t("community_online_empty")}</p>}</section>
-   <section className="card p-4 sm:p-5"><h2 className="font-bold">{t("community_resources")}</h2><p className="text-sm text-muted mt-1">{t("community_resource_intro")}</p><div className="flex flex-wrap gap-2 mt-3">{(["A1","A2","B1","B2"] as const).map(level=><Link className="btn btn-ghost" href={`/grammar/${level}`} key={level}>📘 {level} · {t("community_share_grammar")}</Link>)}</div><p className="text-xs text-muted mt-3">{t("community_session_not_counted")}</p></section>
-  </>}
+  </div>
+  {/* Phones: create room as a floating button above the bottom bar. */}
+  {!selectedId&&<button type="button" onClick={openCreate} aria-label={t("community_create_room")} className="md:hidden fixed bottom-24 end-4 z-30 grid place-items-center w-14 h-14 rounded-full bg-emerald-600 text-white text-3xl shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2">＋</button>}
   {inviteOpen&&<Modal onClose={()=>setInviteOpen(false)}><form onSubmit={followInvite} className="space-y-4"><h2 className="text-xl font-bold">{t("community_join_invite")}</h2><label className="block space-y-1.5"><span className="text-sm">{t("community_invite_title")}</span><input className="field" autoFocus value={inviteText} onChange={e=>setInviteText(e.target.value)}/></label><div className="flex justify-end gap-2"><button type="button" className="btn btn-ghost" onClick={()=>setInviteOpen(false)}>{t("community_cancel")}</button><button className="btn btn-primary">{t("community_join")}</button></div></form></Modal>}
   {createOpen&&<Modal onClose={()=>setCreateOpen(false)}><form onSubmit={create} className="space-y-4"><div><h2 className="text-2xl font-bold">{t("community_create_room")}</h2><p className="text-sm text-muted mt-1">{t("community_room_form_intro")}</p></div>
    <div className="grid sm:grid-cols-2 gap-3"><Field label={t("community_room_name")}><input className="field" minLength={3} maxLength={70} required value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></Field><Field label={t("community_visibility")}><select className="field" value={form.visibility} onChange={e=>setForm({...form,visibility:e.target.value as FormData["visibility"]})}><option value="public">{t("community_public")}</option><option value="private">{t("community_private")}</option></select></Field></div>
@@ -44,24 +88,52 @@ export function CommunityHome(){
   </form></Modal>}
  </main>;
 }
-function SectionTitle({title,count}:{title:string;count:number}){return <div className="flex items-center gap-2"><h2 className="text-xl font-bold">{title}</h2><span className="rounded-full bg-surface-2 px-2.5 py-1 text-xs tabular-nums">{count}</span></div>}
-function RoomCard({ room, own, onJoin, t }: { room: RoomCardData; own: boolean; onJoin: () => void; t: (key: TKey) => string }) {
- const modeLabel = ("community_mode_" + room.mode) as TKey;
- const levelLabel = room.level === "general" ? t("community_general_level") : room.level;
- const visibilityLabel = room.visibility === "private" ? t("community_private") : t("community_public");
- const actionLabel = own ? t("community_open") : room.participants >= room.capacity ? t("community_room_full") : t("community_join");
- return (
-  <article className="card p-4 flex flex-col gap-4 border border-line/70 hover:border-emerald-500/40 transition">
-   <div className="flex items-start gap-3"><Avatar name={room.host.name} photo={room.host.photo}/><div className="min-w-0 flex-1"><div className="flex justify-between gap-2"><h3 className="font-bold truncate">{room.name}</h3><span className="w-2.5 h-2.5 mt-1.5 shrink-0 rounded-full bg-emerald-500" aria-label={t("community_room_active")}/></div><p className="text-xs text-muted mt-1">{t("community_host")}: {room.host.name}</p></div><span aria-label={visibilityLabel}>{room.visibility === "private" ? "🔒" : "🌐"}</span></div>
-   {room.description ? <p className="text-sm text-muted line-clamp-2">{room.description}</p> : null}
-   <div className="flex flex-wrap gap-1.5"><Tag>{levelLabel}</Tag><Tag>{t(modeLabel)}</Tag>{room.approvalRequired ? <Tag>{t("community_approval_on")}</Tag> : null}</div>
-   <div className="flex items-center justify-between text-xs text-muted"><span>👥 {room.participants}/{room.capacity} {t("community_participant_count")}</span><span>⏱ {room.timerStatus === "running" ? t("community_timer_focus") : t("community_timer_idle")}</span></div>
-   <button className={own ? "btn btn-ghost w-full" : "btn btn-primary w-full"} disabled={busyRoom(own, room)} onClick={onJoin}>{actionLabel}</button>
-  </article>
- );
+type T=(key:TKey)=>string;
+function RoomGroup({title,rooms,selectedId,onSelect,t}:{title:string;rooms:RoomCardData[];selectedId:string|null;onSelect:(id:string)=>void;t:T}){
+ return <section className="mb-2"><h2 className="px-2 pt-2 pb-1 text-[11px] font-bold tracking-wide text-muted uppercase">{title} <span className="tabular-nums">· {rooms.length}</span></h2><ul className="space-y-0.5">{rooms.map(r=><li key={r.id}><RoomRow room={r} active={r.id===selectedId} onClick={()=>onSelect(r.id)} t={t}/></li>)}</ul></section>;
 }
-function busyRoom(own:boolean,room:RoomCardData){return !own&&room.participants>=room.capacity}
-function Tag({children}:{children:React.ReactNode}){return <span className="rounded-full bg-surface-2 px-2.5 py-1 text-xs">{children}</span>}
+function LevelBadge({level,t}:{level:string;t:T}){return <span className="shrink-0 rounded-md bg-surface-2 px-1.5 py-0.5 text-[11px] font-bold tabular-nums">{level==="general"?t("community_general_level"):level}</span>}
+function RoomRow({room,active,onClick,t}:{room:RoomCardData;active:boolean;onClick:()=>void;t:T}){
+ const live=room.participants>0;
+ return <button type="button" onClick={onClick} aria-current={active?"true":undefined} className={`w-full flex items-center gap-3 rounded-xl px-2 py-2 min-h-[56px] text-start transition focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-emerald-500 ${active?"bg-emerald-500/10":"hover:bg-surface-2"}`}>
+  <span className="relative shrink-0"><Avatar name={room.host.name} photo={room.host.photo}/>{live&&<span className="absolute -bottom-0.5 -end-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[var(--surface)]" aria-label={t("community_room_active")}/>}</span>
+  <span className="min-w-0 flex-1">
+   <span className="flex items-center gap-1.5"><span className="font-semibold truncate" dir="auto">{room.name}</span>{room.visibility==="private"&&<span aria-label={t("community_private")} className="text-xs">🔒</span>}</span>
+   <span className="flex items-center gap-1.5 text-xs text-muted mt-0.5"><LevelBadge level={room.level} t={t}/><span className="truncate">{t(`community_mode_${room.mode}` as TKey)}</span></span>
+  </span>
+  <span className="shrink-0 text-xs text-muted tabular-nums" aria-label={`${room.participants}/${room.capacity} ${t("community_participant_count")}`}>👥 {room.participants}/{room.capacity}</span>
+ </button>;
+}
+function RoomDetails({room,own,people,busy,onBack,onJoin,t}:{room:RoomCardData;own:boolean;people:Dashboard["onlinePeople"];busy:boolean;onBack:()=>void;onJoin:()=>void;t:T}){
+ const full=!own&&room.participants>=room.capacity,others=Math.max(0,room.participants-people.length);
+ return <div className="flex-1 min-h-0 overflow-y-auto">
+  <div className="sticky top-0 z-10 flex items-center gap-2 px-3 sm:px-5 py-2.5 border-b border-line bg-surface/95 backdrop-blur">
+   <button type="button" onClick={onBack} className="md:hidden grid place-items-center w-10 h-10 rounded-full hover:bg-surface-2 text-xl rtl:rotate-180" aria-label={t("community_back")}>←</button>
+   <h2 className="font-bold truncate flex-1" dir="auto">{room.name}</h2>
+   {room.participants>0&&<span className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-300"><i className="w-2 h-2 rounded-full bg-emerald-500" aria-hidden="true"/>{t("community_room_active")}</span>}
+  </div>
+  <div className="p-4 sm:p-6 space-y-5 max-w-2xl">
+   <div className="flex items-center gap-3"><Avatar name={room.host.name} photo={room.host.photo}/><div className="min-w-0"><p className="text-xs text-muted">{t("community_host")}</p><p className="font-semibold truncate" dir="auto">{room.host.name}</p></div></div>
+   <div className="flex flex-wrap gap-1.5 text-xs">
+    <span className="rounded-full bg-emerald-500/10 text-emerald-800 dark:text-emerald-200 px-2.5 py-1 font-bold">{room.level==="general"?t("community_general_level"):room.level}</span>
+    <span className="rounded-full bg-surface-2 px-2.5 py-1">{t(`community_mode_${room.mode}` as TKey)}</span>
+    <span className="rounded-full bg-surface-2 px-2.5 py-1">{room.visibility==="private"?`🔒 ${t("community_private")}`:`🌐 ${t("community_public")}`}</span>
+    {room.approvalRequired&&<span className="rounded-full bg-surface-2 px-2.5 py-1">{t("community_approval_on")}</span>}
+    <span className="rounded-full bg-surface-2 px-2.5 py-1">⏱ {room.timerStatus==="running"?t("community_timer_focus"):t("community_timer_idle")}</span>
+   </div>
+   {room.description&&<p className="leading-relaxed whitespace-pre-wrap break-words" dir="auto">{room.description}</p>}
+   {room.goal&&<div className="rounded-2xl bg-surface-2 px-4 py-3"><p className="text-xs text-muted">{t("community_goal")}</p><p className="mt-0.5 font-medium break-words" dir="auto">{room.goal}</p></div>}
+   <div>
+    <h3 className="text-sm font-bold">{t("community_members")} <span className="text-muted font-normal tabular-nums">· {room.participants}/{room.capacity}</span></h3>
+    {room.participants===0?<p className="mt-2 text-sm text-muted">{t("community_room_empty")}</p>:<ul className="mt-2 space-y-1.5">
+     {people.map(p=><li key={p.id} className="flex items-center gap-2.5"><span className="relative"><Avatar name={p.name} photo={p.photo}/><span className="absolute -bottom-0.5 -end-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[var(--surface)]" aria-hidden="true"/></span><span className="truncate" dir="auto">{p.name}</span></li>)}
+     {others>0&&<li className="text-sm text-muted">{fill(t(people.length?"community_more_people":"community_people_inside"),{n:others})}</li>}
+    </ul>}
+   </div>
+   <button type="button" className="btn btn-primary w-full !min-h-[52px] text-lg" disabled={busy||full} onClick={onJoin}>{busy?t("loading"):own?t("community_open"):full?t("community_room_full"):t("community_join")}</button>
+  </div>
+ </div>;
+}
 function Avatar({name,photo}:{name:string;photo:string|null}){return photo?<Image src={photo} alt="" width={40} height={40} unoptimized className="w-10 h-10 rounded-full object-cover shrink-0"/>:<span className="w-10 h-10 rounded-full bg-emerald-600/20 text-emerald-800 dark:text-emerald-200 grid place-items-center font-bold shrink-0">{name.trim().slice(0,1)||"?"}</span>}
 function Field({label,children}:{label:string;children:React.ReactNode}){return <label className="block space-y-1.5"><span className="text-sm font-semibold">{label}</span>{children}</label>}
 function Modal({children,onClose}:{children:React.ReactNode;onClose:()=>void}){return <div className="fixed inset-0 z-50 bg-black/55 p-3 sm:p-6 grid place-items-center" onMouseDown={e=>{if(e.target===e.currentTarget)onClose()}}><div className="card w-full max-w-2xl max-h-[92dvh] overflow-y-auto p-5 sm:p-7" role="dialog" aria-modal="true">{children}</div></div>}
