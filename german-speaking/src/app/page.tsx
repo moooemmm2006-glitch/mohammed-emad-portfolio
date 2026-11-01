@@ -1,10 +1,13 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { HomePage } from "@/components/home/HomePage";
 import { isLevel } from "@/lib/levels";
-import { LEVEL_COOKIE, levelPath } from "@/lib/paths";
+import { LEVEL_COOKIE } from "@/lib/paths";
 
-// The start page is the learner's last level (A1 the first time).
+export const metadata: Metadata = { title: "الرئيسية" };
+
+// 🏠 The home page: welcome + continue, the intro video, the four levels, everything on the site.
 export default async function Home() {
   const last = (await cookies()).get(LEVEL_COOKIE)?.value?.toUpperCase();
-  redirect(levelPath(isLevel(last) ? last : "A1"));
+  return <HomePage lastLevel={isLevel(last) ? last : null} />;
 }

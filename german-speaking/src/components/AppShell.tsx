@@ -1,6 +1,6 @@
 "use client";
 
-import { IconSprachcafe } from "@/components/Icons";
+import { IconHome, IconSprachcafe } from "@/components/Icons";
 import Link from "next/link";
 import { m } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -89,7 +89,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {children}
       </main>
       <SiteFooter loggedIn={!bare && !!me} minimal={/^\/level\/[a-z0-9]+\/?$/i.test(path)} />
-      {mobileNav && <MobilePrimaryNav path={path} active={active} />}
+      {mobileNav && <MobilePrimaryNav path={path} />}
       {!bare && me && <FocusController />}
     </div>
   );
@@ -112,6 +112,7 @@ function LevelNav({ active, communityActive, cafeActive }: { active: Level | nul
   const { t } = useUI();
   return (
     <nav aria-label={t("header_level")} className="flex items-center gap-1.5 sm:gap-3 min-w-0 overflow-x-auto">
+      <Link href="/" aria-label={t("home_nav")} title={t("home_nav")} className="hidden md:grid place-items-center w-9 h-9 shrink-0 rounded-full text-muted hover:bg-surface-2 hover:text-foreground"><IconHome size={20} /></Link>
       <span className="font-extrabold text-sm sm:text-2xl leading-none whitespace-nowrap">{t("header_level")}</span>
       <div className="flex items-center gap-0.5 sm:gap-1 rounded-full bg-surface-2/70 p-0.5 sm:p-1 shadow-inner">
         {LEVELS.map((l) => {
@@ -141,10 +142,10 @@ function LevelNav({ active, communityActive, cafeActive }: { active: Level | nul
   );
 }
 
-function MobilePrimaryNav({ path, active }: { path: string; active: Level | null }) {
+function MobilePrimaryNav({ path }: { path: string }) {
   const { t, lang } = useUI();
   const items = [
-    { href: active ? levelPath(active) : "/", label: t("nav_levels"), icon: "📚", selected: Boolean(active) || path === "/" },
+    { href: "/", label: t("home_nav"), icon: "🏠", selected: path === "/" },
     { href: "/community", label: t("community_nav"), icon: "👥", selected: path.startsWith("/community") },
     { href: "/sprachcafe", label: t("cafe_nav"), icon: <IconSprachcafe size={20} />, selected: path.startsWith("/sprachcafe") },
     { href: "/grammar", label: t("nav_grammar"), icon: "📘", selected: path.startsWith("/grammar") },

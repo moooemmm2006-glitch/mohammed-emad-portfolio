@@ -5,28 +5,24 @@ import { createPortal } from "react-dom";
 import { IconX } from "@/components/Icons";
 import { useUI } from "@/lib/client/ui";
 
-// 🎬 "اتعرّف على الموقع": the intro video (the owner's own, guests agreed). The page shows only the
-// poster; the video file is requested only after the play button is pressed, and plays in a dialog.
+// 🎬 "اتعرّف على الموقع": the intro video (the owner's own, guests agreed), on the home page. The page
+// shows only the poster; the video file is requested only after play is pressed, and plays in a dialog.
 
 const VIDEO = "/media/german-intro-web.mp4";
 const POSTER = "/media/german-intro-poster.jpg";
 
-export function IntroVideo() {
+/** The poster with the round play button; pressing it opens the video in a dialog. */
+export function IntroVideoPoster() {
   const { t } = useUI();
   const [open, setOpen] = useState(false);
   return (
-    <section className="space-y-3" aria-labelledby="intro-video-title" data-testid="intro-video">
-      <div>
-        <h2 id="intro-video-title" className="text-xl sm:text-2xl font-extrabold">
-          {t("intro_title")}
-        </h2>
-        <p className="text-sm sm:text-base text-muted mt-1">{t("intro_sub")}</p>
-      </div>
+    <>
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-label={t("intro_play_aria")}
-        className="group relative block w-full max-w-3xl mx-auto overflow-hidden rounded-[1.25rem] border border-line bg-surface-2 shadow-[var(--shadow)] aspect-video focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
+        data-testid="intro-play"
+        className="group relative block w-full overflow-hidden rounded-[1.25rem] border border-line bg-surface-2 shadow-[var(--shadow)] aspect-video focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--brand)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--bg)]"
       >
         {/* eslint-disable-next-line @next/next/no-img-element -- a plain lazy poster; no optimisation needed */}
         <img src={POSTER} alt="" width={1280} height={720} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
@@ -42,9 +38,8 @@ export function IntroVideo() {
           ▶ {t("intro_label")}
         </span>
       </button>
-      <p className="text-xs text-muted text-center">{t("intro_consent")}</p>
       {open && <VideoDialog onClose={() => setOpen(false)} />}
-    </section>
+    </>
   );
 }
 
