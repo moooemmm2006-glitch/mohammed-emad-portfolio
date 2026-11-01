@@ -202,3 +202,28 @@ export function IconWhatsApp({ className = "h-6 w-6" }: { className?: string }) 
     </svg>
   );
 }
+
+/** Calendar glyph in a blue circle — "pick a session" step in the Sprachcafé hero. */
+export function IconCalendarBadge({ className = "h-6 w-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Calendar">
+      <circle cx="16" cy="16" r="16" fill="#2563eb" />
+      <rect x="8.5" y="10" width="15" height="13.5" rx="2.5" fill="#fff" />
+      <rect x="8.5" y="10" width="15" height="4" rx="2" fill="#bfdbfe" />
+      <path d="M12 8v4M20 8v4" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+      <g fill="#2563eb"><circle cx="12.5" cy="17.5" r="1.2" /><circle cx="16" cy="17.5" r="1.2" /><circle cx="19.5" cy="17.5" r="1.2" /><circle cx="12.5" cy="21" r="1.2" /><circle cx="16" cy="21" r="1.2" /></g>
+    </svg>
+  );
+}
+
+/** Video-call + speech glyph in a teal circle — "join the live session and talk" step (generic, not a brand logo). */
+export function IconVideoTalkBadge({ className = "h-6 w-6" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 32 32" className={className} role="img" aria-label="Video call">
+      <circle cx="16" cy="16" r="16" fill="#0d9488" />
+      <rect x="7" y="11" width="13" height="10" rx="2.5" fill="#fff" />
+      <path d="M20 14.5l5-3v9l-5-3z" fill="#fff" />
+      <path d="M10.5 15h6M10.5 17.5h4" stroke="#0d9488" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
