@@ -50,14 +50,27 @@ export async function copyText(text: string): Promise<boolean> {
   return legacyCopy(text);
 }
 
+/** Longest link we build; longer prompts open Gemini empty (the copy is still there to paste). */
+export const MAX_PROMPT_URL = 7000;
+
 /**
- * Copy and open a page in a new tab with ONE tap. The tab is opened synchronously, before any
+ * Gemini with the prompt already in its box (`?q=`), so the learner just sends it. Unofficial: if a
+ * device or the Gemini app ignores it, the copied prompt is still in the clipboard to paste.
+ */
+export function withPrompt(url: string, text: string): string {
+  if (!/^https:\/\/gemini\.google\.com\//.test(url)) return url;
+  const link = `${url}${url.includes("?") ? "&" : "?"}q=${encodeURIComponent(text)}`;
+  return link.length <= MAX_PROMPT_URL ? link : url;
+}
+
+/**
+ * Copy and open a page in a new tab with ONE tap. For Gemini the prompt also travels in the link. The tab is opened synchronously, before any
  * async copy finishes, so Safari (iOS) doesn't block it as a popup. The synchronous copy runs first,
  * while this page still has focus; the Clipboard API is the backup.
  */
 export function copyAndOpen(text: string, url: string): Promise<boolean> {
   const copied = legacyCopy(text);
   const later = copied ? Promise.resolve(true) : hasClipboardApi() ? navigator.clipboard.writeText(text).then(() => true, () => false) : Promise.resolve(false);
-  window.open(url, "_blank", "noopener,noreferrer");
+  window.open(withPrompt(url, text), "_blank", "noopener,noreferrer");
   return later;
 }
