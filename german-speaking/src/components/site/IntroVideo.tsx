@@ -9,7 +9,7 @@ import { useUI } from "@/lib/client/ui";
 // shows only the poster; the video file is requested only after play is pressed, and plays in a dialog.
 
 const VIDEO = "/media/german-intro-web.mp4";
-const POSTER = "/media/german-intro-poster.jpg";
+const POSTER = "/media/german-intro-poster-v2.jpg";
 
 /** The poster with the round play button; pressing it opens the video in a dialog. */
 export function IntroVideoPoster() {
