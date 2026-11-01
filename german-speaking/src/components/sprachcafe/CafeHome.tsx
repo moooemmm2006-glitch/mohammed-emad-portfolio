@@ -1,5 +1,5 @@
 "use client";
-import { IconSprachcafe, IconWhatsApp } from "@/components/Icons";
+import { IconCalendarBadge, IconSprachcafe, IconVideoTalkBadge, IconWhatsApp } from "@/components/Icons";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -31,7 +31,7 @@ export function CafeHome(){
     <h1 className="mt-4 text-3xl sm:text-5xl font-extrabold tracking-tight">{cafeText(t,"title")}</h1>
     <p className="mt-3 max-w-3xl text-lg leading-8 text-muted">{cafeText(t,"intro")}</p>
     <ol className="mt-6 grid gap-3 sm:grid-cols-3" aria-label={cafeText(t,"how_title")}>
-     {(["step1","step2","step3"] as const).map((k,i)=><li key={k} className="flex items-center gap-3 rounded-2xl border border-line bg-surface/80 p-3.5"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-500 text-lg font-black text-slate-950">{i+1}</span><span className="text-sm font-semibold leading-snug">{cafeText(t,k)}</span>{k==="step2"&&<IconWhatsApp className="ms-auto h-7 w-7 shrink-0" />}</li>)}
+     {(["step1","step2","step3"] as const).map((k,i)=><li key={k} className="flex items-center gap-3 rounded-2xl border border-line bg-surface/80 p-3.5"><span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-500 text-lg font-black text-slate-950">{i+1}</span><span className="text-sm font-semibold leading-snug">{cafeText(t,k)}</span>{(()=>{const C=k==="step1"?IconCalendarBadge:k==="step2"?IconWhatsApp:IconVideoTalkBadge;return <C className="ms-auto h-7 w-7 shrink-0" />;})()}</li>)}
     </ol>
     <div className="mt-6 flex flex-wrap gap-3"><a className="btn btn-primary" href="#sessions">{cafeText(t,"browse")}</a><Link className="btn btn-ghost" href="/sprachcafe/bookings">{cafeText(t,"my_bookings")}</Link><a className="btn btn-ghost" href="#teachers">{cafeText(t,"teachers")}</a></div>
     <p className="mt-4 text-xs text-muted">{cafeText(t,"media_note")}</p>

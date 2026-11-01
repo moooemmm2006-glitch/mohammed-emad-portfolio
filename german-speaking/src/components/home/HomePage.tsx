@@ -49,7 +49,7 @@ export function HomePage({ lastLevel }: { lastLevel: Level | null }) {
             Sprich Deutsch
           </p>
           <h1 id="home-title" className="mt-2 text-3xl sm:text-5xl font-extrabold leading-tight">
-            {first ? fill(t("home_hello"), { name: first }) : t("home_hello_anon")}
+            <span className="de" lang="de">{first ? fill(t("home_hello"), { name: first }) : t("home_hello_anon")}</span>
           </h1>
           <p className="mt-3 text-base sm:text-lg text-muted leading-relaxed">{t("home_sub")}</p>
           <div className="mt-6 flex flex-wrap gap-2.5">
