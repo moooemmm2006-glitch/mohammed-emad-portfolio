@@ -7,7 +7,7 @@ import { jsonLdString, publicSiteReviews, reviewsJsonLd } from "@/lib/publicRevi
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "الريفيوز – Sprich Deutsch",
+  title: "الريفيوز",
   description: "Was Lernende über Sprich Deutsch sagen – echte Bewertungen von A1 bis B2. آراء الطلاب الحقيقية في Sprich Deutsch.",
   alternates: { canonical: "/reviews" },
 };

@@ -33,6 +33,16 @@ export function ProfileMenu() {
   const [note, setNote] = useState<string | null>(null);
   const wrap = useRef<HTMLDivElement>(null);
   const button = useRef<HTMLButtonElement>(null);
+  // Admin: how many learners' opinions wait for a decision (a small dot on the avatar + a count).
+  const [pending, setPending] = useState(0);
+  const isAdmin = me?.user.role === "admin";
+  useEffect(() => {
+    if (!isAdmin) return;
+    const load = () => api<{ reviews: unknown[] }>("/api/admin/level-reviews?status=pending").then((r) => setPending(r.reviews.length), () => {});
+    void load();
+    const id = window.setInterval(load, 120_000);
+    return () => window.clearInterval(id);
+  }, [isAdmin]);
   const fileInput = useRef<HTMLInputElement>(null);
 
   // Close on outside click and on Esc (focus goes back to the circle).
@@ -109,13 +119,14 @@ export function ProfileMenu() {
       <button
         ref={button}
         type="button"
-        className="grid place-items-center rounded-full w-10 h-10 hover:ring-4 ring-surface-2 transition"
+        className="relative grid place-items-center rounded-full w-10 h-10 hover:ring-4 ring-surface-2 transition"
         aria-label={t("me_label")}
         aria-haspopup="true"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
       >
         <UserAvatar name={user.name} username={user.username} photo={user.photo} size={36} />
+        {pending > 0 && <span className="absolute top-0 end-0 w-3 h-3 rounded-full bg-danger ring-2 ring-surface" aria-hidden="true" />}
       </button>
       <input ref={fileInput} type="file" accept={PHOTO_ACCEPT} className="hidden" onChange={onFile} />
 
@@ -201,6 +212,11 @@ export function ProfileMenu() {
             {user.role === "admin" && (
               <MenuLink href="/admin" icon={<IconShield size={18} />} onClick={() => setOpen(false)}>
                 {t("me_admin")}
+                {pending > 0 && (
+                  <span className="ms-auto rounded-full bg-danger px-2 py-0.5 text-xs font-bold text-white" title={t("lrev_adm_pending")}>
+                    {pending}
+                  </span>
+                )}
               </MenuLink>
             )}
             <div className="border-t border-line my-1" />

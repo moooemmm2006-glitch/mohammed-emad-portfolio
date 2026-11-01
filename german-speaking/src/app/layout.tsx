@@ -11,11 +11,19 @@ import { dbTarget } from "@/lib/db";
 import { ProvidersProvider } from "@/components/ProvidersProvider";
 import { SiteProvider } from "@/components/site/SiteProvider";
 import { siteLinksSafe } from "@/lib/site";
+import { siteUrl } from "@/lib/siteUrl";
 import "./globals.css";
 
+const DESCRIPTION = "Deutsch sprechen lernen von A1 bis B2: Sätze nachsprechen, Grammatik, Videos, Lesen, Schreiben, Lernplan und Sprachcafé. تعلّم تتكلم ألماني من A1 لحد B2.";
+
 export const metadata: Metadata = {
-  title: "Sprich Deutsch",
-  description: "German practice A1–B2 with your own book: listen & repeat, grammar, videos, reading, writing, and voice conversations with Gemini.",
+  metadataBase: new URL(siteUrl()),
+  title: { default: "Sprich Deutsch", template: "%s · Sprich Deutsch" },
+  description: DESCRIPTION,
+  applicationName: "Sprich Deutsch",
+  openGraph: { type: "website", siteName: "Sprich Deutsch", title: "Sprich Deutsch – Deutsch sprechen lernen", description: DESCRIPTION, locale: "ar_EG", alternateLocale: ["de_DE", "en_US"] },
+  twitter: { card: "summary_large_image", title: "Sprich Deutsch – Deutsch sprechen lernen", description: DESCRIPTION },
+  appleWebApp: { capable: true, title: "Sprich Deutsch", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
