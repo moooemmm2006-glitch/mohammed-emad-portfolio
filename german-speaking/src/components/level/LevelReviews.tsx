@@ -140,6 +140,13 @@ export function LevelReviews({ level }: { level: ReviewTarget }) {
         </ul>
       )}
 
+      {site && (
+        <p className="text-sm">
+          <a href="/reviews" className="font-bold underline" style={{ color: accent }}>
+            {t("rv_see_all")}
+          </a>
+        </p>
+      )}
       {data.mine && !writing && (
         <p className="text-sm rounded-xl bg-surface-2 px-3 py-2" role="status">
           {t(data.mine.status === "approved" ? "lrev_mine_approved" : data.mine.status === "rejected" ? "lrev_mine_rejected" : "lrev_mine_pending")}
