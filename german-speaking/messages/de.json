@@ -1140,5 +1140,11 @@
   "lrev_adm_approve": "Freigeben",
   "lrev_adm_hide": "Ausblenden",
   "lrev_adm_delete": "Löschen",
-  "lrev_adm_delete_confirm": "Diese Meinung endgültig löschen?"
+  "lrev_adm_delete_confirm": "Diese Meinung endgültig löschen?",
+  "lrev_nav": "Stimmen der Lernenden",
+  "lrev_explore_sub": "Lies, was andere sagen – und sag deine Meinung",
+  "lrev_page_title": "Was Lernende sagen",
+  "lrev_page_sub": "Echte Meinungen von Lernenden auf der Seite – wähle ein Niveau.",
+  "lrev_load_failed": "Die Meinungen konnten nicht geladen werden.",
+  "lrev_retry": "Erneut versuchen"
 }

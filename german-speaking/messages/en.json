@@ -1140,5 +1140,11 @@
   "lrev_adm_approve": "Approve",
   "lrev_adm_hide": "Hide",
   "lrev_adm_delete": "Delete",
-  "lrev_adm_delete_confirm": "Delete this opinion for good?"
+  "lrev_adm_delete_confirm": "Delete this opinion for good?",
+  "lrev_nav": "Learners' opinions",
+  "lrev_explore_sub": "See what others say – and share yours",
+  "lrev_page_title": "What learners say",
+  "lrev_page_sub": "Real opinions from learners on the site – pick a level.",
+  "lrev_load_failed": "Couldn't load the opinions.",
+  "lrev_retry": "Try again"
 }
