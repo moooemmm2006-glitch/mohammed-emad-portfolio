@@ -32,6 +32,8 @@ export const nicosWeg: { A1: NicosWegLevel; A2: NicosWegLevel; B1: NicosWegLevel
 };
 
 export const DW_COURSE_URL = "https://learngerman.dw.com";
+/** The owner's own video: how to study Nicos Weg and get the most out of it (shown under the movie). */
+export const NICOS_STUDY_GUIDE_ID = "LSfqMq72Qjk";
 export const NICOS_WEG_CREDIT = "Nicos Weg – Deutsche Welle (DW)";
 export const VIDEO_THEMA_CREDIT = "Video-Thema – Deutsche Welle (DW)";
 

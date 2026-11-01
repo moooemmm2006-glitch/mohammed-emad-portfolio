@@ -1171,5 +1171,7 @@
   "community_pick_room": "اختار غرفة من القايمة عشان تشوف تفاصيلها وتنضم، أو ابدأ غرفتك.",
   "community_room_empty": "لسه محدش جوه. ادخل وابدأ.",
   "community_more_people": "و{n} كمان",
-  "community_people_inside": "{n} جوه الغرفة"
+  "community_people_inside": "{n} جوه الغرفة",
+  "vid_guide_title": "ازاي تذاكر الفيديو وتستفيد منه",
+  "vid_guide_sub": "فيديو قصير مني بيشرحلك الطريقة خطوة بخطوة"
 }

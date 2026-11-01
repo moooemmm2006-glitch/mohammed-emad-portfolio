@@ -1171,5 +1171,7 @@
   "community_pick_room": "Pick a room from the list to see it and join – or start your own.",
   "community_room_empty": "Nobody inside yet – be the first.",
   "community_more_people": "and {n} more",
-  "community_people_inside": "{n} inside"
+  "community_people_inside": "{n} inside",
+  "vid_guide_title": "How to study with the video",
+  "vid_guide_sub": "A short video from me – step by step"
 }

@@ -1171,5 +1171,7 @@
   "community_pick_room": "Wähle links einen Raum – oder starte deinen eigenen.",
   "community_room_empty": "Noch niemand da – fang an!",
   "community_more_people": "und {n} weitere",
-  "community_people_inside": "{n} im Raum"
+  "community_people_inside": "{n} im Raum",
+  "vid_guide_title": "So lernst du mit dem Video",
+  "vid_guide_sub": "Ein kurzes Video von mir – Schritt für Schritt"
 }
