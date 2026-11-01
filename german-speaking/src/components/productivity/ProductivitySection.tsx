@@ -117,7 +117,9 @@ export function ProductivitySection({ compact = false, headingLevel = 2 }: { com
               </span>
               <span>
                 <span className="block font-bold">{name}</span>
-                <span className="block text-sm text-muted">{t("prod_channel")}</span>
+                <span className="block text-sm text-muted">
+                  {t("prod_channel")}: <span dir="auto">{info.channel}</span>
+                </span>
               </span>
             </div>
             {channel && (

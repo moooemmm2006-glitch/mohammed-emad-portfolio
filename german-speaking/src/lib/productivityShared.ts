@@ -5,10 +5,15 @@ import { parseYouTubeId } from "./easyGermanShared";
 
 export const CREATORS = ["abouzeid", "abdaal"] as const;
 export type Creator = (typeof CREATORS)[number];
-export const CREATOR_INFO: Record<Creator, { ar: string; latin: string; initials: string }> = {
-  abouzeid: { ar: "أحمد أبو زيد", latin: "Ahmed Abouzeid", initials: "AZ" },
-  abdaal: { ar: "Ali Abdaal", latin: "Ali Abdaal", initials: "AA" },
+export const CREATOR_INFO: Record<Creator, { ar: string; latin: string; initials: string; channel: string }> = {
+  abouzeid: { ar: "أحمد أبو زيد", latin: "Ahmed Abouzeid", initials: "AZ", channel: "دروس أونلاين" },
+  abdaal: { ar: "Ali Abdaal", latin: "Ali Abdaal", initials: "AA", channel: "Ali Abdaal" },
 };
+
+/** Added once on a fresh section (picked by the owner); the admin can delete it and it stays deleted. */
+export const PRODUCTIVITY_SEED: { creator: Creator; youtubeId: string; title: string }[] = [
+  { creator: "abouzeid", youtubeId: "7nmKtI7fEmU", title: "تعلّم كيف تتعلّم" },
+];
 export const PRODUCTIVITY_KINDS = ["video", "course", "channel"] as const;
 export type ProductivityKind = (typeof PRODUCTIVITY_KINDS)[number];
 
