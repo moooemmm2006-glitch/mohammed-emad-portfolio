@@ -1158,5 +1158,6 @@
   "rv_none_yet": "No reviews yet – they'll show here as soon as learners write.",
   "rv_cta_signup": "Create an account and start",
   "rv_see_all": "All reviews →",
-  "rv_honest_note": "First names only. No paid or invented reviews."
+  "rv_honest_note": "First names only. No paid or invented reviews.",
+  "rv_all_n": "All ({n})"
 }
