@@ -22,6 +22,14 @@ export const IconHome = (p: P) => (
     <path d="M3 11l9-7 9 7M5 10v10h14V10" />
   </I>
 );
+/** 🎯 Productivity: a target with an arrow. */
+export const IconProductivity = (p: P) => (
+  <I {...p}>
+    <circle cx="11" cy="13" r="8" />
+    <circle cx="11" cy="13" r="4" />
+    <path d="M11 13l8.5-8.5M16.5 4.5h3v3" />
+  </I>
+);
 export const IconChart = (p: P) => (
   <I {...p}>
     <path d="M4 20V10M10 20V4M16 20v-7M22 20H2" />

@@ -253,6 +253,12 @@ export const levelReviews = sqliteTable("level_reviews", {
   comment: text("comment").notNull(), status: text("status").notNull().default("pending"), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
 }, (t) => [uniqueIndex("level_review_user_level_unique").on(t.userId, t.level), index("level_reviews_level_status").on(t.level, t.status, t.updatedAt)]);
 
+/** 🎯 Productivity section: videos, courses and channel links of the creators the owner recommends. */
+export const productivityItems = sqliteTable("productivity_items", {
+  id: text("id").primaryKey(), creator: text("creator").notNull(), kind: text("kind").notNull(), title: text("title").notNull(),
+  url: text("url").notNull(), youtubeId: text("youtube_id"), createdAt: integer("created_at").notNull(),
+}, (t) => [index("productivity_creator_kind").on(t.creator, t.kind, t.createdAt)]);
+
 /** One finished ⏱️ focus session (the "خزنتي" vault). */
 export const focusSessions = sqliteTable("focus_sessions", {
   id: text("id").primaryKey(),
@@ -453,6 +459,11 @@ export const LEVEL_REVIEWS_DDL = [
   "CREATE TABLE IF NOT EXISTS level_reviews (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, level TEXT NOT NULL, rating INTEGER NOT NULL, comment TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
   "CREATE UNIQUE INDEX IF NOT EXISTS level_review_user_level_unique ON level_reviews(user_id, level)",
   "CREATE INDEX IF NOT EXISTS level_reviews_level_status ON level_reviews(level, status, updated_at)",
+].join(";");
+
+export const PRODUCTIVITY_DDL = [
+  "CREATE TABLE IF NOT EXISTS productivity_items (id TEXT PRIMARY KEY, creator TEXT NOT NULL, kind TEXT NOT NULL, title TEXT NOT NULL, url TEXT NOT NULL, youtube_id TEXT, created_at INTEGER NOT NULL)",
+  "CREATE INDEX IF NOT EXISTS productivity_creator_kind ON productivity_items(creator, kind, created_at)",
 ].join(";");
 
 export const READING_DDL = [

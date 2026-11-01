@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { IntroVideoPoster } from "@/components/site/IntroVideo";
 import { IconSprachcafe } from "@/components/Icons";
+import { ProductivitySection } from "@/components/productivity/ProductivitySection";
 import { api } from "@/lib/client/api";
 import { fill, type TKey } from "@/lib/client/i18n";
 import { useMe } from "@/lib/client/me";
@@ -161,6 +162,9 @@ export function HomePage({ lastLevel }: { lastLevel: Level | null }) {
           ))}
         </ul>
       </section>
+
+      {/* ── Productivity & time management ── */}
+      <ProductivitySection compact />
 
       {/* ── From the vlogs: a calm break ── */}
       {vlog && (

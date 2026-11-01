@@ -1,6 +1,6 @@
 "use client";
 
-import { IconHome, IconSprachcafe } from "@/components/Icons";
+import { IconHome, IconProductivity, IconSprachcafe } from "@/components/Icons";
 import { BrandMark } from "@/components/public/kit";
 import Link from "next/link";
 import { m } from "framer-motion";
@@ -117,8 +117,10 @@ function ExplainerButton() {
 /** "المستوى" + the four level pills; the highlight slides to the active level. */
 function LevelNav({ active, communityActive, cafeActive }: { active: Level | null; communityActive: boolean; cafeActive: boolean }) {
   const { t } = useUI();
+  const path = usePathname();
   return (
     <nav aria-label={t("header_level")} className="flex items-center gap-1.5 sm:gap-3 min-w-0 overflow-x-auto">
+      <Link href="/productivity" aria-label={t("prod_nav")} title={t("prod_nav")} aria-current={path === "/productivity" ? "page" : undefined} className={`hidden md:grid place-items-center w-9 h-9 shrink-0 rounded-full hover:bg-surface-2 hover:text-foreground ${path === "/productivity" ? "bg-surface-2 text-foreground" : "text-muted"}`} data-testid="nav-productivity"><IconProductivity size={20} /></Link>
       <Link href="/" aria-label={t("home_nav")} title={t("home_nav")} className="hidden md:grid place-items-center w-9 h-9 shrink-0 rounded-full text-muted hover:bg-surface-2 hover:text-foreground"><IconHome size={20} /></Link>
       <span className="font-extrabold text-sm sm:text-2xl leading-none whitespace-nowrap">{t("header_level")}</span>
       <div className="flex items-center gap-0.5 sm:gap-1 rounded-full bg-surface-2/70 p-0.5 sm:p-1 shadow-inner">
