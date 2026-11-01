@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { IntroVideoPoster } from "@/components/site/IntroVideo";
+import { PlatformShowcase } from "@/components/site/PlatformShowcase";
 import { IconSprachcafe } from "@/components/Icons";
 import { ProductivitySection } from "@/components/productivity/ProductivitySection";
 import { api } from "@/lib/client/api";
@@ -64,30 +64,8 @@ export function HomePage({ lastLevel }: { lastLevel: Level | null }) {
         </div>
       </section>
 
-      {/* ── Intro video + its description ── */}
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] lg:items-center" aria-labelledby="intro-title" data-testid="intro-video">
-        <div className="space-y-4">
-          <p className="text-xs font-bold tracking-[0.2em] uppercase text-muted de" lang="de">
-            Willkommen
-          </p>
-          <h2 id="intro-title" className="text-2xl sm:text-3xl font-extrabold">
-            {t("intro_title")}
-          </h2>
-          <p className="text-muted leading-relaxed">{t("intro_sub")}</p>
-          <ul className="space-y-2.5">
-            {(["intro_point_1", "intro_point_2", "intro_point_3"] as const).map((k) => (
-              <li key={k} className="flex items-start gap-2.5">
-                <span className="mt-1 grid place-items-center w-5 h-5 shrink-0 rounded-full bg-emerald-600 text-white text-[11px] font-bold" aria-hidden="true">
-                  ✓
-                </span>
-                <span className="leading-relaxed">{t(k)}</span>
-              </li>
-            ))}
-          </ul>
-          <p className="text-xs text-muted">{t("intro_consent")}</p>
-        </div>
-        <IntroVideoPoster />
-      </section>
+      {/* ── The platform at a glance ── */}
+      <PlatformShowcase />
 
       {/* ── The four levels ── */}
       <section aria-labelledby="levels-title" className="space-y-4">
