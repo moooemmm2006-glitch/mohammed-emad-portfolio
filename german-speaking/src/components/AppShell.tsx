@@ -1,6 +1,7 @@
 "use client";
 
 import { IconHome, IconSprachcafe } from "@/components/Icons";
+import { BrandMark } from "@/components/public/kit";
 import Link from "next/link";
 import { m } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -65,6 +66,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       </a>
       <header className="glass-header sticky top-0 z-30">
         <div className="mx-auto max-w-7xl px-3 sm:px-4 py-2 sm:py-0 sm:h-16 flex flex-wrap items-center gap-x-2 gap-y-1">
+          {bare && !me && (
+            <Link href="/" className="flex items-center gap-2.5 font-extrabold text-lg" aria-label="Sprich Deutsch">
+              <BrandMark size={34} />
+              <span className="de hidden min-[380px]:inline" dir="ltr">Sprich Deutsch</span>
+            </Link>
+          )}
           {!bare && <div className="w-full min-w-0 sm:w-auto"><LevelNav active={active} communityActive={path.startsWith("/community")} cafeActive={path.startsWith("/sprachcafe")} /></div>}
           <div className="ms-auto flex items-center gap-1 shrink-0">
             <LangSwitcher />

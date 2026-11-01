@@ -1,5 +1,6 @@
 "use client";
 
+import { FooterLinks } from "@/components/public/kit";
 import Link from "next/link";
 import { useUI } from "@/lib/client/ui";
 import { CHANNEL_NAME, type ClickPlace } from "@/lib/siteShared";
@@ -77,6 +78,7 @@ export function SiteFooter({ loggedIn, minimal = false }: { loggedIn: boolean; m
   return (
     <footer className="mx-auto w-full max-w-6xl px-4 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-2 space-y-3">
       {!minimal && <CreatorCard showPause={loggedIn} />}
+      <FooterLinks />
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-muted">
         {links.channelUrl && (
           <a href={links.channelUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 hover:text-ink min-h-[36px]" onClick={() => trackClick("footer")}>

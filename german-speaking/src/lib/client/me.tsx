@@ -30,7 +30,7 @@ interface MeCtx {
 const Ctx = createContext<MeCtx | null>(null);
 export const PUBLIC_PATHS = ["/login", "/signup"];
 /** Pages anyone can open, logged in or not (the public reviews page). */
-export const OPEN_PATHS = ["/reviews"];
+export const OPEN_PATHS = ["/", "/reviews", "/about", "/faq", "/privacy", "/terms", "/test"];
 
 export function MeProvider({ children }: { children: ReactNode }) {
   const path = usePathname();

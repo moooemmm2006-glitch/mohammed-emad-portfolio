@@ -6,9 +6,10 @@ import { SESSION_COOKIE, verifyToken } from "./lib/auth/token";
 // disabled account or a changed password is rejected there.
 
 const PUBLIC_PAGES = ["/login", "/signup"];
-// Open to everyone (and to search engines): the reviews page, which shows only opinions the admin
-// approved (first name, stars, text) — nothing else.
-const OPEN_PAGES = ["/reviews"];
+// Open to everyone (and to search engines): the public face of the site — landing ("/" for visitors;
+// logged-in learners get their home there), about, FAQ, placement test, legal pages, and the reviews
+// page (only opinions the admin approved). None of them shows any account data.
+const OPEN_PAGES = ["/", "/reviews", "/about", "/faq", "/privacy", "/terms", "/test"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -32,5 +33,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!api/auth/|_next/static|_next/image|favicon.ico|icon|apple-icon|robots.txt|sitemap.xml|manifest.webmanifest|opengraph-image|logos/).*)"],
+  matcher: ["/((?!api/auth/|_next/static|_next/image|favicon.ico|icon|apple-icon|robots.txt|sitemap.xml|manifest.webmanifest|opengraph-image|logos/|media/).*)"],
 };

@@ -4,7 +4,7 @@ import { siteUrl } from "@/lib/siteUrl";
 // Search engines may read the public pages (reviews, login, sign-up); everything else needs an account.
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: [{ userAgent: "*", allow: ["/reviews", "/login", "/signup"], disallow: ["/api/", "/admin"] }],
+    rules: [{ userAgent: "*", allow: ["/$", "/reviews", "/about", "/faq", "/test", "/privacy", "/terms", "/login", "/signup"], disallow: ["/api/", "/admin"] }],
     sitemap: `${siteUrl()}/sitemap.xml`,
   };
 }
