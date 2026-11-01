@@ -20,6 +20,7 @@ import { LevelExplore } from "@/components/level/LevelExplore";
 import { LevelReviews } from "@/components/level/LevelReviews";
 import { ReviewsButton } from "@/components/reviews/ReviewsButton";
 import { IntroStrip } from "@/components/site/IntroStrip";
+import { IntroVideo } from "@/components/site/IntroVideo";
 import { api } from "@/lib/client/api";
 import { fill, type TKey } from "@/lib/client/i18n";
 import { useFx } from "@/lib/client/motion";
@@ -94,6 +95,8 @@ function LevelContent({ level }: { level: Level }) {
       <ReviewsButton floating />
       <IntroStrip />
       <LevelHeader level={level} progress={progress} />
+      {/* 🎬 The intro video, right after the hero (only the poster loads until play is pressed). */}
+      <IntroVideo />
       <PlanCard level={level} />
       <CareerTicker />
 

@@ -1173,5 +1173,10 @@
   "community_more_people": "and {n} more",
   "community_people_inside": "{n} inside",
   "vid_guide_title": "How to study with the video",
-  "vid_guide_sub": "A short video from me – step by step"
+  "vid_guide_sub": "A short video from me – step by step",
+  "intro_title": "Get to know the site",
+  "intro_sub": "A German teacher and a German guest talk about the fastest way to learn.",
+  "intro_label": "Watch the video (1 min)",
+  "intro_play_aria": "Play the intro video",
+  "intro_consent": "Shown with the guests' consent."
 }
