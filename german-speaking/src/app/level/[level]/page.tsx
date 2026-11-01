@@ -90,18 +90,12 @@ function LevelContent({ level }: { level: Level }) {
 
   return (
     // Wide screens: the content and, beside it (under the profile circle), the reviews panel.
-    <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_280px] xl:gap-6 xl:items-start">
+    <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_230px] xl:gap-6 xl:items-start">
     <div className={`level-${level.toLowerCase()} min-w-0 max-w-5xl xl:max-w-none mx-auto xl:mx-0 xl:w-full space-y-5`}>
       <IntroStrip />
       <LevelHeader level={level} progress={progress} />
-      {/* 💬 What learners say about the site — right at the front (on wide screens: the side panel). */}
-      <div className="xl:hidden">
-        <LevelReviews level="SITE" />
-      </div>
       <PlanCard level={level} />
       <CareerTicker />
-      {/* What learners say about this level (approved by the admin). */}
-      <LevelReviews level={level} />
 
       <div role="tablist" aria-label={t("header_level")} className="grid grid-cols-5 gap-1 sm:gap-2 rounded-2xl bg-surface-2/80 p-1 sticky top-[5.5rem] sm:top-16 z-20 backdrop-blur">
         {SKILLS.map((s) => (
@@ -125,6 +119,14 @@ function LevelContent({ level }: { level: Level }) {
           {skill === "write" && <WritePanel level={level} />}
           {skill === "grammar" && <GrammarSkillPanel level={level} />}
         </m.div>
+      </div>
+
+      {/* What learners say about this level (approved by the admin) — after the lessons. */}
+      <LevelReviews level={level} />
+
+      {/* Phones and tablets: the small reviews widget near the end (wide screens have it beside the content). */}
+      <div className="xl:hidden max-w-md">
+        <ReviewsRail inline />
       </div>
 
       {/* After all the content (never between lessons): more activities, trusted sources, about. */}

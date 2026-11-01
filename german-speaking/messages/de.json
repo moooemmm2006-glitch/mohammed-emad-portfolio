@@ -1158,5 +1158,6 @@
   "rv_none_yet": "Noch keine Bewertungen – sie erscheinen hier, sobald Lernende schreiben.",
   "rv_cta_signup": "Konto erstellen und loslegen",
   "rv_see_all": "Alle Bewertungen →",
-  "rv_honest_note": "Nur mit Vornamen. Keine bezahlten oder erfundenen Bewertungen."
+  "rv_honest_note": "Nur mit Vornamen. Keine bezahlten oder erfundenen Bewertungen.",
+  "rv_all_n": "Alle ({n})"
 }
