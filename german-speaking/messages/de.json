@@ -1146,5 +1146,11 @@
   "lrev_page_title": "Was Lernende sagen",
   "lrev_page_sub": "Echte Meinungen von Lernenden auf der Seite – wähle ein Niveau.",
   "lrev_load_failed": "Die Meinungen konnten nicht geladen werden.",
-  "lrev_retry": "Erneut versuchen"
+  "lrev_retry": "Erneut versuchen",
+  "lrev_nav_short": "Stimmen",
+  "lrev_site_title": "Was Lernende über Sprich Deutsch sagen",
+  "lrev_site_empty": "Noch keine Meinungen. Probier die Seite aus und sag, was du denkst.",
+  "lrev_site_form_title": "Deine Meinung zur Seite",
+  "lrev_student_site": "Lernt auf der Seite",
+  "lrev_tab_site": "Allgemein"
 }

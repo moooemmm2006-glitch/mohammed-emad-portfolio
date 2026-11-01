@@ -1146,5 +1146,11 @@
   "lrev_page_title": "آراء الطلاب",
   "lrev_page_sub": "آراء حقيقية من طلاب بيذاكروا على الموقع، في كل مستوى. اختار المستوى.",
   "lrev_load_failed": "ماقدرناش نحمّل الآراء دلوقتي.",
-  "lrev_retry": "حاول تاني"
+  "lrev_retry": "حاول تاني",
+  "lrev_nav_short": "الآراء",
+  "lrev_site_title": "آراء الطلاب في Sprich Deutsch",
+  "lrev_site_empty": "لسه مفيش آراء. جرّب الموقع وقول رأيك، رأيك هيظهر هنا لكل اللي يدخل.",
+  "lrev_site_form_title": "رأيك في الموقع",
+  "lrev_student_site": "طالب على الموقع",
+  "lrev_tab_site": "عام"
 }

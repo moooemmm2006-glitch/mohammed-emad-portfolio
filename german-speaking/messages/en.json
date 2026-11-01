@@ -1146,5 +1146,11 @@
   "lrev_page_title": "What learners say",
   "lrev_page_sub": "Real opinions from learners on the site – pick a level.",
   "lrev_load_failed": "Couldn't load the opinions.",
-  "lrev_retry": "Try again"
+  "lrev_retry": "Try again",
+  "lrev_nav_short": "Opinions",
+  "lrev_site_title": "What learners say about Sprich Deutsch",
+  "lrev_site_empty": "No opinions yet. Try the site and tell us what you think.",
+  "lrev_site_form_title": "Your opinion of the site",
+  "lrev_student_site": "Learner on the site",
+  "lrev_tab_site": "General"
 }
