@@ -885,7 +885,7 @@
   "cafe_join_window_now": "You can join the session now.",
   "cafe_not_join_time": "The joining window is not open yet.",
   "cafe_meeting_missing": "The meeting link has not been added yet. Please contact the administrator before the session.",
-  "cafe_media_note": "In-site audio and video are not enabled yet. A configured private meeting link is shown only to booked users during the session.",
+  "cafe_media_note": "Classes take place on Google Meet. The link is shown only to booked learners and becomes available once the class time is set.",
   "cafe_loading": "Loading…",
   "cafe_error": "Something went wrong. Please try again.",
   "cafe_retry": "Try again",

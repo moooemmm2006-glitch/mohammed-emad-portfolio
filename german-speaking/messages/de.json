@@ -885,7 +885,7 @@
   "cafe_join_window_now": "Du kannst jetzt teilnehmen.",
   "cafe_not_join_time": "Der Zugang ist noch nicht geöffnet.",
   "cafe_meeting_missing": "Der Meeting-Link wurde noch nicht hinterlegt. Bitte wende dich vor dem Termin an die Administration.",
-  "cafe_media_note": "Audio und Video sind auf der Website noch nicht aktiviert. Ein hinterlegter privater Meeting-Link ist nur für gebuchte Teilnehmende während des Termins sichtbar.",
+  "cafe_media_note": "Der Unterricht findet über Google Meet statt. Der Link ist nur für gebuchte Teilnehmende sichtbar und wird verfügbar, sobald der Termin feststeht.",
   "cafe_loading": "Daten werden geladen …",
   "cafe_error": "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
   "cafe_retry": "Erneut versuchen",
