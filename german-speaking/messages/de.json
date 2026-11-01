@@ -1173,5 +1173,10 @@
   "community_more_people": "und {n} weitere",
   "community_people_inside": "{n} im Raum",
   "vid_guide_title": "So lernst du mit dem Video",
-  "vid_guide_sub": "Ein kurzes Video von mir – Schritt für Schritt"
+  "vid_guide_sub": "Ein kurzes Video von mir – Schritt für Schritt",
+  "intro_title": "Lerne die Seite kennen",
+  "intro_sub": "Ein Deutschlehrer und ein deutscher Gast sprechen über den schnellsten Weg zum Lernen.",
+  "intro_label": "Video ansehen (1 Min.)",
+  "intro_play_aria": "Vorstellungsvideo abspielen",
+  "intro_consent": "Das Video wird mit Zustimmung der Gäste gezeigt."
 }
