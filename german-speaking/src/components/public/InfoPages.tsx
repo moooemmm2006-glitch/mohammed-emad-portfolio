@@ -35,9 +35,6 @@ export function AboutPage() {
                 ▶ {tr({ ar: "قناتي على يوتيوب", de: "Mein YouTube-Kanal", en: "My YouTube channel" })}
               </a>
             )}
-            <Link href="/test" className="btn btn-ghost !min-h-[42px]">
-              🎯 {tr({ ar: "اعرف مستواك", de: "Niveau testen", en: "Check your level" })}
-            </Link>
           </div>
         </div>
       </section>
@@ -104,7 +101,7 @@ export function AboutPage() {
 
 const FAQ: { q: Tri; a: Tri }[] = [
   { q: { ar: "الموقع ده لمين؟", de: "Für wen ist die Seite?", en: "Who is this site for?" }, a: { ar: "لأي حد بيتكلم عربي وعايز يتكلم ألماني: للشغل، للدراسة، للسفر، أو لنفسه. من الصفر لحد B2.", de: "Für alle Arabischsprachigen, die Deutsch sprechen wollen – für Job, Studium, Reise oder sich selbst. Von null bis B2.", en: "For any Arabic speaker who wants to speak German – for work, study, travel or themselves. From zero to B2." } },
-  { q: { ar: "لازم أكون عارف ألماني قبل كده؟", de: "Muss ich schon Deutsch können?", en: "Do I need to know German already?" }, a: { ar: "لا خالص. ابدأ من A1، أو اعمل اختبار المستوى وهو يقولك تبدأ منين.", de: "Nein. Starte mit A1 oder mach den Einstufungstest.", en: "Not at all. Start with A1, or take the placement test." } },
+  { q: { ar: "لازم أكون عارف ألماني قبل كده؟", de: "Muss ich schon Deutsch können?", en: "Do I need to know German already?" }, a: { ar: "لا خالص. ابدأ من A1 وامشي خطوة بخطوة، ولو عارف ألماني قبل كده ابدأ من المستوى اللي يناسبك.", de: "Nein. Starte mit A1 – oder direkt mit dem Niveau, das zu dir passt.", en: "Not at all. Start with A1 – or go straight to the level that fits you." } },
   { q: { ar: "الموقع ببلاش؟", de: "Ist die Seite kostenlos?", en: "Is the site free?" }, a: { ar: "تقدر تعمل حساب وتستخدم المستويات والخطة والتمارين. بعض جلسات شبراخ كافيه ممكن يكون ليها سعر، والسعر بيبقى مكتوب على الجلسة قبل ما تحجز.", de: "Konto, Niveaus, Plan und Übungen kannst du nutzen. Manche Sprachcafé-Termine können etwas kosten – der Preis steht vor der Buchung dabei.", en: "You can create an account and use the levels, plan and exercises. Some Sprachcafé sessions may have a price, shown on the session before you book." } },
   { q: { ar: "المحادثة مع Gemini بتشتغل إزاي؟", de: "Wie funktioniert das Gespräch mit Gemini?", en: "How does the Gemini conversation work?" }, a: { ar: "تدوس «ابدأ مع Gemini»، والموقع يفتحلك Gemini ومعاه تعليمات معمولة لمستواك وموضوعك. تبعتها، تدوس Live وتتكلم. وفي الآخر تقول «Bericht» ياخدلك تقرير بأخطاءك. Gemini خدمة من Google وبتستخدم حسابك عندهم.", de: "„Mit Gemini starten“ öffnet Gemini mit einer Anleitung für dein Niveau und Thema. Senden, Live tippen, sprechen – am Ende „Bericht“ sagen. Gemini ist ein Dienst von Google mit deinem Google-Konto.", en: "“Start with Gemini” opens Gemini with instructions for your level and topic. Send them, tap Live and talk – say “Bericht” at the end for a report. Gemini is a Google service using your Google account." } },
   { q: { ar: "الموقع بيصحّح نطقي إزاي؟", de: "Wie wird meine Aussprache geprüft?", en: "How is my pronunciation checked?" }, a: { ar: "بتسمح للمتصفح يستخدم المايك، وانت بتقول الجملة الموقع بيقارن اللي اتسمع بالجملة الصح ويقولك قلتها صح ولا لأ.", de: "Du erlaubst das Mikrofon; die Seite vergleicht, was erkannt wurde, mit dem richtigen Satz.", en: "You allow the microphone; the site compares what it heard with the correct sentence." } },

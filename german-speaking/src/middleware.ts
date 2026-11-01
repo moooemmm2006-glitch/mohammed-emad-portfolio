@@ -7,9 +7,9 @@ import { SESSION_COOKIE, verifyToken } from "./lib/auth/token";
 
 const PUBLIC_PAGES = ["/login", "/signup"];
 // Open to everyone (and to search engines): the public face of the site — landing ("/" for visitors;
-// logged-in learners get their home there), about, FAQ, placement test, legal pages, and the reviews
+// logged-in learners get their home there), about, FAQ, legal pages, and the reviews
 // page (only opinions the admin approved). None of them shows any account data.
-const OPEN_PAGES = ["/", "/reviews", "/about", "/faq", "/privacy", "/terms", "/test"];
+const OPEN_PAGES = ["/", "/reviews", "/about", "/faq", "/privacy", "/terms"];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

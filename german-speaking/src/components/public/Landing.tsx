@@ -25,7 +25,7 @@ export function Landing({ reviews }: { reviews: PublicReviews }) {
     { icon: "⏱️", c: "#ea580c", title: { ar: "تركيز وتحفيز", de: "Fokus und Motivation", en: "Focus and motivation" }, text: { ar: "تايمر مذاكرة، خزنة لوقتك، شارات، وكوميكس بعد كل خطوة.", de: "Lern-Timer, Zeit-Tresor, Abzeichen und Comics nach jedem Schritt.", en: "Study timer, a time vault, badges and comics after each step." } },
   ];
   const steps = [
-    { n: "1", title: { ar: "اعرف مستواك", de: "Niveau finden", en: "Find your level" }, text: { ar: "اختبار في 5 دقايق يقولك تبدأ منين.", de: "Ein 5-Minuten-Test zeigt dir den Start.", en: "A 5-minute test shows where to start." } },
+    { n: "1", title: { ar: "اختار مستواك", de: "Niveau wählen", en: "Pick your level" }, text: { ar: "من A1 لحد B2، ابدأ من المستوى اللي يناسبك.", de: "Von A1 bis B2 – starte auf deinem Niveau.", en: "From A1 to B2 – start at the level that fits you." } },
     { n: "2", title: { ar: "ابدأ خطتك", de: "Plan starten", en: "Start your plan" }, text: { ar: "اختار يوم البداية، والخطة ترتّبلك كل يوم.", de: "Startdatum wählen – der Plan ordnet jeden Tag.", en: "Pick a start day – the plan arranges every day." } },
     { n: "3", title: { ar: "اتكلم كل يوم", de: "Jeden Tag sprechen", en: "Speak every day" }, text: { ar: "جمل، Gemini، فيديو، وكتابة… خطوة صغيرة كل يوم.", de: "Sätze, Gemini, Video, Schreiben – jeden Tag ein Schritt.", en: "Sentences, Gemini, video, writing – a small step daily." } },
   ];
@@ -49,9 +49,6 @@ export function Landing({ reviews }: { reviews: PublicReviews }) {
             <div className="mt-7 flex flex-wrap gap-2.5">
               <Link href="/signup" className="btn !min-h-[50px] !px-7 bg-white !text-[#1f3a5f] hover:brightness-95 text-lg" data-testid="landing-signup">
                 {tr({ ar: "ابدأ مجانًا", de: "Kostenlos starten", en: "Start for free" })}
-              </Link>
-              <Link href="/test" className="btn !min-h-[50px] border border-white/40 !text-white hover:bg-white/10">
-                🎯 {tr({ ar: "اعرف مستواك", de: "Niveau testen", en: "Check your level" })}
               </Link>
               <Link href="/login" className="btn !min-h-[50px] !text-white/90 hover:bg-white/10">
                 {t("login_button")}

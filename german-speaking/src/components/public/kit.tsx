@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { useUI } from "@/lib/client/ui";
 import type { UILang } from "@/lib/client/i18n";
 
-// Small building blocks shared by the public pages (landing, about, FAQ, placement test, legal).
+// Small building blocks shared by the public pages (landing, about, FAQ, legal).
 
 export type Tri = { ar: string; de: string; en: string };
 export const useTr = () => {
@@ -63,13 +63,10 @@ export function StartBand() {
   return (
     <section className="rounded-[2rem] p-6 sm:p-10 text-center text-white" style={{ background: "linear-gradient(135deg, #1f3a5f, #0f766e)" }}>
       <h2 className="text-2xl sm:text-3xl font-extrabold">{tr({ ar: "جاهز تبدأ؟", de: "Bereit?", en: "Ready to start?" })}</h2>
-      <p className="mt-2 opacity-85">{tr({ ar: "اعمل حساب في دقيقة، أو اعرف مستواك الأول.", de: "Konto in einer Minute – oder erst dein Niveau testen.", en: "Create an account in a minute – or check your level first." })}</p>
+      <p className="mt-2 opacity-85">{tr({ ar: "اعمل حساب مجاني في دقيقة وابدأ على طول.", de: "Kostenloses Konto in einer Minute – und los geht’s.", en: "Create a free account in a minute and get going." })}</p>
       <div className="mt-5 flex flex-wrap justify-center gap-2.5">
         <Link href="/signup" className="btn !min-h-[48px] !px-6 bg-white !text-[#1f3a5f] hover:brightness-95">
           {tr({ ar: "اعمل حساب مجاني", de: "Kostenloses Konto", en: "Create a free account" })}
-        </Link>
-        <Link href="/test" className="btn !min-h-[48px] border border-white/40 !text-white hover:bg-white/10">
-          🎯 {tr({ ar: "اختبار المستوى", de: "Einstufungstest", en: "Placement test" })}
         </Link>
       </div>
     </section>
@@ -81,7 +78,6 @@ export function FooterLinks() {
   const tr = useTr();
   const links: [string, Tri][] = [
     ["/about", { ar: "عن Sprich Deutsch", de: "Über uns", en: "About" }],
-    ["/test", { ar: "اختبار المستوى", de: "Einstufungstest", en: "Placement test" }],
     ["/faq", { ar: "الأسئلة الشائعة", de: "FAQ", en: "FAQ" }],
     ["/reviews", { ar: "الريفيوز", de: "Bewertungen", en: "Reviews" }],
     ["/privacy", { ar: "الخصوصية", de: "Datenschutz", en: "Privacy" }],
