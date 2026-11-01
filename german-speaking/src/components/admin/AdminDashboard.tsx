@@ -8,6 +8,7 @@ import { useUI } from "@/lib/client/ui";
 import type { StudentRow } from "@/lib/admin";
 import { TopicVideosAdmin } from "@/components/admin/TopicVideosAdmin";
 import { ChannelAdmin, VlogsAdmin } from "@/components/admin/ChannelAdmin";
+import { ProductivityAdmin } from "@/components/admin/ProductivityAdmin";
 import { PodcastsAdmin } from "@/components/admin/PodcastsAdmin";
 import { FilmsAdmin } from "@/components/admin/FilmsAdmin";
 import { SprachcafeAdmin } from "@/components/admin/SprachcafeAdmin";
@@ -47,6 +48,7 @@ export default function AdminDashboard() {
       </ul>
       <ChannelAdmin />
       <VlogsAdmin />
+      <ProductivityAdmin />
       <TopicVideosAdmin />
       <PodcastsAdmin />
       <FilmsAdmin />
