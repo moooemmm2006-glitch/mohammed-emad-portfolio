@@ -1,7 +1,7 @@
-import { desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb, schema } from "./db";
 import { sniffImage } from "./photo";
-import { CLICK_PLACES, DEFAULT_CHANNEL_URL, FIRST_VLOG, type ClickPlace, type SiteLinks, type Vlog } from "./siteShared";
+import { CLICK_PLACES, DEFAULT_CHANNEL_URL, FIRST_VLOG, FIRST_VLOG_OLD_DESCRIPTION, type ClickPlace, type SiteLinks, type Vlog } from "./siteShared";
 
 // Server only. The owner's channel, explainer video, tutorials playlist and channel photo (admin
 // settings), the vlogs of "☕ استراحة" and the channel click counter.
@@ -62,7 +62,11 @@ export function checkChannelPhoto(dataUrl: string): string | null {
 async function seedVlogs(now: number) {
   const db = await getDb();
   const flag = await db.select().from(schema.siteSettings).where(eq(schema.siteSettings.key, VLOGS_SEEDED)).get();
-  if (flag) return;
+  if (flag) {
+    // Correct the first vlog's old description only if nobody changed it since.
+    await db.update(schema.vlogs).set({ descriptionAr: FIRST_VLOG.description_ar }).where(and(eq(schema.vlogs.youtubeId, FIRST_VLOG.youtubeId), eq(schema.vlogs.descriptionAr, FIRST_VLOG_OLD_DESCRIPTION))).run();
+    return;
+  }
   // Only once: a vlog the admin deletes later doesn't come back.
   await db.insert(schema.vlogs).values({ youtubeId: FIRST_VLOG.youtubeId, title: FIRST_VLOG.title, descriptionAr: FIRST_VLOG.description_ar, addedAt: now }).onConflictDoNothing().run();
   await db.insert(schema.siteSettings).values({ key: VLOGS_SEEDED, value: "1", updatedAt: now }).onConflictDoNothing().run();

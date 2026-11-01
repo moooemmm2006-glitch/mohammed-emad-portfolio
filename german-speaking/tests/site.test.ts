@@ -55,7 +55,8 @@ describe("link formats", () => {
   it("has the texts the owner asked for", () => {
     expect(ar.yt_creator_line).toBe("صاحب الموقع – بشارك شروحات وتجارب في تعلم اللغات على يوتيوب");
     expect(ar.yt_follow).toBe("تابعني على يوتيوب");
-    expect(ar.pause_intro).toBe("خلّصت مذاكرة أو زهقت؟ خد استراحة واتفرج على تجاربي في ألمانيا وفي Goethe.");
+    expect(ar.pause_intro).toBe("خلّصت مذاكرة أو زهقت؟ خد استراحة واتفرج على تجاربي في معهد جوته الألماني (Goethe-Institut).");
+    expect(ar.pause_intro).not.toContain("ألمانيا"); // the owner hasn't travelled to Germany
     expect(ar.yt_strip).toBe("أول مرة هنا؟ ▶️ شوف شرح الموقع في دقيقتين");
   });
 });

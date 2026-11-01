@@ -10,7 +10,9 @@ export const DEFAULT_CHANNEL_URL = "https://www.youtube.com/@mohammedemad-ilden"
 export const DEFAULT_CHANNEL_ID = "UCwjFZpJ56bU7SdkMGlFuqQw";
 export const CHANNEL_NAME = "Mohamed Emad | مُحَمَّد عِمَاد";
 /** The first vlog ("vlog in Goethe 🇩🇪"), checked on YouTube by the owner. */
-export const FIRST_VLOG = { youtubeId: "qALULLsNpbc", title: "vlog in Goethe 🇩🇪", description_ar: "يوم من أيامي في معهد Goethe في ألمانيا." };
+export const FIRST_VLOG = { youtubeId: "qALULLsNpbc", title: "vlog in Goethe 🇩🇪", description_ar: "يوم من أيامي في معهد جوته الألماني (Goethe-Institut)." };
+/** The first wording said "in Germany" by mistake (the owner hasn't travelled); fixed in place once. */
+export const FIRST_VLOG_OLD_DESCRIPTION = "يوم من أيامي في معهد Goethe في ألمانيا.";
 
 export interface SiteLinks {
   /** Clean channel URL, or null when the admin removed it. */
