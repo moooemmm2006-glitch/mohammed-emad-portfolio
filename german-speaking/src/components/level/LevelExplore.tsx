@@ -1,5 +1,6 @@
 "use client";
 
+import { IconSprachcafe } from "@/components/Icons";
 import Link from "next/link";
 import { fill, type TKey } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
@@ -14,7 +15,7 @@ import { useSite } from "../site/SiteProvider";
 const ACTIVITIES = [
   { href: (l: Level) => `/grammar/${l}`, emoji: "📘", title: "nav_grammar", sub: "explore_grammar_sub" },
   { href: () => "/community", emoji: "👥", title: "community_nav", sub: "explore_community_sub" },
-  { href: () => "/sprachcafe", emoji: "☕", title: "cafe_nav", sub: "explore_cafe_sub" },
+  { href: () => "/sprachcafe", emoji: <IconSprachcafe size={22} />, title: "cafe_nav", sub: "explore_cafe_sub" },
   { href: () => "/review", emoji: "🔁", title: "book_review_title", sub: "explore_review_sub" },
   { href: () => "/progress", emoji: "📈", title: "nav_progress", sub: "explore_progress_sub" },
   { href: () => "/pause", emoji: "🎬", title: "pause_name", sub: "explore_pause_sub" },
@@ -46,7 +47,7 @@ export function LevelExplore({ level }: { level: Level }) {
         <p className="text-muted mt-1">{t("explore_sub")}</p>
         <ul className="mt-5 grid gap-3 grid-cols-1 min-[560px]:grid-cols-2 lg:grid-cols-3">
           {ACTIVITIES.map((a) => (
-            <li key={a.emoji}>
+            <li key={a.title}>
               <Link href={a.href(level)} className="explore-card group h-full card depth rounded-2xl p-4 flex items-start gap-3 hover:-translate-y-0.5 transition">
                 <span className="grid place-items-center w-11 h-11 rounded-xl text-xl shrink-0" style={{ background: `color-mix(in oklab, ${accent} 14%, transparent)` }} aria-hidden="true">
                   {a.emoji}

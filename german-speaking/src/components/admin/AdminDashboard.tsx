@@ -11,6 +11,7 @@ import { ChannelAdmin, VlogsAdmin } from "@/components/admin/ChannelAdmin";
 import { PodcastsAdmin } from "@/components/admin/PodcastsAdmin";
 import { FilmsAdmin } from "@/components/admin/FilmsAdmin";
 import { SprachcafeAdmin } from "@/components/admin/SprachcafeAdmin";
+import { LevelReviewsAdmin } from "@/components/admin/LevelReviewsAdmin";
 
 export default function AdminDashboard() {
   const { t } = useUI();
@@ -49,6 +50,7 @@ export default function AdminDashboard() {
       <TopicVideosAdmin />
       <PodcastsAdmin />
       <FilmsAdmin />
+      <LevelReviewsAdmin />
       <SprachcafeAdmin />
     </div>
   );

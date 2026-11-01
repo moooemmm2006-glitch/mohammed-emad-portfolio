@@ -3,47 +3,53 @@
 import { useUI } from "@/lib/client/ui";
 
 // 🌍 Where German can take you: a calm ticker of well-known companies that hire German speakers in
-// Egypt (customer service / BPO and tech). Each company shows in its own brand colour with a simple
-// initials mark of ours (not the company's logo, which is its trademark), as motivation, not job ads.
+// Egypt (customer service / BPO and tech), as motivation, not job ads. Each name has its logo next to
+// it when the file is in public/logos/ (logo: the file name); until then a plain initials mark.
 
-export type CareerCompany = { name: string; mark: string; color: string };
+export type CareerCompany = { name: string; mark: string; logo?: string };
 
 export const CAREER_COMPANIES: CareerCompany[] = [
-  { name: "Concentrix", mark: "C", color: "#0A3161" },
-  { name: "Teleperformance (TP)", mark: "TP", color: "#4A2382" },
-  { name: "Foundever", mark: "F", color: "#5F2EEA" },
-  { name: "Sutherland", mark: "S", color: "#00539B" },
-  { name: "TELUS Digital", mark: "T", color: "#4B286D" },
-  { name: "_VOIS (Vodafone)", mark: "V", color: "#E60000" },
-  { name: "Raya CX", mark: "R", color: "#C8102E" },
-  { name: "IBM", mark: "IBM", color: "#0F62FE" },
+  { name: "Concentrix", mark: "C" },
+  { name: "Teleperformance (TP)", mark: "TP" },
+  { name: "Foundever", mark: "F" },
+  { name: "Sutherland", mark: "S" },
+  { name: "TELUS Digital", mark: "T" },
+  { name: "_VOIS (Vodafone)", mark: "V", logo: "vodafone.svg" },
+  { name: "Raya CX", mark: "R" },
+  { name: "IBM", mark: "IBM", logo: "ibm.svg" },
 ];
+
+function Logo({ c }: { c: CareerCompany }) {
+  if (c.logo) {
+    // eslint-disable-next-line @next/next/no-img-element -- tiny local SVGs, no optimisation needed
+    return <img src={`/logos/${c.logo}`} alt="" className="h-6 w-auto max-w-[3.5rem] object-contain" decoding="async" />;
+  }
+  return (
+    <span className="grid place-items-center h-7 min-w-7 px-1 rounded-full bg-surface-2 text-[11px] font-black text-muted" aria-hidden="true">
+      {c.mark}
+    </span>
+  );
+}
 
 export function CareerTicker() {
   const { t } = useUI();
   const row = (hidden: boolean) => (
-    <ul className="career-ticker-row flex shrink-0 items-center gap-4 pe-4 py-1" aria-hidden={hidden || undefined}>
+    <ul className="career-ticker-row flex shrink-0 items-center gap-3 pe-3" aria-hidden={hidden || undefined}>
       {CAREER_COMPANIES.map((c) => (
-        <li
-          key={c.name}
-          className="flex items-center gap-3 whitespace-nowrap rounded-2xl ps-2 pe-5 py-2 text-base sm:text-lg font-extrabold tracking-wide text-white shadow-md"
-          style={{ backgroundColor: c.color }}
-        >
-          <span className="grid place-items-center h-9 min-w-9 sm:h-10 sm:min-w-10 px-1.5 rounded-xl bg-white text-sm sm:text-base font-black" style={{ color: c.color }} aria-hidden="true">
-            {c.mark}
-          </span>
+        <li key={c.name} className="flex items-center gap-2.5 whitespace-nowrap rounded-full border border-line bg-surface ps-2 pe-4 py-1.5 text-base font-bold tracking-wide">
+          <Logo c={c} />
           {c.name}
         </li>
       ))}
     </ul>
   );
   return (
-    <section className="card p-5 sm:p-6 space-y-4 overflow-hidden" aria-labelledby="career-title" data-testid="career-ticker">
+    <section className="card p-4 sm:p-5 space-y-3 overflow-hidden" aria-labelledby="career-title" data-testid="career-ticker">
       <div>
-        <h2 id="career-title" className="font-extrabold text-xl sm:text-2xl">
+        <h2 id="career-title" className="font-extrabold text-lg sm:text-xl">
           {t("career_title")}
         </h2>
-        <p className="text-sm sm:text-base text-muted">{t("career_sub")}</p>
+        <p className="text-sm text-muted">{t("career_sub")}</p>
       </div>
       <div className="career-ticker relative flex overflow-hidden" dir="ltr" lang="en">
         {row(false)}

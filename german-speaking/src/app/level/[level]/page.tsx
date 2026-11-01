@@ -17,6 +17,7 @@ import { WritePanel } from "@/components/level/WritePanel";
 import { GrammarSkillPanel } from "@/components/level/GrammarSkillPanel";
 import { ListeningForLevel } from "@/components/videos/ListeningHub";
 import { LevelExplore } from "@/components/level/LevelExplore";
+import { LevelReviews } from "@/components/level/LevelReviews";
 import { IntroStrip } from "@/components/site/IntroStrip";
 import { api } from "@/lib/client/api";
 import { fill, type TKey } from "@/lib/client/i18n";
@@ -116,6 +117,9 @@ function LevelContent({ level }: { level: Level }) {
           {skill === "grammar" && <GrammarSkillPanel level={level} />}
         </m.div>
       </div>
+
+      {/* What learners say about this level (approved by the admin). */}
+      <LevelReviews level={level} />
 
       {/* After all the content (never between lessons): more activities, trusted sources, about. */}
       <LevelExplore level={level} />
