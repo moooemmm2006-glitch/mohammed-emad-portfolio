@@ -8,7 +8,7 @@ import { useUI } from "@/lib/client/ui";
 import { isLevel } from "@/lib/levels";
 import type { TKey } from "@/lib/client/i18n";
 import { FormError, PasswordField, TextField } from "./Fields";
-import { IconCamera, IconChart, IconFile, IconFlame, IconGear, IconKey, IconLogout, IconPen, IconShield, IconTrash, IconVideoPlay } from "./Icons";
+import { IconCamera, IconSprachcafe, IconChart, IconFile, IconFlame, IconGear, IconKey, IconLogout, IconPen, IconShield, IconTrash, IconVideoPlay } from "./Icons";
 import { useSite } from "./site/SiteProvider";
 import { Modal } from "./Modal";
 import { PHOTO_ACCEPT, PhotoCropper, checkPhotoFile } from "./PhotoCropper";
@@ -183,7 +183,7 @@ export function ProfileMenu() {
             <MenuLink href="/community" icon={<span className="w-[18px] text-center">👥</span>} onClick={() => setOpen(false)}>
               {t("community_nav")}
             </MenuLink>
-            <MenuLink href="/sprachcafe" icon={<span className="w-[18px] text-center">☕</span>} onClick={() => setOpen(false)}>
+            <MenuLink href="/sprachcafe" icon={<IconSprachcafe size={18} />} onClick={() => setOpen(false)}>
               {t("cafe_nav")}
             </MenuLink>
             <MenuLink href="/progress" icon={<IconChart size={18} />} onClick={() => setOpen(false)}>

@@ -1,5 +1,6 @@
 "use client";
 
+import { IconSprachcafe } from "@/components/Icons";
 import Link from "next/link";
 import { m } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -134,7 +135,7 @@ function LevelNav({ active, communityActive, cafeActive }: { active: Level | nul
         <span aria-hidden="true">👥</span><span>{t("community_nav")}</span>
       </Link>
       <Link href="/sprachcafe" aria-label={t("cafe_nav")} aria-current={cafeActive ? "page" : undefined} className={`hidden md:inline-flex items-center gap-1.5 rounded-full px-2 xl:px-3 py-2 text-sm font-bold transition ${cafeActive ? "bg-amber-500 text-slate-950" : "text-muted hover:bg-surface-2 hover:text-foreground"}`}>
-        <span aria-hidden="true">☕</span><span>{t("cafe_nav")}</span>
+        <IconSprachcafe size={18} /><span>{t("cafe_nav")}</span>
       </Link>
     </nav>
   );
@@ -145,7 +146,7 @@ function MobilePrimaryNav({ path, active }: { path: string; active: Level | null
   const items = [
     { href: active ? levelPath(active) : "/", label: t("nav_levels"), icon: "📚", selected: Boolean(active) || path === "/" },
     { href: "/community", label: t("community_nav"), icon: "👥", selected: path.startsWith("/community") },
-    { href: "/sprachcafe", label: t("cafe_nav"), icon: "☕", selected: path.startsWith("/sprachcafe") },
+    { href: "/sprachcafe", label: t("cafe_nav"), icon: <IconSprachcafe size={20} />, selected: path.startsWith("/sprachcafe") },
     { href: "/grammar", label: t("nav_grammar"), icon: "📘", selected: path.startsWith("/grammar") },
   ];
   return (
@@ -153,7 +154,7 @@ function MobilePrimaryNav({ path, active }: { path: string; active: Level | null
       <ul className="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 pt-1.5">
         {items.map((item) => <li key={item.href}>
           <Link href={item.href} aria-current={item.selected ? "page" : undefined} className={`flex min-h-12 flex-col items-center justify-center gap-0.5 rounded-xl px-1 text-[11px] font-semibold leading-tight transition ${item.selected ? "bg-surface-2 text-ink" : "text-muted hover:text-ink"}`}>
-            <span aria-hidden="true" className="text-base">{item.icon}</span><span className="max-w-full truncate">{item.label}</span>
+            <span aria-hidden="true" className="grid h-6 place-items-center text-base">{item.icon}</span><span className="max-w-full truncate">{item.label}</span>
           </Link>
         </li>)}
       </ul>

@@ -247,6 +247,12 @@ export const cafeReviews = sqliteTable("cafe_reviews", {
   rating: integer("rating").notNull(), comment: text("comment").notNull().default(""), createdAt: integer("created_at").notNull(),
 }, (t) => [uniqueIndex("cafe_review_user_session_unique").on(t.userId, t.sessionId), index("cafe_reviews_teacher").on(t.teacherId, t.createdAt)]);
 
+/** 💬 A learner's opinion of a level (one per learner and level); shown only after the admin approves it. */
+export const levelReviews = sqliteTable("level_reviews", {
+  id: text("id").primaryKey(), userId: text("user_id").notNull(), level: text("level").notNull(), rating: integer("rating").notNull(),
+  comment: text("comment").notNull(), status: text("status").notNull().default("pending"), createdAt: integer("created_at").notNull(), updatedAt: integer("updated_at").notNull(),
+}, (t) => [uniqueIndex("level_review_user_level_unique").on(t.userId, t.level), index("level_reviews_level_status").on(t.level, t.status, t.updatedAt)]);
+
 /** One finished ⏱️ focus session (the "خزنتي" vault). */
 export const focusSessions = sqliteTable("focus_sessions", {
   id: text("id").primaryKey(),
@@ -441,6 +447,12 @@ export const SPRACHCAFE_DDL = [
   "CREATE TABLE IF NOT EXISTS cafe_bookings (id TEXT PRIMARY KEY, session_id TEXT NOT NULL, user_id TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'booked', payment_status TEXT NOT NULL DEFAULT 'not_required', booked_at INTEGER NOT NULL, cancelled_at INTEGER, updated_at INTEGER NOT NULL, UNIQUE(user_id, session_id))",
   "CREATE INDEX IF NOT EXISTS cafe_booking_session_status ON cafe_bookings(session_id, status)",
   "CREATE INDEX IF NOT EXISTS cafe_booking_user_status ON cafe_bookings(user_id, status)",
+].join(";");
+
+export const LEVEL_REVIEWS_DDL = [
+  "CREATE TABLE IF NOT EXISTS level_reviews (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, level TEXT NOT NULL, rating INTEGER NOT NULL, comment TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)",
+  "CREATE UNIQUE INDEX IF NOT EXISTS level_review_user_level_unique ON level_reviews(user_id, level)",
+  "CREATE INDEX IF NOT EXISTS level_reviews_level_status ON level_reviews(level, status, updated_at)",
 ].join(";");
 
 export const READING_DDL = [

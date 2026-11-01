@@ -184,3 +184,11 @@ export const IconVideoPlay = ({ size = 20, className = "" }: { size?: number; cl
     <path d="M10 9l5.2 3L10 15z" fill="#fff" />
   </svg>
 );
+/** Sprachcafé: two speech bubbles (a conversation), the second one with three dots. */
+export const IconSprachcafe = (p: P) => (
+  <I {...p}>
+    <path d="M15 8.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h1v3l3.2-3" />
+    <path d="M11 10.5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v4.5a2 2 0 0 1-2 2h-.5V20l-3.5-3H13a2 2 0 0 1-2-2z" />
+    <path d="M14.2 12.75h.01M16 12.75h.01M17.8 12.75h.01" strokeWidth={2.4} />
+  </I>
+);
