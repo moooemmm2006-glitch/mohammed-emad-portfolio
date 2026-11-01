@@ -572,3 +572,13 @@ html[lang="ar"] body {
   .plan-page > :not(.plan-print-note) { display: none !important; }
   .plan-print-note { display: block !important; font-size: 18px; padding: 2rem; }
 }
+/* ⭐ Reviews side panel: the opinions drift slowly upwards (paused on hover), faded at the edges. */
+.rail-window { mask-image: linear-gradient(to bottom, transparent, #000 8%, #000 92%, transparent); }
+.rail-track { animation: rail-up linear infinite; }
+.rail-window:hover .rail-track, .rail-window:focus-within .rail-track { animation-play-state: paused; }
+@keyframes rail-up { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .rail-track { animation: none; }
+  .rail-window { overflow-y: auto; }
+  .rail-copy { display: none; }
+}
