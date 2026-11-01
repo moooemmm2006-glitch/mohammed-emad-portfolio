@@ -1,6 +1,6 @@
 "use client";
 
-import { DW_COURSE_URL, NICOS_WEG_CREDIT, nicosWeg, youtubePlaylistUrl, youtubeWatchUrl } from "../../../data/videos";
+import { DW_COURSE_URL, NICOS_STUDY_GUIDE_ID, NICOS_WEG_CREDIT, nicosWeg, youtubePlaylistUrl, youtubeWatchUrl } from "../../../data/videos";
 import { fill } from "@/lib/client/i18n";
 import { useUI } from "@/lib/client/ui";
 import { percentOf } from "@/lib/videoShared";
@@ -69,6 +69,8 @@ export function NicosWegSection({ level, hideIntro = false }: { level: "A1" | "A
         <Tip />
       </div>
 
+      <StudyGuide />
+
       {cfg.playlistStartIndex && (
         <div className="card p-4 sm:p-5 space-y-3">
           <h3 className="font-bold">{t("vid_episodes")}</h3>
@@ -79,6 +81,33 @@ export function NicosWegSection({ level, hideIntro = false }: { level: "A1" | "A
       )}
 
     </section>
+  );
+}
+
+/** ⌄ "How to study the video": a closed card under Nicos Weg; tapping the arrow opens the owner's guide video. */
+function StudyGuide() {
+  const { t } = useUI();
+  return (
+    <details className="study-guide card group overflow-hidden" data-testid="nicos-study-guide">
+      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 sm:p-5 min-h-[56px] [&::-webkit-details-marker]:hidden focus-visible:outline-2 focus-visible:outline-offset-[-2px]">
+        <span className="grid place-items-center w-10 h-10 shrink-0 rounded-full bg-red-600/10 text-red-600 text-lg" aria-hidden="true">
+          ▶
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-bold">{t("vid_guide_title")}</span>
+          <span className="block text-sm text-muted">{t("vid_guide_sub")}</span>
+        </span>
+        <span className="grid place-items-center w-9 h-9 shrink-0 rounded-full bg-surface-2 text-lg transition-transform duration-200 group-open:rotate-180" aria-hidden="true">
+          ⌄
+        </span>
+      </summary>
+      <div className="px-4 pb-4 sm:px-5 sm:pb-5 space-y-2">
+        <YouTubePlayer videoId={NICOS_STUDY_GUIDE_ID} title={t("vid_guide_title")} />
+        <a className="text-xs text-muted underline" href={youtubeWatchUrl(NICOS_STUDY_GUIDE_ID)} target="_blank" rel="noopener noreferrer">
+          ▶ {t("vid_open_youtube")}
+        </a>
+      </div>
+    </details>
   );
 }
 
