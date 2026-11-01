@@ -58,7 +58,8 @@ describe("productivity API", () => {
   it("adds videos, courses and one channel per creator", async () => {
     cookie = boss;
     const v = (await (await admin.POST(req("POST", { creator: "abouzeid", kind: "video", link: "https://youtu.be/LSfqMq72Qjk" }))).json()) as Items;
-    expect(v.items[0]).toMatchObject({ kind: "video", youtubeId: "LSfqMq72Qjk", title: "Plan your week" });
+    expect(v.items[0]).toMatchObject({ kind: "video", youtubeId: "7nmKtI7fEmU" }); // the owner's first pick, seeded once
+    expect(v.items[1]).toMatchObject({ kind: "video", youtubeId: "LSfqMq72Qjk", title: "Plan your week" });
     expect((await admin.POST(req("POST", { creator: "abouzeid", kind: "course", link: "https://x.com/c" }))).status).toBe(400);
     expect((await admin.POST(req("POST", { creator: "abouzeid", kind: "course", link: "javascript:alert(1)", title: "C" }))).status).toBe(400);
     expect((await admin.POST(req("POST", { creator: "abouzeid", kind: "channel", link: "https://www.youtube.com/@one" }))).status).toBe(200);
@@ -68,5 +69,10 @@ describe("productivity API", () => {
     expect(channels[0].url).toBe("https://www.youtube.com/@two");
     const del = (await (await admin.DELETE(req("DELETE", { id: channels[0].id }))).json()) as Items;
     expect(del.items.some((i) => i.kind === "channel")).toBe(false);
+    // A deleted seed stays deleted.
+    await admin.DELETE(req("DELETE", { id: "seed-7nmKtI7fEmU" }));
+    cookie = student;
+    const after2 = (await (await route.GET()).json()) as Items;
+    expect(after2.items.some((i) => i.youtubeId === "7nmKtI7fEmU")).toBe(false);
   });
 });

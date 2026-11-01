@@ -1,9 +1,22 @@
 import { randomUUID } from "node:crypto";
 import { asc, eq } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
-import type { Creator, ProductivityItem, ProductivityKind } from "@/lib/productivityShared";
+import { PRODUCTIVITY_SEED, type Creator, type ProductivityItem, type ProductivityKind } from "@/lib/productivityShared";
 
-export async function listProductivity(): Promise<ProductivityItem[]> {
+const SEEDED = "productivity_seeded_v1";
+
+/** Only once: the owner's first picks. Something the admin deletes later doesn't come back. */
+async function seedProductivity(now: number) {
+  const db = await getDb();
+  if (await db.select().from(schema.siteSettings).where(eq(schema.siteSettings.key, SEEDED)).get()) return;
+  for (const [i, v] of PRODUCTIVITY_SEED.entries()) {
+    await db.insert(schema.productivityItems).values({ id: `seed-${v.youtubeId}`, creator: v.creator, kind: "video", title: v.title, url: `https://www.youtube.com/watch?v=${v.youtubeId}`, youtubeId: v.youtubeId, createdAt: now + i }).onConflictDoNothing().run();
+  }
+  await db.insert(schema.siteSettings).values({ key: SEEDED, value: "1", updatedAt: now }).onConflictDoNothing().run();
+}
+
+export async function listProductivity(now = Date.now()): Promise<ProductivityItem[]> {
+  await seedProductivity(now);
   const db = await getDb();
   const rows = await db.select().from(schema.productivityItems).orderBy(asc(schema.productivityItems.createdAt)).all();
   return rows.map((r) => ({ id: r.id, creator: r.creator as Creator, kind: r.kind as ProductivityKind, title: r.title, url: r.url, youtubeId: r.youtubeId }));
