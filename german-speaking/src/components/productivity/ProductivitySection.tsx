@@ -40,9 +40,12 @@ export function ProductivitySection({
     () => (items ?? []).filter((i) => i.creator === tab),
     [items, tab],
   );
-  const videos = mine.filter(
-    (i) => (i.kind === "video" || i.kind === "featured") && i.youtubeId,
-  );
+  // The featured pick comes first.
+  const videos = mine
+    .filter((i) => (i.kind === "video" || i.kind === "featured") && i.youtubeId)
+    .sort(
+      (a, b) => Number(b.kind === "featured") - Number(a.kind === "featured"),
+    );
   const courses = mine.filter((i) => i.kind === "course");
   const channel = mine.find((i) => i.kind === "channel");
   const shownVideos = compact ? videos.slice(0, 2) : videos;

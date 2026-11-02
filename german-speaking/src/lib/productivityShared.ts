@@ -15,7 +15,7 @@ export const PRODUCTIVITY_SEED: { flag: string; creator: Creator; kind: "video" 
   { flag: "productivity_seeded_v1", creator: "abouzeid", kind: "video", youtubeId: "7nmKtI7fEmU", title: "تعلّم كيف تتعلّم" },
   { flag: "productivity_seeded_featured_v1", creator: "abouzeid", kind: "featured", youtubeId: "3acWaDehEiU", title: "غيّر حياتك كلها في يوم" },
 ];
-/** "featured": one video shown at the very top of the home page. */
+/** "featured": one video shown first in the productivity section. */
 export const PRODUCTIVITY_KINDS = ["video", "course", "channel", "featured"] as const;
 export type ProductivityKind = (typeof PRODUCTIVITY_KINDS)[number];
 
