@@ -10,9 +10,11 @@ export const CREATOR_INFO: Record<Creator, { ar: string; latin: string; initials
   abdaal: { ar: "Ali Abdaal", latin: "Ali Abdaal", initials: "AA", channel: "Ali Abdaal" },
 };
 
-/** Added once on a fresh section (picked by the owner); the admin can delete it and it stays deleted. */
-export const PRODUCTIVITY_SEED: { creator: Creator; youtubeId: string; title: string }[] = [
-  { creator: "abouzeid", youtubeId: "7nmKtI7fEmU", title: "تعلّم كيف تتعلّم" },
+/** The owner's picks, each added once (its own flag); the admin can delete one and it stays deleted.
+ *  A featured seed is skipped when the admin already chose a featured video. */
+export const PRODUCTIVITY_SEED: { flag: string; creator: Creator; kind: "video" | "featured"; youtubeId: string; title: string }[] = [
+  { flag: "productivity_seeded_v1", creator: "abouzeid", kind: "video", youtubeId: "7nmKtI7fEmU", title: "تعلّم كيف تتعلّم" },
+  { flag: "productivity_seeded_featured_v1", creator: "abouzeid", kind: "featured", youtubeId: "3acWaDehEiU", title: "غيّر حياتك كلها في يوم" },
 ];
 /** "featured": one video shown at the very top of the home page. */
 export const PRODUCTIVITY_KINDS = ["video", "course", "channel", "featured"] as const;
