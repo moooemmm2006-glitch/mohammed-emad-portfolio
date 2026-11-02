@@ -58,8 +58,9 @@ describe("productivity API", () => {
   it("adds videos, courses and one channel per creator", async () => {
     cookie = boss;
     const v = (await (await admin.POST(req("POST", { creator: "abouzeid", kind: "video", link: "https://youtu.be/LSfqMq72Qjk" }))).json()) as Items;
-    expect(v.items[0]).toMatchObject({ kind: "video", youtubeId: "7nmKtI7fEmU" }); // the owner's first pick, seeded once
-    expect(v.items[1]).toMatchObject({ kind: "video", youtubeId: "LSfqMq72Qjk", title: "Plan your week" });
+    expect(v.items[0]).toMatchObject({ kind: "video", youtubeId: "7nmKtI7fEmU" }); // the owner's picks, seeded once
+    expect(v.items[1]).toMatchObject({ kind: "featured", youtubeId: "3acWaDehEiU" });
+    expect(v.items[2]).toMatchObject({ kind: "video", youtubeId: "LSfqMq72Qjk", title: "Plan your week" });
     expect((await admin.POST(req("POST", { creator: "abouzeid", kind: "course", link: "https://x.com/c" }))).status).toBe(400);
     expect((await admin.POST(req("POST", { creator: "abouzeid", kind: "course", link: "javascript:alert(1)", title: "C" }))).status).toBe(400);
     expect((await admin.POST(req("POST", { creator: "abouzeid", kind: "channel", link: "https://www.youtube.com/@one" }))).status).toBe(200);
