@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   if (!parsed.success) return jsonError(400, "invalid_body", parsed.error.message);
   const { creator, kind, link } = parsed.data;
   const title = parsed.data.title ?? "";
-  if (kind === "video") {
+  if (kind === "video" || kind === "featured") {
     const id = parseYouTubeId(link);
     if (!id) return jsonError(400, "invalid_video", "Not a YouTube video link");
     const meta = await youtubeOEmbed(id);

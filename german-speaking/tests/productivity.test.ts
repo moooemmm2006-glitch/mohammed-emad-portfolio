@@ -69,6 +69,10 @@ describe("productivity API", () => {
     expect(channels[0].url).toBe("https://www.youtube.com/@two");
     const del = (await (await admin.DELETE(req("DELETE", { id: channels[0].id }))).json()) as Items;
     expect(del.items.some((i) => i.kind === "channel")).toBe(false);
+    // One featured video for the whole site: a new one replaces the old.
+    await admin.POST(req("POST", { creator: "abouzeid", kind: "featured", link: "https://youtu.be/LSfqMq72Qjk" }));
+    const feat = (await (await admin.POST(req("POST", { creator: "abdaal", kind: "featured", link: "https://www.youtube.com/watch?v=qALULLsNpbc" }))).json()) as Items;
+    expect(feat.items.filter((i) => i.kind === "featured").map((i) => i.youtubeId)).toEqual(["qALULLsNpbc"]);
     // A deleted seed stays deleted.
     await admin.DELETE(req("DELETE", { id: "seed-7nmKtI7fEmU" }));
     cookie = student;

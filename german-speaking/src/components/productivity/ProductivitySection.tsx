@@ -22,7 +22,7 @@ export function ProductivitySection({ compact = false, headingLevel = 2 }: { com
   }, []);
 
   const mine = useMemo(() => (items ?? []).filter((i) => i.creator === tab), [items, tab]);
-  const videos = mine.filter((i) => i.kind === "video" && i.youtubeId);
+  const videos = mine.filter((i) => (i.kind === "video" || i.kind === "featured") && i.youtubeId);
   const courses = mine.filter((i) => i.kind === "course");
   const channel = mine.find((i) => i.kind === "channel");
   const shownVideos = compact ? videos.slice(0, 2) : videos;
@@ -116,10 +116,16 @@ export function ProductivitySection({ compact = false, headingLevel = 2 }: { com
                 {info.initials}
               </span>
               <span>
-                <span className="block font-bold">{name}</span>
-                <span className="block text-sm text-muted">
-                  {t("prod_channel")}: <span dir="auto">{info.channel}</span>
+                <span className="block font-bold">
+                  {name}
+                  {info.channel !== name && (
+                    <span className="font-semibold text-muted">
+                      {" · "}
+                      <span dir="auto">{info.channel}</span>
+                    </span>
+                  )}
                 </span>
+                <span className="block text-sm text-muted">{t("prod_channel")}</span>
               </span>
             </div>
             {channel && (

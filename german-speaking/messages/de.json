@@ -1231,5 +1231,8 @@
   "adm_prod_name": "Titel (für Kurse nötig)",
   "adm_prod_add": "Hinzufügen",
   "adm_prod_invalid_link": "Der Link muss mit https beginnen",
-  "adm_prod_title_needed": "Bitte den Kurstitel eingeben"
+  "adm_prod_title_needed": "Bitte den Kurstitel eingeben",
+  "adm_prod_featured": "Empfohlenes Video (oben auf der Startseite)",
+  "prod_featured_sub": "Ein sehr wichtiges Video – schau es dir vor dem Start an.",
+  "prod_featured_more": "Mehr Videos zur Produktivität"
 }

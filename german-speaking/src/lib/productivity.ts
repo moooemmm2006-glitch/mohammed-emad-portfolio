@@ -22,11 +22,11 @@ export async function listProductivity(now = Date.now()): Promise<ProductivityIt
   return rows.map((r) => ({ id: r.id, creator: r.creator as Creator, kind: r.kind as ProductivityKind, title: r.title, url: r.url, youtubeId: r.youtubeId }));
 }
 
-/** Adds one item. A creator has one channel link: a new one replaces the old. */
+/** Adds one item. A creator has one channel link, and the site one featured video: a new one replaces the old. */
 export async function addProductivityItem(item: Omit<ProductivityItem, "id">, now = Date.now()) {
   const db = await getDb();
-  if (item.kind === "channel") {
-    const old = (await listProductivity()).filter((i) => i.creator === item.creator && i.kind === "channel");
+  if (item.kind === "channel" || item.kind === "featured") {
+    const old = (await listProductivity()).filter((i) => i.kind === item.kind && (item.kind === "featured" || i.creator === item.creator));
     for (const o of old) await db.delete(schema.productivityItems).where(eq(schema.productivityItems.id, o.id)).run();
   }
   await db.insert(schema.productivityItems).values({ id: randomUUID(), ...item, createdAt: now }).run();
