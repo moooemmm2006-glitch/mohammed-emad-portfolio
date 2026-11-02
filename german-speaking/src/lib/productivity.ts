@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { asc, eq } from "drizzle-orm";
 import { getDb, schema } from "@/lib/db";
-import { PRODUCTIVITY_SEED, type Creator, type ProductivityItem, type ProductivityKind } from "@/lib/productivityShared";
+import { CREATORS, PRODUCTIVITY_SEED, type Creator, type ProductivityItem, type ProductivityKind } from "@/lib/productivityShared";
 
 /** Each of the owner's picks only once. Something the admin deletes later doesn't come back. */
 async function seedProductivity(now: number) {
@@ -18,7 +18,8 @@ export async function listProductivity(now = Date.now()): Promise<ProductivityIt
   await seedProductivity(now);
   const db = await getDb();
   const rows = await db.select().from(schema.productivityItems).orderBy(asc(schema.productivityItems.createdAt)).all();
-  return rows.map((r) => ({ id: r.id, creator: r.creator as Creator, kind: r.kind as ProductivityKind, title: r.title, url: r.url, youtubeId: r.youtubeId }));
+  // Rows of a creator no longer on the site are hidden (kept in the table, harmless).
+  return rows.filter((r) => (CREATORS as readonly string[]).includes(r.creator)).map((r) => ({ id: r.id, creator: r.creator as Creator, kind: r.kind as ProductivityKind, title: r.title, url: r.url, youtubeId: r.youtubeId }));
 }
 
 /** Adds one item. A creator has one channel link, and the site one featured video: a new one replaces the old. */
