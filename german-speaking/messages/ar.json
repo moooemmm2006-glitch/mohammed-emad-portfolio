@@ -1231,5 +1231,8 @@
   "adm_prod_name": "العنوان (لازم للكورس)",
   "adm_prod_add": "إضافة",
   "adm_prod_invalid_link": "اللينك لازم يبدأ بـ https",
-  "adm_prod_title_needed": "اكتب اسم الكورس"
+  "adm_prod_title_needed": "اكتب اسم الكورس",
+  "adm_prod_featured": "فيديو مميز (أول الهوم)",
+  "prod_featured_sub": "فيديو مهم جداً أنصحك تشوفه قبل ما تبدأ.",
+  "prod_featured_more": "فيديوهات تانية للإنتاجية"
 }

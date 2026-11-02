@@ -14,7 +14,8 @@ export const CREATOR_INFO: Record<Creator, { ar: string; latin: string; initials
 export const PRODUCTIVITY_SEED: { creator: Creator; youtubeId: string; title: string }[] = [
   { creator: "abouzeid", youtubeId: "7nmKtI7fEmU", title: "تعلّم كيف تتعلّم" },
 ];
-export const PRODUCTIVITY_KINDS = ["video", "course", "channel"] as const;
+/** "featured": one video shown at the very top of the home page. */
+export const PRODUCTIVITY_KINDS = ["video", "course", "channel", "featured"] as const;
 export type ProductivityKind = (typeof PRODUCTIVITY_KINDS)[number];
 
 export interface ProductivityItem {

@@ -13,7 +13,7 @@ const ERR: Record<string, TKey> = {
   invalid_link: "adm_prod_invalid_link",
   title_needed: "adm_prod_title_needed",
 };
-const KIND_LABEL: Record<ProductivityKind, TKey> = { video: "adm_prod_video", course: "prod_course", channel: "adm_prod_channel" };
+const KIND_LABEL: Record<ProductivityKind, TKey> = { video: "adm_prod_video", course: "prod_course", channel: "adm_prod_channel", featured: "adm_prod_featured" };
 
 /** Admin: 🎯 the productivity section — per creator: YouTube videos, course links and the channel link. */
 export function ProductivityAdmin() {

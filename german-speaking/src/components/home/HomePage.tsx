@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PlatformShowcase } from "@/components/site/PlatformShowcase";
 import { IconSprachcafe } from "@/components/Icons";
+import { FeaturedVideo } from "@/components/productivity/FeaturedVideo";
 import { ProductivitySection } from "@/components/productivity/ProductivitySection";
 import { api } from "@/lib/client/api";
 import { fill, type TKey } from "@/lib/client/i18n";
@@ -15,8 +16,8 @@ import type { SkillProgress } from "@/lib/skills";
 import type { Vlog } from "@/lib/siteShared";
 import { posterFor } from "../../../data/videos";
 
-// 🏠 Home: a calm, professional start page. Welcome + "continue", the intro video with its
-// description, the four levels with the learner's progress, and everything the site offers.
+// 🏠 Home: a calm, professional start page. Welcome + "continue", the featured video, the platform at a glance,
+// the four levels with the learner's progress, and everything the site offers.
 
 const overall = (p: SkillProgress) => Math.round((p.speak + p.listen + p.read + p.write) / 4);
 
@@ -63,6 +64,9 @@ export function HomePage({ lastLevel }: { lastLevel: Level | null }) {
           </div>
         </div>
       </section>
+
+      {/* ── Featured video (picked in the admin panel) ── */}
+      <FeaturedVideo />
 
       {/* ── The platform at a glance ── */}
       <PlatformShowcase />
