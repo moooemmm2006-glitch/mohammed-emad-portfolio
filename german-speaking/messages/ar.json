@@ -1232,5 +1232,6 @@
   "adm_prod_add": "إضافة",
   "adm_prod_invalid_link": "اللينك لازم يبدأ بـ https",
   "adm_prod_title_needed": "اكتب اسم الكورس",
-  "adm_prod_featured": "فيديو مميز (أول قسم الإنتاجية)"
+  "adm_prod_featured": "فيديو مميز (أول قسم الإنتاجية)",
+  "grammar_lesson_no": "الدرس"
 }

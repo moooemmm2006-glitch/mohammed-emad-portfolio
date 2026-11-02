@@ -1,4 +1,5 @@
 import type { Level } from "./levels";
+import type { MindMap } from "./grammarMap";
 
 export type GrammarExerciseKind = "choice" | "text" | "order" | "correction" | "translation" | "writing";
 export interface GrammarExercise {
@@ -36,4 +37,8 @@ export interface GrammarLesson {
   exercises: GrammarExercise[];
   summaryAr: string[];
   related: string[];
+  /** When present, the lesson is explained as a mind map (no text sections, no exercises). */
+  map?: MindMap;
+  /** The lesson's place in the course (1, 2, 3 …), shown on the card. */
+  no?: number;
 }
