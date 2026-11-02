@@ -29,7 +29,7 @@ export const B2_LESSONS: GrammarLesson[] = [
     examples: [e("Wenn sie früher losgefahren wäre, hätte sie den Zug erreicht.", "لو انطلقت مبكرًا، للحقت بالقطار.", "wäre … losgefahren / hätte … erreicht", "الشرط والنتيجة ماضيان غير واقعيين."), e("An deiner Stelle würde ich das Angebot prüfen.", "لو كنت مكانك لفحصت العرض.", "würde … prüfen", "würde + مصدر يقدم نصيحة افتراضية.")],
     mistakes: [{ wrong: "Wenn ich hätte früher gelernt, …", right: "Wenn ich früher gelernt hätte, …", reasonAr: "في التابعة يأتي المساعد المصرف في النهاية.", avoidAr: "ضع Partizip II ثم hätte/wäre أخيرًا." }],
     exercises: [mc("Wenn er gefragt hätte, ___ ich ihm geholfen.", ["habe","hätte","werde"], "hätte", "النتيجة الماضية غير الواقعية تحتاج hätte."), tx("اكتب: كان بإمكاني البقاء أطول.", "Ich hätte länger bleiben können.", "مع modal الماضي: hätte + مصدر الفعل + modalinfinitiv.")],
-    summaryAr: ["würde + مصدر لافتراض الحاضر.", "hätte/wäre + Partizip II للماضي غير الواقعي.", "مع modal في الماضي يأتي مصدران بعد hätte."], related: ["b1-konjunktiv2", "b2-indirekte-rede"],
+    summaryAr: ["würde + مصدر لافتراض الحاضر.", "hätte/wäre + Partizip II للماضي غير الواقعي.", "مع modal في الماضي يأتي مصدران بعد hätte."], related: ["b1-konjunktiv2-gebrauch", "b2-indirekte-rede"],
   },
   {
     id: "b2-indirekte-rede", level: "B2", order: 3, titleDe: "Konjunktiv I und indirekte Rede", titleAr: "الكلام المنقول وKonjunktiv I",
@@ -55,7 +55,7 @@ export const B2_LESSONS: GrammarLesson[] = [
     examples: [e("Obwohl die Frist knapp war, reichte das Team den Bericht pünktlich ein.", "رغم قصر المهلة، سلّم الفريق التقرير في الموعد.", "Obwohl … war, reichte", "بعد التابعة يأتي الفعل الرئيسي مباشرة."), e("Das ist die Methode, mit der sich der Fehler vermeiden lässt.", "هذه الطريقة التي يمكن تجنب الخطأ بها.", "mit der", "حرف الجر يسبق ضمير الوصل وحالته Dativ.")],
     mistakes: [{ wrong: "…, damit du verstehst es.", right: "…, damit du es verstehst.", reasonAr: "الفعل المصرف يأتي في نهاية جملة damit.", avoidAr: "راجع موضع الفعل بعد كل أداة تابعة." }],
     exercises: [mc("Ich schreibe es auf, ___ ich es nicht vergesse.", ["damit","obwohl","während"], "damit", "المعنى غاية، لذلك damit."), tx("أكمل: Sobald der Zug ___, steigen wir ein. (ankommen)", "angekommen ist", "في التابعة يأتي المساعد المصرف أخيرًا.")],
-    summaryAr: ["الفعل في نهاية الجملة التابعة.", "اختر الرابط حسب معنى الزمن أو الغاية أو النتيجة أو التنازل.", "حرف الجر يسبق ضمير الوصل."], related: ["b1-nebensaetze", "b1-relativsaetze"],
+    summaryAr: ["الفعل في نهاية الجملة التابعة.", "اختر الرابط حسب معنى الزمن أو الغاية أو النتيجة أو التنازل.", "حرف الجر يسبق ضمير الوصل."], related: ["b1-waehrend-bevor", "b1-relativsaetze-1"],
   },
   {
     id: "b2-konnektoren", level: "B2", order: 5, titleDe: "Zweiteilige Konnektoren und Argumentieren", titleAr: "الروابط المزدوجة والكتابة المنطقية",
@@ -68,7 +68,7 @@ export const B2_LESSONS: GrammarLesson[] = [
     examples: [e("Die Lösung ist nicht nur günstig, sondern auch zuverlässig.", "الحل ليس اقتصاديًا فحسب، بل موثوق أيضًا.", "nicht nur … sondern auch", "الطرفان صفتان متوازيتان."), e("Die Nachfrage stieg; folglich wurde die Produktion erweitert.", "ازداد الطلب؛ وبالتالي تم توسيع الإنتاج.", "folglich wurde", "بعد ظرف النتيجة يأتي الفعل المصرف مباشرة.")],
     mistakes: [{ wrong: "Sowohl sorgfältig als auch ist sie schnell.", right: "Sie arbeitet sowohl sorgfältig als auch schnell.", reasonAr: "يجب أن يكون العنصران بعد الزوج متوازيين.", avoidAr: "اربط صفات بصفات أو جملًا بجمل." }],
     exercises: [mc("___ die Kosten ___ der Zeitplan wurden eingehalten.", ["Weder … noch","Entweder … oder","Nicht nur … sondern"], "Weder … noch", "المعنى ينفي الأمرين: weder … noch."), tx("أكمل ظرف النتيجة: Die Daten fehlen; ___ kann der Antrag nicht geprüft werden.", "deshalb", "بعد deshalb يأتي الفعل المصرف مباشرة.")],
-    summaryAr: ["حافظ على التوازي بعد الروابط المزدوجة.", "الروابط تحدد الاختيار أو الجمع أو النفي أو التأكيد.", "ظروف النتيجة تتبعها قاعدة الفعل ثانيًا."], related: ["b1-konnektoren-man-es", "b2-nebensaetze-relativ"],
+    summaryAr: ["حافظ على التوازي بعد الروابط المزدوجة.", "الروابط تحدد الاختيار أو الجمع أو النفي أو التأكيد.", "ظروف النتيجة تتبعها قاعدة الفعل ثانيًا."], related: ["b1-doppelkonnektoren", "b2-nebensaetze-relativ"],
   },
   {
     id: "b2-nominalisierung", level: "B2", order: 6, titleDe: "Nominalisierung und Verbalisierung", titleAr: "تحويل الأفعال والصفات إلى أسماء والعكس",
@@ -107,7 +107,7 @@ export const B2_LESSONS: GrammarLesson[] = [
     examples: [e("Trotz der hohen Kosten wurde das Projekt fortgesetzt.", "رغم التكاليف المرتفعة، استمر المشروع.", "Trotz der hohen Kosten", "trotz يقدم تنازلًا ويتبعه Genitiv."), e("Sie freut sich über die Zusage und auf den ersten Arbeitstag.", "هي سعيدة بالموافقة وتتطلع لأول يوم عمل.", "über / auf", "über للخبر الواصل وauf للحدث المتوقع.")],
     mistakes: [{ wrong: "Ich freue mich auf deine Nachricht. (بعد وصولها)", right: "Ich freue mich über deine Nachricht.", reasonAr: "über يناسب الخبر الذي وصل؛ auf لما ننتظره.", avoidAr: "اختر الحرف بحسب زمن الحدث." }],
     exercises: [mc("___ des Streiks fuhren weniger Züge.", ["Trotz","Während","Aufgrund"], "Aufgrund", "المعنى سببي: aufgrund + Genitiv."), mc("Ich freue mich ___ das Konzert nächste Woche.", ["über","auf","mit"], "auf", "الحدث مستقبلي: sich freuen auf.")],
-    summaryAr: ["حروف Genitiv شائعة في الأسلوب المعياري.", "ميّز السبب عن التنازل والتزامن.", "حروف الأفعال قد تغيّر المعنى."], related: ["b1-faelle-genitiv", "b1-verben-praep"],
+    summaryAr: ["حروف Genitiv شائعة في الأسلوب المعياري.", "ميّز السبب عن التنازل والتزامن.", "حروف الأفعال قد تغيّر المعنى."], related: ["b1-genitiv", "b1-verben-praep"],
   },
   {
     id: "b2-adjektiv-partizip", level: "B2", order: 9, titleDe: "Partizip I und II als Adjektive", titleAr: "Partizip I وII كصفات",
@@ -120,7 +120,7 @@ export const B2_LESSONS: GrammarLesson[] = [
     examples: [e("Die auf eine Antwort wartenden Kunden wurden informiert.", "أُبلغ العملاء الذين ينتظرون ردًا.", "wartenden Kunden", "Partizip I يصف العملاء الذين ينتظرون."), e("Die gestern reparierte Maschine funktioniert wieder.", "الآلة التي أُصلحت أمس تعمل مجددًا.", "reparierte Maschine", "Partizip II يصف الآلة التي وقع عليها الإصلاح.")],
     mistakes: [{ wrong: "die reparierende Maschine (إذا كانت الآلة قد أُصلحت)", right: "die reparierte Maschine", reasonAr: "Partizip I يوحي بأن الآلة هي التي تصلح شيئًا.", avoidAr: "حدّد هل الاسم فاعل للفعل أم متأثر به." }],
     exercises: [mc("القطار الذي يصل الآن: der ___ Zug", ["ankommende","angekommene","ankommen"], "ankommende", "القطار يقوم بفعل الوصول الآن: Partizip I."), tx("الباب الذي أُغلق: die ___ Tür.", "geschlossene", "الباب وقع عليه الفعل: Partizip II مع نهاية مؤنث.")],
-    summaryAr: ["Partizip I غالبًا فعل جارٍ يقوم به الاسم.", "Partizip II غالبًا نتيجة أو فعل واقع على الاسم.", "كلاهما يأخذ نهاية الصفة قبل الاسم."], related: ["b1-adjektiv", "b2-nominalisierung"],
+    summaryAr: ["Partizip I غالبًا فعل جارٍ يقوم به الاسم.", "Partizip II غالبًا نتيجة أو فعل واقع على الاسم.", "كلاهما يأخذ نهاية الصفة قبل الاسم."], related: ["b1-adjektiv-ohne-artikel", "b2-nominalisierung"],
   },
   {
     id: "b2-wortstellung", level: "B2", order: 10, titleDe: "Wortstellung, Fokus und Satzverkürzung", titleAr: "ترتيب الكلمات للتأكيد واختصار الجمل",
