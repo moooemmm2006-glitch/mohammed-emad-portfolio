@@ -52,7 +52,7 @@ describe("productivity API", () => {
     expect((await route.GET()).status).toBe(401);
     cookie = student;
     expect((await route.GET()).status).toBe(200);
-    expect((await admin.POST(req("POST", { creator: "abdaal", kind: "course", link: "https://x.com", title: "C" }))).status).toBe(403);
+    expect((await admin.POST(req("POST", { creator: "abouzeid", kind: "course", link: "https://x.com", title: "C" }))).status).toBe(403);
   });
 
   it("adds videos, courses and one channel per creator", async () => {
@@ -72,7 +72,7 @@ describe("productivity API", () => {
     expect(del.items.some((i) => i.kind === "channel")).toBe(false);
     // One featured video for the whole site: a new one replaces the old.
     await admin.POST(req("POST", { creator: "abouzeid", kind: "featured", link: "https://youtu.be/LSfqMq72Qjk" }));
-    const feat = (await (await admin.POST(req("POST", { creator: "abdaal", kind: "featured", link: "https://www.youtube.com/watch?v=qALULLsNpbc" }))).json()) as Items;
+    const feat = (await (await admin.POST(req("POST", { creator: "abouzeid", kind: "featured", link: "https://www.youtube.com/watch?v=qALULLsNpbc" }))).json()) as Items;
     expect(feat.items.filter((i) => i.kind === "featured").map((i) => i.youtubeId)).toEqual(["qALULLsNpbc"]);
     // A deleted seed stays deleted.
     await admin.DELETE(req("DELETE", { id: "seed-7nmKtI7fEmU" }));

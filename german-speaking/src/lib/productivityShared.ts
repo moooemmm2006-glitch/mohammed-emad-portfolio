@@ -3,11 +3,10 @@ import { parseYouTubeId } from "./easyGermanShared";
 // 🎯 "الإنتاجية وتنظيم الوقت": creators the owner recommends (their own YouTube videos via the
 // official embed, links to their courses, and a subscribe link to their channel). No photos of them.
 
-export const CREATORS = ["abouzeid", "abdaal"] as const;
+export const CREATORS = ["abouzeid"] as const;
 export type Creator = (typeof CREATORS)[number];
 export const CREATOR_INFO: Record<Creator, { ar: string; latin: string; initials: string; channel: string }> = {
   abouzeid: { ar: "أحمد أبو زيد", latin: "Ahmed Abouzeid", initials: "AZ", channel: "دروس أونلاين" },
-  abdaal: { ar: "Ali Abdaal", latin: "Ali Abdaal", initials: "AA", channel: "Ali Abdaal" },
 };
 
 /** The owner's picks, each added once (its own flag); the admin can delete one and it stays deleted.
