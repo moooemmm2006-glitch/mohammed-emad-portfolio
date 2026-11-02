@@ -14,6 +14,57 @@
    ========================================================================= */
 window.PROJECTS = [
   {
+    slug: "german-speaking",
+    service: "",
+    name: "Sprich Deutsch",
+    url: "https://german-speaking.vercel.app/",
+    year: "",
+    color: "#1E3A5F",
+
+    type: { ar: "منصة لتعلّم الكلام بالألماني", en: "German speaking practice platform" },
+    summary: {
+      ar: "منصة «اتكلم ألماني» للناطقين بالعربي: من A1 لحد B2، كلام وسماع وقراءة وكتابة في مكان واحد.",
+      en: "“Sprich Deutsch”, a German practice platform for Arabic speakers: A1 to B2, speaking, listening, reading and writing in one place."
+    },
+
+    idea: {
+      ar: "منصة لتعلّم الكلام بالألماني للناطقين بالعربي، مبنية على كتاب «Sprich Deutsch»: كل مستوى من A1 لحد B2 فيه المواضيع والقواعد وفيديوهات السماع والقراءة والكتابة، مع خطة يومية ومتابعة لتقدّم كل طالب في حسابه.",
+      en: "A German speaking practice platform for Arabic speakers, built on the book “Sprich Deutsch”: every level from A1 to B2 has its topics, grammar, listening videos, reading and writing, with a daily plan and progress saved to each learner’s account."
+    },
+    brief: "",
+    built: {
+      ar: [
+        "أربع مستويات من A1 لحد B2، ولكل مستوى أربع مهارات: الكلام، السماع، القراءة، والكتابة",
+        "«اسمع وكرّر» بالصوت، ومحادثات صوتية مع Gemini على كل موضوع",
+        "خطة مذاكرة يومية لكل مستوى",
+        "كتاب قواعد مقسّم على المستويات",
+        "فيديوهات سماع من DW وEasy German",
+        "حسابات للطلاب مع حفظ التقدّم في كل مهارة",
+        "مجتمع فيه غرف للتعلّم وكافيه للمحادثة",
+        "الواجهة بالعربي والألماني والإنجليزي، مع وضع ليلي وتصميم مناسب للموبايل"
+      ],
+      en: [
+        "Four levels from A1 to B2, each with four skills: speaking, listening, reading and writing",
+        "“Listen & repeat” with your voice, plus voice conversations with Gemini on every topic",
+        "A daily study plan for each level",
+        "A grammar book organized by level",
+        "Listening videos from DW and Easy German",
+        "Learner accounts with progress saved for every skill",
+        "A community with study rooms and a conversation café",
+        "Arabic, German and English interface, with dark mode and a mobile-friendly design"
+      ]
+    },
+
+    cover: "assets/projects/german-speaking/cover.jpg",
+    screenshots: [
+      "assets/projects/german-speaking/shot-1.jpg",
+      "assets/projects/german-speaking/shot-2.jpg",
+      "assets/projects/german-speaking/shot-3.jpg"
+    ],
+    mobile: "assets/projects/german-speaking/mobile.jpg"
+  },
+
+  {
     slug: "mad-watches",
     service: "business",
     name: "Mad Watches",
