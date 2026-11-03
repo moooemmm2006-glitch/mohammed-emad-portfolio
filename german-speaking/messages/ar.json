@@ -1234,5 +1234,6 @@
   "adm_prod_title_needed": "اكتب اسم الكورس",
   "adm_prod_featured": "فيديو مميز (أول قسم الإنتاجية)",
   "grammar_lesson_no": "الدرس",
-  "gr_topic_rules": "قواعد الموضوع"
+  "gr_topic_rules": "قواعد الموضوع",
+  "grammar_source": "القواعد مستوحاة من كتاب Grammatik aktiv (Cornelsen)، بشرح وأمثلة من Sprich Deutsch"
 }
