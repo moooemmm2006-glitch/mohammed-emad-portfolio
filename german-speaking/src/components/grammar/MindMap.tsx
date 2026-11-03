@@ -13,6 +13,7 @@ import type {
   MapColor,
   MindMap as MindMapData,
 } from "@/lib/grammarMap";
+import { useUI } from "@/lib/client/ui";
 
 // 🗺️ A grammar lesson as a mind map: a purple centre card, colored branches around it with
 // curved connectors (desktop), stacked with a colored rail on phones. German stays LTR; the
@@ -388,6 +389,27 @@ export function MindMap({
           ))}
         </div>
       </div>
+      <GrammarSource className="relative mt-5" />
     </div>
+  );
+}
+
+/** "Inspired by Grammatik aktiv" — shown on every grammar map and grammar page. */
+export function GrammarSource({ className = "" }: { className?: string }) {
+  const { t } = useUI();
+  return (
+    <p
+      dir="auto"
+      className={`me-auto flex w-fit items-center gap-2 rounded-full border border-line bg-surface/90 px-3 py-1.5 text-sm text-muted shadow-sm ${className}`}
+      data-testid="grammar-source"
+    >
+      <span
+        aria-hidden="true"
+        className="grid h-7 w-7 place-items-center rounded-lg bg-surface-2 text-base"
+      >
+        📖
+      </span>
+      <span className="font-semibold">{t("grammar_source")}</span>
+    </p>
   );
 }

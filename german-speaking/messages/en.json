@@ -1234,5 +1234,6 @@
   "adm_prod_title_needed": "Please enter the course title",
   "adm_prod_featured": "Featured video (first in productivity)",
   "grammar_lesson_no": "Lesson",
-  "gr_topic_rules": "Topic grammar"
+  "gr_topic_rules": "Topic grammar",
+  "grammar_source": "Inspired by the book “Grammatik aktiv” (Cornelsen), explained with Sprich Deutsch’s own examples"
 }
