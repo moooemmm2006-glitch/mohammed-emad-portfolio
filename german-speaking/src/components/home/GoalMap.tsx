@@ -10,7 +10,7 @@ import { levelPath } from "@/lib/paths";
 // (call centres …) → focus on topics, conversation and listening. Every focus card opens that part.
 
 type Focus = { icon: string; de: string; title: Tri; text: Tri; href: string; key?: boolean };
-type Path = { id: string; color: string; soft: string; poster: string[]; tag: Tri; title: Tri; note: Tri; focus: Focus[] };
+type Path = { id: string; color: string; soft: string; poster: string[]; tag: Tri; title: Tri; note: Tri; focus: Focus[]; extra?: Tri };
 
 function paths(level: Level): Path[] {
   const lv = levelPath(level);
@@ -23,10 +23,10 @@ function paths(level: Level): Path[] {
       tag: { ar: "السفر أو امتحان Goethe", de: "Reisen oder Goethe-Prüfung", en: "Travel or the Goethe exam" },
       title: { ar: "عايز تسافر أو تاخد شهادة", de: "Du willst reisen oder ein Zertifikat", en: "You want to travel or get certified" },
       note: { ar: "الامتحان بيطلب كتابة سليمة وقواعد مظبوطة، فدول أهم حاجة عندك.", de: "Die Prüfung verlangt korrektes Schreiben und sichere Grammatik.", en: "The exam needs correct writing and solid grammar." },
+      extra: { ar: "وطبعًا هتشتغل على باقي المهارات عادي، زي المحادثة والاستماع والقراءة، بس هتركّز أكتر على الكتابة والقواعد عشان الامتحان.", de: "Natürlich übst du auch die anderen Fertigkeiten – Sprechen, Hören, Lesen –, aber für die Prüfung liegt dein Schwerpunkt auf Schreiben und Grammatik.", en: "Of course you’ll practise the other skills too – speaking, listening, reading – but for the exam your focus is writing and grammar." },
       focus: [
         { icon: "✍️", de: "Schreiben", key: true, title: { ar: "الكتابة", de: "Schreiben", en: "Writing" }, text: { ar: "اكتب كل يوم وصحّح مع Gemini", de: "Täglich schreiben, mit Gemini korrigieren", en: "Write daily, correct with Gemini" }, href: `${lv}?skill=write` },
         { icon: "📘", de: "Grammatik", key: true, title: { ar: "القواعد", de: "Grammatik", en: "Grammar" }, text: { ar: "كل قاعدة في خريطة ذهنية", de: "Jede Regel als Mindmap", en: "Every rule as a mind map" }, href: `/grammar/${level}` },
-        { icon: "📖", de: "Lesen & Hören", title: { ar: "القراءة والاستماع", de: "Lesen & Hören", en: "Reading & listening" }, text: { ar: "تكمّل باقي أجزاء الامتحان", de: "Für die anderen Prüfungsteile", en: "For the other exam parts" }, href: `${lv}?skill=read` },
       ],
     },
     {
@@ -99,6 +99,12 @@ function Branch({ p }: { p: Path }) {
             </li>
           ))}
         </ul>
+        {p.extra && (
+          <p className="flex items-start gap-2.5 rounded-2xl border border-dashed p-3 text-sm leading-relaxed text-muted" style={{ borderColor: `${p.color}55` }}>
+            <span aria-hidden="true" className="text-base">💡</span>
+            <span>{tr(p.extra)}</span>
+          </p>
+        )}
       </div>
     </article>
   );
