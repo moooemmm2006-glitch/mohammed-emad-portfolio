@@ -90,10 +90,33 @@ function Marked({ text, mark }: { text: string; mark: string }) {
   );
 }
 
-function Card({ card, color }: { card: MapCard; color: MapColor }) {
+type Say = ((de: string) => void) | undefined;
+
+function Card({
+  card,
+  color,
+  onSay,
+}: {
+  card: MapCard;
+  color: MapColor;
+  onSay: Say;
+}) {
   const c = C[color];
+  const long = card.ar.length > 90;
   return (
-    <div className="relative rounded-xl border border-black/5 bg-surface p-3 shadow-[0_6px_16px_-10px_rgba(15,31,53,.35)] dark:border-white/10">
+    <div
+      className={`relative rounded-xl border border-black/5 bg-surface p-3 shadow-[0_6px_16px_-10px_rgba(15,31,53,.35)] dark:border-white/10 ${card.wide ? "@sm:col-span-2" : ""} ${card.say && onSay ? "ps-12" : ""}`}
+    >
+      {card.say && onSay && (
+        <button
+          type="button"
+          onClick={() => onSay(card.say!)}
+          aria-label={`▶ ${card.say}`}
+          className={`absolute start-2.5 top-2.5 grid h-8 w-8 place-items-center rounded-full text-white shadow ${c.chip}`}
+        >
+          ▶
+        </button>
+      )}
       {card.tag && (
         <span className="absolute -top-2 end-2 rounded-full border border-line bg-surface px-2 py-px text-[10px] font-bold uppercase tracking-wide text-muted">
           {card.tag}
@@ -103,7 +126,11 @@ function Card({ card, color }: { card: MapCard; color: MapColor }) {
         <Marked text={card.head} mark={c.mark} />
       </p>
       {card.ar && (
-        <p className="mt-0.5 text-end text-xs text-muted" dir="rtl" lang="ar">
+        <p
+          className={`mt-0.5 text-end text-muted ${long ? "text-sm leading-relaxed" : "text-xs"}`}
+          dir="rtl"
+          lang="ar"
+        >
           {card.ar}
         </p>
       )}
@@ -128,19 +155,21 @@ function Card({ card, color }: { card: MapCard; color: MapColor }) {
 function Branch({
   b,
   setRef,
+  onSay,
 }: {
   b: MapBranch;
   setRef: (el: HTMLElement | null) => void;
+  onSay: Say;
 }) {
   const c = C[b.color];
   return (
     <section
       ref={setRef}
-      className={`relative rounded-2xl border p-3 pt-6 ${c.panel}`}
+      className={`@container relative rounded-2xl border p-3 pt-0 ${c.panel}`}
       aria-label={b.title}
     >
       <span
-        className={`absolute -top-3.5 start-3 rounded-lg px-2.5 py-1 text-sm font-extrabold text-white shadow ${c.title}`}
+        className={`relative -mt-3.5 mb-1 inline-block max-w-full rounded-lg px-2.5 py-1 text-sm font-extrabold leading-snug text-white shadow ${c.title}`}
         lang="de"
       >
         {b.title}
@@ -157,10 +186,10 @@ function Branch({
         <div className="h-1" />
       )}
       <div
-        className={`grid gap-2.5 ${b.cards.length > 1 ? "sm:grid-cols-2" : ""}`}
+        className={`grid gap-2.5 ${b.cards.length > 1 ? "@sm:grid-cols-2" : ""}`}
       >
         {b.cards.map((card, i) => (
-          <Card key={i} card={card} color={b.color} />
+          <Card key={i} card={card} color={b.color} onSay={onSay} />
         ))}
       </div>
     </section>
@@ -172,11 +201,14 @@ export function MindMap({
   titleDe,
   titleAr,
   eyebrow,
+  onSay,
 }: {
   map: MindMapData;
   titleDe: string;
   titleAr: string;
   eyebrow: string;
+  /** Reads a German example aloud (cards with `say`). */
+  onSay?: (de: string) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const centre = useRef<HTMLDivElement>(null);
@@ -196,7 +228,8 @@ export function MindMap({
     const draw = () => {
       const cr = centre.current?.getBoundingClientRect();
       const br = el.getBoundingClientRect();
-      if (!cr || window.innerWidth < 1024) return setPaths([]);
+      // Connectors only in the three-column layout (the map itself is ≥ 64rem wide).
+      if (!cr || el.clientWidth < 1024) return setPaths([]);
       setPaths(
         map.branches.flatMap((b, i) => {
           const h = heads.current[i]?.getBoundingClientRect();
@@ -232,7 +265,12 @@ export function MindMap({
   const column = (items: { b: MapBranch; i: number }[]): ReactNode => (
     <div className="flex flex-col gap-6">
       {items.map(({ b, i }) => (
-        <Branch key={i} b={b} setRef={(e) => (heads.current[i] = e)} />
+        <Branch
+          key={i}
+          b={b}
+          onSay={onSay}
+          setRef={(e) => (heads.current[i] = e)}
+        />
       ))}
     </div>
   );
@@ -241,7 +279,7 @@ export function MindMap({
     <div
       ref={box}
       dir="ltr"
-      className="relative rounded-[2rem] border border-line p-4 sm:p-6"
+      className="@container relative rounded-[2rem] border border-line p-4 sm:p-6"
       style={{
         backgroundImage:
           "radial-gradient(color-mix(in oklab, var(--color-muted, #94a3b8) 28%, transparent) 1px, transparent 1px)",
@@ -250,7 +288,7 @@ export function MindMap({
       data-testid="grammar-map"
     >
       <svg
-        className="pointer-events-none absolute inset-0 hidden h-full w-full lg:block"
+        className="pointer-events-none absolute inset-0 hidden h-full w-full @5xl:block"
         aria-hidden="true"
       >
         {paths.map((p, i) => (
@@ -271,9 +309,9 @@ export function MindMap({
           </g>
         ))}
       </svg>
-      <div className="relative grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,1fr)] lg:items-center">
-        <div className="hidden lg:block">{column(left)}</div>
-        <div className="space-y-4 lg:order-none">
+      <div className="relative grid gap-6 @5xl:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)_minmax(0,1fr)] @5xl:items-center">
+        <div className="hidden @5xl:block">{column(left)}</div>
+        <div className="space-y-4">
           <div
             ref={centre}
             className="rounded-[1.6rem] p-5 text-white shadow-[0_24px_50px_-20px_rgba(91,33,182,.7)]"
@@ -310,12 +348,20 @@ export function MindMap({
                 )}
               </div>
             )}
-            <p className="mt-4 text-[17px] font-bold" lang="de">
-              <Marked text={map.ex} mark="bg-white text-violet-700" />
-            </p>
-            <p className="mt-1 text-end text-sm opacity-85" dir="rtl" lang="ar">
-              {map.exAr}
-            </p>
+            {map.ex && (
+              <p className="mt-4 text-[17px] font-bold" lang="de">
+                <Marked text={map.ex} mark="bg-white text-violet-700" />
+              </p>
+            )}
+            {map.exAr && (
+              <p
+                className="mt-1 text-end text-sm opacity-85"
+                dir="rtl"
+                lang="ar"
+              >
+                {map.exAr}
+              </p>
+            )}
           </div>
           {map.phrases && map.phrases.length > 0 && (
             <div className="rounded-2xl border border-line bg-surface p-4 shadow-sm">
@@ -334,11 +380,11 @@ export function MindMap({
             </div>
           )}
         </div>
-        <div className="hidden lg:block">{column(right)}</div>
-        {/* Phones and tablets: one column, every branch under the centre. */}
-        <div className="flex flex-col gap-6 lg:hidden">
+        <div className="hidden @5xl:block">{column(right)}</div>
+        {/* Narrower maps: every branch under the centre — two columns when there is room, one on phones. */}
+        <div className="flex flex-col gap-6 @2xl:grid @2xl:grid-cols-2 @2xl:items-start @5xl:hidden">
           {map.branches.map((b, i) => (
-            <Branch key={i} b={b} setRef={() => {}} />
+            <Branch key={i} b={b} onSay={onSay} setRef={() => {}} />
           ))}
         </div>
       </div>

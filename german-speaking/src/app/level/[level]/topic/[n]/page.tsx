@@ -147,7 +147,12 @@ function TopicPage() {
           />
         )}
         {tab === "hoeren" && <EasyGermanTab level={level} topic={topic} />}
-        {tab === "grammar" && <GrammarTab level={level} grammar={topic.grammar} settings={settings} providers={providers} />}
+        {tab === "grammar" && (
+          // The mind map gets more room than the narrow topic column (centred, never wider than the screen).
+          <div style={{ marginInline: "calc((100% - min(80rem, 100vw - 3rem)) / 2)" }}>
+            <GrammarTab level={level} grammar={topic.grammar} topicNo={topic.number} topicAr={topic.title_ar} topicDe={topic.title_de} settings={settings} providers={providers} />
+          </div>
+        )}
       </div>
     </div>
   );
