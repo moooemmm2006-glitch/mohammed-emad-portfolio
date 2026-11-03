@@ -7,7 +7,7 @@ import {
 } from "../src/lib/grammar/course";
 
 describe("grammar course", () => {
-  it("has A1–B1 as mind maps in course order and keeps B2", () => {
+  it("has every level as mind maps in course order", () => {
     expect(GRAMMAR_LEVELS).toEqual(["A1", "A2", "B1", "B2"]);
     expect(grammarLessonCounts()).toEqual({ A1: 30, A2: 20, B1: 35, B2: 12 });
   });
@@ -24,19 +24,15 @@ describe("grammar course", () => {
             grammarLessonById(related),
             `${lesson.id} -> ${related}`,
           ).toBeDefined();
-        if (level === "B2") {
-          expect(lesson.explanationAr.length).toBeGreaterThan(60);
-          expect(lesson.exercises.length).toBeGreaterThan(0);
-        } else {
-          expect(lesson.order).toBe(i + 1);
-          expect(lesson.exercises).toEqual([]);
-        }
+        expect(lesson.order).toBe(i + 1);
+        expect(lesson.exercises).toEqual([]);
+        expect(lesson.map, lesson.id).toBeDefined();
       });
     }
   });
 
-  it("draws every A1–B1 lesson as a full mind map", () => {
-    for (const level of ["A1", "A2", "B1"] as const) {
+  it("draws every lesson as a full mind map", () => {
+    for (const level of ["A1", "A2", "B1", "B2"] as const) {
       for (const lesson of grammarLessons(level)) {
         const map = lesson.map!;
         expect(map, lesson.id).toBeDefined();

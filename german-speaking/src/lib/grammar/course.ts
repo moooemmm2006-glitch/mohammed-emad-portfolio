@@ -4,10 +4,11 @@ import { A1_MAP } from "../../../data/grammar-map/a1";
 import { A2_MAP } from "../../../data/grammar-map/a2";
 import { B1_MAP } from "../../../data/grammar-map/b1";
 import { B2_LESSONS } from "../../../data/grammar/b2";
+import { writtenToMap } from "./writtenToMap";
 export const GRAMMAR_LEVELS: Level[] = ["A1", "A2", "B1", "B2"];
-// A1–B1 are mind maps in the course order; B2 keeps its written lessons for now.
+// Every level is drawn as mind maps: A1–B1 authored as maps, B2 converted from its written lessons.
 const numbered = (list: GrammarLesson[]) => list.map((l, i) => ({ ...l, order: i + 1, no: i + 1 }));
-const lessons: Record<Level, GrammarLesson[]> = { A1: numbered(A1_MAP), A2: numbered(A2_MAP), B1: numbered(B1_MAP), B2: B2_LESSONS };
+const lessons: Record<Level, GrammarLesson[]> = { A1: numbered(A1_MAP), A2: numbered(A2_MAP), B1: numbered(B1_MAP), B2: numbered(B2_LESSONS).map((l) => ({ ...l, map: writtenToMap(l), exercises: [] })) };
 export function grammarLessons(level: Level) { return lessons[level]; }
 export function grammarLesson(level: Level, id: string) { return lessons[level].find((item) => item.id === id); }
 export function grammarLessonCounts() { return Object.fromEntries(GRAMMAR_LEVELS.map((level) => [level, lessons[level].length])) as Record<Level, number>; }
