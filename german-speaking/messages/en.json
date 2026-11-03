@@ -1233,5 +1233,6 @@
   "adm_prod_invalid_link": "The link must start with https",
   "adm_prod_title_needed": "Please enter the course title",
   "adm_prod_featured": "Featured video (first in productivity)",
-  "grammar_lesson_no": "Lesson"
+  "grammar_lesson_no": "Lesson",
+  "gr_topic_rules": "Topic grammar"
 }

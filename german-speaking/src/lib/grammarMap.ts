@@ -14,6 +14,10 @@ export interface MapCard {
   note?: string;
   /** A small tag in the corner, e.g. "2 Bedeutungen". */
   tag?: string;
+  /** German text a ▶ button reads aloud (when the map is given `onSay`). */
+  say?: string;
+  /** Spans the whole branch width (long rules). */
+  wide?: boolean;
 }
 
 export interface MapBranch {
