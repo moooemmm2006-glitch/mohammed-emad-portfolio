@@ -24,7 +24,7 @@ export const TopicSchema = z.object({
   title_ar: z.string(),
   intro_ar: z.string(),
   vocab: z.array(Pair),
-  sections: z.array(z.object({ number: z.number().int(), title_de: z.string(), title_ar: z.string(), sentences: z.array(SentenceSchema).min(1) })).min(1),
+  sections: z.array(z.object({ number: z.number().int(), title_de: z.string(), title_ar: z.string(), can_ar: z.string().optional(), sentences: z.array(SentenceSchema).min(1) })).min(1),
   grammar: z.array(GrammarSchema),
 });
 const LevelFileSchema = z.object({

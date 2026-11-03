@@ -36,6 +36,10 @@ function open() {
     await client.executeMultiple(schema.SPRACHCAFE_DDL);
     await client.executeMultiple(schema.LEVEL_REVIEWS_DDL);
     await client.executeMultiple(schema.PRODUCTIVITY_DDL);
+    // A1 topics were rebuilt (situations with 40 sentences, same sentence numbers): reset their old
+    // per-sentence progress once, so old scores don't attach to new sentences.
+    const a1Reset = await client.execute({ sql: "INSERT OR IGNORE INTO site_settings (key, value, updated_at) VALUES (?, ?, ?)", args: ["book_a1_v2_reset", "1", Date.now()] });
+    if (a1Reset.rowsAffected === 1) await client.execute("DELETE FROM book_progress WHERE topic BETWEEN 1 AND 15");
     const now = Date.now();
     await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["farah", "Frau", "Frau", now, now] });
     await client.execute({ sql: "INSERT OR IGNORE INTO cafe_teachers (id, display_name_ar, display_name_en, created_at, updated_at) VALUES (?, ?, ?, ?, ?)", args: ["omar-helmy", "Herr", "Herr", now, now] });

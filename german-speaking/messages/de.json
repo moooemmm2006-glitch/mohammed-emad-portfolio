@@ -214,7 +214,7 @@
   "admin_copy": "Kopieren",
   "admin_copied": "Kopiert",
   "book_topics_title": "Themen aus dem Buch",
-  "book_topics_sub": "Aus deinem Buch Sprich Deutsch — 100 Sätze und Grammatik pro Thema",
+  "book_topics_sub": "Aus deinem Buch Sprich Deutsch — echte Situationen mit ausgewählten Sätzen und Grammatik",
   "book_done": "Fertig",
   "book_progress": "{c} von {t} Sätzen richtig",
   "book_review_title": "Heutige Wiederholung",
@@ -1231,5 +1231,6 @@
   "adm_prod_featured": "Empfohlenes Video (zuerst im Bereich Produktivität)",
   "grammar_lesson_no": "Lektion",
   "gr_topic_rules": "Grammatik des Themas",
-  "grammar_source": "Inspiriert vom Buch „Grammatik aktiv“ (Cornelsen), erklärt mit eigenen Beispielen von Sprich Deutsch"
+  "grammar_source": "Inspiriert vom Buch „Grammatik aktiv“ (Cornelsen), erklärt mit eigenen Beispielen von Sprich Deutsch",
+  "topic_source": "Situationen inspiriert von Netzwerk neu {level} (Klett), mit eigenen Sätzen von Sprich Deutsch"
 }

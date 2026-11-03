@@ -6,6 +6,9 @@ import { LockedTopic } from "@/components/plan/LockedTopic";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { GrammarTab } from "@/components/book/GrammarTab";
+import { SourceNote } from "@/components/grammar/MindMap";
+import { NETZWERK_LEVELS } from "@/lib/bookLevels";
+import { fill } from "@/lib/client/i18n";
 import { Shadowing } from "@/components/book/Shadowing";
 import { IconArrow, IconBook, IconHeadphones, IconMic, IconRepeat } from "@/components/Icons";
 import { EasyGermanTab } from "@/components/videos/EasyGermanTab";
@@ -90,6 +93,7 @@ function TopicPage() {
             {topic.title_de}
           </p>
           <p className="text-sm leading-relaxed">{topic.intro_ar}</p>
+          {NETZWERK_LEVELS.includes(level) && <SourceNote text={fill(t("topic_source"), { level })} testid="topic-source" />}
         </div>
         <div className="p-4">
           <p className="text-xs font-semibold text-muted mb-2">{t("book_vocab")}</p>
@@ -133,8 +137,10 @@ function TopicPage() {
             mode="shadow"
             groups={topic.sections.map((s) => ({
               key: `s${s.number}`,
-              title_de: `${s.number}. ${s.title_de}`,
+              no: s.number,
+              title_de: s.title_de,
               title_ar: s.title_ar,
+              can_ar: s.can_ar,
               items: s.sentences.map((x) => ({ n: x.n, key: `n${x.n}`, de: x.de, ar: x.ar })),
             }))}
           />

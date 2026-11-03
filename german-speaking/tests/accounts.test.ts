@@ -201,7 +201,7 @@ describe("data isolation between two learners", () => {
 
     // Sara still has hers.
     await loginAs(a);
-    const scored = (await (await bookAttemptsRoute.POST(req("/x", { heard: [{ n: 1, said: "Hallo" }, { n: 2, said: "Guten Morgen" }] }))).json()) as { results: { score: number }[] };
+    const scored = (await (await bookAttemptsRoute.POST(req("/x", { heard: [{ n: 1, said: "Hallo, ich heiße Mohammed" }, { n: 2, said: "Mein Name ist Sara Ahmed" }] }))).json()) as { results: { score: number }[] };
     expect(scored.results.map((r) => r.score)).toEqual([100, 100]);
     const saraTopics = (await (await bookLevelRoute.GET(req("/x"), levelCtx)).json()) as { topics: { number: number; progress: { correct: number } }[] };
     expect(saraTopics.topics[0].progress.correct).toBe(2);

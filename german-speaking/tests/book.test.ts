@@ -9,7 +9,7 @@ import { resetDbForTests } from "@/lib/db";
 import { LEVELS } from "@/lib/levels";
 
 describe("book loader", () => {
-  it("loads all 100 topics, 10,000 sentences and 546 grammar points, split by level", async () => {
+  it("loads all 100 topics and 546 grammar points; A1 is rebuilt as 4 situations × 10 sentences", async () => {
     const counts = { topics: 0, sentences: 0, grammar: 0 };
     const perLevel: Record<string, number> = {};
     for (const level of LEVELS) {
@@ -18,13 +18,19 @@ describe("book loader", () => {
       for (const t of topics) {
         expect(t.level).toBe(level);
         expect(levelOfTopic(t.number)).toBe(level);
-        expect(t.sections).toHaveLength(5);
+        if (level === "A1") {
+          expect(t.sections).toHaveLength(4);
+          for (const s of t.sections) {
+            expect(s.sentences).toHaveLength(10);
+            expect(s.can_ar?.length ?? 0).toBeGreaterThan(5);
+          }
+        } else expect(t.sections).toHaveLength(5);
         counts.topics++;
         counts.sentences += getSentences(t).length;
         counts.grammar += t.grammar.length;
       }
     }
-    expect(counts).toEqual({ topics: 100, sentences: 10000, grammar: 546 });
+    expect(counts).toEqual({ topics: 100, sentences: 600 + 8500, grammar: 546 });
     expect(perLevel).toEqual({ A1: 15, A2: 25, B1: 30, B2: 30 });
   });
 
@@ -34,8 +40,10 @@ describe("book loader", () => {
     expect((await getTopic("A2", 16))?.level).toBe("A2");
     expect((await getTopicByNumber(100))?.level).toBe("B2");
     const t1 = (await getTopicByNumber(1))!;
-    expect(getSentences(t1)).toHaveLength(100);
-    expect(getSentences(t1, 1).map((s) => s.n)).toEqual(Array.from({ length: 20 }, (_, i) => i + 1));
+    expect(getSentences(t1)).toHaveLength(40);
+    expect(getSentences(t1, 1).map((s) => s.n)).toEqual(Array.from({ length: 10 }, (_, i) => i + 1));
+    // Sentence numbers stay inside the topic's block of 100 (topic 2 starts at 101).
+    expect(getSentences((await getTopicByNumber(2))!)[0].n).toBe(101);
     const summaries = await topicSummaries("B1");
     expect(summaries.map((x) => x.number)).toEqual(Array.from({ length: 30 }, (_, i) => i + 41));
     expect(JSON.stringify(summaries)).not.toContain('"sentences"'); // the list page gets no sentences
