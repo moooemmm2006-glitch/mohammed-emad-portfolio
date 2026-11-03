@@ -214,7 +214,7 @@
   "admin_copy": "نسخ",
   "admin_copied": "اتنسخ",
   "book_topics_title": "مواضيع الكتاب",
-  "book_topics_sub": "من كتابك Sprich Deutsch — كل موضوع فيه 100 جملة وقواعد",
+  "book_topics_sub": "من كتابك Sprich Deutsch — مواقف حقيقية بجمل مختارة وقواعد",
   "book_done": "خلّصته",
   "book_progress": "{c} من {t} جملة صح",
   "book_review_title": "مراجعة النهارده",
@@ -1231,5 +1231,6 @@
   "adm_prod_featured": "فيديو مميز (أول قسم الإنتاجية)",
   "grammar_lesson_no": "الدرس",
   "gr_topic_rules": "قواعد الموضوع",
-  "grammar_source": "القواعد مستوحاة من كتاب Grammatik aktiv (Cornelsen)، بشرح وأمثلة من Sprich Deutsch"
+  "grammar_source": "القواعد مستوحاة من كتاب Grammatik aktiv (Cornelsen)، بشرح وأمثلة من Sprich Deutsch",
+  "topic_source": "المواقف مستوحاة من كتاب Netzwerk neu {level} (Klett)، بجمل وترجمة من Sprich Deutsch"
 }

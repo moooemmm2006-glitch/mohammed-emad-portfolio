@@ -397,11 +397,16 @@ export function MindMap({
 /** "Inspired by Grammatik aktiv" — shown on every grammar map and grammar page. */
 export function GrammarSource({ className = "" }: { className?: string }) {
   const { t } = useUI();
+  return <SourceNote text={t("grammar_source")} className={className} testid="grammar-source" />;
+}
+
+/** A small "📖 based on …" pill. */
+export function SourceNote({ text, className = "", testid }: { text: string; className?: string; testid?: string }) {
   return (
     <p
       dir="auto"
       className={`me-auto flex w-fit items-center gap-2 rounded-full border border-line bg-surface/90 px-3 py-1.5 text-sm text-muted shadow-sm ${className}`}
-      data-testid="grammar-source"
+      data-testid={testid}
     >
       <span
         aria-hidden="true"
@@ -409,7 +414,7 @@ export function GrammarSource({ className = "" }: { className?: string }) {
       >
         📖
       </span>
-      <span className="font-semibold">{t("grammar_source")}</span>
+      <span className="font-semibold">{text}</span>
     </p>
   );
 }

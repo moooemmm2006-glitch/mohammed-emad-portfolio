@@ -214,7 +214,7 @@
   "admin_copy": "Copy",
   "admin_copied": "Copied",
   "book_topics_title": "Book topics",
-  "book_topics_sub": "From your book Sprich Deutsch — 100 sentences and grammar per topic",
+  "book_topics_sub": "From your book Sprich Deutsch — real situations with selected sentences and grammar",
   "book_done": "Done",
   "book_progress": "{c} of {t} sentences right",
   "book_review_title": "Today's review",
@@ -1231,5 +1231,6 @@
   "adm_prod_featured": "Featured video (first in productivity)",
   "grammar_lesson_no": "Lesson",
   "gr_topic_rules": "Topic grammar",
-  "grammar_source": "Inspired by the book “Grammatik aktiv” (Cornelsen), explained with Sprich Deutsch’s own examples"
+  "grammar_source": "Inspired by the book “Grammatik aktiv” (Cornelsen), explained with Sprich Deutsch’s own examples",
+  "topic_source": "Situations inspired by Netzwerk neu {level} (Klett), with Sprich Deutsch’s own sentences"
 }

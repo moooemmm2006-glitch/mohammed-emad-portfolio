@@ -64,7 +64,7 @@ export function AboutPage() {
           {[
             ["4", { ar: "مستويات من A1 لحد B2", de: "Niveaus A1–B2", en: "levels A1–B2" }],
             ["100", { ar: "موضوع من الحياة اليومية", de: "Alltagsthemen", en: "everyday topics" }],
-            ["100", { ar: "جملة في كل موضوع", de: "Sätze pro Thema", en: "sentences per topic" }],
+            ["85", { ar: "درس قواعد بالخرايط الذهنية", de: "Grammatik-Mindmaps", en: "grammar mind maps" }],
             ["5", { ar: "مهارات: كلام، استماع، قراءة، كتابة، قواعد", de: "Fertigkeiten", en: "skills" }],
           ].map(([n, label], i) => (
             <div key={i} className="rounded-2xl bg-surface-2 p-4">

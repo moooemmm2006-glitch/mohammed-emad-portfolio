@@ -3,6 +3,9 @@ import type { Level } from "./levels";
 // Which book topics belong to which level (safe to import in the browser — no book data here).
 
 /** The book's topic ranges per level: A1 = 1–15, A2 = 16–40, B1 = 41–70, B2 = 71–100. */
+/** Levels whose topics are rebuilt as situations after the model of Netzwerk neu (Klett). */
+export const NETZWERK_LEVELS: Level[] = ["A1"];
+
 export const TOPIC_RANGE: Record<Level, [number, number]> = { A1: [1, 15], A2: [16, 40], B1: [41, 70], B2: [71, 100] };
 
 export function levelOfTopic(n: number): Level | null {

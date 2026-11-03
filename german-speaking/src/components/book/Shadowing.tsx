@@ -26,6 +26,10 @@ export interface PracticeGroup {
   key: string;
   title_de?: string;
   title_ar?: string;
+  /** Situation number (shown as a badge). */
+  no?: number;
+  /** "After this you can …" (Arabic). */
+  can_ar?: string;
   items: PracticeItem[];
 }
 
@@ -147,18 +151,38 @@ export function Shadowing({ level, groups, settings, providers, scores: initialS
       <p className="text-sm text-muted">{reverse ? t("sh_reverse_hint") : t("sh_tap")}</p>
 
       {groups.map((g) => (
-        <section key={g.key} className="space-y-2">
-          {(g.title_de || g.title_ar) && (
-            <h3 className="font-bold flex flex-wrap items-baseline gap-x-2">
-              {g.title_ar && <span>{g.title_ar}</span>}
-              {g.title_de && (
-                <span className="de text-sm text-muted font-semibold" dir="ltr">
-                  {g.title_de}
+        <section key={g.key} className={g.no ? "rounded-3xl border border-line bg-surface p-3 sm:p-4 shadow-[var(--shadow)]" : "space-y-2"}>
+          {g.no ? (
+            // A situation card: number, title, and what the learner can do after it.
+            <header className="mb-3 flex items-start gap-3">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl bg-accent text-lg font-black text-white" aria-hidden="true">
+                {g.no}
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="flex flex-wrap items-baseline gap-x-2">
+                  {g.title_ar && <span className="text-lg font-extrabold">{g.title_ar}</span>}
+                  {g.title_de && (
+                    <span className="de text-sm font-semibold text-muted" dir="ltr" lang="de">
+                      {g.title_de}
+                    </span>
+                  )}
                 </span>
-              )}
-            </h3>
+                {g.can_ar && <span className="mt-0.5 block text-sm text-muted">🎯 {g.can_ar}</span>}
+              </span>
+            </header>
+          ) : (
+            (g.title_de || g.title_ar) && (
+              <h3 className="font-bold flex flex-wrap items-baseline gap-x-2">
+                {g.title_ar && <span>{g.title_ar}</span>}
+                {g.title_de && (
+                  <span className="de text-sm text-muted font-semibold" dir="ltr">
+                    {g.title_de}
+                  </span>
+                )}
+              </h3>
+            )
           )}
-          <ul className="space-y-2">
+          <ul className={g.no ? "grid gap-2 sm:grid-cols-2" : "space-y-2"}>
             {g.items.map((it) => {
               const res = results[it.key];
               const best = it.n ? scores[it.n] : undefined;
@@ -169,7 +193,7 @@ export function Shadowing({ level, groups, settings, providers, scores: initialS
                   ref={(el) => {
                     rowRefs.current[it.key] = el;
                   }}
-                  className={`rounded-2xl border p-3 sm:p-4 transition ${active ? "border-accent bg-accent-soft" : "border-line bg-surface"}`}
+                  className={`${g.no ? "rounded-xl px-3 py-2.5" : "rounded-2xl p-3 sm:p-4"} border transition ${active ? "border-accent bg-accent-soft" : g.no ? "border-transparent bg-surface-2/70 hover:border-line" : "border-line bg-surface"}`}
                 >
                   <button
                     type="button"
@@ -181,12 +205,12 @@ export function Shadowing({ level, groups, settings, providers, scores: initialS
                     }}
                     aria-label={reverse ? it.ar : it.de}
                   >
-                    <span className="shrink-0 mt-1 text-xs tabular-nums text-muted w-8">{it.n ?? ""}</span>
+                    <span className={`shrink-0 tabular-nums text-muted ${g.no ? "mt-0.5 w-5 text-[11px]" : "mt-1 w-8 text-xs"}`}>{g.no ? g.items.indexOf(it) + 1 : (it.n ?? "")}</span>
                     <span className="flex-1 min-w-0">
                       {reverse && !res ? (
                         <span className="block text-lg font-semibold">{it.ar}</span>
                       ) : (
-                        <span dir="ltr" lang="de" className="block de text-lg font-semibold text-start">
+                        <span dir="ltr" lang="de" className={`block de font-semibold text-start ${g.no ? "text-base leading-snug" : "text-lg"}`}>
                           {res ? <Marked cmp={res.cmp} /> : it.de}
                         </span>
                       )}

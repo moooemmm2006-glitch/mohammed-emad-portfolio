@@ -6,29 +6,25 @@
   "title_ar": "التحية والتعارف",
   "sections": [
    {
-    "title_de": "Hallo sagen",
-    "title_ar": "نسلم على بعض"
-   },
-   {
-    "title_de": "Wie geht's?",
-    "title_ar": "إزيك؟ وعامل إيه؟"
-   },
-   {
     "title_de": "Sich vorstellen",
-    "title_ar": "نعرف نفسنا"
+    "title_ar": "تعرّف نفسك"
    },
    {
-    "title_de": "Herkunft und Sprachen",
-    "title_ar": "إنت منين وبتتكلم إيه"
+    "title_de": "Fragen stellen",
+    "title_ar": "اسأل الطرف التاني"
    },
    {
-    "title_de": "Tschüss sagen",
-    "title_ar": "نودع بعض"
+    "title_de": "Höflich sein: du oder Sie?",
+    "title_ar": "بأدب: du ولا Sie؟"
+   },
+   {
+    "title_de": "Begrüßen und verabschieden",
+    "title_ar": "سلام ووداع"
    }
   ],
   "sentences": [
    1,
-   100
+   40
   ]
  },
  {
@@ -42,12 +38,8 @@
     "title_ar": "السن وعيد الميلاد"
    },
    {
-    "title_de": "Die Adresse",
-    "title_ar": "العنوان"
-   },
-   {
-    "title_de": "Telefon und E-Mail",
-    "title_ar": "التليفون والإيميل"
+    "title_de": "Adresse und Kontakt",
+    "title_ar": "العنوان ووسيلة التواصل"
    },
    {
     "title_de": "Beruf und Familienstand",
@@ -55,12 +47,12 @@
    },
    {
     "title_de": "Ein Formular ausfüllen",
-    "title_ar": "نملا استمارة"
+    "title_ar": "تملا استمارة"
    }
   ],
   "sentences": [
    101,
-   200
+   140
   ]
  },
  {
@@ -70,29 +62,25 @@
   "title_ar": "العيلة",
   "sections": [
    {
-    "title_de": "Meine Familie",
-    "title_ar": "عيلتي"
+    "title_de": "Meine Familie vorstellen",
+    "title_ar": "تعرّف عيلتك"
    },
    {
-    "title_de": "Geschwister",
-    "title_ar": "الإخوات"
+    "title_de": "Nach der Familie fragen",
+    "title_ar": "تسأل عن العيلة"
    },
    {
-    "title_de": "Eltern und Großeltern",
-    "title_ar": "الأهل والجدود"
+    "title_de": "Familie und Alltag",
+    "title_ar": "العيلة واليوم العادي"
    },
    {
-    "title_de": "Kinder",
-    "title_ar": "الأولاد"
-   },
-   {
-    "title_de": "Fotos und Familienleben",
-    "title_ar": "صور وحياة العيلة"
+    "title_de": "Ein Familienfoto beschreiben",
+    "title_ar": "توصف صورة عيلة"
    }
   ],
   "sentences": [
    201,
-   300
+   240
   ]
  },
  {
@@ -106,25 +94,21 @@
     "title_ar": "الأرقام والأسعار"
    },
    {
-    "title_de": "Wie spät ist es?",
-    "title_ar": "الساعة كام؟"
+    "title_de": "Die Uhrzeit",
+    "title_ar": "الساعة"
    },
    {
-    "title_de": "Wann? Zeiten verabreden",
-    "title_ar": "إمتى؟ نتفق على ميعاد"
+    "title_de": "Tage, Monate und Datum",
+    "title_ar": "الأيام والشهور والتاريخ"
    },
    {
-    "title_de": "Wochentage und Tageszeiten",
-    "title_ar": "أيام الأسبوع وأوقات اليوم"
-   },
-   {
-    "title_de": "Datum und Monate",
-    "title_ar": "التاريخ والشهور"
+    "title_de": "Zeiten verabreden",
+    "title_ar": "تتفق على ميعاد"
    }
   ],
   "sentences": [
    301,
-   400
+   340
   ]
  },
  {
@@ -134,16 +118,8 @@
   "title_ar": "الصبح وروتين اليوم",
   "sections": [
    {
-    "title_de": "Aufwachen",
-    "title_ar": "الصحيان"
-   },
-   {
-    "title_de": "Im Bad",
-    "title_ar": "في الحمام"
-   },
-   {
-    "title_de": "Anziehen",
-    "title_ar": "اللبس"
+    "title_de": "Aufstehen und ins Bad",
+    "title_ar": "الصحيان والحمام"
    },
    {
     "title_de": "Frühstück",
@@ -151,12 +127,16 @@
    },
    {
     "title_de": "Aus dem Haus",
-    "title_ar": "نازلين من البيت"
+    "title_ar": "النزول من البيت"
+   },
+   {
+    "title_de": "Mein Tagesablauf",
+    "title_ar": "يومي من أوله لآخره"
    }
   ],
   "sentences": [
    401,
-   500
+   440
   ]
  },
  {
@@ -166,29 +146,25 @@
   "title_ar": "الأكل والشرب",
   "sections": [
    {
-    "title_de": "Hunger und Durst",
-    "title_ar": "جعان وعطشان"
-   },
-   {
     "title_de": "Was isst du gern?",
     "title_ar": "بتحب تاكل إيه؟"
    },
    {
-    "title_de": "Frühstück, Mittag- und Abendessen",
-    "title_ar": "الفطار والغدا والعشا"
+    "title_de": "Hunger, Durst und Mahlzeiten",
+    "title_ar": "الجوع والعطش والوجبات"
    },
    {
-    "title_de": "Am Tisch",
-    "title_ar": "على السفرة"
+    "title_de": "Im Restaurant bestellen",
+    "title_ar": "تطلب في المطعم"
    },
    {
-    "title_de": "Kochen und Einkaufen",
+    "title_de": "Kochen und einkaufen",
     "title_ar": "الطبخ وشراء الأكل"
    }
   ],
   "sentences": [
    501,
-   600
+   540
   ]
  },
  {
@@ -198,8 +174,8 @@
   "title_ar": "الشراء من المحلات: الأساسيات",
   "sections": [
    {
-    "title_de": "Wo finde ich …?",
-    "title_ar": "ألاقي... فين؟"
+    "title_de": "Im Geschäft fragen",
+    "title_ar": "تسأل في المحل"
    },
    {
     "title_de": "Preise und Mengen",
@@ -207,20 +183,16 @@
    },
    {
     "title_de": "Kleidung kaufen",
-    "title_ar": "شراء الهدوم"
+    "title_ar": "تشتري لبس"
    },
    {
     "title_de": "An der Kasse",
     "title_ar": "عند الكاشير"
-   },
-   {
-    "title_de": "Einkaufsliste und Probleme",
-    "title_ar": "ليستة الطلبات والمشاكل"
    }
   ],
   "sentences": [
    601,
-   700
+   640
   ]
  },
  {
@@ -230,8 +202,8 @@
   "title_ar": "البيت والأوض",
   "sections": [
    {
-    "title_de": "Wo wohnst du?",
-    "title_ar": "ساكن فين؟"
+    "title_de": "Wo und wie wohnst du?",
+    "title_ar": "ساكن فين وإزاي؟"
    },
    {
     "title_de": "Die Zimmer",
@@ -242,17 +214,13 @@
     "title_ar": "العفش: إيه فين؟"
    },
    {
-    "title_de": "Miete und Wohnungssuche",
-    "title_ar": "الإيجار والدور على شقة"
-   },
-   {
-    "title_de": "Zu Hause und die Nachbarn",
-    "title_ar": "في البيت والجيران"
+    "title_de": "Eine Wohnung suchen",
+    "title_ar": "تدوّر على شقة"
    }
   ],
   "sentences": [
    701,
-   800
+   740
   ]
  },
  {
@@ -262,29 +230,25 @@
   "title_ar": "الجو",
   "sections": [
    {
-    "title_de": "Wie ist das Wetter heute?",
-    "title_ar": "الجو عامل إيه النهارده؟"
+    "title_de": "Wie ist das Wetter?",
+    "title_ar": "الجو عامل إيه؟"
    },
    {
-    "title_de": "Temperatur und Gefühl",
-    "title_ar": "درجة الحرارة وإحساسك"
+    "title_de": "Wie fühlst du dich bei dem Wetter?",
+    "title_ar": "حاسس بإيه في الجو ده؟"
    },
    {
-    "title_de": "Morgen und die Wettervorhersage",
-    "title_ar": "بكرة والنشرة الجوية"
+    "title_de": "Wettervorhersage",
+    "title_ar": "النشرة الجوية"
    },
    {
-    "title_de": "Die Jahreszeiten",
-    "title_ar": "فصول السنة"
-   },
-   {
-    "title_de": "Smalltalk über das Wetter",
-    "title_ar": "دردشة عن الجو"
+    "title_de": "Jahreszeiten und Smalltalk",
+    "title_ar": "الفصول والدردشة"
    }
   ],
   "sentences": [
    801,
-   900
+   840
   ]
  },
  {
@@ -308,15 +272,11 @@
    {
     "title_de": "Orte in der Stadt",
     "title_ar": "أماكن في المدينة"
-   },
-   {
-    "title_de": "Navigation und Probleme unterwegs",
-    "title_ar": "الـ GPS ومشاكل في الطريق"
    }
   ],
   "sentences": [
    901,
-   1000
+   940
   ]
  },
  {
@@ -331,24 +291,20 @@
    },
    {
     "title_de": "Wie oft?",
-    "title_ar": "بتعملها كام مرة؟"
+    "title_ar": "كل قد إيه؟"
    },
    {
     "title_de": "Sport und draußen",
-    "title_ar": "الرياضة والخروج برا"
-   },
-   {
-    "title_de": "Zu Hause und Kultur",
-    "title_ar": "في البيت والثقافة"
+    "title_ar": "الرياضة والخروج"
    },
    {
     "title_de": "Zusammen etwas machen",
-    "title_ar": "نعمل حاجة سوا"
+    "title_ar": "تخرجوا سوا"
    }
   ],
   "sentences": [
    1001,
-   1100
+   1040
   ]
  },
  {
@@ -358,29 +314,25 @@
   "title_ar": "المشاعر ببساطة",
   "sections": [
    {
-    "title_de": "Wie geht’s dir?",
-    "title_ar": "عامل إيه؟"
+    "title_de": "Wie geht es dir wirklich?",
+    "title_ar": "إنت عامل إيه بجد؟"
    },
    {
-    "title_de": "Gute Gefühle",
-    "title_ar": "مشاعر حلوة"
+    "title_de": "Freude teilen",
+    "title_ar": "تشارك الفرحة"
    },
    {
-    "title_de": "Nicht so gute Gefühle",
-    "title_ar": "مشاعر مش حلوة"
-   },
-   {
-    "title_de": "Körper: Hunger, Durst, krank",
-    "title_ar": "الجسم: جوع وعطش وعيا"
+    "title_de": "Probleme und Sorgen",
+    "title_ar": "مشاكل وقلق"
    },
    {
     "title_de": "Reagieren und trösten",
-    "title_ar": "الرد والطبطبة"
+    "title_ar": "ترد وتواسي"
    }
   ],
   "sentences": [
    1101,
-   1200
+   1140
   ]
  },
  {
@@ -390,8 +342,8 @@
   "title_ar": "تعلّم الألماني في الفصل",
   "sections": [
    {
-    "title_de": "Ich lerne Deutsch",
-    "title_ar": "أنا بتعلم ألماني"
+    "title_de": "Warum Deutsch?",
+    "title_ar": "ليه ألماني؟"
    },
    {
     "title_de": "Ich verstehe nicht",
@@ -402,17 +354,13 @@
     "title_ar": "في الحصة"
    },
    {
-    "title_de": "Hausaufgaben und Prüfung",
-    "title_ar": "الواجب والامتحان"
-   },
-   {
-    "title_de": "Tipps und Sprache im Alltag",
-    "title_ar": "نصايح واللغة في الحياة اليومية"
+    "title_de": "Tipps zum Lernen",
+    "title_ar": "نصايح للمذاكرة"
    }
   ],
   "sentences": [
    1201,
-   1300
+   1240
   ]
  },
  {
@@ -423,28 +371,24 @@
   "sections": [
    {
     "title_de": "Ankommen und Platz finden",
-    "title_ar": "الوصول وإيجاد مكان"
+    "title_ar": "توصل وتلاقي مكان"
    },
    {
-    "title_de": "Getränke bestellen",
-    "title_ar": "طلب المشروبات"
-   },
-   {
-    "title_de": "Kuchen und Snacks",
-    "title_ar": "الكيك والسناكس"
+    "title_de": "Bestellen",
+    "title_ar": "تطلب"
    },
    {
     "title_de": "Zum Mitnehmen",
     "title_ar": "تيك أواي"
    },
    {
-    "title_de": "Bezahlen",
-    "title_ar": "الدفع"
+    "title_de": "Bezahlen und Probleme",
+    "title_ar": "الدفع والمشاكل"
    }
   ],
   "sentences": [
    1301,
-   1400
+   1340
   ]
  },
  {
@@ -454,29 +398,25 @@
   "title_ar": "الأسبوع والمواعيد",
   "sections": [
    {
-    "title_de": "Die Tage der Woche",
-    "title_ar": "أيام الأسبوع"
-   },
-   {
     "title_de": "Mein Wochenplan",
-    "title_ar": "برنامجي في الأسبوع"
+    "title_ar": "جدول أسبوعي"
    },
    {
     "title_de": "Sich verabreden",
-    "title_ar": "الاتفاق على ميعاد مع صحاب"
+    "title_ar": "تتفق مع صاحبك"
    },
    {
     "title_de": "Einen Termin machen",
-    "title_ar": "حجز ميعاد رسمي"
+    "title_ar": "تاخد ميعاد"
    },
    {
     "title_de": "Absagen und verschieben",
-    "title_ar": "الإلغاء والتأجيل"
+    "title_ar": "تلغي أو تأجل"
    }
   ],
   "sentences": [
    1401,
-   1500
+   1440
   ]
  },
  {

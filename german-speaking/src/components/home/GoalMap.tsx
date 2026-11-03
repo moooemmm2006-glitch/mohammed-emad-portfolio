@@ -38,7 +38,7 @@ function paths(level: Level): Path[] {
       title: { ar: "عايز تتكلم بطلاقة أو تشتغل بيها", de: "Du willst fließend sprechen oder damit arbeiten", en: "You want to speak fluently or work with it" },
       note: { ar: "الشغل بالكلام محتاج ودن وسرعة رد، فركّز على المحادثة والاستماع.", de: "Arbeit am Telefon braucht Ohr und schnelle Antworten.", en: "Phone work needs a good ear and quick answers." },
       focus: [
-        { icon: "🗣️", de: "Themen", key: true, title: { ar: "المواضيع", de: "Themen", en: "Topics" }, text: { ar: "100 جملة لكل موضوع بصوتك", de: "100 Sätze pro Thema, laut", en: "100 sentences per topic, out loud" }, href: lv },
+        { icon: "🗣️", de: "Themen", key: true, title: { ar: "المواضيع", de: "Themen", en: "Topics" }, text: { ar: "جمل مهمة لكل موقف، بصوتك", de: "Wichtige Sätze pro Situation, laut", en: "Key sentences per situation, out loud" }, href: lv },
         { icon: "🎙️", de: "Gespräche", key: true, title: { ar: "المحادثة", de: "Gespräche", en: "Conversation" }, text: { ar: "Gemini Live والـ Sprachcafé", de: "Gemini Live und Sprachcafé", en: "Gemini Live and the Sprachcafé" }, href: "/sprachcafe" },
         { icon: "🎧", de: "Hören", key: true, title: { ar: "الاستماع", de: "Hören", en: "Listening" }, text: { ar: "Nicos Weg و Easy German", de: "Nicos Weg und Easy German", en: "Nicos Weg and Easy German" }, href: `${lv}?skill=listen` },
       ],
