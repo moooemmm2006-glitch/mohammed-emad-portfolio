@@ -31,7 +31,7 @@ export function NicheArt({
       <rect x={250 + j(30)} y={18 + j(20)} width="130" height="110" fill={`url(#${id}d)`} />
       {niche === "courses" && <Courses id={id} s={s} primary={primary} accent={accent} bg={bg1} />}
       {niche === "clinic" && <Clinic id={id} s={s} primary={primary} accent={accent} bg={bg1} />}
-      {niche === "shop" && <Shop id={id} s={s} primary={primary} accent={accent} bg={bg1} />}
+      {niche === "shop" && (variant % 3 === 1 ? <ShopBox id={id} s={s} primary={primary} accent={accent} bg={bg1} /> : variant % 3 === 2 ? <ShopJar id={id} s={s} primary={primary} accent={accent} bg={bg1} /> : <Shop id={id} s={s} primary={primary} accent={accent} bg={bg1} />)}
     </svg>
   );
 }
@@ -105,6 +105,42 @@ function Shop({ id, s, primary, accent, bg }: P) {
         <rect x="10" y="16" width="32" height="7" rx="3.5" fill={accent} />
       </g>
       {[0, 1, 2, 3, 4].map((i) => <circle key={i} cx={60 + i * 70 + j(30)} cy={40 + j(40)} r={3 + (i % 3)} fill={i % 2 ? primary : accent} opacity=".7" />)}
+    </g>
+  );
+}
+
+function ShopBox({ id, s, primary, accent, bg }: P) {
+  const j = jitter(s + "box");
+  return (
+    <g>
+      <circle cx={110 + j(30)} cy={110 + j(20)} r="70" fill={accent} opacity=".85" />
+      <g transform={`translate(${170 + j(20)} ${110 + j(10)}) rotate(${4 + j(6)})`}>
+        <rect x="0" y="40" width="150" height="120" rx="14" fill={`url(#${id}a)`} />
+        <rect x="-8" y="20" width="166" height="34" rx="10" fill={primary} />
+        <rect x="64" y="20" width="22" height="140" fill={bg} opacity=".85" />
+        <path d="M75 20 c-30 -40 -60 -10 -30 0 M75 20 c30 -40 60 -10 30 0" fill="none" stroke={bg} strokeWidth="8" strokeLinecap="round" />
+      </g>
+      {[0, 1, 2].map((i) => <rect key={i} x={40 + i * 120 + j(30)} y={250 + j(20)} width="14" height="14" rx="3" fill={i % 2 ? accent : primary} transform={`rotate(${20 * i} ${47 + i * 120} 257)`} opacity=".7" />)}
+    </g>
+  );
+}
+
+function ShopJar({ id, s, primary, accent, bg }: P) {
+  const j = jitter(s + "jar");
+  return (
+    <g>
+      <rect x={60 + j(20)} y="60" width="280" height="200" rx="100" fill={accent} opacity=".25" />
+      <g transform={`translate(${150 + j(20)} ${60 + j(10)})`}>
+        <rect x="20" y="0" width="60" height="30" rx="8" fill={primary} />
+        <rect x="0" y="26" width="100" height="170" rx="30" fill={`url(#${id}a)`} />
+        <rect x="16" y="90" width="68" height="40" rx="8" fill={bg} opacity=".85" />
+        <rect x="26" y="104" width="48" height="6" rx="3" fill={accent} />
+      </g>
+      <g transform={`translate(${270 + j(16)} ${150 + j(10)})`}>
+        <rect x="0" y="0" width="56" height="96" rx="22" fill={accent} />
+        <rect x="14" y="-18" width="28" height="22" rx="6" fill={primary} opacity=".8" />
+      </g>
+      <circle cx={90 + j(20)} cy={220 + j(16)} r="18" fill={primary} opacity=".6" />
     </g>
   );
 }
