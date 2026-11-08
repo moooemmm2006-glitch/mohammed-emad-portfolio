@@ -1,5 +1,8 @@
 User-agent: *
 Allow: /
 Disallow: /brand/
+Disallow: /demo/
+Disallow: /studio
+Disallow: /api/
 
 Sitemap: https://mohammed-emad-portfolio.vercel.app/sitemap.xml

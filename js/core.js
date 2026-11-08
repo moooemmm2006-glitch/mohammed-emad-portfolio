@@ -223,8 +223,8 @@
 
   function navLinks() {
     // Links to a dedicated page; the rest are sections of the home page.
-    const pages = { consult: 'consultation', automation: 'automation' };
-    return ['work', 'services', 'automation', 'consult', 'about', 'contact'].map((k) => {
+    const pages = { consult: 'consultation', automation: 'automation', try: 'try' };
+    return ['work', 'services', 'automation', 'try', 'consult', 'about', 'contact'].map((k) => {
       const url = pages[k] ? pages[k] + '.html' : href(k);
       const current = pages[k] && page === pages[k] ? ' aria-current="page"' : '';
       return `<a href="${url}"${current} data-i18n="nav.${k}"></a>`;
@@ -280,7 +280,8 @@
       const links = ['work', 'why', 'services', 'process', 'about']
         .map((k) => `<li><a href="${href(k)}">${esc(t('nav.' + k))}</a></li>`).join('')
         + `<li><a href="automation.html">${esc(t('nav.automation'))}</a></li>`
-        + `<li><a href="consultation.html">${esc(t('nav.consult'))}</a></li>`;
+        + `<li><a href="consultation.html">${esc(t('nav.consult'))}</a></li>`
+        + `<li><a href="try.html">${esc(t('nav.try'))}</a></li>`;
       const follow = followLinks();
       el.innerHTML = `
         <div class="container">
