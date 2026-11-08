@@ -84,7 +84,7 @@ function nicheLabel(c: DemoContent) {
 }
 
 /** 1200×630 Open Graph card: business name + niche visual + "نموذج موقع خاص بيكم". */
-export async function ogSvg(c: DemoContent, seed: string, host: string): Promise<string> {
+export async function ogSvg(c: DemoContent, seed: string, host: string, site = false): Promise<string> {
   const W = 1200, H = 630;
   const p = c.brand.primary, a = c.brand.accent;
   const deep = mix("#0B0D12", p, 0.32);
@@ -106,7 +106,7 @@ export async function ogSvg(c: DemoContent, seed: string, host: string): Promise
     <g clip-path="url(#card)">${art}</g>
   </g>
   <rect x="${W - 80 - 330}" y="98" width="330" height="54" rx="27" fill="${a}"/>
-  ${line("نموذج موقع خاص بيكم", W - 108, 135, 28, 800, readableOn(a))}
+  ${line(site ? (c.tagline ? wrap(c.tagline, 290, 28, 1)[0] : nicheLabel(c)) : "نموذج موقع خاص بيكم", W - 108, 135, 28, 800, readableOn(a))}
   ${lines.map((l, i) => line(l, W - 80, nameY0 + i * size * 1.18 + size * 0.35, size, 800, "#FFFFFF")).join("\n  ")}
   ${line(sub, W - 80, nameY0 + (lines.length - 1) * size * 1.18 + size * 0.35 + 78, 34, 500, "#FFFFFF", 0.78)}
   <rect x="${W - 80 - 64}" y="${H - 104}" width="64" height="6" rx="3" fill="${a}"/>

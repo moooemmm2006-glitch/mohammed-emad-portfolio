@@ -2,10 +2,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRuntime, WaGlyph, type Act } from "./runtime";
+import { waLink } from "@/lib/phone";
 
 /** A button that runs a template action (WhatsApp / call / form) through the runtime. */
 export function ActionButton({ action, className, children, ariaLabel }: { action: Act; className?: string; children: React.ReactNode; ariaLabel?: string }) {
-  const { act } = useRuntime();
+  const { act, mode, phone, whatsapp } = useRuntime();
+  // Static export: plain links that work without JavaScript.
+  if (mode === "export" && action.kind !== "form") {
+    const href = action.kind === "call" ? `tel:${phone || whatsapp}` : waLink(whatsapp || phone, action.text);
+    return <a href={href} className={className} aria-label={ariaLabel} {...(action.kind === "whatsapp" ? { target: "_blank", rel: "noopener" } : {})}>{children}</a>;
+  }
   return (
     <motion.button type="button" whileHover={{ y: -2 }} whileTap={{ scale: 0.98 }} onClick={() => act(action)} className={className} aria-label={ariaLabel}>
       {children}
@@ -17,7 +23,7 @@ export type FieldDef = { name: string; label: string; type?: "text" | "tel" | "s
 
 /** Booking / registration form. Demo mode: friendly modal + engagement event. Live site: stored + WhatsApp. */
 export function BookingForm({ fields, submitLabel, formLabel, variant = "card" }: { fields: FieldDef[]; submitLabel: string; formLabel: string; variant?: "card" | "plain" }) {
-  const { act } = useRuntime();
+  const { act, mode, whatsapp, phone, name } = useRuntime();
   const [err, setErr] = useState("");
   const [done, setDone] = useState(false);
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -35,18 +41,18 @@ export function BookingForm({ fields, submitLabel, formLabel, variant = "card" }
     setDone(true);
   }
   return (
-    <form onSubmit={onSubmit} className={variant === "card" ? "rounded-[28px] bg-card border border-line p-5 sm:p-7 shadow-[0_30px_80px_-40px_rgba(0,0,0,.35)]" : ""} noValidate>
+    <form onSubmit={onSubmit} {...(mode === "export" ? { "data-wa": waLink(whatsapp || phone).replace("https://wa.me/", ""), "data-title": `أهلاً ${name} 👋\n${formLabel}` } : {})} className={variant === "card" ? "rounded-[28px] bg-card border border-line p-5 sm:p-7 shadow-[0_30px_80px_-40px_rgba(0,0,0,.35)]" : ""} noValidate>
       <div className="grid gap-4">
         {fields.map((f) => (
           <div key={f.name}>
             <label htmlFor={`f-${f.name}`} className="block text-sm font-semibold mb-1.5">{f.label}{f.required && <span className="text-p" aria-hidden> *</span>}</label>
             {f.type === "select" ? (
-              <select id={`f-${f.name}`} name={f.name} className="tpl-input" required={f.required} defaultValue="">
+              <select id={`f-${f.name}`} name={f.name} data-label={f.label} className="tpl-input" required={f.required} defaultValue="">
                 <option value="" disabled>اختار…</option>
                 {(f.options || []).map((o) => <option key={o} value={o}>{o}</option>)}
               </select>
             ) : (
-              <input id={`f-${f.name}`} name={f.name} type={f.type || "text"} inputMode={f.type === "tel" ? "tel" : undefined} dir={f.type === "tel" ? "ltr" : undefined}
+              <input id={`f-${f.name}`} name={f.name} data-label={f.label} type={f.type || "text"} inputMode={f.type === "tel" ? "tel" : undefined} dir={f.type === "tel" ? "ltr" : undefined}
                 className={`tpl-input ${f.type === "tel" ? "text-end" : ""}`} placeholder={f.placeholder} required={f.required} autoComplete={f.autoComplete} maxLength={120} />
             )}
           </div>
@@ -64,8 +70,9 @@ export function BookingForm({ fields, submitLabel, formLabel, variant = "card" }
 /** Click-to-load map: no Google scripts or cookies until the visitor asks for the map. */
 export function MapFacade({ query, label, className = "" }: { query: string; label: string; className?: string }) {
   const [on, setOn] = useState(false);
-  const { track } = useRuntime();
+  const { track, mode } = useRuntime();
   const src = `https://maps.google.com/maps?q=${encodeURIComponent(query)}&output=embed&hl=ar`;
+  if (mode === "export") return <iframe title={`خريطة ${label}`} src={src} className={`w-full border-0 ${className}`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" />;
   if (on) return <iframe title={`خريطة ${label}`} src={src} className={`w-full border-0 ${className}`} loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />;
   return (
     <button type="button" onClick={() => { setOn(true); track("map_open"); }} className={`group relative w-full overflow-hidden bg-bg2 ${className}`} aria-label={`اعرض الخريطة: ${label}`}>
@@ -89,11 +96,11 @@ export function MapFacade({ query, label, className = "" }: { query: string; lab
 export function ProductFilter({ categories, children }: { categories: string[]; children: React.ReactNode }) {
   const [cat, setCat] = useState("");
   return (
-    <div data-cat={cat}>
+    <div data-cat={cat} data-cat-root="">
       {categories.length > 1 && (
         <div className="mb-6 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]" role="group" aria-label="الأقسام">
           {["", ...categories].map((c) => (
-            <button key={c || "all"} type="button" aria-pressed={cat === c} onClick={() => setCat(c)}
+            <button key={c || "all"} type="button" data-cat-btn={c} aria-pressed={cat === c} onClick={() => setCat(c)}
               className={`h-10 shrink-0 rounded-full px-5 text-[15px] font-semibold border transition ${cat === c ? "tp-btn border-transparent" : "border-line hover:border-p text-fg"}`}>
               {c || "الكل"}
             </button>

@@ -54,3 +54,16 @@ export async function sha256(s: string): Promise<string> {
 export async function visitorHash(ip: string, ua: string, day: string): Promise<string> {
   return (await hmac(`v:${ip}|${ua}|${day}`)).slice(0, 32);
 }
+
+/** Short-lived token that lets the exporter render /s/[slug] in static mode. */
+export async function exportToken(slug: string, now = Date.now()): Promise<string> {
+  const exp = now + 5 * 60_000;
+  return `${exp}.${(await hmac(`export:${slug}:${exp}`)).slice(0, 32)}`;
+}
+export async function verifyExportToken(slug: string, token: string | undefined, now = Date.now()): Promise<boolean> {
+  if (!token) return false;
+  const [e, sig] = token.split(".");
+  const exp = Number(e);
+  if (!exp || exp < now || !sig) return false;
+  return safeEqual(sig, (await hmac(`export:${slug}:${exp}`)).slice(0, 32));
+}
