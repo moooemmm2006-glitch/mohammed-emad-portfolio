@@ -1,0 +1,31 @@
+{
+  "settings": {
+    "graphApiVersion": "v27.0",
+    "keepCloudCopy": false,
+    "pollTimeoutMinutes": 10,
+    "igShareToFeed": true
+  },
+  "facebookPages": [
+    { "name": "مطعم الأصيل", "pageId": "100000000000001", "tokenEnv": "FB_TOKEN_PAGE_1" },
+    { "name": "عروض الأصيل", "pageId": "100000000000002", "tokenEnv": "FB_TOKEN_PAGE_2" },
+    { "name": "صفحة قديمة (مقفولة)", "pageId": "100000000000003", "tokenEnv": "FB_TOKEN_PAGE_3", "enabled": false }
+  ],
+  "instagramAccounts": [
+    { "name": "@alaseel.eg", "igUserId": "17841400000000001", "tokenEnv": "FB_TOKEN_PAGE_1" }
+  ],
+  "tiktok": {
+    "enabled": true,
+    "name": "@alaseel",
+    "privacyLevel": "SELF_ONLY",
+    "disableComment": false,
+    "disableDuet": false,
+    "disableStitch": false
+  },
+  "youtube": {
+    "enabled": true,
+    "name": "قناة الأصيل",
+    "privacyStatus": "public",
+    "categoryId": "22",
+    "madeForKids": false
+  }
+}

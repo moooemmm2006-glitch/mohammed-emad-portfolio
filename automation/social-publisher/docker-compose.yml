@@ -1,0 +1,41 @@
+# Social Publisher — n8n running locally (Windows / Docker Desktop).
+# Start: start.bat   Stop: stop.bat   UI: http://localhost:5678
+services:
+  n8n:
+    image: docker.n8n.io/n8nio/n8n:2.46.7   # pinned stable release (Nov 2026); see README to upgrade
+    container_name: social-publisher-n8n
+    restart: "no"                          # only runs when you start it
+    ports:
+      - "127.0.0.1:5678:5678"              # reachable from this laptop only
+    env_file:
+      - .env                               # tokens + N8N_ENCRYPTION_KEY (git-ignored)
+    environment:
+      - N8N_ENCRYPTION_KEY=${N8N_ENCRYPTION_KEY:?Set N8N_ENCRYPTION_KEY in .env}
+      - GENERIC_TIMEZONE=Africa/Cairo
+      - TZ=Africa/Cairo
+      - N8N_LISTEN_ADDRESS=0.0.0.0
+      - N8N_HOST=localhost
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://localhost:5678/
+      - N8N_SECURE_COOKIE=false            # plain http on localhost
+      # big videos
+      - N8N_PAYLOAD_SIZE_MAX=512           # MiB
+      - N8N_FORMDATA_FILE_SIZE_MAX=512     # MiB, max uploaded file in the form
+      - N8N_DEFAULT_BINARY_DATA_MODE=filesystem
+      # Code nodes need these built-ins (raw http/https for uploads, fs for files, crypto for signatures)
+      - NODE_FUNCTION_ALLOW_BUILTIN=fs,path,crypto,http,https
+      - N8N_BLOCK_ENV_ACCESS_IN_NODE=false # Code nodes read the tokens from .env
+      - N8N_RESTRICT_FILE_ACCESS_TO=/files # file nodes may only touch the mounted project folder
+      - N8N_RUNNERS_TASK_TIMEOUT=3600      # uploads + Instagram processing can take a while (default 300 s)
+      - N8N_DIAGNOSTICS_ENABLED=false
+      - N8N_PERSONALIZATION_ENABLED=false
+      - EXECUTIONS_DATA_PRUNE=true
+      - EXECUTIONS_DATA_MAX_AGE=336        # keep 14 days of execution history
+    volumes:
+      - n8n_data:/home/node/.n8n           # workflows, credentials, executions survive restarts
+      - ./:/files/project                  # accounts.json, logs/, data/ (uploads + TikTok token)
+
+volumes:
+  n8n_data:
+    name: social_publisher_n8n_data

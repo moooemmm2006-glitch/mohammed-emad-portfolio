@@ -1,0 +1,12 @@
+{
+  "name": "social-publisher",
+  "version": "1.0.0",
+  "private": true,
+  "description": "n8n workflow: upload a video once, publish to Facebook Pages, Instagram, TikTok and YouTube Shorts.",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "build": "node scripts/build-workflow.js",
+    "mock": "node test/mock-server.js 9999"
+  },
+  "engines": { "node": ">=20" }
+}
