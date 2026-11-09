@@ -57,27 +57,27 @@
   "rewrites": [
     {
       "source": "/demo/:path*",
-      "destination": "https://me-demo-studio.vercel.app/demo/:path*"
+      "destination": "https://mohammed-emad-portfolio-fjko.vercel.app/demo/:path*"
     },
     {
       "source": "/s/:path*",
-      "destination": "https://me-demo-studio.vercel.app/s/:path*"
+      "destination": "https://mohammed-emad-portfolio-fjko.vercel.app/s/:path*"
     },
     {
       "source": "/studio",
-      "destination": "https://me-demo-studio.vercel.app/studio"
+      "destination": "https://mohammed-emad-portfolio-fjko.vercel.app/studio"
     },
     {
       "source": "/studio/:path*",
-      "destination": "https://me-demo-studio.vercel.app/studio/:path*"
+      "destination": "https://mohammed-emad-portfolio-fjko.vercel.app/studio/:path*"
     },
     {
       "source": "/api/:path*",
-      "destination": "https://me-demo-studio.vercel.app/api/:path*"
+      "destination": "https://mohammed-emad-portfolio-fjko.vercel.app/api/:path*"
     },
     {
       "source": "/_next/:path*",
-      "destination": "https://me-demo-studio.vercel.app/_next/:path*"
+      "destination": "https://mohammed-emad-portfolio-fjko.vercel.app/_next/:path*"
     }
   ]
 }

@@ -65,10 +65,10 @@
 
 ## ٣. النشر على Vercel
 
-1. Vercel ← **Add New Project** ← نفس الريبو، وخلي **Root Directory = `demo-studio`**، واسم المشروع **`me-demo-studio`**.
+1. Vercel ← **Add New Project** ← نفس الريبو، وخلي **Root Directory = `demo-studio`**.
 2. ضيف متغيرات البيئة اللي فوق، وضيف **Storage ← Blob** للمشروع.
-3. Deploy. الاستوديو هيبقى على `https://me-demo-studio.vercel.app/studio`.
-4. **نفس الدومين (ثقة أكتر)**: `vercel.json` في البورتفوليو بيعمل rewrite لـ `/demo`، `/s`، `/studio`، `/api`، `/_next` على `https://me-demo-studio.vercel.app`.
+3. Deploy. الاستوديو هيبقى على `https://mohammed-emad-portfolio-fjko.vercel.app/studio`.
+4. **نفس الدومين (ثقة أكتر)**: `vercel.json` في البورتفوليو بيعمل rewrite لـ `/demo`، `/s`، `/studio`، `/api`، `/_next` على `https://mohammed-emad-portfolio-fjko.vercel.app`.
    - النتيجة: اللينك اللي بتبعته بيبقى `https://mohammed-emad-portfolio.vercel.app/demo/english-dose`.
    - لو اسم المشروع طلع مختلف، غيّر الرابط في `vercel.json` (٦ سطور).
    - وخلي `NEXT_PUBLIC_SITE_URL` = دومين البورتفوليو.
@@ -93,7 +93,7 @@
 
 ## ٥. دومين خاص لعميل
 
-1. Vercel ← مشروع `me-demo-studio` ← Settings ← Domains ← Add ← `englishdose.com` (و `www.englishdose.com`).
+1. Vercel ← مشروع Demo Studio (`mohammed-emad-portfolio-fjko`) ← Settings ← Domains ← Add ← `englishdose.com` (و `www.englishdose.com`).
 2. عند شركة الدومين:
    - `A @ 76.76.21.21`
    - `CNAME www cname.vercel-dns.com`
@@ -161,7 +161,7 @@ npm run build
 - **Portfolio**: `try.html` plus nav/hero/footer links. `vercel.json` rewrites the Demo Studio paths onto the portfolio domain, and the strict CSP is scoped to the static pages.
 
 ### Deploy
-1. Create a Vercel project from this repo with Root Directory `demo-studio`, named `me-demo-studio`.
+1. Create a Vercel project from this repo with Root Directory `demo-studio` (currently `mohammed-emad-portfolio-fjko`).
 2. Add the env vars above and a Blob store.
 3. If the project URL differs, update the six rewrite destinations in the root `vercel.json`.
 
