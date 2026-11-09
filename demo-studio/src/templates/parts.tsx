@@ -94,7 +94,7 @@ export function Initials({ name, className = "" }: { name: string; className?: s
   if (/[()]/.test(name)) {
     return (
       <span aria-hidden className={`grid place-items-center ${className}`}>
-        <svg width="40%" height="40%" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="12" cy="8" r="4" /><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" /></svg>
+        <svg width="1.3em" height="1.3em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"><circle cx="12" cy="8" r="4" /><path d="M4.5 20.5a7.5 7.5 0 0 1 15 0" /></svg>
       </span>
     );
   }
