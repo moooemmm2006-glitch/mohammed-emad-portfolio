@@ -90,7 +90,7 @@ export function SitePanel({ demo, submissions }: { demo: DemoDTO; submissions: S
         <ol className="list-decimal ps-5 space-y-1.5 text-sm text-fg2">
           <li>في Vercel افتح مشروع demo-studio ← Settings ← Domains ← Add، واكتب دومين العميل (مثلاً englishdose.com).</li>
           <li>عند شركة الدومين: سجل A للدومين الرئيسي على <code dir="ltr">76.76.21.21</code>، وسجل CNAME لـ <code dir="ltr">www</code> على <code dir="ltr">cname.vercel-dns.com</code>.</li>
-          <li>ضيف Redirect في Vercel (أو في <code dir="ltr">next.config.ts</code>) من <code dir="ltr">/</code> على الدومين ده لـ <code dir="ltr">/s/{d.slug}</code>. التفاصيل في README.</li>
+          <li>في Environment Variables ضيف (أو كمّل) <code dir="ltr">CUSTOM_DOMAINS</code> = <code dir="ltr">{"englishdose.com="}{d.slug}</code> واعمل Redeploy. الدومين هيفتح الموقع ده على طول.</li>
         </ol>
       </section>
     </div>
