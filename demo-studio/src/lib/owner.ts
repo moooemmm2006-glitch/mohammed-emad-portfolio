@@ -25,6 +25,7 @@ export const BRAND = {
 
 /** Public base URL used in share links, QR codes and OG tags. */
 export function siteUrl(): string {
-  const v = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "") || "http://localhost:3100";
+  // Links are shared from the portfolio domain (vercel.json rewrites); localhost in development.
+  const v = process.env.NEXT_PUBLIC_SITE_URL || (process.env.VERCEL ? OWNER.portfolioUrl : "http://localhost:3100");
   return v.replace(/\/+$/, "");
 }
