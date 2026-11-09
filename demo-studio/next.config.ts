@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Always render <title>/<meta>/OG tags in <head> (WhatsApp previews, SEO), never streamed later.
+  htmlLimitedBots: /.*/,
   serverExternalPackages: ["@libsql/client", "libsql", "@resvg/resvg-js"],
   // The share images read these fonts at runtime.
   outputFileTracingIncludes: { "/api/og/[slug]": ["./assets/fonts/**"], "/api/mockup/[slug]": ["./assets/fonts/**"] },

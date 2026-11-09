@@ -162,7 +162,7 @@ export function Items({ t }: { t: T }) {
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {c.services.map((s, i) => (
               <li key={s.id} className="group relative overflow-hidden rounded-[26px] border border-line bg-card p-6 transition hover:-translate-y-1 hover:shadow-[0_24px_60px_-30px_rgba(0,0,0,.35)] hover:border-p">
-                <span aria-hidden className="absolute -top-3 -end-1 text-[88px] font-extrabold leading-none text-p opacity-[.07] transition group-hover:opacity-[.14]" style={{ fontFamily: "var(--font-h)" }}>{String(i + 1).padStart(2, "0")}</span>
+                <svg aria-hidden viewBox="0 0 120 90" className="absolute -top-4 -end-2 w-[120px] text-p opacity-[.08] transition group-hover:opacity-[.15]"><text x="0" y="78" fill="currentColor" fontSize="88" fontWeight="800" style={{ fontFamily: "var(--font-h)" }}>{String(i + 1).padStart(2, "0")}</text></svg>
                 {s.tag && <p className="mb-3 inline-flex rounded-full bg-a-soft px-3 py-1 text-[13px] font-semibold">{s.tag}</p>}
                 <h3 className="text-[22px] font-extrabold">{s.title}</h3>
                 {s.desc && <p className="mt-2 text-mute">{s.desc}</p>}

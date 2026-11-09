@@ -57,11 +57,13 @@ export function readableOn(bg: string): string {
 export function themeVars(primary: string, accent: string, mode: "light" | "dark"): Record<string, string> {
   const dark = mode === "dark";
   const bg = dark ? mix("#0B0D12", primary, 0.06) : mix("#FFFFFF", primary, 0.025);
-  const bg2 = dark ? mix("#12151C", primary, 0.1) : mix("#F6F5F2", primary, 0.06);
   const card = dark ? mix("#161A22", primary, 0.08) : "#FFFFFF";
+  const bg2 = dark ? mix("#12151C", primary, 0.1) : mix("#F6F5F2", primary, 0.06);
   const fg = dark ? "#F4F1EA" : "#11131A";
   const mute = dark ? "#B4B7BF" : "#4B5060";
-  const p = dark ? ensureContrast(mix(primary, "#FFFFFF", 0.15), bg, 4.5) : ensureContrast(primary, bg, 4.5);
+  // Accent text sits on the page and on cards: it must pass on both.
+  let p = dark ? ensureContrast(mix(primary, "#FFFFFF", 0.15), bg, 4.6) : ensureContrast(primary, bg, 4.6);
+  p = ensureContrast(p, card, 4.6);
   const btn = ensureContrast(primary, dark ? "#FFFFFF" : "#000000", 1);
   return {
     "--p": p,

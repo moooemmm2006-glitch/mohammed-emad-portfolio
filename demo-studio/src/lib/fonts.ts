@@ -1,10 +1,10 @@
 import { Cairo, IBM_Plex_Sans_Arabic, Readex_Pro, Tajawal } from "next/font/google";
 
-// Only the families a page actually uses get downloaded (preload off, CSS-only declaration).
-export const cairo = Cairo({ subsets: ["arabic", "latin"], weight: ["400", "600", "700", "800"], variable: "--f-cairo", display: "swap", preload: false });
-export const tajawal = Tajawal({ subsets: ["arabic", "latin"], weight: ["400", "500", "700", "800"], variable: "--f-tajawal", display: "swap", preload: false });
-export const plex = IBM_Plex_Sans_Arabic({ subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700"], variable: "--f-plex", display: "swap", preload: false });
-export const readex = Readex_Pro({ subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700"], variable: "--f-readex", display: "swap", preload: false });
+// Cairo + Tajawal (the default pairs) are preloaded to avoid a layout shift; the others load on demand.
+export const cairo = Cairo({ subsets: ["arabic", "latin"], weight: ["400", "600", "700", "800"], variable: "--f-cairo", display: "optional", preload: false });
+export const tajawal = Tajawal({ subsets: ["arabic", "latin"], weight: ["400", "700", "800"], variable: "--f-tajawal", display: "optional", preload: false });
+export const plex = IBM_Plex_Sans_Arabic({ subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700"], variable: "--f-plex", display: "optional", preload: false });
+export const readex = Readex_Pro({ subsets: ["arabic", "latin"], weight: ["400", "500", "600", "700"], variable: "--f-readex", display: "optional", preload: false });
 
 export const fontVars = [cairo.variable, tajawal.variable, plex.variable, readex.variable].join(" ");
 
